@@ -1,0 +1,29 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api"
+  status = 200
+
+[[redirects]]
+  from = "/admin"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/teacher"
+  to = "/teacher.html"
+  status = 200
+
+[[redirects]]
+  from = "/parent"
+  to = "/parent.html"
+  status = 200
+
+[build.environment]
+  NODE_VERSION = "20"

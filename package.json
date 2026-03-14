@@ -1,0 +1,16 @@
+{
+  "name": "school-discipline-system",
+  "version": "1.0.0",
+  "description": "نظام متابعة السلوك والانضباط المدرسي - Netlify",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "netlify dev",
+    "build": "echo 'No build step needed'"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "netlify-cli": "^17.0.0"
+  }
+}
