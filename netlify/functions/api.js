@@ -234,9 +234,10 @@ async function doUnifiedLogin(credential) {
 
   // 1. هل هي رمز معلم؟ (يُفحص أولاً لمنع تعارض sys_password)
   const teacherRows = await sb('teachers', 'GET',
-    `code=eq.${encodeURIComponent(cred)}&active=eq.نعم&select=*`);
-  if (Array.isArray(teacherRows) && teacherRows.length) {
-    const t = teacherRows[0];
+    `code=eq.${encodeURIComponent(cred)}&select=*`);
+  const activeTeachers = Array.isArray(teacherRows) ? teacherRows.filter(t => t.active === 'نعم') : [];
+  if (activeTeachers.length) {
+    const t = activeTeachers[0];
     const schoolRows = await sb('schools', 'GET',
       `school_code=eq.${t.school_code}&select=status,end_date,name`);
     if (Array.isArray(schoolRows) && schoolRows.length) {
