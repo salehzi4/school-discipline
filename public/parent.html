@@ -113,6 +113,7 @@
 @media print { #calFloatBtn,#calFloatPanel,#calOverlay{display:none!important;} }
 </style>
 <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>بوابة ولي الأمر</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
@@ -1149,7 +1150,6 @@ function applyParentSettings(s){
 async function loadParentSettings(){
   try {
     const schoolCode = window.getSchoolCode ? window.getSchoolCode() : (new URLSearchParams(window.location.search).get('school') || 'SCH001');
-    {
 
     if(!schoolCode){
       _showParentLogin(); // لا يوجد school code → اعرض بالألوان الافتراضية
