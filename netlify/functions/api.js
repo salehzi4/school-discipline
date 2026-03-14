@@ -83,6 +83,7 @@ async function dispatch(action, body, schoolCode) {
     // ── الدخول ──
     case 'doLogin':         return doLogin(body.password, schoolCode);
     case 'doTeacherLogin':  return doTeacherLogin(body.code, schoolCode);
+    case 'doUnifiedLogin':  return doUnifiedLogin(body.credential);
 
     // ── الفصول ──
     case 'getClasses':      return getClasses(schoolCode);
@@ -220,6 +221,69 @@ async function doLogin(password, schoolCode) {
     daysLeft: license.daysLeft || 0, warning: license.warning || false,
     schoolName: license.schoolName || '', expiredMsg: license.msg || '',
     whatsapp: license.whatsapp || '', endDate: license.endDate || '' };
+}
+
+// ═══════════════════════════════════════════════════════════
+//  الدخول الموحد — رابط واحد لكل المدارس والأدوار
+// ═══════════════════════════════════════════════════════════
+async function doUnifiedLogin(credential) {
+  if (!credential || !credential.trim()) {
+    return { success: false, error: 'أدخل كلمة المرور أو رقم الهوية' };
+  }
+  const cred = credential.trim();
+
+  // 1. هل هي رمز معلم؟ (يُفحص أولاً لمنع تعارض sys_password)
+  const teacherRows = await sb('teachers', 'GET',
+    `code=eq.${encodeURIComponent(cred)}&active=eq.نعم&select=*`);
+  if (Array.isArray(teacherRows) && teacherRows.length) {
+    const t = teacherRows[0];
+    const schoolRows = await sb('schools', 'GET',
+      `school_code=eq.${t.school_code}&select=status,end_date,name`);
+    if (Array.isArray(schoolRows) && schoolRows.length) {
+      const s = schoolRows[0];
+      if (s.status === 'suspended') return { success: false, error: 'تم إيقاف اشتراك المدرسة' };
+      const daysLeft = Math.ceil((new Date(s.end_date) - new Date()) / 86400000);
+      const readOnly = daysLeft < 0;
+      return { success: true, role: 'teacher', schoolCode: t.school_code,
+        schoolName: s.name, readOnly,
+        teacher: { name: t.name, subjects: t.subjects, classes: t.classes.split(',').map(c => c.trim()) },
+        daysLeft: readOnly ? 0 : daysLeft, warning: daysLeft <= 5 && daysLeft >= 0 };
+    }
+  }
+
+  // 2. هل هي كلمة مرور إدارة؟
+  const adminRows = await sb('schools', 'GET',
+    `admin_password=eq.${encodeURIComponent(cred)}&status=eq.active&select=*`);
+  if (Array.isArray(adminRows) && adminRows.length) {
+    const s = adminRows[0];
+    const today = new Date();
+    const daysLeft = Math.ceil((new Date(s.end_date) - today) / 86400000);
+    if (daysLeft < 0) {
+      return { success: true, role: 'admin', readOnly: true, schoolCode: s.school_code,
+        schoolName: s.name, expiredMsg: `انتهى الاشتراك بتاريخ ${s.end_date}` };
+    }
+    return { success: true, role: 'admin', readOnly: false, schoolCode: s.school_code,
+      schoolName: s.name, daysLeft, warning: daysLeft <= 5 };
+  }
+
+  // 3. هل هي رقم هوية طالب؟
+  const studentRows = await sb('students', 'GET',
+    `national_id=eq.${encodeURIComponent(cred)}&select=name,class_name,school_code`);
+  if (Array.isArray(studentRows) && studentRows.length) {
+    const st = studentRows[0];
+    const schoolRows = await sb('schools', 'GET',
+      `school_code=eq.${st.school_code}&select=status,end_date,name`);
+    if (Array.isArray(schoolRows) && schoolRows.length) {
+      const s = schoolRows[0];
+      if (s.status === 'suspended') return { success: false, error: 'تم إيقاف اشتراك المدرسة' };
+      const daysLeft = Math.ceil((new Date(s.end_date) - new Date()) / 86400000);
+      if (daysLeft < 0) return { success: false, error: 'انتهى اشتراك المدرسة' };
+      return { success: true, role: 'parent', schoolCode: st.school_code,
+        schoolName: s.name, student: { name: st.name, className: st.class_name } };
+    }
+  }
+
+  return { success: false, error: 'كلمة المرور أو رقم الهوية غير صحيح' };
 }
 
 async function doTeacherLogin(code, schoolCode) {
