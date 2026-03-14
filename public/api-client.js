@@ -92,8 +92,16 @@
     getCustomSettings: function() { return callAPI('getCustomSettings'); },
     saveCustomSettings: function(s) { return callAPI('saveCustomSettings', { settings: s }); },
     getSchoolCode: function() { return Promise.resolve({ code: getSchoolCode() }); },
-    getTeacherUrl: function() { return callAPI('getTeacherUrl'); },
-    getParentUrl: function() { return callAPI('getParentUrl'); },
+    getTeacherUrl: function() {
+      var sc = getSchoolCode();
+      var base = window.location.origin;
+      return Promise.resolve(base + '/teacher.html?school=' + sc);
+    },
+    getParentUrl: function() {
+      var sc = getSchoolCode();
+      var base = window.location.origin;
+      return Promise.resolve(base + '/parent.html?school=' + sc);
+    },
     getSpreadsheetUrl: function() { return Promise.resolve({ url: '#' }); },
     initializeSheets: function() { return callAPI('initializeSheets'); }
   };
