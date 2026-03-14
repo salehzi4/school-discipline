@@ -7,7 +7,8 @@
 .parent-vis-btn.on  { background:#f0fdf4; border-color:#16a34a; color:#16a34a; }
 .parent-vis-btn.off { background:#fef2f2; border-color:#dc2626; color:#dc2626; }
 </style>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>بوابة المعلم</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
@@ -1023,7 +1024,44 @@ function showL(){document.getElementById('loadingOverlay').classList.add('show')
 function hideL(){document.getElementById('loadingOverlay').classList.remove('show');}
 function showA(id,t,m){const c=document.getElementById(id);if(c){c.innerHTML='<div class="alert alert-'+t+'">'+m+'</div>';setTimeout(()=>{c.innerHTML='';},5000);}}
 
-document.addEventListener('DOMContentLoaded',()=>{loadSettingsFromSupabase();const c=sessionStorage.getItem('tCode');if(c){showL();google.script.run.withSuccessHandler(r=>{hideL();if(r&&r.success){T=r.teacher;if(r.readOnly)showReadOnlyBanner(r.expiredMsg);else if(r.warning)showWarningBar(r.daysLeft);enter();}}).doTeacherLogin(c);}});
+document.addEventListener('DOMContentLoaded', function() {
+  loadSettingsFromSupabase();
+
+  // ── حالة 1: جاء من الدخول الموحد (index.html) ──
+  var tName     = sessionStorage.getItem('tName');
+  var tSubjects = sessionStorage.getItem('tSubjects');
+  var tClasses  = sessionStorage.getItem('tClasses');
+  var tCode     = sessionStorage.getItem('tCode');
+  var role      = sessionStorage.getItem('userRole');
+
+  if (role === 'teacher' && tName) {
+    try {
+      T = {
+        name: tName,
+        subjects: tSubjects || '',
+        classes: tClasses ? JSON.parse(tClasses) : []
+      };
+      enter();
+      return;
+    } catch(e) {}
+  }
+
+  // ── حالة 2: جلسة محفوظة (تسجيل دخول سابق مباشر) ──
+  if (tCode) {
+    showL();
+    google.script.run
+      .withSuccessHandler(function(r) {
+        hideL();
+        if (r && r.success) {
+          T = r.teacher;
+          if (r.readOnly) showReadOnlyBanner(r.expiredMsg);
+          else if (r.warning) showWarningBar(r.daysLeft);
+          enter();
+        }
+      })
+      .doTeacherLogin(tCode);
+  }
+});
 
 function doLogin(){
   const c=document.getElementById('loginCode').value.trim();
