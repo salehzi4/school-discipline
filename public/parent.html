@@ -681,6 +681,7 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 
 function applySettings(s){
+  if(s && s.gender === 'female') setTimeout(function(){ applyGender('female'); }, 100);
   if(!s) return;
   var map = {
     loginIconEl:s.parentHeaderIcon, loginTitleEl:s.parentLoginTitle,
@@ -1209,6 +1210,38 @@ async function loadParentSettings(){
     }
   }catch(e){ _showParentLogin(); }
 })();
+
+// ══ تطبيق صيغة المؤنث ══
+function applyGender(gender) {
+  if (!gender || gender === 'male') return;
+  var map = [
+    ['الطالب','الطالبة'],['طالب','طالبة'],
+    ['الطلاب','الطالبات'],['طلاب','طالبات'],
+    ['المعلم','المعلمة'],['معلم','معلمة'],
+    ['المعلمين','المعلمات'],['معلمين','معلمات'],
+    ['المدير','المديرة'],['مدير','مديرة'],
+    ['الوكيل','الوكيلة'],['وكيل','وكيلة'],
+    ['الموجه','الموجهة'],['موجه','موجهة'],
+    ['المرشد','المرشدة'],['مرشد','مرشدة'],
+    ['المشرف','المشرفة'],['مشرف','مشرفة'],
+    ['المسؤول','المسؤولة'],['مسؤول','مسؤولة'],
+    ['المسجل','المسجلة'],['المسجّل','المسجّلة'],
+    ['ولي الأمر','ولية الأمر'],
+    ['أولياء الأمور','أولياء أمور الطالبات'],
+    ['ابنك','ابنتك'],['طفلك','طفلتك'],
+  ];
+  var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+  var nodes = [];
+  var node;
+  while (node = walker.nextNode()) {
+    if (node.parentNode.tagName !== 'SCRIPT' && node.parentNode.tagName !== 'STYLE') nodes.push(node);
+  }
+  nodes.forEach(function(n) {
+    var text = n.textContent;
+    map.forEach(function(p){ text = text.split(p[0]).join(p[1]); });
+    n.textContent = text;
+  });
+}
 </script>
 </body>
 </html>
