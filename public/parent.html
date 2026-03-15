@@ -661,9 +661,23 @@ document.addEventListener('DOMContentLoaded', function(){
     .withSuccessHandler(applySettings)
     .withFailureHandler(function(){})
     .getCustomSettings();
-  var sN = sessionStorage.getItem('parentStudentName');
-  var sC = sessionStorage.getItem('parentStudentClass');
-  if(sN && sC){ checkNewReports(sN,sC); loadProfile(sN,sC); }
+  // ── الدخول الموحد: تحقق من URL params ──
+  var urlParams = new URLSearchParams(window.location.search);
+  var urlStudent = urlParams.get('student');
+  var urlClass   = urlParams.get('class');
+  if(urlStudent && urlClass){
+    // قادم من شاشة الدخول الموحدة
+    sessionStorage.setItem('parentStudentName', urlStudent);
+    sessionStorage.setItem('parentStudentClass', urlClass);
+    var ls = document.getElementById('loginScreen');
+    if(ls){ ls.style.display='none'; ls.style.opacity='0'; }
+    checkNewReports(urlStudent, urlClass);
+    loadProfile(urlStudent, urlClass);
+  } else {
+    var sN = sessionStorage.getItem('parentStudentName');
+    var sC = sessionStorage.getItem('parentStudentClass');
+    if(sN && sC){ checkNewReports(sN,sC); loadProfile(sN,sC); }
+  }
 });
 
 function applySettings(s){
@@ -709,11 +723,11 @@ function showErr(msg){
 function doLogout(){
   sessionStorage.removeItem('parentStudentName');
   sessionStorage.removeItem('parentStudentClass');
-  $('app').style.display='none';
-  var ls=$('loginScreen');
-  ls.style.opacity='0'; ls.style.display='flex';
-  setTimeout(function(){ ls.style.transition='opacity .3s'; ls.style.opacity='1'; }, 50);
-  $('nationalIdInput').value='';
+  sessionStorage.removeItem('loggedIn');
+  sessionStorage.removeItem('userRole');
+  sessionStorage.removeItem('schoolCode');
+  var sc = new URLSearchParams(window.location.search).get('school') || '';
+  window.location.href = '/?school=' + sc;
 }
 
 /* ══ CHECK NEW REPORTS ══ */
