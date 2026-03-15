@@ -2056,39 +2056,65 @@ function applyGender(gender) {
   if (window._genderApplied) return;
   window._genderApplied = true;
 
-  // نستبدل من الأطول للأقصر لمنع التداخل
+  // الجمع أولاً ثم المفرد — مرتب بحيث المؤنث لا يُعاد استبداله
   var map = [
-    ['أولياء الأمور','أولياء أمور الطالبات'],
-    ['ولي الأمر','ولية الأمر'],
-    ['المعلمين','المعلمات'],
-    ['معلمين','معلمات'],
-    ['الطلاب','الطالبات'],
-    ['طلاب','طالبات'],
-    ['المسجّل','المسجّلة'],
-    ['المسجل','المسجلة'],
-    ['المسؤول','المسؤولة'],
-    ['مسؤول','مسؤولة'],
-    ['المشرف','المشرفة'],
-    ['مشرف','مشرفة'],
-    ['المرشد','المرشدة'],
-    ['مرشد','مرشدة'],
-    ['الموجه','الموجهة'],
-    ['موجه','موجهة'],
-    ['الوكيل','الوكيلة'],
-    ['وكيل','وكيلة'],
-    ['المدير','المديرة'],
-    ['مدير','مديرة'],
-    ['المعلم','المعلمة'],
-    ['معلم','معلمة'],
-    ['الطالب','الطالبة'],
-    ['طالب','طالبة'],
-    ['ابنك','ابنتك'],
-    ['طفلك','طفلتك'],
+    ['أولياء الأمور',  'أولياء أمور الطالبات'],
+    ['المعلمين',       'المعلمات'],
+    ['معلمين',         'معلمات'],
+    ['الطلاب',         'الطالبات'],
+    ['طلاب',           'طالبات'],
+    ['ولي الأمر',      'ولية الأمر'],
+    ['المسجّل',        'المسجّلة'],
+    ['المسجل',         'المسجلة'],
+    ['المسؤول',        'المسؤولة'],
+    ['مسؤول',          'مسؤولة'],
+    ['المشرف',         'المشرفة'],
+    ['مشرف',           'مشرفة'],
+    ['المرشد',         'المرشدة'],
+    ['مرشد',           'مرشدة'],
+    ['الموجه',         'الموجهة'],
+    ['موجه',           'موجهة'],
+    ['الوكيل',         'الوكيلة'],
+    ['وكيل',           'وكيلة'],
+    ['المدير',         'المديرة'],
+    ['مدير',           'مديرة'],
+    ['المعلم',         'المعلمة'],
+    ['معلم',           'معلمة'],
+    ['الطالب',         'الطالبة'],
+    ['طالب',           'طالبة'],
+    ['ابنك',           'ابنتك'],
+    ['طفلك',           'طفلتك'],
   ];
 
-  // بناء مجموعة النصوص المؤنثة لتجنب استبدالها مرة ثانية
-  var femaleSet = {};
-  map.forEach(function(p){ femaleSet[p[1]] = true; });
+  // قائمة بكل الكلمات المؤنثة لتجنب إعادة استبدالها
+  var femaleWords = map.map(function(p){ return p[1]; });
+
+  function replaceInText(text) {
+    map.forEach(function(p) {
+      var masc = p[0];
+      var fem  = p[1];
+      if (text.indexOf(masc) === -1) return;
+      // تقسيم النص وإعادة تجميعه مع التحقق من كل قطعة
+      var parts = text.split(masc);
+      var result = '';
+      for (var i = 0; i < parts.length; i++) {
+        if (i > 0) {
+          // تحقق أن الكلمة اللي قبلها ليست مؤنثة بالفعل
+          var prevEnds = result.slice(-4);
+          var nextStarts = parts[i].slice(0, 2);
+          // لو الحرف التالي 'ا' + 'ت' = جمع مؤنث → لا تستبدل
+          if (nextStarts === 'ات' || nextStarts === 'ة') {
+            result += masc;
+          } else {
+            result += fem;
+          }
+        }
+        result += parts[i];
+      }
+      text = result;
+    });
+    return text;
+  }
 
   var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
   var nodes = [];
@@ -2100,18 +2126,9 @@ function applyGender(gender) {
     }
   }
   nodes.forEach(function(n) {
-    var text = n.textContent;
-    var changed = false;
-    map.forEach(function(p) {
-      var masc = p[0];
-      var fem  = p[1];
-      // تحقق أن النص يحتوي على المذكر وليس المؤنث بالفعل
-      if (text.indexOf(masc) !== -1 && text.indexOf(fem) === -1) {
-        text = text.split(masc).join(fem);
-        changed = true;
-      }
-    });
-    if (changed) n.textContent = text;
+    var original = n.textContent;
+    var replaced = replaceInText(original);
+    if (replaced !== original) n.textContent = replaced;
   });
 }!DOCTYPE html>
 <html lang="ar" dir="rtl">
