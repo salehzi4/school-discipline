@@ -1136,7 +1136,6 @@ function enter(){
 loadTeacherStats();
 }
 function applyCustomStyles(s){
-  if(s && s.gender === 'female') setTimeout(function(){ applyGender('female'); }, 100);
   if(!s) return;
   const v = (key, def) => s[key] !== undefined ? s[key] : def;
 
@@ -1253,6 +1252,7 @@ async function loadSettingsFromSupabase() {
     if (!s) return;
     sessionStorage.setItem(_SB_TCH_KEY, JSON.stringify(s));
     applyCustomStyles(s);
+    if (s && s.gender === 'female') applyGender('female');
     _showLoginScreen();
   } catch(e) {
     console.warn('Teacher settings load failed:', e);
@@ -3240,7 +3240,6 @@ function enter(){
 loadTeacherStats();
 }
 function applyCustomStyles(s){
-  if(s && s.gender === 'female') setTimeout(function(){ applyGender('female'); }, 100);
   if(!s) return;
   const v = (key, def) => s[key] !== undefined ? s[key] : def;
 
