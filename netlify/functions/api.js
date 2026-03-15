@@ -1178,27 +1178,32 @@ const DEFAULT_SETTINGS = {
 };
 
 async function getCustomSettings(sc) {
+  // جلب gender من جدول schools
+  const schoolRows = await sb('schools', 'GET', `school_code=eq.${sc}&select=gender`);
+  const gender = (Array.isArray(schoolRows) && schoolRows.length) ? (schoolRows[0].gender || 'male') : 'male';
+
   const rows = await sb('custom_settings', 'GET', `school_code=eq.${sc}`);
+  let settings = DEFAULT_SETTINGS;
   if (Array.isArray(rows) && rows.length) {
     const s = rows[0].settings;
-    // لو الإعدادات محفوظة بهيكل لوحة التحكم {admin:{}, teacher:{}, parent:{}}
-    // نرجع القسم المناسب حسب الصفحة (افتراضي: admin)
-    if (s && s.admin) return s.admin;
-    return s;
+    settings = (s && s.admin) ? s.admin : (s || DEFAULT_SETTINGS);
   }
-  return DEFAULT_SETTINGS;
+  return { ...settings, gender };
 }
 
 async function getPageSettings(sc, page) {
+  // جلب gender من جدول schools
+  const schoolRows = await sb('schools', 'GET', `school_code=eq.${sc}&select=gender`);
+  const gender = (Array.isArray(schoolRows) && schoolRows.length) ? (schoolRows[0].gender || 'male') : 'male';
+
   const rows = await sb('custom_settings', 'GET', `school_code=eq.${sc}`);
+  let settings = {};
   if (Array.isArray(rows) && rows.length) {
     const s = rows[0].settings;
-    if (s && s[page]) return s[page];
-    // إذا ما في قسم خاص → ارجع الإعدادات كلها
-    if (s && !s.admin) return s;
-    return {};
+    if (s && s[page]) settings = s[page];
+    else if (s && !s.admin) settings = s;
   }
-  return {};
+  return { ...settings, gender };
 }
 
 async function saveCustomSettings(settings, sc) {
