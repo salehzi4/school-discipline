@@ -1213,12 +1213,24 @@ async function loadParentSettings(){
 })();
 
 // ══ تطبيق صيغة المؤنث ══
-function applyGender(gender) {
-  if (!gender || gender === 'male') return;
-  if (window._genderApplied) return;
-  window._genderApplied = true;
+// نخزّن النصوص الأصلية مرة واحدة عند تحميل الصفحة
+var _originalTexts = null;
+function _storeOriginalTexts() {
+  if (_originalTexts) return;
+  _originalTexts = [];
+  var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+  var node;
+  while (node = walker.nextNode()) {
+    var tag = node.parentNode.tagName;
+    if (tag !== 'SCRIPT' && tag !== 'STYLE' && tag !== 'INPUT' && tag !== 'TEXTAREA') {
+      _originalTexts.push({ node: node, text: node.textContent });
+    }
+  }
+}
+// استدع هذه الدالة فوراً عند تحميل الصفحة
+_storeOriginalTexts();
 
-  // القائمة مرتبة: المركبات والجمع أولاً ثم المفرد
+function applyGender(gender) {
   var map = [
     ['الطلاب المحالون',      'الطالبات المحالات'],
     ['المعلمين الموجودين',   'المعلمات الموجودات'],
@@ -1252,29 +1264,29 @@ function applyGender(gender) {
     ['جديد',                  'جديدة'],
   ];
 
-  var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
-  var nodes = [];
-  var node;
-  while (node = walker.nextNode()) {
-    var tag = node.parentNode.tagName;
-    if (tag !== 'SCRIPT' && tag !== 'STYLE' && tag !== 'INPUT' && tag !== 'TEXTAREA') {
-      nodes.push(node);
+  if (!gender || gender === 'male') {
+    // استعادة النصوص الأصلية
+    if (_originalTexts) {
+      _originalTexts.forEach(function(item) {
+        if (item.node.parentNode) item.node.textContent = item.text;
+      });
     }
+    return;
   }
 
-  // نجمع كل النصوص ونستبدل مرة واحدة فقط
-  nodes.forEach(function(n) {
-    var text = n.textContent;
+  // تطبيق التأنيث على النصوص الأصلية دائماً
+  if (!_originalTexts) _storeOriginalTexts();
+  _originalTexts.forEach(function(item) {
+    if (!item.node.parentNode) return;
+    var text = item.text; // النص الأصلي دائماً
     var changed = false;
     for (var i = 0; i < map.length; i++) {
-      var from = map[i][0];
-      var to   = map[i][1];
-      if (text.indexOf(from) !== -1) {
-        text = text.split(from).join(to);
+      if (text.indexOf(map[i][0]) !== -1) {
+        text = text.split(map[i][0]).join(map[i][1]);
         changed = true;
       }
     }
-    if (changed) n.textContent = text;
+    if (changed) item.node.textContent = text;
   });
 }!DOCTYPE html>
 <html lang="ar" dir="rtl">
