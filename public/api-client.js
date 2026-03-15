@@ -75,6 +75,7 @@
     updateTeacher: function(on, n, s, c, k, a) { return callAPI('updateTeacher', { oldName: on, name: n, subjects: s, classes: c, code: k, active: a }); },
     deleteTeacher: function(n) { return callAPI('deleteTeacher', { name: n }); },
     deleteAllTeachers: function() { return callAPI('deleteAllTeachers'); },
+    upsertTeacher: function(n, s, c, k) { return callAPI('upsertTeacher', { name: n, subjects: s, classes: c, code: k }); },
     getAdvancedStats: function(df) { return callAPI('getAdvancedStats', { dateFilter: df }); },
     getWeeklyReport: function() { return callAPI('getWeeklyReport'); },
     getMonthlyChartData: function() { return callAPI('getMonthlyChartData'); },
