@@ -4006,6 +4006,7 @@ function applyCS(s){
 const _SB_URL  = 'https://tilxiaygkiptxgcwlujx.supabase.co';
 const _SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRpbHhpYXlna2lwdHhnY3dsdWp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1NDkyODQsImV4cCI6MjA4NzEyNTI4NH0.8lZ_mXOLbIrDMoTDXRgZEJWg2sStEQCS5m5-vrzZBuw';
 const _SB_SCHOOL_KEY = 'school_settings_cache';
+sessionStorage.removeItem(_SB_SCHOOL_KEY); // مسح الكاش عند كل تحميل
 
 async function loadSettingsFromSupabase() {
   try {
