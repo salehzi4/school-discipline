@@ -92,7 +92,9 @@
     getReportsByStudent: function(sn, cn) { return callAPI('getReportsByStudent', { studentName: sn, className: cn }); },
     getFullReportData: function(df, dt) { return callAPI('getFullReportData', { dateFrom: df, dateTo: dt }); },
     getLastRegionName: function() { return callAPI('getLastRegionName'); },
-    getCustomSettings: function() { return callAPI('getCustomSettings'); },
+    getCustomSettings:  function() { return callAPI('getCustomSettings'); },
+    getTeacherSettings: function() { return callAPI('getTeacherSettings'); },
+    getParentSettings:  function() { return callAPI('getParentSettings'); },
     saveCustomSettings: function(s) { return callAPI('saveCustomSettings', { settings: s }); },
     getSchoolCode: function() { return Promise.resolve({ code: getSchoolCode() }); },
     getTeacherUrl: function() {
