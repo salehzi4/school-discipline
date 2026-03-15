@@ -143,6 +143,7 @@ async function dispatch(action, body, schoolCode) {
     case 'updateTeacher':    return updateTeacher(body.oldName, body.name, body.subjects, body.classes, body.code, body.active, schoolCode);
     case 'deleteTeacher':    return deleteTeacher(body.name, schoolCode);
     case 'deleteAllTeachers':return deleteAllTeachers(schoolCode);
+    case 'upsertTeacher':    return upsertTeacher(body.name, body.subjects, body.classes, body.code, schoolCode);
 
     // ── الإحصاءات ──
     case 'getAdvancedStats':           return getAdvancedStats(body.dateFilter, schoolCode);
@@ -236,6 +237,10 @@ async function doUnifiedLogin(credential) {
   const teacherRows = await sb('teachers', 'GET',
     `code=eq.${encodeURIComponent(cred)}&select=*`);
   const activeTeachers = Array.isArray(teacherRows) ? teacherRows.filter(t => t.active === 'نعم') : [];
+  // إذا وُجد نفس الرمز في أكثر من مدرسة → خطأ (يجب منع هذا عند الإضافة)
+  if (activeTeachers.length > 1) {
+    return { success: false, error: 'رمز الدخول مكرر في أكثر من مدرسة — تواصل مع مسؤول النظام' };
+  }
   if (activeTeachers.length) {
     const t = activeTeachers[0];
     const schoolRows = await sb('schools', 'GET',
@@ -720,17 +725,25 @@ async function getTeachers(sc) {
 }
 
 async function addTeacher(name, subjects, classes, code, sc) {
-  const existing = await sb('teachers', 'GET', `school_code=eq.${sc}&code=eq.${encodeURIComponent(code)}`);
-  if (Array.isArray(existing) && existing.length) return { success: false, message: 'رمز الدخول هذا مستخدم مسبقاً ❌' };
+  // تحقق من التكرار عبر كل المدارس
+  const globalCheck = await sb('teachers', 'GET', `code=eq.${encodeURIComponent(code)}&select=school_code,name`);
+  if (Array.isArray(globalCheck) && globalCheck.length) {
+    const other = globalCheck.find(t => t.school_code !== sc);
+    if (other) return { success: false, message: 'رمز الدخول هذا مستخدم في مدرسة أخرى ❌' };
+    const same = globalCheck.find(t => t.school_code === sc);
+    if (same) return { success: false, message: 'رمز الدخول هذا مستخدم مسبقاً ❌' };
+  }
   await sb('teachers', 'POST', '', { school_code: sc, name, subjects, classes, code, active: 'نعم' });
   return { success: true, message: 'تمت إضافة المعلم ✅' };
 }
 
 async function updateTeacher(oldName, name, subjects, classes, code, active, sc) {
-  // تحقق من تعارض الرمز
-  const conflict = await sb('teachers', 'GET',
-    `school_code=eq.${sc}&code=eq.${encodeURIComponent(code)}&name=neq.${encodeURIComponent(oldName)}`);
-  if (Array.isArray(conflict) && conflict.length) return { success: false, message: 'رمز الدخول مستخدم من معلم آخر ❌' };
+  // تحقق من التكرار عبر كل المدارس
+  const globalCheck = await sb('teachers', 'GET', `code=eq.${encodeURIComponent(code)}&select=school_code,name`);
+  if (Array.isArray(globalCheck) && globalCheck.length) {
+    const conflict = globalCheck.find(t => !(t.school_code === sc && t.name === oldName));
+    if (conflict) return { success: false, message: 'رمز الدخول مستخدم في مدرسة أخرى أو من معلم آخر ❌' };
+  }
   await sb('teachers', 'PATCH', `school_code=eq.${sc}&name=eq.${encodeURIComponent(oldName)}`,
     { name, subjects, classes, code, active: active || 'نعم' });
   return { success: true, message: 'تم التعديل ✅' };
@@ -744,6 +757,25 @@ async function deleteTeacher(name, sc) {
 async function deleteAllTeachers(sc) {
   await sb('teachers', 'DELETE', `school_code=eq.${sc}`);
   return { success: true };
+}
+
+async function upsertTeacher(name, subjects, classes, code, sc) {
+  // تحقق من التكرار عبر كل المدارس
+  const globalCheck = await sb('teachers', 'GET', `code=eq.${encodeURIComponent(code)}&select=school_code,name`);
+  if (Array.isArray(globalCheck) && globalCheck.length) {
+    const other = globalCheck.find(t => t.school_code !== sc);
+    if (other) return { success: false, message: 'رمز الدخول مستخدم في مدرسة أخرى ❌' };
+    // موجود في نفس المدرسة → تحديث
+    const same = globalCheck.find(t => t.school_code === sc);
+    if (same) {
+      await sb('teachers', 'PATCH', `school_code=eq.${sc}&code=eq.${encodeURIComponent(code)}`,
+        { name, subjects, classes, active: 'نعم' });
+      return { success: true, updated: true };
+    }
+  }
+  // جديد → إضافة
+  await sb('teachers', 'POST', '', { school_code: sc, name, subjects, classes, code, active: 'نعم' });
+  return { success: true, updated: false };
 }
 
 async function verifyTeacher(code, sc) {
