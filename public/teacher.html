@@ -1125,7 +1125,7 @@ function enter(){
   T.classes.forEach(c=>{const o=document.createElement('option');o.value=c.trim();o.textContent=c.trim();s.appendChild(o);});
   // تحميل أنواع المخالفات والسلوكيات — يُستدعى عند كل دخول
   reloadAllViolationTypes();
-  google.script.run.withSuccessHandler(applyCustomStyles).getCustomSettings();
+  google.script.run.withSuccessHandler(applyCustomStyles).getTeacherSettings();
   loadAlerts();
   const st=sessionStorage.getItem('tTab');
   if(st) showPage(st, null); else showPage('home',null);
@@ -1248,7 +1248,7 @@ async function loadSettingsFromSupabase() {
     if (!schoolCode) return;
 
     // استخدام API بدلاً من Supabase مباشرة
-    const s = await GAS.getCustomSettings();
+    const s = await GAS.getTeacherSettings();
     if (!s) return;
     sessionStorage.setItem(_SB_TCH_KEY, JSON.stringify(s));
     applyCustomStyles(s);
