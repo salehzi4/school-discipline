@@ -4015,7 +4015,7 @@ async function loadSettingsFromSupabase() {
     // استخدام API بدلاً من Supabase مباشرة
     const s = await GAS.getCustomSettings();
     if (!s) return;
-    sessionStorage.setItem(_SB_SCHOOL_KEY, JSON.stringify(s));
+    var sToCache = Object.assign({}, s); delete sToCache.gender; sessionStorage.setItem(_SB_SCHOOL_KEY, JSON.stringify(sToCache));
     applyCS(s);
     if (s.gender === 'female') applyGender('female');
     _showLoginScreen();
