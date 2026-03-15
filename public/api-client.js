@@ -27,6 +27,8 @@
 
   var F = {
     doLogin: function(p) { return callAPI('doLogin', { password: p }); },
+    doUnifiedLogin: function(c) { return callAPI('doUnifiedLogin', { credential: c }); },
+    doUnifiedLogin: function(credential) { return callAPI('doUnifiedLogin', { credential: credential }); },
     doTeacherLogin: function(c) { return callAPI('doTeacherLogin', { code: c }); },
     getClasses: function() { return callAPI('getClasses'); },
     addClass: function(n) { return callAPI('addClass', { name: n }); },
