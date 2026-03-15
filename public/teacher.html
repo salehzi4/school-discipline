@@ -1241,6 +1241,7 @@ function applyCustomStyles(s){
 const _SB_URL  = 'https://tilxiaygkiptxgcwlujx.supabase.co';
 const _SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRpbHhpYXlna2lwdHhnY3dsdWp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1NDkyODQsImV4cCI6MjA4NzEyNTI4NH0.8lZ_mXOLbIrDMoTDXRgZEJWg2sStEQCS5m5-vrzZBuw';
 const _SB_TCH_KEY = 'teacher_settings_cache';
+sessionStorage.removeItem(_SB_TCH_KEY);;
 
 async function loadSettingsFromSupabase() {
   try {
@@ -3345,6 +3346,7 @@ function applyCustomStyles(s){
 const _SB_URL  = 'https://tilxiaygkiptxgcwlujx.supabase.co';
 const _SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRpbHhpYXlna2lwdHhnY3dsdWp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1NDkyODQsImV4cCI6MjA4NzEyNTI4NH0.8lZ_mXOLbIrDMoTDXRgZEJWg2sStEQCS5m5-vrzZBuw';
 const _SB_TCH_KEY = 'teacher_settings_cache';
+sessionStorage.removeItem(_SB_TCH_KEY);;
 
 async function loadSettingsFromSupabase() {
   try {
@@ -4152,37 +4154,7 @@ function closeSidebar() {
 window.addEventListener('load', function() { setTimeout(applySidebarBounds, 100); });
 window.addEventListener('resize', applySidebarBounds);
 
-// ══ تطبيق صيغة المؤنث ══
-function applyGender(gender) {
-  if (!gender || gender === 'male') return;
-  var map = [
-    ['الطالب','الطالبة'],['طالب','طالبة'],
-    ['الطلاب','الطالبات'],['طلاب','طالبات'],
-    ['المعلم','المعلمة'],['معلم','معلمة'],
-    ['المعلمين','المعلمات'],['معلمين','معلمات'],
-    ['المدير','المديرة'],['مدير','مديرة'],
-    ['الوكيل','الوكيلة'],['وكيل','وكيلة'],
-    ['الموجه','الموجهة'],['موجه','موجهة'],
-    ['المرشد','المرشدة'],['مرشد','مرشدة'],
-    ['المشرف','المشرفة'],['مشرف','مشرفة'],
-    ['المسؤول','المسؤولة'],['مسؤول','مسؤولة'],
-    ['المسجل','المسجلة'],['المسجّل','المسجّلة'],
-    ['ولي الأمر','ولية الأمر'],
-    ['أولياء الأمور','أولياء أمور الطالبات'],
-    ['ابنك','ابنتك'],['طفلك','طفلتك'],
-  ];
-  var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
-  var nodes = [];
-  var node;
-  while (node = walker.nextNode()) {
-    if (node.parentNode.tagName !== 'SCRIPT' && node.parentNode.tagName !== 'STYLE') nodes.push(node);
-  }
-  nodes.forEach(function(n) {
-    var text = n.textContent;
-    map.forEach(function(p){ text = text.split(p[0]).join(p[1]); });
-    n.textContent = text;
-  });
-}
+
 </script>
 
 
