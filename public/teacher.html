@@ -1250,7 +1250,7 @@ async function loadSettingsFromSupabase() {
     // استخدام API بدلاً من Supabase مباشرة
     const s = await GAS.getTeacherSettings();
     if (!s) return;
-    sessionStorage.setItem(_SB_TCH_KEY, JSON.stringify(s));
+    var sToCache2 = Object.assign({}, s); delete sToCache2.gender; sessionStorage.setItem(_SB_TCH_KEY, JSON.stringify(sToCache2));
     applyCustomStyles(s);
     if (s && s.gender === 'female') applyGender('female');
     _showLoginScreen();
@@ -3354,7 +3354,7 @@ async function loadSettingsFromSupabase() {
     // استخدام API بدلاً من Supabase مباشرة
     const s = await GAS.getTeacherSettings();
     if (!s) return;
-    sessionStorage.setItem(_SB_TCH_KEY, JSON.stringify(s));
+    var sToCache2 = Object.assign({}, s); delete sToCache2.gender; sessionStorage.setItem(_SB_TCH_KEY, JSON.stringify(sToCache2));
     applyCustomStyles(s);
     _showLoginScreen();
   } catch(e) {
