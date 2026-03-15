@@ -168,7 +168,9 @@ async function dispatch(action, body, schoolCode) {
     case 'getLastRegionName': return getLastRegionName(schoolCode);
 
     // ── الإعدادات ──
-    case 'getCustomSettings': return getCustomSettings(schoolCode);
+    case 'getCustomSettings':        return getCustomSettings(schoolCode);
+    case 'getTeacherSettings':       return getPageSettings(schoolCode, 'teacher');
+    case 'getParentSettings':        return getPageSettings(schoolCode, 'parent');
     case 'saveCustomSettings':return saveCustomSettings(body.settings, schoolCode);
     case 'getSchoolCode':     return { code: schoolCode };
 
@@ -1177,8 +1179,26 @@ const DEFAULT_SETTINGS = {
 
 async function getCustomSettings(sc) {
   const rows = await sb('custom_settings', 'GET', `school_code=eq.${sc}`);
-  if (Array.isArray(rows) && rows.length) return rows[0].settings;
+  if (Array.isArray(rows) && rows.length) {
+    const s = rows[0].settings;
+    // لو الإعدادات محفوظة بهيكل لوحة التحكم {admin:{}, teacher:{}, parent:{}}
+    // نرجع القسم المناسب حسب الصفحة (افتراضي: admin)
+    if (s && s.admin) return s.admin;
+    return s;
+  }
   return DEFAULT_SETTINGS;
+}
+
+async function getPageSettings(sc, page) {
+  const rows = await sb('custom_settings', 'GET', `school_code=eq.${sc}`);
+  if (Array.isArray(rows) && rows.length) {
+    const s = rows[0].settings;
+    if (s && s[page]) return s[page];
+    // إذا ما في قسم خاص → ارجع الإعدادات كلها
+    if (s && !s.admin) return s;
+    return {};
+  }
+  return {};
 }
 
 async function saveCustomSettings(settings, sc) {
