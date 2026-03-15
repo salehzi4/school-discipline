@@ -4,6 +4,7 @@
 <!-- ✅ FIX: يُطبَّق فوراً قبل اكتمال تحميل الصفحة -->
 <style>html{background:#062E22;margin:0;}body{background:#062E22;margin:0;}body.app-ready{background:var(--bg,#F0F3F7)!important;}</style>
 <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>سجل المخالفات السلوكية - الإدارة</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -1520,10 +1521,10 @@ tr:hover td{background:var(--em-ghost);}
     <h1 class="lp-title" id="loginTitle">سجل المخالفات السلوكية</h1>
     <p class="lp-sub" id="loginSubtitle">منصة متكاملة لإدارة السلوك المدرسي</p>
     <div class="lp-card">
-      <label class="lfc-lbl">رمز الدخول</label>
+      <label class="lfc-lbl">كلمة المرور أو رقم الهوية</label>
       <div class="lfc-field">
         <span class="material-icons-round lfc-ico">lock</span>
-        <input type="password" class="lfc-inp" id="loginPassword" placeholder="••••••" maxlength="20" onkeypress="if(event.key==='Enter')doLogin()">
+        <input type="text" class="lfc-inp" id="loginPassword" placeholder="أدخل كلمة المرور أو رقم الهوية" maxlength="30" onkeypress="if(event.key==='Enter')doLogin()" autocomplete="off">
       </div>
       <button class="lfc-btn" onclick="doLogin()">
         <span class="material-icons-round" style="font-size:17px;">login</span> دخول
@@ -3160,42 +3161,63 @@ function doLogin(){
   const p=document.getElementById('loginPassword').value;
   if(!p){document.getElementById('loginError').style.display='block';return;}
   showLoading();
-  google.script.run
-    .withSuccessHandler(function(res){
-      hideLoading();
-      if(!res||!res.success){
-        const err=document.getElementById('loginError');
-        err.textContent=res&&res.error?res.error:'رمز الدخول غير صحيح';
-        err.style.display='block';
-        document.getElementById('loginPassword').style.borderColor='rgba(239,71,111,0.6)';
-        setTimeout(()=>document.getElementById('loginPassword').style.borderColor='rgba(255,255,255,0.15)',2000);
-        return;
+
+  // ── الدخول الموحد: يبحث في كل المدارس تلقائياً ──
+  GAS.doUnifiedLogin(p).then(function(res){
+    hideLoading();
+    if(!res||!res.success){
+      const err=document.getElementById('loginError');
+      err.textContent=res&&res.error?res.error:'رمز الدخول أو رقم الهوية غير صحيح';
+      err.style.display='block';
+      document.getElementById('loginPassword').style.borderColor='rgba(239,71,111,0.6)';
+      setTimeout(function(){ document.getElementById('loginPassword').style.borderColor='rgba(255,255,255,0.15)'; },2000);
+      return;
+    }
+
+    // ── حفظ بيانات الجلسة ──
+    sessionStorage.setItem('loggedIn','true');
+    sessionStorage.setItem('userRole', res.role||'teacher');
+    sessionStorage.setItem('schoolCode', res.schoolCode||'');
+    window.setSchoolCode && window.setSchoolCode(res.schoolCode||'');
+
+    // ── توجيه حسب الدور ──
+    if(res.role === 'parent'){
+      // ولي الأمر → صفحة ولي الأمر
+      const sc = res.schoolCode||'';
+      window.location.href = '/parent.html?school=' + sc + '&student=' + encodeURIComponent(res.student.name) + '&class=' + encodeURIComponent(res.student.className);
+      return;
+    }
+
+    if(res.role === 'teacher'){
+      // المعلم → صفحة المعلم
+      sessionStorage.setItem('tCode', p);
+      sessionStorage.setItem('tName', res.teacher.name);
+      sessionStorage.setItem('tSubjects', res.teacher.subjects||'');
+      sessionStorage.setItem('tClasses', JSON.stringify(res.teacher.classes||[]));
+      const sc = res.schoolCode||'';
+      window.location.href = '/teacher.html?school=' + sc;
+      return;
+    }
+
+    // الإدارة → هنا في نفس الصفحة
+    const ls=document.getElementById('loginScreen');
+    ls.style.transition='opacity .4s ease';ls.style.opacity='0';
+    setTimeout(function(){
+      ls.classList.remove('active');ls.style.display='none';
+      document.getElementById('mainApp').style.display='block';
+      document.getElementById('appFooter').style.display='block';
+      document.body.classList.add('app-ready');
+      setTimeout(applySidebarBounds, 150);
+      if(res.readOnly){
+        showExpiredBanner(res.expiredMsg, res.whatsapp);
+        lockAllInputs();
+      } else if(res.warning){
+        showExpiryWarning(res.daysLeft);
       }
-      // حفظ بيانات الجلسة
-      sessionStorage.setItem('loggedIn','true');
-      sessionStorage.setItem('userRole', res.role||'teacher');
-      // إخفاء شاشة الدخول
-      const ls=document.getElementById('loginScreen');
-      ls.style.transition='opacity .4s ease';ls.style.opacity='0';
-      setTimeout(()=>{
-        ls.classList.remove('active');ls.style.display='none';
-        document.getElementById('mainApp').style.display='block'; document.getElementById('appFooter').style.display='block'; document.body.classList.add('app-ready'); setTimeout(applySidebarBounds, 150);
-        // وضع القراءة فقط إذا انتهى الاشتراك
-        if(res.readOnly){
-          showExpiredBanner(res.expiredMsg, res.whatsapp);
-          lockAllInputs();
-        } else if(res.warning){
-          showExpiryWarning(res.daysLeft);
-        }
-        // إخفاء تبويبات الإدارة للمعلم
-        if(res.role==='teacher') hideAdminTabs();
-        initApp();restoreTab();
-        // تحديث الإعدادات بعد الدخول
-        loadSettingsFromSupabase();
-      },400);
-    })
-    .withFailureHandler(function(e){hideLoading();console.error(e);})
-    .doLogin(p);
+      initApp();restoreTab();
+      loadSettingsFromSupabase();
+    },400);
+  }).catch(function(e){ hideLoading(); console.error(e); });
 }
 function showExpiredBanner(msg,whatsapp){
   const b=document.createElement('div');
