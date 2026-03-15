@@ -4057,6 +4057,8 @@ function applyGender(gender) {
   if (!gender || gender === 'male') return;
   if (window._genderApplied) return;
   window._genderApplied = true;
+
+  // نستبدل من الأطول للأقصر لمنع التداخل
   var map = [
     ['أولياء الأمور','أولياء أمور الطالبات'],
     ['ولي الأمر','ولية الأمر'],
@@ -4085,6 +4087,11 @@ function applyGender(gender) {
     ['ابنك','ابنتك'],
     ['طفلك','طفلتك'],
   ];
+
+  // بناء مجموعة النصوص المؤنثة لتجنب استبدالها مرة ثانية
+  var femaleSet = {};
+  map.forEach(function(p){ femaleSet[p[1]] = true; });
+
   var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
   var nodes = [];
   var node;
@@ -4098,8 +4105,11 @@ function applyGender(gender) {
     var text = n.textContent;
     var changed = false;
     map.forEach(function(p) {
-      if (text.indexOf(p[0]) !== -1) {
-        text = text.split(p[0]).join(p[1]);
+      var masc = p[0];
+      var fem  = p[1];
+      // تحقق أن النص يحتوي على المذكر وليس المؤنث بالفعل
+      if (text.indexOf(masc) !== -1 && text.indexOf(fem) === -1) {
+        text = text.split(masc).join(fem);
         changed = true;
       }
     });
