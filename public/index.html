@@ -3951,6 +3951,10 @@ function applyCS(s){
   if(s.pageBg){
     document.documentElement.style.setProperty('--bg', s.pageBg);
   }
+  // ── تطبيق صيغة المؤنث ──
+  if(s.gender === 'female') {
+    setTimeout(function(){ applyGender('female'); }, 100);
+  }
 
   // ── بطاقات الأقسام والتنقل والإحصاءات (CSS ديناميكي) ──
   const ss = document.getElementById('_dynamicCardStyles') || (() => {
@@ -4047,6 +4051,58 @@ function _showLoginScreen() {
   } catch(e) { _showLoginScreen(); }
 })();
 
+
+
+// ══ تطبيق صيغة المؤنث للمدارس ══
+function applyGender(gender) {
+  if (!gender || gender === 'male') return;
+  
+  const map = [
+    ['الطالب',        'الطالبة'],
+    ['طالب',          'طالبة'],
+    ['الطلاب',        'الطالبات'],
+    ['طلاب',          'طالبات'],
+    ['المعلم',        'المعلمة'],
+    ['معلم',          'معلمة'],
+    ['المعلمين',      'المعلمات'],
+    ['معلمين',        'معلمات'],
+    ['المدير',        'المديرة'],
+    ['مدير',          'مديرة'],
+    ['الوكيل',        'الوكيلة'],
+    ['وكيل',          'وكيلة'],
+    ['الموجه',        'الموجهة'],
+    ['موجه',          'موجهة'],
+    ['المرشد',        'المرشدة'],
+    ['مرشد',          'مرشدة'],
+    ['المشرف',        'المشرفة'],
+    ['مشرف',          'مشرفة'],
+    ['المسؤول',       'المسؤولة'],
+    ['مسؤول',         'مسؤولة'],
+    ['المسجل',        'المسجلة'],
+    ['المسجّل',       'المسجّلة'],
+    ['ولي الأمر',     'ولية الأمر'],
+    ['أولياء الأمور', 'أولياء أمور الطالبات'],
+    ['ابنك',          'ابنتك'],
+    ['طفلك',          'طفلتك'],
+  ];
+
+  // العناصر النصية القابلة للتغيير فقط (بدون تغيير الكود أو الـ attributes)
+  var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+  var nodes = [];
+  var node;
+  while (node = walker.nextNode()) {
+    if (node.parentNode.tagName !== 'SCRIPT' && node.parentNode.tagName !== 'STYLE') {
+      nodes.push(node);
+    }
+  }
+  nodes.forEach(function(n) {
+    var text = n.textContent;
+    map.forEach(function(pair) {
+      text = text.split(pair[0]).join(pair[1]);
+    });
+    n.textContent = text;
+  });
+}
 
 function loadProfileStudents(){const cn=document.getElementById('profileClass').value;const sel=document.getElementById('profileStudent');sel.innerHTML='<option value="">-- الطالب --</option>';document.getElementById('profileContainer').style.display='none';if(!cn)return;showLoading();google.script.run.withSuccessHandler(function(students){hideLoading();students.forEach(s=>{const o=document.createElement('option');o.value=s.name;o.textContent=s.name;sel.appendChild(o);});}).getStudentsByClass(cn);}
 
