@@ -660,7 +660,7 @@ document.addEventListener('DOMContentLoaded', function(){
   google.script.run
     .withSuccessHandler(applySettings)
     .withFailureHandler(function(){})
-    .getCustomSettings();
+    .getParentSettings();
   // ── الدخول الموحد: تحقق من URL params ──
   var urlParams = new URLSearchParams(window.location.search);
   var urlStudent = urlParams.get('student');
@@ -1178,7 +1178,7 @@ async function loadParentSettings(){
     }
 
     // جلب الإعدادات من API
-    const settingsResult = await GAS.getCustomSettings();
+    const settingsResult = await GAS.getParentSettings();
     if(!settingsResult){ if(!cached) _showParentLogin(); return; }
     const s = settingsResult;
     sessionStorage.setItem(_PAR_KEY, JSON.stringify(s));
