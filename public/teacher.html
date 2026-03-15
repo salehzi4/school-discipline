@@ -2052,7 +2052,8 @@ window.addEventListener('resize', applySidebarBounds);
 // ══ تطبيق صيغة المؤنث ══
 function applyGender(gender) {
   if (!gender || gender === 'male') return;
-  // الترتيب مهم: الأطول أولاً لمنع الاستبدال المزدوج
+  if (window._genderApplied) return;
+  window._genderApplied = true;
   var map = [
     ['أولياء الأمور','أولياء أمور الطالبات'],
     ['ولي الأمر','ولية الأمر'],
