@@ -681,7 +681,6 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 
 function applySettings(s){
-  if(s && s.gender === 'female') setTimeout(function(){ applyGender('female'); }, 100);
   if(!s) return;
   var map = {
     loginIconEl:s.parentHeaderIcon, loginTitleEl:s.parentLoginTitle,
@@ -1184,6 +1183,7 @@ async function loadParentSettings(){
     const s = settingsResult;
     sessionStorage.setItem(_PAR_KEY, JSON.stringify(s));
     applyParentSettings(s);
+    if (s && s.gender === 'female') applyGender('female');
     if(!cached) _showParentLogin();
 
   } catch(e){
@@ -1947,7 +1947,6 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 
 function applySettings(s){
-  if(s && s.gender === 'female') setTimeout(function(){ applyGender('female'); }, 100);
   if(!s) return;
   var map = {
     loginIconEl:s.parentHeaderIcon, loginTitleEl:s.parentLoginTitle,
