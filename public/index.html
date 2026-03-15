@@ -3952,9 +3952,6 @@ function applyCS(s){
     document.documentElement.style.setProperty('--bg', s.pageBg);
   }
   // ── تطبيق صيغة المؤنث ──
-  if(s.gender === 'female') {
-    setTimeout(function(){ applyGender('female'); }, 100);
-  }
 
   // ── بطاقات الأقسام والتنقل والإحصاءات (CSS ديناميكي) ──
   const ss = document.getElementById('_dynamicCardStyles') || (() => {
@@ -4020,6 +4017,7 @@ async function loadSettingsFromSupabase() {
     if (!s) return;
     sessionStorage.setItem(_SB_SCHOOL_KEY, JSON.stringify(s));
     applyCS(s);
+    if (s.gender === 'female') applyGender('female');
     _showLoginScreen();
   } catch(e) {
     console.warn('Settings load failed:', e);
