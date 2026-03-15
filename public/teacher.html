@@ -1099,7 +1099,19 @@ function showWarningBar(days){
   b.innerHTML='⚠️ تنبيه: سينتهي الاشتراك بعد <strong>'+days+' أيام</strong> — تواصل مع مزود النظام للتجديد';
   document.getElementById('mainApp').prepend(b);
 }
-function doLogout(){sessionStorage.removeItem('tCode');sessionStorage.removeItem('tTab');T=null;document.getElementById('mainApp').style.display='none';const ls=document.getElementById('loginScreen');ls.style.display='flex';ls.classList.add('active');ls.style.opacity='0';setTimeout(()=>ls.style.opacity='1',50);document.getElementById('loginCode').value='';document.getElementById('loginError').style.display='none';}
+function doLogout(){
+  sessionStorage.removeItem('tCode');
+  sessionStorage.removeItem('tTab');
+  sessionStorage.removeItem('tName');
+  sessionStorage.removeItem('tSubjects');
+  sessionStorage.removeItem('tClasses');
+  sessionStorage.removeItem('loggedIn');
+  sessionStorage.removeItem('userRole');
+  sessionStorage.removeItem('schoolCode');
+  T = null;
+  var sc = new URLSearchParams(window.location.search).get('school') || '';
+  window.location.href = '/?school=' + sc;
+}
 
 function enter(){
   const ls=document.getElementById('loginScreen');
