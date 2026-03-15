@@ -83,7 +83,7 @@ async function dispatch(action, body, schoolCode) {
     // ── الدخول ──
     case 'doLogin':         return doLogin(body.password, schoolCode);
     case 'doTeacherLogin':  return doTeacherLogin(body.code, schoolCode);
-    case 'doUnifiedLogin':  return doUnifiedLogin(body.credential);
+    case 'doUnifiedLogin':  return doUnifiedLogin(body.credential, schoolCode);
 
     // ── الفصول ──
     case 'getClasses':      return getClasses(schoolCode);
@@ -227,17 +227,18 @@ async function doLogin(password, schoolCode) {
 // ═══════════════════════════════════════════════════════════
 //  الدخول الموحد — رابط واحد لكل المدارس والأدوار
 // ═══════════════════════════════════════════════════════════
-async function doUnifiedLogin(credential) {
+async function doUnifiedLogin(credential, schoolCode) {
   if (!credential || !credential.trim()) {
     return { success: false, error: 'أدخل كلمة المرور أو رقم الهوية' };
   }
   const cred = credential.trim();
+  const sc = (schoolCode || '').trim();
 
-  // 1. هل هي رمز معلم؟ (يُفحص أولاً لمنع تعارض sys_password)
-  const teacherRows = await sb('teachers', 'GET',
-    `code=eq.${encodeURIComponent(cred)}&select=*`);
+  // 1. هل هي رمز معلم؟
+  let teacherQuery = `code=eq.${encodeURIComponent(cred)}&select=*`;
+  if (sc) teacherQuery += `&school_code=eq.${sc}`;
+  const teacherRows = await sb('teachers', 'GET', teacherQuery);
   const activeTeachers = Array.isArray(teacherRows) ? teacherRows.filter(t => t.active === 'نعم') : [];
-  // إذا وُجد نفس الرمز في أكثر من مدرسة → خطأ (يجب منع هذا عند الإضافة)
   if (activeTeachers.length > 1) {
     return { success: false, error: 'رمز الدخول مكرر في أكثر من مدرسة — تواصل مع مسؤول النظام' };
   }
@@ -257,9 +258,10 @@ async function doUnifiedLogin(credential) {
     }
   }
 
-  // 2. هل هي كلمة مرور إدارة؟
-  const adminRows = await sb('schools', 'GET',
-    `admin_password=eq.${encodeURIComponent(cred)}&status=eq.active&select=*`);
+  // 2. هل هي كلمة مرور إدارة؟ (مع فلتر المدرسة إذا محدد)
+  let adminQuery = `admin_password=eq.${encodeURIComponent(cred)}&status=eq.active&select=*`;
+  if (sc) adminQuery += `&school_code=eq.${sc}`;
+  const adminRows = await sb('schools', 'GET', adminQuery);
   if (Array.isArray(adminRows) && adminRows.length) {
     const s = adminRows[0];
     const today = new Date();
@@ -273,8 +275,9 @@ async function doUnifiedLogin(credential) {
   }
 
   // 3. هل هي رقم هوية طالب؟
-  const studentRows = await sb('students', 'GET',
-    `national_id=eq.${encodeURIComponent(cred)}&select=name,class_name,school_code`);
+  let studentQuery = `national_id=eq.${encodeURIComponent(cred)}&select=name,class_name,school_code`;
+  if (sc) studentQuery += `&school_code=eq.${sc}`;
+  const studentRows = await sb('students', 'GET', studentQuery);
   if (Array.isArray(studentRows) && studentRows.length) {
     const st = studentRows[0];
     const schoolRows = await sb('schools', 'GET',
