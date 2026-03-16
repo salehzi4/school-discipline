@@ -1184,7 +1184,7 @@ async function loadParentSettings(){
     const s = settingsResult;
     sessionStorage.setItem(_PAR_KEY, JSON.stringify(s));
     applyParentSettings(s);
-    if (s && s.gender === 'female') applyGender('female');
+    if (s && s.gender === 'female') setTimeout(function(){ applyGender('female'); }, 500);
     if(!cached) _showParentLogin();
 
   } catch(e){
@@ -2580,7 +2580,7 @@ async function loadParentSettings(){
     const s = settingsResult;
     sessionStorage.setItem(_PAR_KEY, JSON.stringify(s));
     applyParentSettings(s);
-    if (s && s.gender === 'female') applyGender('female');
+    if (s && s.gender === 'female') setTimeout(function(){ applyGender('female'); }, 500);
     if(!cached) _showParentLogin();
 
   } catch(e){
