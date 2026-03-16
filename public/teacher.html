@@ -1253,7 +1253,7 @@ async function loadSettingsFromSupabase() {
     if (!s) return;
     var sToCache2 = Object.assign({}, s); delete sToCache2.gender; sessionStorage.setItem(_SB_TCH_KEY, JSON.stringify(sToCache2));
     applyCustomStyles(s);
-    if (s && s.gender === 'female') applyGender('female');
+    if (s && s.gender === 'female') setTimeout(function(){ applyGender('female'); }, 500);
     _showLoginScreen();
   } catch(e) {
     console.warn('Teacher settings load failed:', e);
@@ -3487,7 +3487,7 @@ async function loadSettingsFromSupabase() {
     if (!s) return;
     var sToCache2 = Object.assign({}, s); delete sToCache2.gender; sessionStorage.setItem(_SB_TCH_KEY, JSON.stringify(sToCache2));
     applyCustomStyles(s);
-    if (s && s.gender === 'female') applyGender('female');
+    if (s && s.gender === 'female') setTimeout(function(){ applyGender('female'); }, 500);
     _showLoginScreen();
   } catch(e) {
     console.warn('Teacher settings load failed:', e);
