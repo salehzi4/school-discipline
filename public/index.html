@@ -4018,7 +4018,7 @@ async function loadSettingsFromSupabase() {
     if (!s) return;
     var sToCache = Object.assign({}, s); delete sToCache.gender; sessionStorage.setItem(_SB_SCHOOL_KEY, JSON.stringify(sToCache));
     applyCS(s);
-    console.log('[GENDER DEBUG] gender value:', s.gender); if (s.gender === 'female') applyGender('female');
+    console.log('[GENDER DEBUG] gender value:', s.gender); if (s.gender === 'female') setTimeout(function(){ applyGender('female'); }, 500);
     _showLoginScreen();
   } catch(e) {
     console.warn('Settings load failed:', e);
