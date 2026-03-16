@@ -2087,6 +2087,7 @@ function applyGender(gender) {
     ['معلمات',            'PH12'],
     ['معلمين',            'PH13'],
     ['المسجلات',          'PH14'],
+    ['المسجلين',          'PH60'],
     ['المسجلون',          'PH15'],
     ['الموجودات',         'PH16'],
     ['الموجودين',         'PH17'],
@@ -2143,6 +2144,7 @@ function applyGender(gender) {
     'PH08':'ولية الأمر',        'PH09':'ولية الأمر',
     'PH10':'المعلمات',          'PH11':'المعلمات',
     'PH12':'معلمات',            'PH13':'معلمات',
+    'PH60':'المسجلات',
     'PH14':'المسجلات',          'PH15':'المسجلات',
     'PH16':'الموجودات',         'PH17':'الموجودات',
     'PH18':'الحاليات',          'PH19':'الحاليات',
@@ -2176,6 +2178,7 @@ function applyGender(gender) {
     'PH08':'ولية الأمر','PH09':'ولي الأمر',
     'PH10':'المعلمات','PH11':'المعلمين',
     'PH12':'معلمات','PH13':'معلمين',
+    'PH60':'المسجلين',
     'PH14':'المسجلات','PH15':'المسجلون',
     'PH16':'الموجودات','PH17':'الموجودين',
     'PH18':'الحاليات','PH19':'الحاليين',
@@ -3479,6 +3482,7 @@ async function loadSettingsFromSupabase() {
     if (!s) return;
     var sToCache2 = Object.assign({}, s); delete sToCache2.gender; sessionStorage.setItem(_SB_TCH_KEY, JSON.stringify(sToCache2));
     applyCustomStyles(s);
+    if (s && s.gender === 'female') applyGender('female');
     _showLoginScreen();
   } catch(e) {
     console.warn('Teacher settings load failed:', e);
