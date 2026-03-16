@@ -2064,7 +2064,12 @@ function _storeOriginalTexts() {
     }
   }
 }
-_storeOriginalTexts();
+// تأجيل التخزين حتى بعد تحميل الـ DOM كاملاً
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', _storeOriginalTexts);
+} else {
+  _storeOriginalTexts();
+}
 
 function applyGender(gender) {
   if (!_originalTexts) _storeOriginalTexts();
