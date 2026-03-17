@@ -3748,6 +3748,12 @@ function renderGrid(category, degree, gridId) {
   var items = _fixedViolations.filter(function(v) {
     if (v.category !== category) return false;
     if (degree && v.degree !== degree) return false;
+    // عند مدرسة 'both' — الدرجة 5 فقط للمتوسط/ثانوي
+    if (_schoolStage === 'both' && degree === '5' && v.stage === 'elementary') return false;
+    // عند مدرسة 'elementary' — استثناء مخالفات secondary فقط
+    if (_schoolStage === 'elementary' && v.stage === 'secondary') return false;
+    // عند مدرسة 'secondary' — استثناء مخالفات elementary فقط
+    if (_schoolStage === 'secondary' && v.stage === 'elementary') return false;
     return true;
   });
 
@@ -3938,22 +3944,29 @@ async function submitFixedViolation() {
   if (!selStudents.length) { showAlert('recordAlert','error','اختر طالباً على الأقل'); return; }
   if (!_selectedViolations.length) { showAlert('recordAlert','error','اختر مخالفة على الأقل'); return; }
 
-  var actionText = document.getElementById('fvActionText').value.trim();
+  var actionText = document.getElementById('fvActionText') ? document.getElementById('fvActionText').value.trim() : '';
   showLoading();
   try {
+    console.log('[FV Submit] students:', selStudents.length, 'violations:', _selectedViolations);
     const result = await GAS.recordFixedViolation({
       studentsData: selStudents,
       violations: _selectedViolations,
       actionText: actionText,
-      recorder: currentUser || 'الإدارة'
+      recorder: 'الإدارة'
     });
+    console.log('[FV Submit] result:', result);
     hideLoading();
-    showAlert('recordAlert','success', result.message || 'تم التسجيل ✅');
-    clearAllSelectedViol();
-    document.getElementById('fvActionText').value = '';
-    loadViolationsLog();
+    if (result && result.success) {
+      showAlert('recordAlert','success', result.message || 'تم التسجيل ✅');
+      clearAllSelectedViol();
+      if(document.getElementById('fvActionText')) document.getElementById('fvActionText').value = '';
+      if(typeof loadViolationsLog === 'function') loadViolationsLog();
+    } else {
+      showAlert('recordAlert','error', (result && result.error) || 'فشل التسجيل');
+    }
   } catch(e) {
     hideLoading();
+    console.error('[FV Submit] error:', e);
     showAlert('recordAlert','error','حدث خطأ: ' + e.message);
   }
 }
