@@ -101,6 +101,10 @@ async function dispatch(action, body, schoolCode) {
     case 'verifyParentById':     return verifyParentById(body.nationalId, schoolCode);
 
     // ── أنواع المخالفات ──
+    case 'getFixedViolations':         return getFixedViolations(body.stage);
+    case 'getSchoolStage':             return getSchoolStage(schoolCode);
+    case 'getRepeatCount':             return getRepeatCount(body.studentName, body.violationName, schoolCode);
+    case 'recordFixedViolation':       return recordFixedViolation(body, schoolCode);
     case 'getViolationTypes':          return getViolationTypes(schoolCode);
     case 'addViolationTypesBatch':     return addViolationTypesBatch(body.types, body.messages, body.severities, schoolCode);
     case 'updateViolationType':        return updateViolationType(body.oldType, body.newType, body.newMessage, body.newSeverity, schoolCode);
@@ -569,6 +573,112 @@ async function recordViolation(body, sc) {
   }));
   await sb('violations_log', 'POST', '', rows);
   return { success: true, message: `تم تسجيل المخالفة لـ ${studentsData.length} طالب ✅` };
+}
+
+// ═══════════════════════════════════════════════════════════
+//  المخالفات الثابتة — الجديد
+// ═══════════════════════════════════════════════════════════
+
+async function getFixedViolations(stage) {
+  // جلب كل المخالفات المناسبة للمرحلة
+  const stageFilter = stage === 'elementary'
+    ? `stage=in.(elementary,both)`
+    : stage === 'secondary'
+    ? `stage=in.(secondary,both)`
+    : `stage=in.(elementary,secondary,both)`;
+
+  const violations = await sb('fixed_violations', 'GET', `${stageFilter}&order=degree.asc,sort_order.asc`);
+  if (!Array.isArray(violations)) return [];
+
+  // جلب التوابع
+  const children = await sb('fixed_violations_children', 'GET', 'order=parent_id.asc,sort_order.asc');
+  const childMap = {};
+  if (Array.isArray(children)) {
+    children.forEach(c => {
+      if (!childMap[c.parent_id]) childMap[c.parent_id] = [];
+      childMap[c.parent_id].push(c.name);
+    });
+  }
+
+  return violations.map(v => ({
+    id: v.id,
+    name: v.name,
+    degree: v.degree,
+    stage: v.stage,
+    category: v.category,
+    has_children: v.has_children,
+    sub_type: v.sub_type,
+    sort_order: v.sort_order,
+    children: childMap[v.id] || []
+  }));
+}
+
+async function getSchoolStage(sc) {
+  const rows = await sb('schools', 'GET', `school_code=eq.${sc}&select=stage`);
+  if (Array.isArray(rows) && rows.length) return rows[0].stage || 'elementary';
+  return 'elementary';
+}
+
+async function getRepeatCount(studentName, violationName, sc) {
+  const rows = await sb('violations_log', 'GET',
+    `school_code=eq.${sc}&student_name=eq.${encodeURIComponent(studentName)}&violation_type=eq.${encodeURIComponent(violationName)}&select=id`
+  );
+  return Array.isArray(rows) ? rows.length : 0;
+}
+
+async function recordFixedViolation(body, sc) {
+  const { studentsData, violations, actionText, recorder, degree, category, subViolation } = body;
+  // violations = array of { name, subViolation, degree, category }
+  const now = new Date().toISOString();
+  const results = [];
+
+  for (const student of studentsData) {
+    for (const viol of violations) {
+      const violName = viol.name;
+      const deg = viol.degree || degree || '1';
+      const cat = viol.category || category || 'behavioral';
+      const sub = viol.subViolation || subViolation || '';
+
+      // احسب عدد التكرار
+      const existing = await sb('violations_log', 'GET',
+        `school_code=eq.${sc}&student_name=eq.${encodeURIComponent(student.name)}&violation_type=eq.${encodeURIComponent(violName)}&select=id`
+      );
+      const repeatCount = Array.isArray(existing) ? existing.length + 1 : 1;
+
+      // تحديد الإحالة التلقائية
+      const isStaff = cat === 'staff';
+      const degNum = parseInt(deg) || 1;
+      const autoRefer = isStaff || degNum >= 2;
+      const referredToAdmin = autoRefer ? 'نعم' : 'لا';
+      const referralDate = autoRefer ? now : null;
+
+      // تحديد الظهور لولي الأمر
+      const visibleToParent = (cat === 'positive' || cat === 'absence') ? 'نعم' : 'لا';
+
+      const row = {
+        school_code: sc,
+        student_name: student.name,
+        class_name: student.className,
+        violation_type: violName,
+        notes: sub || '',
+        recorder: recorder || 'الإدارة',
+        severity: deg,
+        degree: deg,
+        category: cat === 'behavioral' ? 'سلوكية' : cat === 'staff' ? 'تجاه الهيئة' : cat === 'class' ? 'صفية' : cat === 'positive' ? 'إيجابية' : cat,
+        action_taken: actionText || '',
+        visible_to_parent: visibleToParent,
+        referred_to_admin: referredToAdmin,
+        referral_date: referralDate,
+        repeat_count: repeatCount,
+        sub_violation: sub
+      };
+
+      results.push(row);
+    }
+  }
+
+  await sb('violations_log', 'POST', '', results);
+  return { success: true, message: `تم تسجيل ${results.length} مخالفة ✅` };
 }
 
 async function recordPositiveBehavior(body, sc) {
