@@ -638,10 +638,12 @@ async function recordFixedViolation(body, sc) {
       const deg = viol.degree || degree || '1';
       const cat = viol.category || category || 'behavioral';
       const sub = viol.subViolation || subViolation || '';
+      // اسم المخالفة الكامل = الاسم الرئيسي + التابع إن وجد
+      const fullViolName = sub ? (violName + ' — ' + sub) : violName;
 
-      // احسب عدد التكرار
+      // احسب عدد التكرار بناءً على الاسم الكامل
       const existing = await sb('violations_log', 'GET',
-        `school_code=eq.${sc}&student_name=eq.${encodeURIComponent(student.name)}&violation_type=eq.${encodeURIComponent(violName)}&select=id`
+        `school_code=eq.${sc}&student_name=eq.${encodeURIComponent(student.name)}&violation_type=eq.${encodeURIComponent(fullViolName)}&select=id`
       );
       const repeatCount = Array.isArray(existing) ? existing.length + 1 : 1;
 
@@ -659,7 +661,7 @@ async function recordFixedViolation(body, sc) {
         school_code: sc,
         student_name: student.name,
         class_name: student.className,
-        violation_type: violName,
+        violation_type: fullViolName,
         notes: sub || '',
         recorder: recorder || 'الإدارة',
         severity: deg,
