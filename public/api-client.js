@@ -48,6 +48,7 @@
     // دخول
     doLogin:               (password)                => callAPI('doLogin', { password }),
     doTeacherLogin:        (code)                    => callAPI('doTeacherLogin', { code }),
+    doUnifiedLogin:        (credential)              => callAPI('doUnifiedLogin', { credential }),
 
     // فصول
     getClasses:            ()                        => callAPI('getClasses'),
