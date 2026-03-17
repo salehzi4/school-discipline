@@ -3770,9 +3770,8 @@ function renderGrid(category, degree, gridId) {
       html += '<div class="fv-children-area" id="fvChildren_' + v.id + '" style="display:none;">';
       (v.children || []).forEach(function(child) {
         var childSelected = _selectedViolations.some(function(s) { return s.id === v.id && s.subViolation === child; });
-        html += '<button class="fv-child-btn' + (childSelected ? ' selected' : '') + '" '
-          + 'onclick="selectChildViolation(' + v.id + ', '' + child.replace(/'/g,"\'") + '')">'
-          + child + '</button>';
+        var childEsc = child.replace(/"/g,'&quot;');
+        html += '<button class="fv-child-btn' + (childSelected ? ' selected' : '') + '" data-pid="' + v.id + '" data-child="' + childEsc + '" onclick="selectChildByData(this)">' + child + '</button>';
       });
       // زر أخرى
       html += '<button class="fv-child-btn" onclick="addCustomSubViolation(' + v.id + ')">+ أخرى</button>';
@@ -3817,7 +3816,13 @@ function handleViolationClick(id) {
   }
 }
 
-function selectChildViolation(parentId, childName) {
+function selectChildByData(btn) {
+  var parentId = parseInt(btn.getAttribute('data-pid'));
+  var childName = btn.getAttribute('data-child').replace(/&quot;/g,'"');
+  selectChildViolation(parentId, childName, btn);
+}
+
+function selectChildViolation(parentId, childName, btn) {
   var viol = _fixedViolations.find(function(v) { return v.id === parentId; });
   if (!viol) return;
 
