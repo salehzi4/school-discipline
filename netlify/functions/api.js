@@ -729,6 +729,7 @@ async function getViolationsLog(filterClass, filterDate, filterType, sc) {
     actionTaken: r.action_taken || '', visibleToParent: r.visible_to_parent || 'لا',
     referredToAdmin: r.referred_to_admin || 'لا', referralDate: fmtDate(r.referral_date),
     behaviorStatus: r.behavior_status || '', subType: r.sub_type || '',
+    repeatCount: r.repeat_count || 1, degree: r.degree || r.severity || '1',
     _id: r.id
   }));
 }
