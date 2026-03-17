@@ -3642,15 +3642,15 @@ function populateViolationDropdownByCategory(cat){
 function loadViolationTypesDropdown(){
   google.script.run.withSuccessHandler(function(types){
     allViolationTypes['سلوكية']=types;
-    if(document.getElementById('selectedCategory').value==='سلوكية') populateViolationDropdownByCategory('سلوكية');
+    if(document.getElementById('selectedCategory') && document.getElementById('selectedCategory').value==='سلوكية') populateViolationDropdownByCategory('سلوكية');
   }).getViolationTypes();
   google.script.run.withSuccessHandler(function(types){
     allViolationTypes['صفية']=types;
-    if(document.getElementById('selectedCategory').value==='صفية') populateViolationDropdownByCategory('صفية');
+    if(document.getElementById('selectedCategory') && document.getElementById('selectedCategory').value==='صفية') populateViolationDropdownByCategory('صفية');
   }).getClassViolationTypes();
   google.script.run.withSuccessHandler(function(types){
     allViolationTypes['إيجابية']=types;
-    if(document.getElementById('selectedCategory').value==='إيجابية') populateViolationDropdownByCategory('إيجابية');
+    if(document.getElementById('selectedCategory') && document.getElementById('selectedCategory').value==='إيجابية') populateViolationDropdownByCategory('إيجابية');
   }).getPositiveBehaviorTypes();
 }
 function loadViolationTypesForFilter(){google.script.run.withSuccessHandler(function(types){const s=document.getElementById('logFilterType');s.innerHTML='<option value="الكل">كل المخالفات</option>';types.forEach(t=>{const o=document.createElement('option');o.value=t.type;o.textContent=t.type;s.appendChild(o);});}).getViolationTypes();}
@@ -3973,8 +3973,11 @@ function toggleSelectAll(){const c=document.getElementById('selectAllStudents').
 function updSelCnt(){
   const sel = getSelectedStudents();
   document.getElementById('selectedCount').textContent = sel.length;
-  document.getElementById('signatureSection').style.display = sel.length === 1 ? 'block' : 'none';
+  var sigSec = document.getElementById('signatureSection'); if(sigSec) sigSec.style.display = sel.length === 1 ? 'block' : 'none';
   if(sel.length === 1) initSig();
+  // إظهار قسم المخالفات الثابتة عند اختيار طالب
+  var fva = document.getElementById('fixedViolationsArea');
+  if(fva) fva.style.display = sel.length > 0 ? 'block' : 'none';
 }
 let sigCanvas, sigCtx, drawing = false;
 function initSig(){
