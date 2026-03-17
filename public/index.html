@@ -3698,12 +3698,14 @@ async function loadFixedViolations() {
   try {
     const stage = await GAS.getSchoolStage();
     _schoolStage = stage || 'elementary';
+    console.log('[FV] School stage:', _schoolStage);
 
     // إظهار درجة 5 للمتوسط والثانوي
     const deg5 = document.getElementById('degBtn_5');
     if (deg5) deg5.style.display = (_schoolStage !== 'elementary') ? '' : 'none';
 
     const violations = await GAS.getFixedViolations({ stage: _schoolStage });
+    console.log('[FV] Violations loaded:', violations ? violations.length : 'null');
     _fixedViolations = violations || [];
     renderAllViolationGrids();
   } catch(e) {
@@ -4026,7 +4028,7 @@ function simulateFP(){
   }, 1500);
 }
 function getSelectedStudents(){return Array.from(document.querySelectorAll('#studentsCheckboxList input:checked')).map(cb=>currentStudents[parseInt(cb.value)]);}
-function updateMessagePreview(){const cat=document.getElementById('selectedCategory').value||'سلوكية';const idx=document.getElementById('recordViolationType').value,sel=getSelectedStudents(),c=document.getElementById('messagePreviewContainer');if(idx===''||!sel.length){c.style.display='none';return;}const vtData=allViolationTypes[cat]||[];const v=vtData[parseInt(idx)];if(!v){c.style.display='none';return;}
+function updateMessagePreview(){var _sc=document.getElementById('selectedCategory'); const cat=(_sc?_sc.value:null)||'سلوكية';const idx=document.getElementById('recordViolationType').value,sel=getSelectedStudents(),c=document.getElementById('messagePreviewContainer');if(idx===''||!sel.length){c.style.display='none';return;}const vtData=allViolationTypes[cat]||[];const v=vtData[parseInt(idx)];if(!v){c.style.display='none';return;}
   // تعبئة الخطورة تلقائياً من نوع المخالفة
   if(cat!=='إيجابية' && v.severity) selectSeverity(v.severity);
   const now=new Date(),today=now.toLocaleDateString('ar-SA'),day=now.toLocaleDateString('ar-SA',{weekday:'long'});let msg=v.message.replace(/\{اسم_الطالب\}/g,sel[0].name).replace(/\{الفصل\}/g,sel[0].className).replace(/\{التاريخ\}/g,today).replace(/\{اليوم\}/g,day).replace(/\{المخالفة\}/g,v.type).replace(/\{الدرجة\}/g,v.severity||'');if(sel.length>1) msg+='\n\n📌 سيتم الإرسال لـ '+sel.length+' طالب';document.getElementById('messagePreviewText').textContent=msg;c.style.display='block';}
