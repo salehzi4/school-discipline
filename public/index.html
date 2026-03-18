@@ -796,6 +796,8 @@ tr:hover td{background:var(--em-ghost);}
 
 .fv-icons-grid {
   margin-bottom: 8px;
+  overflow-x: auto;
+  width: 100%;
 }
 
 .fv-icon-btn {
@@ -2014,7 +2016,7 @@ tr:hover td{background:var(--em-ghost);}
       </div>
 
       <!-- محتوى التبويبات -->
-      <div style="padding:14px;">
+      <div style="padding:14px;overflow-x:hidden;">
 
         <div class="fv-tab-content active" id="fvContent_absence">
           <div class="fv-icons-grid" id="fvGrid_absence"></div>
@@ -3957,7 +3959,7 @@ function renderGrid(category, degree, gridId) {
   var col1 = category === 'positive' ? 'السلوك' : 'المخالفة';
   var col2Label = category === 'class' ? 'النوع' : category === 'positive' ? 'نوع السلوك' : 'التفاصيل';
 
-  var html = '<div style="border-radius:12px;overflow:hidden;border:1.5px solid #C2C1C1;overflow-x:auto;">'
+  var html = '<div style="border-radius:12px;overflow:hidden;border:1.5px solid #C2C1C1;width:100%;">' + '<div style="overflow-x:auto;">'
     + '<table style="width:100%;border-collapse:collapse;min-width:500px;">'
     + '<thead>'
     + '<tr style="background:#15445A;">'
@@ -4016,7 +4018,7 @@ function renderGrid(category, degree, gridId) {
       + '</tr>';
   });
 
-  html += '</tbody></table></div>';
+  html += '</tbody></table></div></div>';
   grid.innerHTML = html;
 }
 
