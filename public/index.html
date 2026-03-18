@@ -3959,8 +3959,7 @@ function updateFVPreview() {
   var lines = _selectedViolations.map(function(v) {
     return v.subViolation ? (v.name + ' — ' + v.subViolation) : v.name;
   });
-  txt.value = lines.join('
-');
+  txt.value = lines.join('\n');
   area.style.display = 'block';
 }
 
