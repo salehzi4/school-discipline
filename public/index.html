@@ -776,25 +776,26 @@ tr:hover td{background:var(--em-ghost);}
 .fv-tab-content.active { display: block; animation: fadeUp .2s ease; }
 
 .fv-degree-btn {
-  padding: 5px 14px; border: 1.5px solid #C2C1C1; border-radius: 20px;
-  background: #f5f9fc; font-family: inherit; font-size: 11px; font-weight: 600;
+  padding: 6px 16px; border: 1.5px solid #C2C1C1; border-radius: 20px;
+  background: var(--surface); font-family: inherit; font-size: 12px; font-weight: 700;
   color: #555; cursor: pointer; transition: all .15s;
 }
-.fv-degree-btn:hover { border-color: #07A869; color: #07A869; }
-.fv-degree-active { background: #07A869 !important; color: #fff !important; border-color: #07A869 !important; }
+.fv-degree-btn:hover { border-color: #3D7EB9; color: #3D7EB9; }
+.fv-degree-active { background: #3D7EB9 !important; color: #fff !important; border-color: #3D7EB9 !important; }
 
 .fv-icons-grid {
-  display: flex; flex-wrap: wrap; gap: 7px;
+  display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px;
 }
 
 .fv-icon-btn {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 9px 14px; border: 0.5px solid #C2C1C1; border-radius: 12px;
-  background: #f5f9fc; font-family: inherit; font-size: 12px; font-weight: 600;
-  color: var(--text); cursor: pointer; transition: all .18s;
+  display: inline-flex; align-items: center;
+  padding: 9px 16px; border: 1.5px solid #C2C1C1; border-radius: 12px;
+  background: var(--surface); font-family: inherit; font-size: 12px; font-weight: 700;
+  color: var(--text); cursor: pointer; transition: all .18s; text-align: right;
+  line-height: 1.4;
 }
 .fv-icon-btn:hover { border-color: #07A869; background: #e8f5ee; color: #055c38; }
-.fv-icon-btn.selected { background: #07A869; color: #fff; border-color: #07A869; }
+.fv-icon-btn.selected { background: #07A869 !important; color: #fff !important; border-color: #07A869 !important; }
 
 .fv-children-area {
   width: 100%; display: flex; flex-wrap: wrap; gap: 6px;
@@ -802,12 +803,12 @@ tr:hover td{background:var(--em-ghost);}
   border: 0.5px dashed #3D7EB9; margin: 4px 0 8px;
 }
 .fv-child-btn {
-  padding: 5px 12px; border: 1.5px solid #3D7EB9; border-radius: 20px;
-  background: #fff; font-family: inherit; font-size: 11px; font-weight: 600;
-  color: #3D7EB9; cursor: pointer; transition: all .15s;
+  padding: 6px 14px; border: 1.5px solid #0DA9A6; border-radius: 20px;
+  background: var(--surface); font-family: inherit; font-size: 12px; font-weight: 700;
+  color: #0DA9A6; cursor: pointer; transition: all .15s;
 }
-.fv-child-btn:hover { background: #3D7EB9; color: #fff; }
-.fv-child-btn.selected { background: #3D7EB9; color: #fff; border-color: #3D7EB9; }
+.fv-child-btn:hover { background: #0DA9A6; color: #fff; }
+.fv-child-btn.selected { background: #0DA9A6 !important; color: #fff !important; border-color: #0DA9A6 !important; }
 
 .fv-selected-chip {
   display: inline-flex; align-items: center; gap: 5px;
@@ -3954,13 +3955,13 @@ function renderGrid(category, degree, gridId) {
 
   var html = '';
   items.forEach(function(v) {
-    var ico = getIconForCategory(category, v.degree);
     var isSelected = _selectedViolations.some(function(s) { return s.id === v.id && !s.subViolation; });
+    var degColor = {'1':'#C1B48A','2':'#3D7EB9','3':'#0DA9A6','4':'#E24B4A','5':'#791F1F','class':'#3D7EB9','positive':'#07A869','absence':'#07A869'}[v.degree] || '#C2C1C1';
     html += '<button class="fv-icon-btn' + (isSelected ? ' selected' : '') + '" '
       + 'id="fvBtn_' + v.id + '" '
+      + 'style="border-color:' + (isSelected ? degColor : '#C2C1C1') + ';" '
       + 'onclick="handleViolationClick(' + v.id + ')">'
-      + '<span class="fv-icon">' + ico + '</span>'
-      + '<span class="fv-label">' + v.name + '</span>'
+      + v.name
       + '</button>';
 
     // منطقة التوابع (مخفية بالبداية)
