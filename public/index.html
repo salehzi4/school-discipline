@@ -4157,7 +4157,7 @@ async function sendWAMessages() {
     var result = await GAS.logMessagesBatch(messages, 'الإدارة');
     console.log('[WA] logMessagesBatch result:', result);
     showAlert('waAlert','success','تم إنشاء روابط الإرسال ✅ — اضغط على كل رابط للإرسال');
-    if (typeof loadMessagesLog === 'function') loadMessagesLog();
+    setTimeout(function(){ if (typeof loadMessagesLog === 'function') loadMessagesLog(); }, 1000);
   } catch(e) {
     console.error('[WA] sendWAMessages error:', e);
     showAlert('waAlert','error','خطأ في التسجيل: ' + e.message);
@@ -4368,7 +4368,7 @@ function submitViolation(sendWA){
 }
 
 // Messages Log
-function loadMessagesLog(){const fc=document.getElementById('msgFilterClass').value,fd=document.getElementById('msgFilterDate').value;showLoading();GAS.getMessagesLog(fc,fd).then(function(msgs){hideLoading();document.getElementById('msgCountChip').textContent=msgs.length+' رسالة';const tb=document.getElementById('messagesTableBody');if(!msgs.length){tb.innerHTML='<tr><td colspan="7" class="empty-state">لا توجد</td></tr>';return;}tb.innerHTML=msgs.map((m,i)=>'<tr><td>'+(i+1)+'</td><td>'+m.date+'</td><td><strong>'+m.studentName+'</strong></td><td>'+m.className+'</td><td style="font-size:11px;max-width:200px;overflow:hidden;text-overflow:ellipsis;">'+(m.messageText||m.violationType||'—')+'</td><td><span style="padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;background:'+(m.subType==='متميز'?'rgba(34,211,238,0.1)':m.category==='إيجابية'||m.subType==='إيجابي'?'rgba(22,163,74,0.1)':m.category==='صفية'?'rgba(249,115,22,0.1)':'rgba(220,53,69,0.1)')+';color:'+(m.subType==='متميز'?'#0891b2':m.category==='إيجابية'||m.subType==='إيجابي'?'#16a34a':m.category==='صفية'?'#f97316':'#dc3545')+';">'+( m.subType==='متميز'?'🌟 متميز':m.category==='إيجابية'||m.subType==='إيجابي'?'⭐ إيجابي':m.category==='صفية'?'📚 صفي':'⚠️ سلوكي')+'</span></td><td><span class="chip">'+m.sender+'</span></td><td><span class="status-sent">'+m.status+'</span></td></tr>').join('');});}
+function loadMessagesLog(){const fc=document.getElementById('msgFilterClass').value,fd=document.getElementById('msgFilterDate').value;showLoading();GAS.getMessagesLog(fc,fd).then(function(msgs){hideLoading();document.getElementById('msgCountChip').textContent=msgs.length+' رسالة';const tb=document.getElementById('messagesTableBody');if(!msgs.length){tb.innerHTML='<tr><td colspan="7" class="empty-state">لا توجد</td></tr>';return;}tb.innerHTML=msgs.map((m,i)=>'<tr><td>'+(i+1)+'</td><td>'+m.date+'</td><td><strong>'+m.studentName+'</strong></td><td>'+m.className+'</td><td style="font-size:11px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+(m.messageText||m.violationType||'—')+'</td><td><span class="chip">'+m.sender+'</span></td><td><span class="status-sent">'+m.status+'</span></td></tr>').join('');});}
 function clearMsgFilters(){document.getElementById('msgFilterClass').value='الكل';document.getElementById('msgFilterDate').value='';loadMessagesLog();}
 
 // Violations Log
