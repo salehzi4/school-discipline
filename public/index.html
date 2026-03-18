@@ -760,6 +760,66 @@ tr:hover td{background:var(--em-ghost);}
 .modal h3{font-size:16px;font-weight:800;color:var(--em);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
 .modal .close-btn{position:absolute;top:12px;left:12px;background:none;border:none;font-size:24px;cursor:pointer;color:var(--text-3);}
 
+
+/* ══ NEW RECORD DESIGN ══ */
+.fv-side-btn {
+  padding: 12px 8px; border: none; background: transparent;
+  border-bottom: 0.5px solid #e8eef2; cursor: pointer;
+  text-align: center; width: 100%; font-family: inherit;
+  font-size: 10px; font-weight: 600; transition: background .15s;
+}
+.fv-side-btn:hover { background: rgba(7,168,105,0.07); }
+.fv-side-active { background: #07A869 !important; border-right: 3px solid #C1B48A; }
+
+.fv-tab-btn { display: none; }
+.fv-tab-content { display: none; }
+.fv-tab-content.active { display: block; animation: fadeUp .2s ease; }
+
+.fv-degree-btn {
+  padding: 5px 14px; border: 1.5px solid #C2C1C1; border-radius: 20px;
+  background: #f5f9fc; font-family: inherit; font-size: 11px; font-weight: 600;
+  color: #555; cursor: pointer; transition: all .15s;
+}
+.fv-degree-btn:hover { border-color: #07A869; color: #07A869; }
+.fv-degree-active { background: #07A869 !important; color: #fff !important; border-color: #07A869 !important; }
+
+.fv-icons-grid {
+  display: flex; flex-wrap: wrap; gap: 7px;
+}
+
+.fv-icon-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 14px; border: 0.5px solid #C2C1C1; border-radius: 12px;
+  background: #f5f9fc; font-family: inherit; font-size: 12px; font-weight: 600;
+  color: var(--text); cursor: pointer; transition: all .18s;
+}
+.fv-icon-btn:hover { border-color: #07A869; background: #e8f5ee; color: #055c38; }
+.fv-icon-btn.selected { background: #07A869; color: #fff; border-color: #07A869; }
+
+.fv-children-area {
+  width: 100%; display: flex; flex-wrap: wrap; gap: 6px;
+  padding: 10px; background: #f0f8ff; border-radius: 10px;
+  border: 0.5px dashed #3D7EB9; margin: 4px 0 8px;
+}
+.fv-child-btn {
+  padding: 5px 12px; border: 1.5px solid #3D7EB9; border-radius: 20px;
+  background: #fff; font-family: inherit; font-size: 11px; font-weight: 600;
+  color: #3D7EB9; cursor: pointer; transition: all .15s;
+}
+.fv-child-btn:hover { background: #3D7EB9; color: #fff; }
+.fv-child-btn.selected { background: #3D7EB9; color: #fff; border-color: #3D7EB9; }
+
+.fv-selected-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px; background: #e8f5ee; color: #055c38;
+  border: 1px solid #07A869; border-radius: 20px;
+  font-size: 11px; font-weight: 600;
+}
+.fv-selected-chip button {
+  background: none; border: none; color: #c0392b;
+  cursor: pointer; font-size: 14px; line-height: 1; padding: 0;
+}
+
 /* ══ FIXED VIOLATIONS UI ══ */
 .fv-tab-btn {
   padding: 8px 14px; border: 1.5px solid var(--border); border-radius: 20px;
@@ -1892,107 +1952,142 @@ tr:hover td{background:var(--em-ghost);}
     <button class="pt-print" onclick="printSection('record')"><span class="material-icons-round">print</span> طباعة</button>
     <button class="pt-pdf" onclick="exportPDF('record')"><span class="material-icons-round">picture_as_pdf</span> PDF</button>
   </div>
-  <div class="card">
-    <div class="card-title"><span class="material-icons-round">edit_note</span> رصد المخالفة والسلوك</div>
 
-    <!-- ══ اختيار الفصل والطلاب ══ -->
-    <div class="form-group">
-      <label>الفصل</label>
-      <select id="recordClass" onchange="loadClassStudents()"><option value="">-- اختر --</option></select>
-    </div>
-    <div class="form-group" id="studentsListContainer" style="display:none;">
-      <label>اختر الطلاب <span class="chip" id="selectedCount">0</span></label>
-      <div class="select-all-bar"><label style="cursor:pointer;display:flex;align-items:center;gap:6px;"><input type="checkbox" id="selectAllStudents" onchange="toggleSelectAll()" style="width:16px;height:16px;accent-color:var(--em);"> تحديد الكل</label></div>
-      <div class="students-checkbox-list" id="studentsCheckboxList"></div>
+  <div class="card" style="padding:0;overflow:hidden;border:0.5px solid #C2C1C1;">
+    <div style="background:#15445A;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;">
+      <span style="font-size:14px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px;">
+        <span class="material-icons-round" style="font-size:18px;color:#C1B48A;">edit_note</span>
+        رصد المخالفات والسلوك
+      </span>
+      <span id="fvStudentBadge" style="font-size:11px;background:rgba(255,255,255,0.15);color:#C1B48A;padding:3px 12px;border-radius:20px;font-weight:600;display:none;"></span>
     </div>
 
-    <!-- ══ التبويبات الرئيسية ══ -->
-    <div id="fixedViolationsArea" style="display:none;margin-top:16px;">
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;border-bottom:2px solid var(--border);padding-bottom:10px;">
-        <button class="fv-tab-btn active" onclick="switchFVTab('absence',this)" id="fvTab_absence">🔵 الغياب</button>
-        <button class="fv-tab-btn" onclick="switchFVTab('behavioral',this)" id="fvTab_behavioral">🔴 المخالفات السلوكية</button>
-        <button class="fv-tab-btn" onclick="switchFVTab('staff',this)" id="fvTab_staff">🟣 تجاه الهيئة</button>
-        <button class="fv-tab-btn" onclick="switchFVTab('class',this)" id="fvTab_class">🟠 المخالفات الصفية</button>
-        <button class="fv-tab-btn" onclick="switchFVTab('positive',this)" id="fvTab_positive">🟢 السلوك الإيجابي</button>
-      </div>
+    <div style="display:flex;min-height:480px;">
 
-      <!-- تبويب الغياب -->
-      <div class="fv-tab-content active" id="fvContent_absence">
-        <div class="fv-icons-grid" id="fvGrid_absence"></div>
-      </div>
-
-      <!-- تبويب المخالفات السلوكية -->
-      <div class="fv-tab-content" id="fvContent_behavioral">
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
-          <button class="fv-degree-btn active" onclick="switchDegree('1',this)" id="degBtn_1">الدرجة 1</button>
-          <button class="fv-degree-btn" onclick="switchDegree('2',this)" id="degBtn_2">الدرجة 2</button>
-          <button class="fv-degree-btn" onclick="switchDegree('3',this)" id="degBtn_3">الدرجة 3</button>
-          <button class="fv-degree-btn" onclick="switchDegree('4',this)" id="degBtn_4">الدرجة 4</button>
-          <button class="fv-degree-btn" id="degBtn_5" style="display:none;" onclick="switchDegree('5',this)">الدرجة 5</button>
-        </div>
-        <div class="fv-icons-grid" id="fvGrid_behavioral_1"></div>
-        <div class="fv-icons-grid" id="fvGrid_behavioral_2" style="display:none;"></div>
-        <div class="fv-icons-grid" id="fvGrid_behavioral_3" style="display:none;"></div>
-        <div class="fv-icons-grid" id="fvGrid_behavioral_4" style="display:none;"></div>
-        <div class="fv-icons-grid" id="fvGrid_behavioral_5" style="display:none;"></div>
-      </div>
-
-      <!-- تبويب تجاه الهيئة -->
-      <div class="fv-tab-content" id="fvContent_staff">
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
-          <button class="fv-degree-btn active" onclick="switchStaffDegree('4',this)">الدرجة 4</button>
-          <button class="fv-degree-btn" onclick="switchStaffDegree('5',this)">الدرجة 5</button>
-        </div>
-        <div class="fv-icons-grid" id="fvGrid_staff_4"></div>
-        <div class="fv-icons-grid" id="fvGrid_staff_5" style="display:none;"></div>
-      </div>
-
-      <!-- تبويب المخالفات الصفية -->
-      <div class="fv-tab-content" id="fvContent_class">
-        <div class="fv-icons-grid" id="fvGrid_class"></div>
-      </div>
-
-      <!-- تبويب السلوك الإيجابي -->
-      <div class="fv-tab-content" id="fvContent_positive">
-        <div class="fv-icons-grid" id="fvGrid_positive"></div>
-      </div>
-
-      <!-- ══ المخالفات المختارة ══ -->
-      <div id="selectedViolationsArea" style="display:none;margin-top:14px;padding:12px;background:var(--s2);border-radius:var(--r2);border:1.5px solid var(--border);">
-        <div style="font-size:12px;font-weight:800;color:var(--text-2);margin-bottom:8px;display:flex;align-items:center;gap:6px;">
-          <span class="material-icons-round" style="font-size:15px;color:var(--em);">playlist_add_check</span>
-          المخالفات المختارة <span class="chip" id="selectedViolCount">0</span>
-          <button onclick="clearAllSelectedViol()" style="margin-right:auto;background:none;border:1px solid var(--border);border-radius:6px;padding:2px 8px;font-family:inherit;font-size:10px;cursor:pointer;color:var(--text-3);">مسح الكل</button>
-        </div>
-        <div id="selectedViolList" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
-      </div>
-
-      <!-- ══ معاينة النص ══ -->
-      <div id="fvPreviewArea" style="display:none;margin-top:14px;">
-        <label style="font-size:12px;font-weight:700;color:var(--text-2);display:block;margin-bottom:6px;">
-          <span class="material-icons-round" style="font-size:14px;vertical-align:middle;color:var(--em);">preview</span>
-          معاينة النص <span style="font-size:10px;color:var(--text-3);">(يمكن التعديل)</span>
-        </label>
-        <textarea id="fvPreviewText" rows="3" style="width:100%;padding:10px;border:1.5px solid var(--em);border-radius:var(--r3);font-family:inherit;font-size:13px;resize:vertical;background:var(--em-pale);"></textarea>
-      </div>
-
-      <!-- ══ الإجراء المتخذ ══ -->
-      <div style="margin-top:14px;">
-        <label style="font-size:12px;font-weight:700;color:var(--text-2);display:block;margin-bottom:6px;">الإجراء المتخذ <span style="font-size:10px;color:var(--text-3);">(اختياري)</span></label>
-        <textarea id="fvActionText" rows="2" placeholder="اكتب الإجراء المتخذ..." style="width:100%;padding:10px;border:1.5px solid var(--border);border-radius:var(--r3);font-family:inherit;font-size:13px;resize:none;"></textarea>
-      </div>
-
-      <!-- ══ أزرار التسجيل ══ -->
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
-        <button class="btn btn-primary" onclick="submitFixedViolation()"><span class="material-icons-round" style="font-size:14px;">save</span> تسجيل</button>
-        <button class="btn" id="fvCreateReportBtn" onclick="openCreateReport()" style="display:none;background:#FEF3DC;color:#C9860A;border:1.5px solid #e8c87a;font-family:inherit;font-size:12px;font-weight:700;display:none;align-items:center;gap:6px;padding:9px 16px;border-radius:10px;cursor:pointer;">
-          <span class="material-icons-round" style="font-size:14px;">description</span> إنشاء محضر
+      <!-- القائمة الجانبية -->
+      <div style="width:88px;flex-shrink:0;background:#f5f9fc;border-left:0.5px solid #C2C1C1;display:flex;flex-direction:column;">
+        <button id="fvSideBtn_absence" class="fv-side-btn fv-side-active" onclick="switchFVTab('absence',this)" style="background:#07A869;border-right:3px solid #C1B48A;">
+          <span class="material-icons-round" style="font-size:22px;color:#fff;display:block;margin:0 auto 4px;">event_busy</span>
+          <span style="color:#fff;">غياب</span>
+        </button>
+        <button id="fvSideBtn_behavioral" class="fv-side-btn" onclick="switchFVTab('behavioral',this)">
+          <span class="material-icons-round" style="font-size:22px;color:#3D7EB9;display:block;margin:0 auto 4px;">warning_amber</span>
+          <span style="color:#3D7EB9;">سلوكية</span>
+        </button>
+        <button id="fvSideBtn_staff" class="fv-side-btn" onclick="switchFVTab('staff',this)">
+          <span class="material-icons-round" style="font-size:22px;color:#0DA9A6;display:block;margin:0 auto 4px;">supervisor_account</span>
+          <span style="color:#0DA9A6;">هيئة</span>
+        </button>
+        <button id="fvSideBtn_class" class="fv-side-btn" onclick="switchFVTab('class',this)">
+          <span class="material-icons-round" style="font-size:22px;color:#C1B48A;display:block;margin:0 auto 4px;">menu_book</span>
+          <span style="color:#9a8a60;">صفية</span>
+        </button>
+        <button id="fvSideBtn_positive" class="fv-side-btn" onclick="switchFVTab('positive',this)">
+          <span class="material-icons-round" style="font-size:22px;color:#07A869;display:block;margin:0 auto 4px;">star</span>
+          <span style="color:#07A869;">إيجابي</span>
         </button>
       </div>
-    </div>
 
-    <div id="recordAlert"></div>
-  </div>
+      <!-- المحتوى الرئيسي -->
+      <div style="flex:1;padding:14px;display:flex;flex-direction:column;gap:12px;">
+
+        <!-- اختيار الفصل والطلاب -->
+        <div class="form-group" style="margin:0;">
+          <label style="font-size:11px;font-weight:700;color:#555;margin-bottom:5px;display:block;">الفصل</label>
+          <select id="recordClass" onchange="loadClassStudents()" style="border-color:#C2C1C1;background:#f5f9fc;"><option value="">-- اختر الفصل --</option></select>
+        </div>
+
+        <div id="studentsListContainer" style="display:none;">
+          <label style="font-size:11px;font-weight:700;color:#555;margin-bottom:5px;display:block;">اختر الطلاب <span class="chip" id="selectedCount">0</span></label>
+          <div class="select-all-bar"><label style="cursor:pointer;display:flex;align-items:center;gap:6px;"><input type="checkbox" id="selectAllStudents" onchange="toggleSelectAll()" style="width:16px;height:16px;accent-color:#07A869;"> تحديد الكل</label></div>
+          <div class="students-checkbox-list" id="studentsCheckboxList"></div>
+        </div>
+
+        <!-- قسم المخالفات الثابتة -->
+        <div id="fixedViolationsArea" style="display:none;">
+
+          <!-- تبويب الغياب -->
+          <div class="fv-tab-content active" id="fvContent_absence">
+            <div class="fv-icons-grid" id="fvGrid_absence"></div>
+          </div>
+
+          <!-- تبويب السلوكية -->
+          <div class="fv-tab-content" id="fvContent_behavioral">
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+              <button class="fv-degree-btn fv-degree-active" onclick="switchDegree('1',this)" id="degBtn_1">الدرجة 1</button>
+              <button class="fv-degree-btn" onclick="switchDegree('2',this)" id="degBtn_2">الدرجة 2</button>
+              <button class="fv-degree-btn" onclick="switchDegree('3',this)" id="degBtn_3">الدرجة 3</button>
+              <button class="fv-degree-btn" onclick="switchDegree('4',this)" id="degBtn_4">الدرجة 4</button>
+              <button class="fv-degree-btn" id="degBtn_5" style="display:none;" onclick="switchDegree('5',this)">الدرجة 5</button>
+            </div>
+            <div class="fv-icons-grid" id="fvGrid_behavioral_1"></div>
+            <div class="fv-icons-grid" id="fvGrid_behavioral_2" style="display:none;"></div>
+            <div class="fv-icons-grid" id="fvGrid_behavioral_3" style="display:none;"></div>
+            <div class="fv-icons-grid" id="fvGrid_behavioral_4" style="display:none;"></div>
+            <div class="fv-icons-grid" id="fvGrid_behavioral_5" style="display:none;"></div>
+          </div>
+
+          <!-- تبويب الهيئة -->
+          <div class="fv-tab-content" id="fvContent_staff">
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+              <button class="fv-degree-btn fv-degree-active" onclick="switchStaffDegree('4',this)">الدرجة 4</button>
+              <button class="fv-degree-btn" onclick="switchStaffDegree('5',this)">الدرجة 5</button>
+            </div>
+            <div class="fv-icons-grid" id="fvGrid_staff_4"></div>
+            <div class="fv-icons-grid" id="fvGrid_staff_5" style="display:none;"></div>
+          </div>
+
+          <!-- تبويب الصفية -->
+          <div class="fv-tab-content" id="fvContent_class">
+            <div class="fv-icons-grid" id="fvGrid_class"></div>
+          </div>
+
+          <!-- تبويب الإيجابي -->
+          <div class="fv-tab-content" id="fvContent_positive">
+            <div class="fv-icons-grid" id="fvGrid_positive"></div>
+          </div>
+
+          <!-- المختارة -->
+          <div id="selectedViolationsArea" style="display:none;background:#e8f5ee;border-radius:10px;padding:10px 12px;border:0.5px solid #07A869;">
+            <div style="font-size:11px;font-weight:700;color:#555;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+              <span class="material-icons-round" style="font-size:14px;color:#07A869;">playlist_add_check</span>
+              المخالفات المختارة <span class="chip" id="selectedViolCount" style="background:#07A869;color:#fff;">0</span>
+              <button onclick="clearAllSelectedViol()" style="margin-right:auto;background:none;border:1px solid #C2C1C1;border-radius:6px;padding:2px 8px;font-family:inherit;font-size:10px;cursor:pointer;color:#666;">مسح الكل</button>
+            </div>
+            <div id="selectedViolList" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+          </div>
+
+          <!-- معاينة النص -->
+          <div id="fvPreviewArea" style="display:none;">
+            <label style="font-size:11px;font-weight:700;color:#555;display:block;margin-bottom:5px;">
+              <span class="material-icons-round" style="font-size:13px;vertical-align:middle;color:#3D7EB9;">preview</span>
+              معاينة النص <span style="font-size:10px;color:#999;">(يمكن التعديل)</span>
+            </label>
+            <textarea id="fvPreviewText" rows="2" style="width:100%;padding:10px;border:1.5px solid #07A869;border-radius:10px;font-family:inherit;font-size:13px;resize:vertical;background:#e8f5ee;box-sizing:border-box;"></textarea>
+          </div>
+
+          <!-- الإجراء المتخذ -->
+          <div>
+            <label style="font-size:11px;font-weight:700;color:#555;display:block;margin-bottom:5px;">الإجراء المتخذ <span style="font-size:10px;color:#999;">(اختياري)</span></label>
+            <textarea id="fvActionText" rows="2" placeholder="اكتب الإجراء المتخذ..." style="width:100%;padding:10px;border:0.5px solid #C2C1C1;border-radius:10px;font-family:inherit;font-size:13px;resize:none;box-sizing:border-box;"></textarea>
+          </div>
+
+          <!-- أزرار -->
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn" onclick="submitFixedViolation()" style="flex:1;background:#15445A;color:#fff;border:none;padding:12px;border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">
+              <span class="material-icons-round" style="font-size:15px;vertical-align:middle;">save</span> تسجيل المخالفة
+            </button>
+            <button id="fvCreateReportBtn" onclick="openCreateReport()" style="display:none;background:#C1B48A;color:#15445A;border:none;padding:12px 16px;border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">
+              <span class="material-icons-round" style="font-size:15px;vertical-align:middle;">description</span> محضر
+            </button>
+          </div>
+
+        </div><!-- /fixedViolationsArea -->
+
+        <div id="recordAlert"></div>
+      </div><!-- /main content -->
+    </div><!-- /flex -->
+  </div><!-- /card -->
 </div>
 
 <!-- الطلاب -->
@@ -2767,65 +2862,82 @@ tr:hover td{background:var(--em-ghost);}
   <div class="page-toolbar">
     <button class="pt-home" onclick="showPage('home',null)"><span class="material-icons-round">home</span> الرئيسية</button>
   </div>
-  <div class="card">
-    <div class="card-title"><span class="material-icons-round" style="color:#25D366;">send</span> إرسال رسالة عبر الواتساب</div>
+  <div class="card" style="padding:0;overflow:hidden;border:0.5px solid #C2C1C1;">
 
-    <!-- اختيار الفصل والطلاب -->
-    <div class="form-group">
-      <label>الفصل</label>
-      <select id="waClass" onchange="loadWAStudents()"><option value="">-- اختر الفصل --</option></select>
+    <div style="background:#15445A;padding:12px 16px;display:flex;align-items:center;gap:10px;">
+      <span class="material-icons-round" style="font-size:20px;color:#C1B48A;">send</span>
+      <span style="font-size:14px;font-weight:700;color:#fff;">إرسال رسالة عبر الواتساب</span>
     </div>
-    <div id="waStudentsArea" style="display:none;">
-      <div class="form-group">
-        <label>اختر الطلاب <span class="chip" id="waSelectedCount">0</span></label>
-        <div class="select-all-bar">
-          <label style="cursor:pointer;display:flex;align-items:center;gap:6px;">
-            <input type="checkbox" id="waSelectAll" onchange="toggleWASelectAll()" style="width:16px;height:16px;accent-color:var(--em);"> تحديد الكل
-          </label>
-        </div>
-        <div class="students-checkbox-list" id="waStudentsList"></div>
+
+    <div style="padding:16px;display:flex;flex-direction:column;gap:14px;">
+
+      <!-- الفصل -->
+      <div class="form-group" style="margin:0;">
+        <label style="font-size:11px;font-weight:700;color:#555;margin-bottom:5px;display:block;">الفصل</label>
+        <select id="waClass" onchange="loadWAStudents()" style="border-color:#C2C1C1;background:#f5f9fc;"><option value="">-- اختر الفصل --</option></select>
       </div>
 
-      <!-- نصوص جاهزة -->
-      <div style="margin-top:14px;">
-        <label style="font-size:12px;font-weight:700;color:var(--text-2);display:block;margin-bottom:8px;">اختر نصاً جاهزاً</label>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;" id="waTemplatesGrid">
-          <button class="fv-icon-btn" style="min-height:60px;min-width:180px;" onclick="selectWATemplate(0)">
-            <span class="fv-icon">📋</span>
-            <span class="fv-label">إشعار عام لولي الأمر</span>
+      <div id="waStudentsArea" style="display:none;display:flex;flex-direction:column;gap:14px;">
+
+        <!-- قائمة الطلاب -->
+        <div>
+          <label style="font-size:11px;font-weight:700;color:#555;margin-bottom:5px;display:block;">اختر الطلاب <span class="chip" id="waSelectedCount" style="background:#07A869;color:#fff;">0</span></label>
+          <div class="select-all-bar">
+            <label style="cursor:pointer;display:flex;align-items:center;gap:6px;">
+              <input type="checkbox" id="waSelectAll" onchange="toggleWASelectAll()" style="width:16px;height:16px;accent-color:#07A869;"> تحديد الكل
+            </label>
+          </div>
+          <div class="students-checkbox-list" id="waStudentsList"></div>
+        </div>
+
+        <!-- نصوص جاهزة -->
+        <div>
+          <label style="font-size:11px;font-weight:700;color:#555;margin-bottom:8px;display:block;">نصوص جاهزة</label>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;" id="waTemplatesGrid">
+            <button onclick="selectWATemplate(0)" style="border:1.5px solid #07A869;border-radius:12px;padding:10px 16px;background:#e8f5ee;font-family:inherit;font-size:12px;font-weight:700;color:#055c38;cursor:pointer;">
+              إشعار عام لولي الأمر
+            </button>
+          </div>
+        </div>
+
+        <!-- معاينة -->
+        <div>
+          <label style="font-size:11px;font-weight:700;color:#555;margin-bottom:5px;display:block;">
+            <span class="material-icons-round" style="font-size:13px;vertical-align:middle;color:#3D7EB9;">preview</span>
+            معاينة الرسالة <span style="font-size:10px;color:#999;">(يمكن التعديل)</span>
+          </label>
+          <textarea id="waPreviewText" rows="5" style="width:100%;padding:12px;border:1.5px solid #07A869;border-radius:10px;font-family:inherit;font-size:13px;resize:vertical;background:#e8f5ee;color:#055c38;line-height:1.8;box-sizing:border-box;" placeholder="اختر نصاً جاهزاً أو اكتب رسالتك..."></textarea>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">
+            <span style="background:#f0f8ff;border:0.5px solid #3D7EB9;border-radius:6px;padding:3px 9px;font-size:11px;color:#3D7EB9;font-weight:600;">{اسم_الطالب}</span>
+            <span style="background:#f0f8ff;border:0.5px solid #3D7EB9;border-radius:6px;padding:3px 9px;font-size:11px;color:#3D7EB9;font-weight:600;">{اليوم}</span>
+            <span style="background:#f0f8ff;border:0.5px solid #3D7EB9;border-radius:6px;padding:3px 9px;font-size:11px;color:#3D7EB9;font-weight:600;">{التاريخ}</span>
+            <span style="background:#f0f8ff;border:0.5px solid #3D7EB9;border-radius:6px;padding:3px 9px;font-size:11px;color:#3D7EB9;font-weight:600;">{الوقت}</span>
+          </div>
+        </div>
+
+        <!-- أزرار -->
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button onclick="sendWAMessages()" style="flex:1;padding:12px;border:none;background:#07A869;color:#fff;border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">
+            <span class="material-icons-round" style="font-size:15px;vertical-align:middle;">send</span> إرسال للمحددين
+          </button>
+          <button onclick="clearWAForm()" style="padding:12px 16px;border:1.5px solid #C2C1C1;background:#f5f9fc;color:#555;border-radius:10px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;">
+            <span class="material-icons-round" style="font-size:15px;vertical-align:middle;">clear</span>
           </button>
         </div>
-      </div>
 
-      <!-- معاينة قابلة للتعديل -->
-      <div style="margin-top:14px;">
-        <label style="font-size:12px;font-weight:700;color:var(--text-2);display:block;margin-bottom:6px;">
-          <span class="material-icons-round" style="font-size:14px;vertical-align:middle;color:var(--em);">preview</span>
-          معاينة الرسالة <span style="font-size:10px;color:var(--text-3);">(يمكن التعديل)</span>
-        </label>
-        <textarea id="waPreviewText" rows="5" style="width:100%;padding:12px;border:1.5px solid #25D366;border-radius:var(--r3);font-family:inherit;font-size:13px;resize:vertical;background:#f0fdf4;line-height:1.8;" placeholder="اختر نصاً جاهزاً أو اكتب رسالتك..."></textarea>
-        <div style="font-size:11px;color:var(--text-3);margin-top:4px;">المتغيرات المتاحة: {اسم_الطالب} {اليوم} {التاريخ} {الوقت}</div>
-      </div>
+        <!-- روابط -->
+        <div id="waLinksArea" style="display:none;">
+          <div style="font-size:11px;font-weight:700;color:#555;margin-bottom:8px;">روابط الإرسال</div>
+          <div id="waLinksList"></div>
+        </div>
 
-      <!-- أزرار الإرسال -->
-      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
-        <button class="btn" style="background:#25D366;color:#fff;" onclick="sendWAMessages()">
-          <span class="material-icons-round" style="font-size:15px;">send</span> إرسال للمحددين
-        </button>
-        <button class="btn btn-outline btn-sm" onclick="clearWAForm()">
-          <span class="material-icons-round" style="font-size:14px;">clear</span> مسح
-        </button>
-      </div>
-
-      <!-- روابط الواتساب -->
-      <div id="waLinksArea" style="display:none;margin-top:16px;">
-        <div style="font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:8px;">روابط الإرسال:</div>
-        <div id="waLinksList"></div>
       </div>
     </div>
   </div>
   <div id="waAlert"></div>
 </div>
+
+
 
 <!-- ملف الطالب -->
 <div class="page-section" id="page-profile">
@@ -4012,11 +4124,19 @@ function checkReportBtn() {
 }
 
 function switchFVTab(tab, btn) {
-  document.querySelectorAll('.fv-tab-btn').forEach(function(b) { b.classList.remove('active'); });
   document.querySelectorAll('.fv-tab-content').forEach(function(c) { c.classList.remove('active'); });
-  if (btn) btn.classList.add('active');
-  var content = document.getElementById('fvContent_' + tab);
-  if (content) content.classList.add('active');
+  document.querySelectorAll('.fv-side-btn').forEach(function(b) { 
+    b.classList.remove('fv-side-active');
+    b.style.background = 'transparent';
+    b.style.borderRight = 'none';
+  });
+  var c = document.getElementById('fvContent_' + tab);
+  if (c) c.classList.add('active');
+  if (btn) {
+    btn.classList.add('fv-side-active');
+    btn.style.background = '#07A869';
+    btn.style.borderRight = '3px solid #C1B48A';
+  }
 }
 
 function switchDegree(deg, btn) {
@@ -4256,6 +4376,8 @@ function updSelCnt(){
   // إظهار قسم المخالفات الثابتة عند اختيار طالب
   var fva = document.getElementById('fixedViolationsArea');
   if(fva) fva.style.display = sel.length > 0 ? 'block' : 'none';
+  var badge = document.getElementById('fvStudentBadge');
+  if(badge) { badge.style.display = sel.length > 0 ? 'inline' : 'none'; badge.textContent = (sel[0]||{name:''}).name + (sel.length>1?' +' + (sel.length-1) : '') + ' — رصد'; }
 }
 let sigCanvas, sigCtx, drawing = false;
 function initSig(){
