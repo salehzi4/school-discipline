@@ -1990,7 +1990,7 @@ tr:hover td{background:var(--em-ghost);}
       </div>
 
       <!-- المحتوى الرئيسي -->
-      <div style="flex:1;padding:14px;display:flex;flex-direction:column;gap:12px;">
+      <div style="flex:1;min-width:0;padding:14px;display:flex;flex-direction:column;gap:12px;">
 
         <!-- اختيار الفصل والطلاب -->
         <div class="form-group" style="margin:0;">
@@ -2005,7 +2005,7 @@ tr:hover td{background:var(--em-ghost);}
         </div>
 
         <!-- قسم المخالفات الثابتة -->
-        <div id="fixedViolationsArea" style="display:none;">
+        <div id="fixedViolationsArea" style="display:none;width:100%;overflow-x:auto;">
 
           <!-- تبويب الغياب -->
           <div class="fv-tab-content active" id="fvContent_absence">
@@ -3955,13 +3955,13 @@ function renderGrid(category, degree, gridId) {
   var col2Label = category === 'class' ? 'النوع' : category === 'positive' ? 'نوع السلوك' : 'التفاصيل';
 
   var html = '<div style="border-radius:12px;overflow:hidden;border:1.5px solid #C2C1C1;">'
-    + '<table style="width:100%;border-collapse:collapse;">'
+    + '<table style="width:100%;border-collapse:collapse;table-layout:fixed;">'
     + '<thead>'
     + '<tr style="background:#15445A;">'
-    + '<th style="padding:10px 14px;text-align:right;font-size:12px;font-weight:700;color:#C1B48A;width:32px;border-left:0.5px solid rgba(255,255,255,0.1);">✓</th>'
-    + '<th style="padding:10px 14px;text-align:right;font-size:12px;font-weight:700;color:#fff;border-left:0.5px solid rgba(255,255,255,0.1);">' + col1 + '</th>'
-    + '<th style="padding:10px 14px;text-align:right;font-size:12px;font-weight:700;color:#fff;border-left:0.5px solid rgba(255,255,255,0.1);">' + col2Label + '</th>'
-    + '<th style="padding:10px 14px;text-align:right;font-size:12px;font-weight:700;color:#fff;">الإجراء المتخذ</th>'
+    + '<th style="padding:10px 14px;text-align:right;font-size:12px;font-weight:700;color:#C1B48A;width:44px;border-left:0.5px solid rgba(255,255,255,0.1);">✓</th>'
+    + '<th style="padding:10px 14px;text-align:right;font-size:12px;font-weight:700;color:#fff;border-left:0.5px solid rgba(255,255,255,0.1);width:30%;">' + col1 + '</th>'
+    + '<th style="padding:10px 14px;text-align:right;font-size:12px;font-weight:700;color:#fff;border-left:0.5px solid rgba(255,255,255,0.1);width:35%;">' + col2Label + '</th>'
+    + '<th style="padding:10px 14px;text-align:right;font-size:12px;font-weight:700;color:#fff;width:25%;">الإجراء المتخذ</th>'
     + '</tr>'
     + '</thead><tbody>';
 
