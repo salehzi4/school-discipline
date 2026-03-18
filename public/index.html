@@ -2004,8 +2004,12 @@ tr:hover td{background:var(--em-ghost);}
           <div class="students-checkbox-list" id="studentsCheckboxList"></div>
         </div>
 
-        <!-- قسم المخالفات الثابتة -->
-        <div id="fixedViolationsArea" style="display:none;width:100%;overflow-x:auto;">
+        <!-- قسم المخالفات الثابتة moved to full width below -->
+        <!-- المخالفات الثابتة moved below -->
+    </div><!-- /flex -->
+
+    <!-- قسم المخالفات — عرض كامل -->
+    <div id="fixedViolationsArea" style="display:none;padding:0 14px 14px;">
 
           <!-- تبويب الغياب -->
           <div class="fv-tab-content active" id="fvContent_absence">
@@ -2049,7 +2053,7 @@ tr:hover td{background:var(--em-ghost);}
           </div>
 
           <!-- المختارة -->
-          <div id="selectedViolationsArea" style="display:none;background:#e8f5ee;border-radius:10px;padding:10px 12px;border:0.5px solid #07A869;">
+          <div id="selectedViolationsArea" style="display:none;background:#e8f5ee;border-radius:10px;padding:10px 12px;border:0.5px solid #07A869;margin-top:10px;">
             <div style="font-size:11px;font-weight:700;color:#555;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
               <span class="material-icons-round" style="font-size:14px;color:#07A869;">playlist_add_check</span>
               المخالفات المختارة <span class="chip" id="selectedViolCount" style="background:#07A869;color:#fff;">0</span>
@@ -2059,7 +2063,7 @@ tr:hover td{background:var(--em-ghost);}
           </div>
 
           <!-- معاينة النص -->
-          <div id="fvPreviewArea" style="display:none;">
+          <div id="fvPreviewArea" style="display:none;margin-top:10px;">
             <label style="font-size:11px;font-weight:700;color:#555;display:block;margin-bottom:5px;">
               <span class="material-icons-round" style="font-size:13px;vertical-align:middle;color:#3D7EB9;">preview</span>
               معاينة النص <span style="font-size:10px;color:#999;">(يمكن التعديل)</span>
@@ -2068,13 +2072,13 @@ tr:hover td{background:var(--em-ghost);}
           </div>
 
           <!-- الإجراء المتخذ -->
-          <div>
-            <label style="font-size:11px;font-weight:700;color:#555;display:block;margin-bottom:5px;">الإجراء المتخذ <span style="font-size:10px;color:#999;">(اختياري)</span></label>
+          <div style="margin-top:10px;">
+            <label style="font-size:11px;font-weight:700;color:#555;display:block;margin-bottom:5px;">الإجراء المتخذ العام <span style="font-size:10px;color:#999;">(اختياري)</span></label>
             <textarea id="fvActionText" rows="2" placeholder="اكتب الإجراء المتخذ..." style="width:100%;padding:10px;border:0.5px solid #C2C1C1;border-radius:10px;font-family:inherit;font-size:13px;resize:none;box-sizing:border-box;"></textarea>
           </div>
 
           <!-- أزرار -->
-          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
             <button class="btn" onclick="submitFixedViolation()" style="flex:1;background:#15445A;color:#fff;border:none;padding:12px;border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">
               <span class="material-icons-round" style="font-size:15px;vertical-align:middle;">save</span> تسجيل المخالفة
             </button>
@@ -2083,11 +2087,9 @@ tr:hover td{background:var(--em-ghost);}
             </button>
           </div>
 
-        </div><!-- /fixedViolationsArea -->
+    </div><!-- /fixedViolationsArea full width -->
+    <div id="recordAlert" style="padding:0 14px 14px;"></div>
 
-        <div id="recordAlert"></div>
-      </div><!-- /main content -->
-    </div><!-- /flex -->
   </div><!-- /card -->
 </div>
 
@@ -3954,14 +3956,14 @@ function renderGrid(category, degree, gridId) {
   var col1 = category === 'positive' ? 'السلوك' : 'المخالفة';
   var col2Label = category === 'class' ? 'النوع' : category === 'positive' ? 'نوع السلوك' : 'التفاصيل';
 
-  var html = '<div style="border-radius:12px;overflow:hidden;border:1.5px solid #C2C1C1;">'
-    + '<table style="width:100%;border-collapse:collapse;table-layout:fixed;">'
+  var html = '<div style="border-radius:12px;overflow:hidden;border:1.5px solid #C2C1C1;overflow-x:auto;">'
+    + '<table style="width:100%;border-collapse:collapse;min-width:500px;">'
     + '<thead>'
     + '<tr style="background:#15445A;">'
     + '<th style="padding:10px 14px;text-align:right;font-size:12px;font-weight:700;color:#C1B48A;width:44px;border-left:0.5px solid rgba(255,255,255,0.1);">✓</th>'
-    + '<th style="padding:10px 14px;text-align:right;font-size:12px;font-weight:700;color:#fff;border-left:0.5px solid rgba(255,255,255,0.1);width:30%;">' + col1 + '</th>'
-    + '<th style="padding:10px 14px;text-align:right;font-size:12px;font-weight:700;color:#fff;border-left:0.5px solid rgba(255,255,255,0.1);width:35%;">' + col2Label + '</th>'
-    + '<th style="padding:10px 14px;text-align:right;font-size:12px;font-weight:700;color:#fff;width:25%;">الإجراء المتخذ</th>'
+    + '<th style="padding:10px 14px;text-align:right;font-size:12px;font-weight:700;color:#fff;border-left:0.5px solid rgba(255,255,255,0.1);">' + col1 + '</th>'
+    + '<th style="padding:10px 14px;text-align:right;font-size:12px;font-weight:700;color:#fff;border-left:0.5px solid rgba(255,255,255,0.1);">' + col2Label + '</th>'
+    + '<th style="padding:10px 14px;text-align:right;font-size:12px;font-weight:700;color:#fff;width:28%;">الإجراء المتخذ</th>'
     + '</tr>'
     + '</thead><tbody>';
 
