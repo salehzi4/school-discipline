@@ -390,6 +390,7 @@ body { font-family: 'IBM Plex Sans Arabic', sans-serif; background: var(--bg); c
 .sidebar-sub-btn[data-page="record"] .material-icons-round    { color: #f87171; }
 .sidebar-sub-btn[data-page="violationsLog"] .material-icons-round { color: #60a5fa; }
 .sidebar-sub-btn[data-page="reports"] .material-icons-round   { color: #a78bfa; }
+.sidebar-sub-btn[data-page="whatsapp"] .material-icons-round  { color: #25D366; }
 .sidebar-sub-btn[data-page="messages"] .material-icons-round  { color: #34d399; }
 .sidebar-sub-btn[data-page="profile"] .material-icons-round   { color: #fbbf24; }
 .sidebar-sub-btn[data-page="classes"] .material-icons-round   { color: #22d3ee; }
@@ -1663,6 +1664,9 @@ tr:hover td{background:var(--em-ghost);}
     <span class="material-icons-round">description</span> سجل المحاضر
   </button>
 
+  <button class="sidebar-sub-btn" data-page="whatsapp" onclick="showPage('whatsapp',this)">
+    <span class="material-icons-round">send</span> إرسال عبر الواتساب
+  </button>
   <button class="sidebar-sub-btn" data-page="messages" onclick="showPage('messages',this)">
     <span class="material-icons-round">chat</span> سجل الرسائل
   </button>
@@ -1961,6 +1965,15 @@ tr:hover td{background:var(--em-ghost);}
           <button onclick="clearAllSelectedViol()" style="margin-right:auto;background:none;border:1px solid var(--border);border-radius:6px;padding:2px 8px;font-family:inherit;font-size:10px;cursor:pointer;color:var(--text-3);">مسح الكل</button>
         </div>
         <div id="selectedViolList" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+      </div>
+
+      <!-- ══ معاينة النص ══ -->
+      <div id="fvPreviewArea" style="display:none;margin-top:14px;">
+        <label style="font-size:12px;font-weight:700;color:var(--text-2);display:block;margin-bottom:6px;">
+          <span class="material-icons-round" style="font-size:14px;vertical-align:middle;color:var(--em);">preview</span>
+          معاينة النص <span style="font-size:10px;color:var(--text-3);">(يمكن التعديل)</span>
+        </label>
+        <textarea id="fvPreviewText" rows="3" style="width:100%;padding:10px;border:1.5px solid var(--em);border-radius:var(--r3);font-family:inherit;font-size:13px;resize:vertical;background:var(--em-pale);"></textarea>
       </div>
 
       <!-- ══ الإجراء المتخذ ══ -->
@@ -2747,6 +2760,71 @@ tr:hover td{background:var(--em-ghost);}
       </tr></thead><tbody id="treatedLogTableBody"><tr><td colspan="8" class="empty-state">لا توجد حالات معالجة</td></tr></tbody></table></div>
     </div>
   </div>
+</div>
+
+<!-- ══ إرسال عبر الواتساب ══ -->
+<div class="page-section" id="page-whatsapp">
+  <div class="page-toolbar">
+    <button class="pt-home" onclick="showPage('home',null)"><span class="material-icons-round">home</span> الرئيسية</button>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="material-icons-round" style="color:#25D366;">send</span> إرسال رسالة عبر الواتساب</div>
+
+    <!-- اختيار الفصل والطلاب -->
+    <div class="form-group">
+      <label>الفصل</label>
+      <select id="waClass" onchange="loadWAStudents()"><option value="">-- اختر الفصل --</option></select>
+    </div>
+    <div id="waStudentsArea" style="display:none;">
+      <div class="form-group">
+        <label>اختر الطلاب <span class="chip" id="waSelectedCount">0</span></label>
+        <div class="select-all-bar">
+          <label style="cursor:pointer;display:flex;align-items:center;gap:6px;">
+            <input type="checkbox" id="waSelectAll" onchange="toggleWASelectAll()" style="width:16px;height:16px;accent-color:var(--em);"> تحديد الكل
+          </label>
+        </div>
+        <div class="students-checkbox-list" id="waStudentsList"></div>
+      </div>
+
+      <!-- نصوص جاهزة -->
+      <div style="margin-top:14px;">
+        <label style="font-size:12px;font-weight:700;color:var(--text-2);display:block;margin-bottom:8px;">اختر نصاً جاهزاً</label>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;" id="waTemplatesGrid">
+          <button class="fv-icon-btn" style="min-height:60px;min-width:180px;" onclick="selectWATemplate(0)">
+            <span class="fv-icon">📋</span>
+            <span class="fv-label">إشعار عام لولي الأمر</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- معاينة قابلة للتعديل -->
+      <div style="margin-top:14px;">
+        <label style="font-size:12px;font-weight:700;color:var(--text-2);display:block;margin-bottom:6px;">
+          <span class="material-icons-round" style="font-size:14px;vertical-align:middle;color:var(--em);">preview</span>
+          معاينة الرسالة <span style="font-size:10px;color:var(--text-3);">(يمكن التعديل)</span>
+        </label>
+        <textarea id="waPreviewText" rows="5" style="width:100%;padding:12px;border:1.5px solid #25D366;border-radius:var(--r3);font-family:inherit;font-size:13px;resize:vertical;background:#f0fdf4;line-height:1.8;" placeholder="اختر نصاً جاهزاً أو اكتب رسالتك..."></textarea>
+        <div style="font-size:11px;color:var(--text-3);margin-top:4px;">المتغيرات المتاحة: {اسم_الطالب} {اليوم} {التاريخ} {الوقت}</div>
+      </div>
+
+      <!-- أزرار الإرسال -->
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn" style="background:#25D366;color:#fff;" onclick="sendWAMessages()">
+          <span class="material-icons-round" style="font-size:15px;">send</span> إرسال للمحددين
+        </button>
+        <button class="btn btn-outline btn-sm" onclick="clearWAForm()">
+          <span class="material-icons-round" style="font-size:14px;">clear</span> مسح
+        </button>
+      </div>
+
+      <!-- روابط الواتساب -->
+      <div id="waLinksArea" style="display:none;margin-top:16px;">
+        <div style="font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:8px;">روابط الإرسال:</div>
+        <div id="waLinksList"></div>
+      </div>
+    </div>
+  </div>
+  <div id="waAlert"></div>
 </div>
 
 <!-- ملف الطالب -->
@@ -3867,6 +3945,25 @@ function addCustomSubViolation(parentId) {
   refreshSelectedDisplay();
 }
 
+function updateFVPreview() {
+  var area = document.getElementById('fvPreviewArea');
+  var txt  = document.getElementById('fvPreviewText');
+  if (!area || !txt) return;
+
+  if (!_selectedViolations.length) {
+    area.style.display = 'none';
+    return;
+  }
+
+  // بناء نص المعاينة من المخالفات المختارة
+  var lines = _selectedViolations.map(function(v) {
+    return v.subViolation ? (v.name + ' — ' + v.subViolation) : v.name;
+  });
+  txt.value = lines.join('
+');
+  area.style.display = 'block';
+}
+
 function refreshSelectedDisplay() {
   var area = document.getElementById('selectedViolationsArea');
   var list = document.getElementById('selectedViolList');
@@ -3890,6 +3987,8 @@ function refreshSelectedDisplay() {
 
   // تحقق من زر المحضر
   checkReportBtn();
+  // تحديث المعاينة
+  updateFVPreview();
 }
 
 function removeSelectedViol(idx) {
@@ -3939,6 +4038,137 @@ function switchStaffDegree(deg, btn) {
   });
 }
 
+
+// ══════════════════════════════════════════════════════════
+// WHATSAPP SECTION
+// ══════════════════════════════════════════════════════════
+var _waStudents = [];
+var _waTemplates = [
+  'عزيزي ولي الأمر، نشعركم بأن ابنكم {اسم_الطالب} وذلك يوم {اليوم} بتاريخ {التاريخ} في تمام الساعة {الوقت}.'
+];
+
+async function loadWAStudents() {
+  var cls = document.getElementById('waClass').value;
+  var area = document.getElementById('waStudentsArea');
+  if (!cls) { if(area) area.style.display='none'; return; }
+  showLoading();
+  try {
+    const students = await GAS.getStudentsByClass(cls);
+    _waStudents = students || [];
+    var list = document.getElementById('waStudentsList');
+    if (list) {
+      list.innerHTML = _waStudents.map(function(s, i) {
+        return '<div class="student-checkbox-item"><input type="checkbox" id="was'+i+'" value="'+i+'" onchange="updWACount()"><label for="was'+i+'">'+s.name+'</label></div>';
+      }).join('');
+    }
+    if (area) area.style.display = 'block';
+    updWACount();
+    hideLoading();
+  } catch(e) {
+    hideLoading();
+    console.error('loadWAStudents:', e);
+  }
+}
+
+function toggleWASelectAll() {
+  var all = document.getElementById('waSelectAll').checked;
+  document.querySelectorAll('#waStudentsList input').forEach(function(cb) { cb.checked = all; });
+  updWACount();
+}
+
+function updWACount() {
+  var sel = getWASelectedStudents();
+  var cnt = document.getElementById('waSelectedCount');
+  if (cnt) cnt.textContent = sel.length;
+}
+
+function getWASelectedStudents() {
+  var checks = document.querySelectorAll('#waStudentsList input:checked');
+  var result = [];
+  checks.forEach(function(cb) {
+    var idx = parseInt(cb.value);
+    if (_waStudents[idx]) result.push(_waStudents[idx]);
+  });
+  return result;
+}
+
+function selectWATemplate(idx) {
+  var tmpl = _waTemplates[idx] || '';
+  var preview = document.getElementById('waPreviewText');
+  if (preview) {
+    preview.value = tmpl;
+    preview.focus();
+  }
+}
+
+function fillWAVars(text, student) {
+  var now = new Date();
+  var day = now.toLocaleDateString('ar-SA', {weekday:'long'});
+  var date = now.toLocaleDateString('ar-SA');
+  var time = now.toLocaleTimeString('ar-SA', {hour:'2-digit', minute:'2-digit'});
+  return text
+    .replace(/\{اسم_الطالب\}/g, student.name)
+    .replace(/\{اليوم\}/g, day)
+    .replace(/\{التاريخ\}/g, date)
+    .replace(/\{الوقت\}/g, time);
+}
+
+async function sendWAMessages() {
+  var selStudents = getWASelectedStudents();
+  if (!selStudents.length) { showAlert('waAlert','error','اختر طالباً على الأقل'); return; }
+  var tmplText = document.getElementById('waPreviewText') ? document.getElementById('waPreviewText').value.trim() : '';
+  if (!tmplText) { showAlert('waAlert','error','اكتب نص الرسالة أولاً'); return; }
+
+  var linksArea = document.getElementById('waLinksArea');
+  var linksList = document.getElementById('waLinksList');
+  var messages = [];
+
+  var html = selStudents.map(function(s) {
+    var msg = fillWAVars(tmplText, s);
+    var phone = String(s.phone || '').replace(/[^0-9]/g, '');
+    var link = 'https://wa.me/' + phone + '?text=' + encodeURIComponent(msg);
+    messages.push({ studentName: s.name, className: s.className, phone: s.phone, messageText: msg, status: 'مرسلة', sender: 'الإدارة' });
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#f0fdf4;border:1px solid #a7f3d0;border-radius:var(--r3);margin-bottom:6px;">'
+      + '<span style="font-size:12px;font-weight:700;">'+s.name+'</span>'
+      + '<a href="'+link+'" target="_blank" class="btn btn-sm" style="background:#25D366;color:#fff;text-decoration:none;">إرسال</a>'
+      + '</div>';
+  }).join('');
+
+  if (linksList) linksList.innerHTML = html;
+  if (linksArea) linksArea.style.display = 'block';
+
+  // تسجيل في سجل الرسائل
+  try {
+    await GAS.logMessagesBatch(messages, 'الإدارة');
+    showAlert('waAlert','success','تم إنشاء روابط الإرسال ✅ — اضغط على كل رابط للإرسال');
+    if (typeof loadMessagesLog === 'function') loadMessagesLog();
+  } catch(e) {
+    console.error('sendWAMessages:', e);
+  }
+}
+
+function clearWAForm() {
+  document.getElementById('waStudentsList').innerHTML = '';
+  document.getElementById('waStudentsArea').style.display = 'none';
+  document.getElementById('waClass').value = '';
+  var preview = document.getElementById('waPreviewText');
+  if (preview) preview.value = '';
+  var linksArea = document.getElementById('waLinksArea');
+  if (linksArea) linksArea.style.display = 'none';
+}
+
+// ملء قائمة الفصول لصفحة الواتساب
+function populateWAClassDropdown() {
+  var sel = document.getElementById('waClass');
+  var src = document.getElementById('recordClass');
+  if (!sel || !src) return;
+  sel.innerHTML = '<option value="">-- اختر الفصل --</option>';
+  Array.from(src.options).forEach(function(o) {
+    if (o.value) sel.appendChild(o.cloneNode(true));
+  });
+}
+
+
 async function submitFixedViolation() {
   var selStudents = getSelectedStudents();
   if (!selStudents.length) { showAlert('recordAlert','error','اختر طالباً على الأقل'); return; }
@@ -3948,10 +4178,13 @@ async function submitFixedViolation() {
   showLoading();
   try {
     console.log('[FV Submit] students:', selStudents.length, 'violations:', _selectedViolations);
+    var previewEl = document.getElementById('fvPreviewText');
+    var previewText = previewEl ? previewEl.value.trim() : '';
     const result = await GAS.recordFixedViolation({
       studentsData: selStudents,
       violations: _selectedViolations,
       actionText: actionText,
+      previewText: previewText,
       recorder: 'الإدارة'
     });
     console.log('[FV Submit] result:', result);
@@ -4105,7 +4338,7 @@ function submitViolation(sendWA){
 }
 
 // Messages Log
-function loadMessagesLog(){const fc=document.getElementById('msgFilterClass').value,fd=document.getElementById('msgFilterDate').value;showLoading();google.script.run.withSuccessHandler(function(msgs){hideLoading();document.getElementById('msgCountChip').textContent=msgs.length+' رسالة';const tb=document.getElementById('messagesTableBody');if(!msgs.length){tb.innerHTML='<tr><td colspan="7" class="empty-state">لا توجد</td></tr>';return;}tb.innerHTML=msgs.map((m,i)=>'<tr><td>'+(i+1)+'</td><td>'+m.date+'</td><td><strong>'+m.studentName+'</strong></td><td>'+m.className+'</td><td>'+m.violationType+'</td><td><span style="padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;background:'+(m.subType==='متميز'?'rgba(34,211,238,0.1)':m.category==='إيجابية'||m.subType==='إيجابي'?'rgba(22,163,74,0.1)':m.category==='صفية'?'rgba(249,115,22,0.1)':'rgba(220,53,69,0.1)')+';color:'+(m.subType==='متميز'?'#0891b2':m.category==='إيجابية'||m.subType==='إيجابي'?'#16a34a':m.category==='صفية'?'#f97316':'#dc3545')+';">'+( m.subType==='متميز'?'🌟 متميز':m.category==='إيجابية'||m.subType==='إيجابي'?'⭐ إيجابي':m.category==='صفية'?'📚 صفي':'⚠️ سلوكي')+'</span></td><td><span class="chip">'+m.sender+'</span></td><td><span class="status-sent">'+m.status+'</span></td></tr>').join('');}).getMessagesLog(fc,fd);}
+function loadMessagesLog(){const fc=document.getElementById('msgFilterClass').value,fd=document.getElementById('msgFilterDate').value;showLoading();google.script.run.withSuccessHandler(function(msgs){hideLoading();document.getElementById('msgCountChip').textContent=msgs.length+' رسالة';const tb=document.getElementById('messagesTableBody');if(!msgs.length){tb.innerHTML='<tr><td colspan="7" class="empty-state">لا توجد</td></tr>';return;}tb.innerHTML=msgs.map((m,i)=>'<tr><td>'+(i+1)+'</td><td>'+m.date+'</td><td><strong>'+m.studentName+'</strong></td><td>'+m.className+'</td><td style="font-size:11px;max-width:200px;overflow:hidden;text-overflow:ellipsis;">'+(m.messageText||m.violationType||'—')+'</td><td><span style="padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;background:'+(m.subType==='متميز'?'rgba(34,211,238,0.1)':m.category==='إيجابية'||m.subType==='إيجابي'?'rgba(22,163,74,0.1)':m.category==='صفية'?'rgba(249,115,22,0.1)':'rgba(220,53,69,0.1)')+';color:'+(m.subType==='متميز'?'#0891b2':m.category==='إيجابية'||m.subType==='إيجابي'?'#16a34a':m.category==='صفية'?'#f97316':'#dc3545')+';">'+( m.subType==='متميز'?'🌟 متميز':m.category==='إيجابية'||m.subType==='إيجابي'?'⭐ إيجابي':m.category==='صفية'?'📚 صفي':'⚠️ سلوكي')+'</span></td><td><span class="chip">'+m.sender+'</span></td><td><span class="status-sent">'+m.status+'</span></td></tr>').join('');}).getMessagesLog(fc,fd);}
 function clearMsgFilters(){document.getElementById('msgFilterClass').value='الكل';document.getElementById('msgFilterDate').value='';loadMessagesLog();}
 
 // Violations Log
