@@ -3955,65 +3955,77 @@ function renderGrid(category, degree, gridId) {
     return;
   }
 
-  // تسميات الأعمدة حسب الفئة
   var col1 = category === 'positive' ? 'السلوك' : 'المخالفة';
   var col2Label = category === 'class' ? 'النوع' : category === 'positive' ? 'نوع السلوك' : 'التفاصيل';
 
-  var html = '<div style="border-radius:12px;overflow:hidden;border:1.5px solid #C2C1C1;width:100%;">' + '<div style="overflow-x:auto;">'
-    + '<table style="width:100%;border-collapse:collapse;min-width:500px;">'
+  // ألوان الدرجات للحد الجانبي
+  var degBorderColors = {'1':'#C1B48A','2':'#3D7EB9','3':'#0DA9A6','4':'#E24B4A','5':'#791F1F','class':'#3D7EB9','positive':'#07A869','absence':'#07A869'};
+  var borderColor = degBorderColors[degree || category] || '#C2C1C1';
+
+  var html = '<div style="border-radius:12px;overflow:hidden;border:1px solid #e0e0e0;">'
+    + '<div style="overflow-x:auto;">'
+    + '<table style="width:100%;border-collapse:collapse;">'
+    + '<colgroup><col style="width:40%;"><col style="width:35%;"><col style="width:25%;"></colgroup>'
     + '<thead>'
     + '<tr style="background:#15445A;">'
-    + '<th style="padding:10px 14px;text-align:right;font-size:12px;font-weight:700;color:#C1B48A;width:44px;border-left:0.5px solid rgba(255,255,255,0.1);">✓</th>'
-    + '<th style="padding:10px 14px;text-align:right;font-size:12px;font-weight:700;color:#fff;border-left:0.5px solid rgba(255,255,255,0.1);">' + col1 + '</th>'
-    + '<th style="padding:10px 14px;text-align:right;font-size:12px;font-weight:700;color:#fff;border-left:0.5px solid rgba(255,255,255,0.1);">' + col2Label + '</th>'
-    + '<th style="padding:10px 14px;text-align:right;font-size:12px;font-weight:700;color:#fff;width:28%;">الإجراء المتخذ</th>'
+    + '<th style="padding:9px 14px;text-align:right;font-size:12px;font-weight:700;color:#fff;border-left:0.5px solid rgba(255,255,255,0.1);">' + col1 + '</th>'
+    + '<th style="padding:9px 14px;text-align:right;font-size:12px;font-weight:700;color:#fff;border-left:0.5px solid rgba(255,255,255,0.1);">' + col2Label + '</th>'
+    + '<th style="padding:9px 14px;text-align:right;font-size:12px;font-weight:700;color:#fff;">الإجراء المتخذ</th>'
     + '</tr>'
     + '</thead><tbody>';
 
   items.forEach(function(v, rowIdx) {
     var isSelected = _selectedViolations.some(function(s) { return s.id === v.id; });
-    var rowBg = isSelected ? '#e8f5ee' : (rowIdx % 2 === 0 ? '#fff' : '#f9fafb');
-    var rowBorder = isSelected ? '1.5px solid #07A869' : '1px solid #f0f0f0';
+    var rowBg   = isSelected ? '#e8f5ee' : (rowIdx % 2 === 0 ? '#fff' : '#fafafa');
+    var nameColor = isSelected ? '#055c38' : 'var(--text)';
+    var selIndicator = isSelected
+      ? '<span style="color:#07A869;font-weight:900;margin-left:6px;">✓</span>'
+      : '';
 
-    // عمود التفاصيل
+    // التفاصيل
     var detailsHtml = '';
     if (v.has_children && v.children && v.children.length) {
       detailsHtml = v.children.map(function(child) {
         var childSelected = _selectedViolations.some(function(s) { return s.id === v.id && s.subViolation === child; });
         var childEsc = child.replace(/"/g,'&quot;');
-        return '<span class="fv-child-btn' + (childSelected ? ' selected' : '') + '" data-pid="' + v.id + '" data-child="' + childEsc + '" onclick="selectChildByData(this)" style="display:inline-block;margin:2px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;border:1.5px solid ' + (childSelected ? '#07A869' : '#C2C1C1') + ';background:' + (childSelected ? '#07A869' : '#fff') + ';color:' + (childSelected ? '#fff' : '#555') + ';cursor:pointer;">' + child + '</span>';
+        var cbg = childSelected ? '#07A869' : '#fff';
+        var cco = childSelected ? '#fff' : '#07A869';
+        var cbr = '1.5px solid #07A869';
+        return '<span data-pid="' + v.id + '" data-child="' + childEsc + '" onclick="event.stopPropagation();selectChildByData(this)" style="display:inline-block;margin:2px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;border:' + cbr + ';background:' + cbg + ';color:' + cco + ';cursor:pointer;">' + child + '</span>';
       }).join('');
-      detailsHtml += '<span onclick="addCustomSubViolation(' + v.id + ')" style="display:inline-block;margin:2px;padding:3px 10px;border-radius:20px;font-size:11px;border:1.5px dashed #C2C1C1;color:#999;cursor:pointer;">+ أخرى</span>';
+      detailsHtml += '<span onclick="event.stopPropagation();addCustomSubViolation(' + v.id + ')" style="display:inline-block;margin:2px;padding:3px 9px;border-radius:20px;font-size:11px;border:1.5px dashed #C2C1C1;color:#999;cursor:pointer;">+ أخرى</span>';
     } else if (category === 'class') {
-      detailsHtml = '<span style="font-size:11px;color:#3D7EB9;font-weight:600;">صفية</span>';
+      detailsHtml = '<span style="font-size:11px;color:#3D7EB9;font-weight:600;background:#f0f8ff;padding:3px 9px;border-radius:20px;">صفية</span>';
     } else if (category === 'positive') {
       var subType = v.sub_type || 'إيجابي';
       var stColor = subType === 'متميز' ? '#0DA9A6' : '#07A869';
-      detailsHtml = '<span style="font-size:11px;font-weight:700;color:' + stColor + ';background:' + (subType === 'متميز' ? '#e8faf9' : '#e8f5ee') + ';padding:3px 10px;border-radius:20px;border:1px solid ' + stColor + ';">' + subType + '</span>';
-    } else if (category === 'absence') {
-      detailsHtml = '<span style="font-size:11px;color:#555;">—</span>';
+      var stBg    = subType === 'متميز' ? '#e8faf9' : '#e8f5ee';
+      detailsHtml = '<span style="font-size:11px;font-weight:700;color:' + stColor + ';background:' + stBg + ';padding:3px 9px;border-radius:20px;border:1px solid ' + stColor + ';">' + subType + '</span>';
     } else {
-      detailsHtml = '<span style="font-size:11px;color:#555;">—</span>';
-      detailsHtml += ' <span onclick="addCustomSubViolation(' + v.id + ')" style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;border:1.5px dashed #C2C1C1;color:#999;cursor:pointer;">+ أخرى</span>';
+      detailsHtml = '<span onclick="event.stopPropagation();addCustomSubViolation(' + v.id + ')" style="display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;border:1.5px dashed #C2C1C1;color:#999;cursor:pointer;">+ أخرى</span>';
     }
 
-    // حقل الإجراء المتخذ لكل صف
+    // حقل الإجراء
     var actionId = 'fvRowAction_' + v.id;
-    var existingAction = '';
-    var selEntry = _selectedViolations.find(function(s) { return s.id === v.id && !s.subViolation; });
-    if (selEntry && selEntry.rowAction) existingAction = selEntry.rowAction;
+    var selEntry = _selectedViolations.find(function(s) { return s.id === v.id; });
+    var existingAction = (selEntry && selEntry.rowAction) ? selEntry.rowAction : '';
 
-    html += '<tr id="fvRow_' + v.id + '" onclick="handleViolationClick(' + v.id + ')" style="background:' + rowBg + ';border-top:' + rowBorder + ';cursor:pointer;transition:background .15s;">'
-      + '<td style="padding:10px 14px;text-align:center;border-left:1px solid #f0f0f0;">'
-      + (isSelected ? '<span style="color:#07A869;font-size:18px;font-weight:700;">✓</span>' : '<span style="color:#C2C1C1;font-size:18px;">○</span>')
-      + '</td>'
-      + '<td style="padding:10px 14px;font-size:13px;font-weight:700;color:' + (isSelected ? '#055c38' : 'var(--text)') + ';border-left:1px solid #f0f0f0;" onclick="handleViolationClick(' + v.id + ')">' + v.name + '</td>'
-      + '<td style="padding:10px 14px;border-left:1px solid #f0f0f0;" onclick="event.stopPropagation()">' + detailsHtml + '</td>'
+    html += '<tr id="fvRow_' + v.id + '" onclick="handleViolationClick(' + v.id + ')" '
+      + 'style="background:' + rowBg + ';border-top:1px solid #f0f0f0;cursor:pointer;'
+      + 'border-right:3px solid ' + (isSelected ? '#07A869' : 'transparent') + ';transition:all .15s;">'
+
+      + '<td style="padding:10px 14px;font-size:13px;font-weight:700;color:' + nameColor + ';">'
+      + selIndicator + v.name + '</td>'
+
+      + '<td style="padding:10px 14px;border-right:1px solid #f0f0f0;" onclick="event.stopPropagation()">'
+      + detailsHtml + '</td>'
+
       + '<td style="padding:8px 10px;" onclick="event.stopPropagation()">'
-      + '<input type="text" id="' + actionId + '" placeholder="اكتب الإجراء..." '
+      + '<input type="text" id="' + actionId + '" placeholder="الإجراء..." '
       + 'onchange="updateRowAction(' + v.id + ',this.value)" '
-      + 'onclick="event.stopPropagation()" '
-      + 'style="width:100%;padding:5px 8px;border:0.5px solid #C2C1C1;border-radius:8px;font-family:inherit;font-size:11px;background:' + (isSelected ? '#f0faf5' : '#fff') + ';box-sizing:border-box;" value="' + existingAction + '">'
+      + 'style="width:100%;padding:5px 8px;border:0.5px solid #C2C1C1;border-radius:8px;'
+      + 'font-family:inherit;font-size:11px;background:' + (isSelected ? '#f0faf5' : '#fff') + ';box-sizing:border-box;" '
+      + 'value="' + existingAction + '">'
       + '</td>'
       + '</tr>';
   });
@@ -4021,6 +4033,13 @@ function renderGrid(category, degree, gridId) {
   html += '</tbody></table></div></div>';
   grid.innerHTML = html;
 }
+
+function updateRowAction(id, value) {
+  var entry = _selectedViolations.find(function(s) { return s.id === id; });
+  if (entry) entry.rowAction = value;
+}
+
+
 
 function updateRowAction(id, value) {
   var entry = _selectedViolations.find(function(s) { return s.id === id; });
