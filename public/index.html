@@ -2743,7 +2743,7 @@ tr:hover td{background:var(--em-ghost);}
         <select id="logFilterType" onchange="loadViolationsLog()"><option value="الكل">كل المخالفات</option></select>
         <button class="btn btn-outline btn-sm" onclick="clearLogFilters()">مسح</button>
       </div>
-      <div class="table-wrapper"><table><thead><tr><th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>المخالفة</th><th>نوع المخالفة</th><th>الحالة</th><th>الخطورة</th><th>المسجّل</th><th>ولي الأمر 👁</th><th>إجراءات</th></tr></thead><tbody id="violationsLogTableBody"><tr><td colspan="8" class="empty-state">لا توجد</td></tr></tbody></table></div>
+      <div class="table-wrapper"><table><thead><tr><th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>المخالفة</th><th>الإجراء المتخذ</th><th>التكرار</th><th>المسجّل</th><th>ولي الأمر 👁</th><th>إجراءات</th></tr></thead><tbody id="violationsLogTableBody"><tr><td colspan="8" class="empty-state">لا توجد</td></tr></tbody></table></div>
     </div>
   </div>
 
@@ -3412,7 +3412,7 @@ function updateSidebarActive(page) {
   document.querySelectorAll('.sidebar-group-btn').forEach(b => b.classList.add('open'));
 }
 
-function showPage(page,btn){document.querySelectorAll('.page-section').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+page).classList.add('active');document.querySelectorAll('.tab-btn').forEach(t=>t.classList.remove('active'));if(btn&&btn.classList&&btn.classList.contains('sidebar-sub-btn')){}else if(btn)btn.classList.add('active');sessionStorage.setItem('activeTab',page);if(page==='messages')loadMessagesLog();if(page==='violationsLog')loadViolationsLog();if(page==='attachments'){loadTeacherUrl();loadParentUrl();}if(page==='home')loadStats();if(page==='violations'){loadViolationTypesTable();loadClassViolationTypesTable();loadPositiveBehaviorTypesTable();}if(page==='teachers')loadTeachersTable();if(page==='alerts')loadAlerts();if(page==='charts')loadCharts();if(page==='weekly'){}if(page==='reports')loadReports();if(page==='referred')loadReferredViolations();if(page==='fullreport')loadFullReport();updateSidebarActive(page);}
+function showPage(page,btn){document.querySelectorAll('.page-section').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+page).classList.add('active');document.querySelectorAll('.tab-btn').forEach(t=>t.classList.remove('active'));if(btn&&btn.classList&&btn.classList.contains('sidebar-sub-btn')){}else if(btn)btn.classList.add('active');sessionStorage.setItem('activeTab',page);if(page==='messages')loadMessagesLog();if(page==='whatsapp')populateWAClassDropdown();if(page==='violationsLog')loadViolationsLog();if(page==='attachments'){loadTeacherUrl();loadParentUrl();}if(page==='home')loadStats();if(page==='violations'){loadViolationTypesTable();loadClassViolationTypesTable();loadPositiveBehaviorTypesTable();}if(page==='teachers')loadTeachersTable();if(page==='alerts')loadAlerts();if(page==='charts')loadCharts();if(page==='weekly'){}if(page==='reports')loadReports();if(page==='referred')loadReferredViolations();if(page==='fullreport')loadFullReport();updateSidebarActive(page);}
 function restoreTab(){
   const s=sessionStorage.getItem('activeTab');
   if(s) showPage(s, null); else showPage('home',null);
@@ -4157,14 +4157,27 @@ function clearWAForm() {
 }
 
 // ملء قائمة الفصول لصفحة الواتساب
-function populateWAClassDropdown() {
+async function populateWAClassDropdown() {
   var sel = document.getElementById('waClass');
-  var src = document.getElementById('recordClass');
-  if (!sel || !src) return;
-  sel.innerHTML = '<option value="">-- اختر الفصل --</option>';
-  Array.from(src.options).forEach(function(o) {
-    if (o.value) sel.appendChild(o.cloneNode(true));
-  });
+  if (!sel) return;
+  // جلب الفصول مباشرة من API
+  try {
+    const classes = await GAS.getClasses();
+    sel.innerHTML = '<option value="">-- اختر الفصل --</option>';
+    (classes || []).forEach(function(cls) {
+      var o = document.createElement('option');
+      o.value = cls; o.textContent = cls;
+      sel.appendChild(o);
+    });
+  } catch(e) {
+    // fallback: copy from recordClass
+    var src = document.getElementById('recordClass');
+    if (!src) return;
+    sel.innerHTML = '<option value="">-- اختر الفصل --</option>';
+    Array.from(src.options).forEach(function(o) {
+      if (o.value) sel.appendChild(o.cloneNode(true));
+    });
+  }
 }
 
 
@@ -4349,7 +4362,7 @@ function switchLogTab(tab,btn){
   if(tab==='positive') loadPositiveBehaviorsLogTable();
 }
 
-function loadViolationsLog(){const fc=document.getElementById('logFilterClass').value,fd=document.getElementById('logFilterDate').value,ft=document.getElementById('logFilterType').value;showLoading();google.script.run.withSuccessHandler(function(records){hideLoading();
+function loadViolationsLog(){const fc=document.getElementById('logFilterClass').value,fd=document.getElementById('logFilterDate').value,ft=document.getElementById('logFilterType').value;showLoading();GAS.getViolationsLog(fc,fd,ft).then(function(records){hideLoading();
   // ── كل السجلات ──
   document.getElementById('logCountChip').textContent=records.length+' مخالفة';
   const tb=document.getElementById('violationsLogTableBody');
@@ -4389,7 +4402,7 @@ function loadViolationsLog(){const fc=document.getElementById('logFilterClass').
         +'</div>')+'</td></tr>';
     }).join('');
   }
-}).getViolationsLog(fc,fd,ft);}
+});}
 
 function showSig(data){const w=window.open('','_blank');const t=['<','h','t','m','l','>'].join('');const b=['<','b','o','d','y',' ','s','t','y','l','e','="display:flex;align-items:center;justify-content:center;height:100vh;margin:0;background:#f0f4f8;"','>'].join('');const bc=['<','/','b','o','d','y','>'].join('');const tc=['<','/','h','t','m','l','>'].join('');w.document.write(t+b+'<div style="background:#fff;padding:20px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,0.1);text-align:center;"><h3 style="font-family:Tajawal,sans-serif;color:#1B4965;margin-bottom:16px;">توقيع الطالب</h3><img src="'+data+'" style="border:1px solid #eee;border-radius:8px;max-width:100%;"><br><button onclick="window.close()" style="margin-top:16px;padding:8px 20px;background:#1B4965;color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:Tajawal,sans-serif;">إغلاق</button></div>'+bc+tc);}
 var _vlVisData = {};
