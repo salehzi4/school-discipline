@@ -695,12 +695,15 @@ async function recordPositiveBehavior(body, sc) {
 
 async function logMessagesBatch(messages, sender, sc) {
   if (!Array.isArray(messages)) return true;
+  const now = new Date().toISOString();
   const rows = messages.map(m => ({
     school_code: sc, student_name: m.studentName, class_name: m.className,
-    violation_type: m.violationType, phone: m.phone || '', message_text: m.messageText || '',
-    status: m.status || 'مرسلة', sender: sender || 'الإدارة', sub_type: m.subType || '', category: m.category || 'سلوكية'
+    violation_type: m.violationType || '', phone: m.phone || '', message_text: m.messageText || '',
+    status: m.status || 'مرسلة', sender: sender || 'الإدارة', sub_type: m.subType || '',
+    category: m.category || 'سلوكية', sent_at: now
   }));
-  await sb('messages_log', 'POST', '', rows);
+  const result = await sb('messages_log', 'POST', '', rows);
+  console.log('logMessagesBatch result:', JSON.stringify(result));
   return true;
 }
 
