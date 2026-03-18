@@ -4094,10 +4094,25 @@ function getWASelectedStudents() {
 function selectWATemplate(idx) {
   var tmpl = _waTemplates[idx] || '';
   var preview = document.getElementById('waPreviewText');
-  if (preview) {
-    preview.value = tmpl;
-    preview.focus();
+  if (!preview) return;
+
+  // جرب تعبئة المتغيرات بأول طالب محدد
+  var sel = getWASelectedStudents();
+  if (sel.length > 0) {
+    preview.value = fillWAVars(tmpl, sel[0]);
+  } else {
+    // لا يوجد طالب محدد — استبدل المتغيرات بقيم توضيحية
+    var now = new Date();
+    var day = now.toLocaleDateString('ar-SA', {weekday:'long'});
+    var date = now.toLocaleDateString('ar-SA');
+    var time = now.toLocaleTimeString('ar-SA', {hour:'2-digit', minute:'2-digit'});
+    preview.value = tmpl
+      .replace(/\{اسم_الطالب\}/g, 'اسم الطالب')
+      .replace(/\{اليوم\}/g, day)
+      .replace(/\{التاريخ\}/g, date)
+      .replace(/\{الوقت\}/g, time);
   }
+  preview.focus();
 }
 
 function fillWAVars(text, student) {
