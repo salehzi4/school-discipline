@@ -2011,13 +2011,39 @@ tr:hover td{background:var(--em-ghost);}
     </div>
 
     <!-- تبويبات الفئات -->
-    <div style="display:flex;background:#f5f9fc;border:0.5px solid #C2C1C1;border-top:none;overflow-x:auto;margin-bottom:10px;">
-      <button id="fvSideBtn_absence"   class="fv-top-tab fv-top-active" onclick="switchFVTab('absence',this)"><span class="material-icons-round" style="font-size:15px;">event_busy</span> غياب</button>
-      <button id="fvSideBtn_behavioral" class="fv-top-tab" onclick="switchFVTab('behavioral',this)"><span class="material-icons-round" style="font-size:15px;">warning_amber</span> سلوكية</button>
-      <button id="fvSideBtn_staff"     class="fv-top-tab" onclick="switchFVTab('staff',this)"><span class="material-icons-round" style="font-size:15px;">supervisor_account</span> هيئة</button>
-      <button id="fvSideBtn_class"     class="fv-top-tab" onclick="switchFVTab('class',this)"><span class="material-icons-round" style="font-size:15px;">menu_book</span> صفية</button>
-      <button id="fvSideBtn_positive"  class="fv-top-tab" onclick="switchFVTab('positive',this)"><span class="material-icons-round" style="font-size:15px;">star</span> إيجابي</button>
-    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:12px;background:#f5f9fc;border:0.5px solid #C2C1C1;border-top:none;margin-bottom:10px;">
+
+  <button id="fvSideBtn_absence" onclick="switchFVTab('absence',this)"
+    style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 6px;border:2px solid #07A869;border-radius:16px;background:#e8f5ee;cursor:pointer;font-family:inherit;transition:all .18s;">
+    <span class="material-icons-round" style="font-size:28px;color:#07A869;">event_busy</span>
+    <span style="font-size:10px;font-weight:700;color:#055c38;text-align:center;">غياب</span>
+  </button>
+
+  <button id="fvSideBtn_behavioral" onclick="switchFVTab('behavioral',this)"
+    style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 6px;border:2px solid #C2C1C1;border-radius:16px;background:#fff;cursor:pointer;font-family:inherit;transition:all .18s;">
+    <span class="material-icons-round" style="font-size:28px;color:#C1B48A;">warning_amber</span>
+    <span style="font-size:10px;font-weight:700;color:#6b5a2e;text-align:center;">سلوكية</span>
+  </button>
+
+  <button id="fvSideBtn_staff" onclick="switchFVTab('staff',this)"
+    style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 6px;border:2px solid #C2C1C1;border-radius:16px;background:#fff;cursor:pointer;font-family:inherit;transition:all .18s;">
+    <span class="material-icons-round" style="font-size:28px;color:#3D7EB9;">supervisor_account</span>
+    <span style="font-size:10px;font-weight:700;color:#0C3B6E;text-align:center;">تجاه الهيئة</span>
+  </button>
+
+  <button id="fvSideBtn_class" onclick="switchFVTab('class',this)"
+    style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 6px;border:2px solid #C2C1C1;border-radius:16px;background:#fff;cursor:pointer;font-family:inherit;transition:all .18s;">
+    <span class="material-icons-round" style="font-size:28px;color:#0DA9A6;">menu_book</span>
+    <span style="font-size:10px;font-weight:700;color:#085856;text-align:center;">صفية وتعليمية</span>
+  </button>
+
+  <button id="fvSideBtn_positive" onclick="switchFVTab('positive',this)"
+    style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 6px;border:2px solid #C2C1C1;border-radius:16px;background:#fff;cursor:pointer;font-family:inherit;transition:all .18s;">
+    <span class="material-icons-round" style="font-size:28px;color:#07A869;">star</span>
+    <span style="font-size:10px;font-weight:700;color:#055c38;text-align:center;">سلوكيات إيجابية</span>
+  </button>
+
+</div>
 
     <!-- درجات سلوكية -->
     <div id="fvDegreeBar_behavioral" style="display:none;padding:0 0 10px;display:flex;gap:6px;flex-wrap:wrap;">
