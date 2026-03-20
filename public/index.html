@@ -3955,65 +3955,71 @@ function renderGrid(category, degree, gridId) {
   });
 
   if (!items.length) {
-    grid.innerHTML = '<div style="color:var(--text-3);font-size:12px;padding:10px;">لا توجد</div>';
+    grid.innerHTML = '<p style="color:#999;font-size:12px;padding:10px;">لا توجد</p>';
     return;
   }
 
   var col1 = category === 'positive' ? 'السلوك' : 'المخالفة';
   var col2Label = category === 'class' ? 'النوع' : category === 'positive' ? 'نوع السلوك' : 'التفاصيل';
 
-  var html = '<table style="width:100%;border-collapse:collapse;border-radius:12px;overflow:hidden;border:1px solid #e0e0e0;">'
+  var html = '<table style="width:100%;border-collapse:collapse;table-layout:fixed;">'
+    + '<colgroup><col style="width:45%;"><col style="width:25%;"><col style="width:30%;"></colgroup>'
     + '<thead><tr style="background:#15445A;">'
-    + '<th style="padding:9px 14px;text-align:right;font-size:12px;font-weight:700;color:#fff;width:38%;">' + col1 + '</th>'
-    + '<th style="padding:9px 14px;text-align:right;font-size:12px;font-weight:700;color:#fff;width:32%;border-right:1px solid rgba(255,255,255,0.2);">' + col2Label + '</th>'
-    + '<th style="padding:9px 14px;text-align:right;font-size:12px;font-weight:700;color:#fff;width:30%;border-right:1px solid rgba(255,255,255,0.2);">الإجراء المتخذ</th>'
+    + '<th style="padding:8px 10px;text-align:right;font-size:11px;font-weight:700;color:#fff;">' + col1 + '</th>'
+    + '<th style="padding:8px 10px;text-align:right;font-size:11px;font-weight:700;color:#fff;border-right:1px solid rgba(255,255,255,0.2);">' + col2Label + '</th>'
+    + '<th style="padding:8px 10px;text-align:right;font-size:11px;font-weight:700;color:#fff;border-right:1px solid rgba(255,255,255,0.2);">الإجراء</th>'
     + '</tr></thead><tbody>';
 
   items.forEach(function(v, rowIdx) {
     var isSelected = _selectedViolations.some(function(s) { return s.id === v.id; });
     var rowBg   = isSelected ? '#e8f5ee' : (rowIdx % 2 === 0 ? '#fff' : '#fafafa');
-    var nameClr = isSelected ? '#055c38' : '#1a1a2e';
+    var nameClr = isSelected ? '#055c38' : '#111';
     var leftBrd = isSelected ? '3px solid #07A869' : '3px solid transparent';
 
     var detailsHtml = '';
     if (v.has_children && v.children && v.children.length) {
       detailsHtml = v.children.map(function(child) {
         var sel = _selectedViolations.some(function(s) { return s.id === v.id && s.subViolation === child; });
-        var e = child.replace(/"/g,'&quot;');
-        return '<span data-pid="' + v.id + '" data-child="' + e + '" onclick="event.stopPropagation();selectChildByData(this)" style="display:inline-block;margin:1px;padding:2px 7px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;background:' + (sel?'#07A869':'#f0f8f4') + ';color:' + (sel?'#fff':'#07A869') + ';">' + child + '</span>';
+        var e = child.replace(/"/g, '&quot;');
+        return '<span data-pid="' + v.id + '" data-child="' + e + '" onclick="event.stopPropagation();selectChildByData(this)" style="display:inline-block;margin:1px;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600;cursor:pointer;background:' + (sel ? '#07A869' : '#e8f5ee') + ';color:' + (sel ? '#fff' : '#07A869') + ';">' + child + '</span>';
       }).join('');
-      detailsHtml += '<span onclick="event.stopPropagation();addCustomSubViolation(' + v.id + ')" style="display:inline-block;margin:1px;padding:2px 7px;border-radius:6px;font-size:11px;color:#aaa;cursor:pointer;border:1px dashed #ccc;">+ أخرى</span>';
+      detailsHtml += '<span onclick="event.stopPropagation();addCustomSubViolation(' + v.id + ')" style="display:inline-block;margin:1px;padding:2px 6px;border-radius:4px;font-size:10px;color:#aaa;cursor:pointer;border:1px dashed #ccc;">+</span>';
     } else if (category === 'class') {
-      detailsHtml = '<span style="font-size:11px;color:#3D7EB9;font-weight:600;">صفية</span>';
+      detailsHtml = '<span style="font-size:10px;color:#3D7EB9;font-weight:600;">صفية</span>';
     } else if (category === 'positive') {
       var st = v.sub_type || 'إيجابي';
       var sc = st === 'متميز' ? '#0DA9A6' : '#07A869';
-      var sb = st === 'متميز' ? '#e8faf9' : '#e8f5ee';
-      detailsHtml = '<span style="font-size:11px;font-weight:700;color:' + sc + ';background:' + sb + ';padding:2px 8px;border-radius:6px;">' + st + '</span>';
+      detailsHtml = '<span style="font-size:10px;font-weight:700;color:' + sc + ';">' + st + '</span>';
     } else {
-      detailsHtml = '<span onclick="event.stopPropagation();addCustomSubViolation(' + v.id + ')" style="font-size:11px;color:#aaa;cursor:pointer;border:1px dashed #ccc;padding:2px 7px;border-radius:6px;">+ أخرى</span>';
+      detailsHtml = '<span onclick="event.stopPropagation();addCustomSubViolation(' + v.id + ')" style="font-size:10px;color:#aaa;cursor:pointer;border:1px dashed #ccc;padding:2px 6px;border-radius:4px;">+أخرى</span>';
     }
 
     var selEntry = _selectedViolations.find(function(s) { return s.id === v.id; });
     var existingAction = (selEntry && selEntry.rowAction) ? selEntry.rowAction : '';
 
     html += '<tr id="fvRow_' + v.id + '" onclick="handleViolationClick(' + v.id + ')" '
-      + 'style="background:' + rowBg + ';border-top:1px solid #f0f0f0;cursor:pointer;border-right:' + leftBrd + ';transition:background .15s;">'
-      + '<td style="padding:10px 14px;font-size:12px;font-weight:700;color:' + nameClr + ';vertical-align:middle;">'
-      + (isSelected ? '<span style="color:#07A869;margin-left:5px;">✓</span>' : '') + v.name + '</td>'
-      + '<td style="padding:8px 12px;border-right:1px solid #f0f0f0;vertical-align:middle;" onclick="event.stopPropagation()">' + detailsHtml + '</td>'
-      + '<td style="padding:6px 10px;border-right:1px solid #f0f0f0;vertical-align:middle;" onclick="event.stopPropagation()">'
-      + '<input type="text" placeholder="الإجراء..." '
-      + 'onchange="updateRowAction(' + v.id + ',this.value)" '
-      + 'style="width:100%;padding:5px 8px;border:1px solid #e0e0e0;border-radius:8px;font-family:inherit;font-size:11px;box-sizing:border-box;background:' + (isSelected ? '#f0faf5' : '#fff') + ';" '
-      + 'value="' + existingAction + '">'
-      + '</td>'
+      + 'style="border-top:1px solid #f0f0f0;cursor:pointer;background:' + rowBg + ';border-right:' + leftBrd + ';">'
+      + '<td style="padding:8px 10px;font-size:12px;font-weight:700;color:' + nameClr + ';overflow:hidden;word-break:break-word;">'
+      + (isSelected ? '<span style="color:#07A869;margin-left:4px;font-size:13px;">✓</span>' : '')
+      + v.name + '</td>'
+      + '<td style="padding:6px 8px;border-right:1px solid #f0f0f0;vertical-align:top;overflow:hidden;" onclick="event.stopPropagation()">' + detailsHtml + '</td>'
+      + '<td style="padding:5px 8px;border-right:1px solid #f0f0f0;" onclick="event.stopPropagation()">'
+      + '<input type="text" placeholder="الإجراء..." onchange="updateRowAction(' + v.id + ',this.value)" '
+      + 'style="width:100%;padding:4px 6px;border:1px solid #e0e0e0;border-radius:6px;font-size:11px;font-family:inherit;background:' + (isSelected ? '#f0faf5' : '#fff') + ';box-sizing:border-box;"'
+      + ' value="' + existingAction + '"></td>'
       + '</tr>';
   });
 
   html += '</tbody></table>';
   grid.innerHTML = html;
 }
+
+function updateRowAction(id, value) {
+  var entry = _selectedViolations.find(function(s) { return s.id === id; });
+  if (entry) entry.rowAction = value;
+}
+
+
 
 function updateRowAction(id, value) {
   var entry = _selectedViolations.find(function(s) { return s.id === id; });
