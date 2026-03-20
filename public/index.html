@@ -4373,7 +4373,7 @@ async function submitFixedViolation() {
   if (!selStudents.length) { showAlert('recordAlert','error','اختر طالباً على الأقل'); return; }
   if (!_selectedViolations.length) { showAlert('recordAlert','error','اختر مخالفة على الأقل'); return; }
 
-  var actionText = document.getElementById('fvActionText') ? document.getElementById('fvActionText').value.trim() : '';
+  var actionText = ''; // الإجراء يُقرأ من كل بطاقة مستقلة
   showLoading();
   try {
     console.log('[FV Submit] students:', selStudents.length, 'violations:', _selectedViolations);
