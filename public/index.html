@@ -4189,7 +4189,7 @@ function switchDegree(deg, btn) {
   if (btn) btn.classList.add('active');
   ['1','2','3','4','5'].forEach(function(d) {
     var grid = document.getElementById('fvGrid_behavioral_' + d);
-    if (grid) grid.style.display = d === deg ? '' : 'none';
+    if (grid) grid.style.display = d === deg ? 'grid' : 'none';
   });
 }
 
@@ -4198,7 +4198,7 @@ function switchStaffDegree(deg, btn) {
   if (btn) btn.classList.add('active');
   ['4','5'].forEach(function(d) {
     var grid = document.getElementById('fvGrid_staff_' + d);
-    if (grid) grid.style.display = d === deg ? '' : 'none';
+    if (grid) grid.style.display = d === deg ? 'grid' : 'none';
   });
 }
 
