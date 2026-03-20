@@ -902,10 +902,12 @@ tr:hover td{background:var(--em-ghost);}
       <select id="recordClass" onchange="loadStudents()"><option value="">-- اختر الفصل --</option></select>
     </div>
 
-    <div id="tStudentsListContainer" style="display:none;">
+    <div id="studentsListContainer" style="display:none;">
+    <div id="tStudentsListContainer">
       <label style="font-size:11px;font-weight:700;color:#555;margin-bottom:5px;display:block;">اختر الطلاب <span class="chip" id="selectedCount">0</span></label>
       <div class="select-all-bar"><label style="cursor:pointer;display:flex;align-items:center;gap:6px;"><input type="checkbox" id="selectAllStudents" onchange="toggleSelectAll()" style="width:16px;height:16px;accent-color:#07A869;"> تحديد الكل</label></div>
       <div class="students-checkbox-list" id="studentsCheckboxList"></div>
+    </div>
     </div>
   </div>
 
@@ -1188,7 +1190,7 @@ function enter(){
   T.classes.forEach(c=>{const o=document.createElement('option');o.value=c.trim();o.textContent=c.trim();s.appendChild(o);});
   // تحميل أنواع المخالفات والسلوكيات — يُستدعى عند كل دخول
   reloadAllViolationTypes();
-  google.script.run.withSuccessHandler(applyCustomStyles).getTeacherSettings();
+  GAS.getTeacherSettings && GAS.getTeacherSettings().then(applyCustomStyles).catch(function(){});
   loadAlerts();
   const st=sessionStorage.getItem('tTab');
   if(st) showPage(st, null); else showPage('home',null);
@@ -1489,7 +1491,7 @@ function loadStudents() {
   var fva = document.getElementById('fixedViolationsArea');
   var tSlc = document.getElementById('tStudentsListContainer');
   if (!cn) {
-    document.getElementById('studentsListContainer').style.display = 'none';
+    var _sc = document.getElementById('studentsListContainer'); if(_sc) _sc.style.display = 'none';
     if (tSlc) tSlc.style.display = 'none';
     if (fva) fva.style.display = 'none';
     return;
@@ -1507,7 +1509,7 @@ function loadStudents() {
           }).join('')
         : '<div class="empty-state">لا يوجد طلاب</div>';
     }
-    document.getElementById('studentsListContainer').style.display = 'block';
+    var _sc2 = document.getElementById('studentsListContainer'); if(_sc2) _sc2.style.display = 'block';
     if (tSlc) tSlc.style.display = 'block';
     var sa = document.getElementById('selectAllStudents') || document.getElementById('selectAll');
     if (sa) sa.checked = false;
