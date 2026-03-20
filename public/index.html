@@ -5809,30 +5809,32 @@ var _rptCurrentIdx    = 0;
 
 function openCreateReport() {
   var sel = getSelectedStudents ? getSelectedStudents() : [];
-  var violationEl = document.getElementById('recordViolationType');
-  var cat = (document.getElementById('selectedCategory') || {}).value || 'سلوكية';
 
   if (!sel || sel.length === 0) {
     showAlert('recordAlert','error','اختر طالباً على الأقل لإنشاء المحضر');
     return;
   }
-  if (!violationEl || violationEl.value === '') {
-    showAlert('recordAlert','error','اختر نوع المخالفة أولاً');
-    return;
-  }
-  if (cat !== 'سلوكية') {
-    showAlert('recordAlert','error','المحضر يُنشأ للمخالفات السلوكية فقط');
+
+  // استخدام _selectedViolations بدل العنصر القديم
+  var behavioralViols = _selectedViolations.filter(function(v) {
+    return v.category === 'behavioral' || !v.category;
+  });
+
+  if (!behavioralViols.length) {
+    showAlert('recordAlert','error','اختر مخالفة سلوكية أولاً لإنشاء المحضر');
     return;
   }
 
-  var vtData = (allViolationTypes && allViolationTypes['سلوكية']) || [];
-  var vt     = vtData[parseInt(violationEl.value)];
+  // أول مخالفة سلوكية محددة
+  var firstViol = behavioralViols[0];
+  var vt = { type: firstViol.name + (firstViol.subViolation ? ' — ' + firstViol.subViolation : '') };
 
   _rptBatchStudents = sel;
   _rptCurrentIdx    = 0;
 
   _fillReportModal(sel[0], vt, 0, sel.length);
 }
+
 
 function _fillReportModal(student, vt, idx, total) {
   // ── شريط التقدم (للجماعي) ──
