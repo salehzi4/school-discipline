@@ -874,82 +874,145 @@ tr:hover td{background:var(--em-ghost);}
 </div>
 
 <div class="page-section" id="page-record">
-<div class="page-toolbar">
+  <div class="page-toolbar">
     <button class="pt-home" onclick="showPage('home',null)"><span class="material-icons-round">home</span> الرئيسية</button>
     <span class="pt-sep"></span>
     <button class="pt-print" onclick="printSection('record')"><span class="material-icons-round">print</span> طباعة</button>
     <button class="pt-pdf" onclick="exportPDF('record')"><span class="material-icons-round">picture_as_pdf</span> PDF</button>
   </div>
-<div class="card"><div class="card-title"><span class="material-icons-round">edit_note</span> رصد المخالفة والسلوك</div>
-<!-- تبويبات الفئة -->
-<div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;">
-  <button id="tCatBtn_سلوكية" class="btn btn-primary btn-sm" onclick="selectTCategory('سلوكية')" style="flex:1;min-width:120px;">🔴 مخالفات سلوكية</button>
-  <button id="tCatBtn_صفية" class="btn btn-outline btn-sm" onclick="selectTCategory('صفية')" style="flex:1;min-width:120px;">🟠 مخالفات صفية وتعليمية</button>
-  <button id="tCatBtn_إيجابية" class="btn btn-outline btn-sm" onclick="selectTCategory('إيجابية')" style="flex:1;min-width:120px;">🟢 سلوكيات إيجابية ومتميزة</button>
-</div>
-<input type="hidden" id="selectedTCategory" value="سلوكية">
-<div style="display:flex;align-items:center;justify-content:flex-end;margin-bottom:4px;">
-  <button onclick="reloadAllViolationTypes()" style="background:none;border:1px solid var(--primary);color:var(--primary);font-size:11px;border-radius:7px;padding:4px 10px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px;">
-    <span class="material-icons-round" style="font-size:13px;">refresh</span> تحديث القوائم
-  </button>
-</div>
-<div class="form-group"><label>الفصل</label><select id="recordClass" onchange="loadStudents()"><option value="">-- اختر --</option></select></div><div id="studentsListContainer" style="display:none;"><div class="form-group"><label>الطلاب <span class="chip" id="selectedCount">0</span></label><div class="select-all-bar"><label style="cursor:pointer;display:flex;align-items:center;gap:6px;"><input type="checkbox" id="selectAll" onchange="toggleAll()" style="width:16px;height:16px;accent-color:var(--primary);"> الكل</label></div><div class="students-checkbox-list" id="studentsList"></div></div></div><div class="form-group"><label id="tViolationTypeLabel">المخالفة</label><select id="violationType" onchange="previewMsg()"><option value="">-- اختر --</option></select></div>
-<div class="form-group">
-  <label id="tScoreLabel">الدرجة <span style="font-size:10px;color:var(--text-light);">(اختياري)</span></label>
-  <input type="number" id="teacherScore" placeholder="0" min="0" max="100" style="width:120px;">
-</div>
-<div class="form-group"><label>ملاحظات</label><input type="text" id="notes" placeholder="اختياري"></div>
-<div class="form-group"><label>المادة <span style="font-size:10px;color:var(--text-light);">(تظهر لولي الأمر)</span></label><input type="text" id="teacherSubject" placeholder="مثل: رياضيات، لغة عربية..."></div>
-	<div id="signatureSection" style="display:none;margin-top:16px;border-top:1px solid var(--border);padding-top:16px;">
-	  <div class="two-cols">
-	    <div class="form-group">
-	      <label>توقيع الطالب (اختياري)</label>
-	      <div class="signature-pad" id="sigPad">
-	        <canvas id="sigCanvas"></canvas>
-	        <div class="signature-pad-label" id="sigLabel">وقع هنا</div>
-	      </div>
-	      <button class="btn btn-outline btn-sm" style="margin-top:4px;width:100%;" onclick="clearSig()">مسح التوقيع</button>
-	    </div>
-	    <div class="form-group">
-	      <label>بصمة الإصبع (اختياري)</label>
-	      <button class="fingerprint-btn" id="fpBtn" onclick="simulateFP()">
-	        <span class="material-icons-round">fingerprint</span>
-	        <span id="fpText">اضغط للتبصيم</span>
-	      </button>
-	      <p style="font-size:10px;color:var(--text-light);margin-top:4px;text-align:center;">محاكاة مستشعر البصمة</p>
-	    </div>
-	  </div>
-	</div><div id="previewContainer" style="display:none;"><div class="message-preview"><div class="message-preview-text" id="previewText"></div></div></div>
 
-<!-- ══ قسم الإجراء المتخذ ══ -->
-<div class="action-section" id="actionSection">
-  <div class="action-title">
-    <span class="material-icons-round" style="font-size:16px;">task_alt</span>
-    الإجراء المتخذ <span style="font-size:10px;color:var(--text-3);font-weight:500;">(يظهر للإدارة)</span>
-  </div>
-  <div class="action-type-grid" id="actionTypeGrid">
-    <button class="action-type-btn" onclick="selectActionType('تنبيه شفهي',this)">🗣️ تنبيه شفهي</button>
-    <button class="action-type-btn" onclick="selectActionType('توجيه وإرشاد',this)">📖 توجيه وإرشاد</button>
-    <button class="action-type-btn" onclick="selectActionType('تواصل مع ولي الأمر',this)">📞 تواصل مع ولي الأمر</button>
-    <button class="action-type-btn" onclick="selectActionType('لم يُتخذ إجراء',this)">— لم يُتخذ إجراء</button>
-  </div>
-  <input type="hidden" id="selectedActionType" value="">
-  <textarea id="actionTakenText" rows="2" placeholder="تفاصيل الإجراء المتخذ (اختياري)..." style="font-size:12px;min-height:60px;"></textarea>
-</div>
-
-<!-- ══ زر الإرسال والتسجيل ══ -->
-<div id="submitBtnsWrap" style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
-  <button class="btn btn-primary" onclick="submit(false)"><span class="material-icons-round" style="font-size:14px;">save</span> تسجيل</button>
-  <button class="btn btn-success" id="btnSendWA" onclick="submit(true)"><span class="material-icons-round" style="font-size:14px;">send</span> تسجيل + واتساب</button>
-  <button type="button" id="btnVisParent" onclick="toggleVisParent()" class="parent-vis-btn on" style="display:none;">
-    <span class="material-icons-round" style="font-size:18px;" id="btnVisIcon">visibility</span>
-    <div style="text-align:right;">
-      <div id="btnVisText">👁 ظاهر لولي الأمر</div>
-      <div style="font-size:10px;font-weight:400;opacity:.8;">اضغط لتغيير الظهور في صفحة ولي الأمر</div>
+  <!-- القسم 1: اختيار الفصل والطلاب -->
+  <div class="card" style="padding:16px;margin-bottom:14px;">
+    <div style="font-size:13px;font-weight:700;color:#15445A;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+      <span class="material-icons-round" style="font-size:18px;color:#C1B48A;">group</span>
+      اختيار الفصل والطلاب
     </div>
-  </button>
+
+    <!-- اختيار المرحلة لمدارس كلاهما -->
+    <div id="tStageSelectArea" style="display:none;margin-bottom:10px;">
+      <label style="font-size:11px;font-weight:700;color:#555;display:block;margin-bottom:5px;">المرحلة الدراسية</label>
+      <div style="display:flex;gap:8px;">
+        <button class="fv-degree-btn fv-degree-active" id="tStageBtn_elementary" onclick="tSelectStage('elementary',this)" style="flex:1;">ابتدائي</button>
+        <button class="fv-degree-btn" id="tStageBtn_secondary" onclick="tSelectStage('secondary',this)" style="flex:1;">متوسط / ثانوي</button>
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-bottom:10px;">
+      <label style="font-size:11px;font-weight:700;color:#555;display:block;margin-bottom:5px;">الفصل</label>
+      <select id="recordClass" onchange="loadStudents()"><option value="">-- اختر الفصل --</option></select>
+    </div>
+
+    <div id="tStudentsListContainer" style="display:none;">
+      <label style="font-size:11px;font-weight:700;color:#555;margin-bottom:5px;display:block;">اختر الطلاب <span class="chip" id="selectedCount">0</span></label>
+      <div class="select-all-bar"><label style="cursor:pointer;display:flex;align-items:center;gap:6px;"><input type="checkbox" id="selectAllStudents" onchange="toggleSelectAll()" style="width:16px;height:16px;accent-color:#07A869;"> تحديد الكل</label></div>
+      <div class="students-checkbox-list" id="studentsCheckboxList"></div>
+    </div>
+  </div>
+
+  <!-- القسم 2: المخالفات -->
+  <div id="fixedViolationsArea" style="display:none;">
+
+    <!-- هيدر -->
+    <div style="background:#15445A;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-radius:12px 12px 0 0;">
+      <span style="font-size:13px;font-weight:700;color:#fff;">رصد المخالفة</span>
+      <span id="fvStudentBadge" style="font-size:11px;background:rgba(255,255,255,0.15);color:#C1B48A;padding:3px 12px;border-radius:20px;font-weight:600;"></span>
+    </div>
+
+    <!-- تبويبات الفئات -->
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:12px;background:#f5f9fc;border:0.5px solid #C2C1C1;border-top:none;margin-bottom:10px;">
+
+      <button id="fvSideBtn_absence" onclick="switchFVTab('absence',this)"
+        style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 6px;border:2px solid #07A869;border-radius:16px;background:#e8f5ee;cursor:pointer;font-family:inherit;transition:all .18s;">
+        <span class="material-icons-round" style="font-size:28px;color:#07A869;">event_busy</span>
+        <span style="font-size:10px;font-weight:700;color:#055c38;text-align:center;">غياب</span>
+      </button>
+
+      <button id="fvSideBtn_behavioral" onclick="switchFVTab('behavioral',this)"
+        style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 6px;border:2px solid #C2C1C1;border-radius:16px;background:#fff;cursor:pointer;font-family:inherit;transition:all .18s;">
+        <span class="material-icons-round" style="font-size:28px;color:#C1B48A;">warning_amber</span>
+        <span style="font-size:10px;font-weight:700;color:#6b5a2e;text-align:center;">سلوكية</span>
+      </button>
+
+      <button id="fvSideBtn_staff" onclick="switchFVTab('staff',this)"
+        style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 6px;border:2px solid #C2C1C1;border-radius:16px;background:#fff;cursor:pointer;font-family:inherit;transition:all .18s;">
+        <span class="material-icons-round" style="font-size:28px;color:#3D7EB9;">supervisor_account</span>
+        <span style="font-size:10px;font-weight:700;color:#0C3B6E;text-align:center;">تجاه الهيئة</span>
+      </button>
+
+      <button id="fvSideBtn_class" onclick="switchFVTab('class',this)"
+        style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 6px;border:2px solid #C2C1C1;border-radius:16px;background:#fff;cursor:pointer;font-family:inherit;transition:all .18s;">
+        <span class="material-icons-round" style="font-size:28px;color:#0DA9A6;">menu_book</span>
+        <span style="font-size:10px;font-weight:700;color:#085856;text-align:center;">صفية وتعليمية</span>
+      </button>
+
+      <button id="fvSideBtn_positive" onclick="switchFVTab('positive',this)"
+        style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 6px;border:2px solid #C2C1C1;border-radius:16px;background:#fff;cursor:pointer;font-family:inherit;transition:all .18s;">
+        <span class="material-icons-round" style="font-size:28px;color:#07A869;">star</span>
+        <span style="font-size:10px;font-weight:700;color:#055c38;text-align:center;">سلوكيات إيجابية</span>
+      </button>
+
+    </div>
+
+    <!-- درجات سلوكية -->
+    <div id="fvDegreeBar_behavioral" style="display:none;padding:0 0 10px;gap:6px;flex-wrap:wrap;">
+      <button class="fv-degree-btn fv-degree-active" onclick="switchDegree('1',this)" id="degBtn_1">الدرجة 1</button>
+      <button class="fv-degree-btn" onclick="switchDegree('2',this)" id="degBtn_2">الدرجة 2</button>
+      <button class="fv-degree-btn" onclick="switchDegree('3',this)" id="degBtn_3">الدرجة 3</button>
+      <button class="fv-degree-btn" onclick="switchDegree('4',this)" id="degBtn_4">الدرجة 4</button>
+      <button class="fv-degree-btn" id="degBtn_5" style="display:none;" onclick="switchDegree('5',this)">الدرجة 5</button>
+    </div>
+
+    <!-- درجات هيئة -->
+    <div id="fvDegreeBar_staff" style="display:none;padding:0 0 10px;gap:6px;flex-wrap:wrap;">
+      <button class="fv-degree-btn fv-degree-active" onclick="switchStaffDegree('4',this)">الدرجة 4</button>
+      <button class="fv-degree-btn" onclick="switchStaffDegree('5',this)">الدرجة 5</button>
+    </div>
+
+    <!-- شبكات المخالفات -->
+    <div class="fv-tab-content active" id="fvContent_absence"><div id="fvGrid_absence"></div></div>
+    <div class="fv-tab-content" id="fvContent_behavioral">
+      <div id="fvGrid_behavioral_1"></div>
+      <div id="fvGrid_behavioral_2" style="display:none;"></div>
+      <div id="fvGrid_behavioral_3" style="display:none;"></div>
+      <div id="fvGrid_behavioral_4" style="display:none;"></div>
+      <div id="fvGrid_behavioral_5" style="display:none;"></div>
+    </div>
+    <div class="fv-tab-content" id="fvContent_staff">
+      <div id="fvGrid_staff_4"></div>
+      <div id="fvGrid_staff_5" style="display:none;"></div>
+    </div>
+    <div class="fv-tab-content" id="fvContent_class"><div id="fvGrid_class"></div></div>
+    <div class="fv-tab-content" id="fvContent_positive"><div id="fvGrid_positive"></div></div>
+
+    <!-- القسم 3: المختارة والتسجيل -->
+    <div class="card" style="padding:16px;margin-top:14px;">
+
+      <div id="selectedViolationsArea" style="display:none;margin-bottom:14px;">
+        <div style="font-size:11px;font-weight:700;color:#555;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+          المخالفات المختارة <span class="chip" id="selectedViolCount" style="background:#07A869;color:#fff;">0</span>
+          <button onclick="clearAllSelectedViol()" style="margin-right:auto;background:none;border:1px solid #C2C1C1;border-radius:6px;padding:2px 8px;font-family:inherit;font-size:10px;cursor:pointer;color:#666;">مسح الكل</button>
+        </div>
+        <div id="selectedViolList" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+      </div>
+
+      <div id="fvPreviewArea" style="display:none;margin-bottom:12px;">
+        <label style="font-size:11px;font-weight:700;color:#555;display:block;margin-bottom:5px;">معاينة النص</label>
+        <textarea id="fvPreviewText" rows="2" style="width:100%;padding:10px;border:1.5px solid #07A869;border-radius:10px;font-family:inherit;font-size:13px;resize:vertical;background:#e8f5ee;box-sizing:border-box;"></textarea>
+      </div>
+
+      <textarea id="fvActionText" style="display:none;"></textarea>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button onclick="submitFixedViolation()" style="flex:1;background:#15445A;color:#fff;border:none;padding:12px;border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">
+          <span class="material-icons-round" style="font-size:15px;vertical-align:middle;">save</span> تسجيل المخالفة
+        </button>
+      </div>
+    </div>
+
+    <div id="recordAlert"></div>
+  </div>
+
 </div>
-<div id="waLinks" style="display:none;margin-top:16px;"><div class="whatsapp-links-list" id="waList"></div></div></div><div id="recordAlert"></div></div>
 
 <div class="page-section" id="page-mylog">
 <div class="page-toolbar">
@@ -1421,14 +1484,75 @@ function toggleTStatDetail(id){
   }
 }
 
-function loadStudents(){const cn=document.getElementById('recordClass').value;if(!cn){document.getElementById('studentsListContainer').style.display='none';return;}showL();google.script.run.withSuccessHandler(s=>{hideL();students=s;const l=document.getElementById('studentsList');l.innerHTML=s.length?s.map((st,i)=>'<div class="student-checkbox-item"><input type="checkbox" id="s'+i+'" value="'+i+'" onchange="updCnt();previewMsg()"><label for="s'+i+'">'+st.name+'</label></div>').join(''):'<div class="empty-state">لا يوجد</div>';document.getElementById('studentsListContainer').style.display='block';document.getElementById('selectAll').checked=false;updCnt();}).getStudentsByClass(cn);}
-function toggleAll(){const c=document.getElementById('selectAll').checked;document.querySelectorAll('#studentsList input').forEach(cb=>cb.checked=c);updCnt();previewMsg();}
-function updCnt(){
-  const sel = getSel();
-  document.getElementById('selectedCount').textContent = sel.length;
-  document.getElementById('signatureSection').style.display = sel.length === 1 ? 'block' : 'none';
-  if(sel.length === 1) initSig();
+function loadStudents() {
+  var cn = document.getElementById('recordClass').value;
+  var fva = document.getElementById('fixedViolationsArea');
+  var tSlc = document.getElementById('tStudentsListContainer');
+  if (!cn) {
+    document.getElementById('studentsListContainer').style.display = 'none';
+    if (tSlc) tSlc.style.display = 'none';
+    if (fva) fva.style.display = 'none';
+    return;
+  }
+  showL();
+  GAS.getStudentsByClass(cn).then(function(s) {
+    hideL();
+    students = s || [];
+    var l = document.getElementById('studentsCheckboxList');
+    if (!l) l = document.getElementById('studentsList');
+    if (l) {
+      l.innerHTML = students.length
+        ? students.map(function(st, i) {
+            return '<div class="student-checkbox-item"><input type="checkbox" id="st_' + i + '" value="' + i + '" onchange="updCnt()"><label for="st_' + i + '">' + st.name + '</label></div>';
+          }).join('')
+        : '<div class="empty-state">لا يوجد طلاب</div>';
+    }
+    document.getElementById('studentsListContainer').style.display = 'block';
+    if (tSlc) tSlc.style.display = 'block';
+    var sa = document.getElementById('selectAllStudents') || document.getElementById('selectAll');
+    if (sa) sa.checked = false;
+    updCnt();
+  }).catch(function(e) {
+    hideL();
+    console.error('loadStudents error:', e);
+  });
 }
+
+function updCnt() {
+  var checked = document.querySelectorAll('#studentsCheckboxList input[type=checkbox]:checked, #studentsList input[type=checkbox]:checked');
+  var cnt = document.getElementById('selectedCount');
+  if (cnt) cnt.textContent = checked.length;
+  var fva = document.getElementById('fixedViolationsArea');
+  if (fva) {
+    fva.style.display = checked.length > 0 ? 'block' : 'none';
+    if (checked.length > 0) {
+      renderAllViolationGrids();
+      var badge = document.getElementById('fvStudentBadge');
+      if (badge) badge.textContent = checked.length + ' طالب';
+    }
+  }
+}
+
+function getSelectedStudents() {
+  var checked = document.querySelectorAll('#studentsCheckboxList input[type=checkbox]:checked, #studentsList input[type=checkbox]:checked');
+  var result = [];
+  checked.forEach(function(cb) {
+    var idx = parseInt(cb.value);
+    if (students && students[idx]) {
+      result.push({ name: students[idx].name, className: students[idx].className || document.getElementById('recordClass').value });
+    }
+  });
+  return result;
+}
+
+function toggleSelectAll() {
+  var sa = document.getElementById('selectAllStudents');
+  var boxes = document.querySelectorAll('#studentsCheckboxList input[type=checkbox]');
+  boxes.forEach(function(b) { b.checked = sa ? sa.checked : false; });
+  updCnt();
+}
+function toggleAll(){const c=document.getElementById('selectAll').checked;document.querySelectorAll('#studentsList input').forEach(cb=>cb.checked=c);updCnt();previewMsg();}
+
 let sigCanvas, sigCtx, drawing = false;
 function initSig(){
   sigCanvas = document.getElementById('sigCanvas');
@@ -2315,6 +2439,299 @@ function closeSidebar() {
 window.addEventListener('load', function() { setTimeout(applySidebarBounds, 100); });
 window.addEventListener('resize', applySidebarBounds);
 
+
+
+
+// ══ Fixed Violations System for Teacher ══
+
+var _fixedViolations = [];
+var _selectedViolations = [];
+var _schoolStage = 'elementary';
+var _activeStage = 'elementary';
+var _openParentId = null;
+
+var _tabColors = {
+  absence:    { bg:'#e8f5ee', border:'#07A869' },
+  behavioral: { bg:'#fdf8ee', border:'#C1B48A' },
+  staff:      { bg:'#f0f4fc', border:'#3D7EB9' },
+  class:      { bg:'#e8faf9', border:'#0DA9A6' },
+  positive:   { bg:'#e8f5ee', border:'#07A869' }
+};
+
+function renderGrid(category, degree, gridId) {
+  var grid = document.getElementById(gridId);
+  if (!grid) return;
+
+  // Set grid display on the container itself
+  grid.style.display = 'grid';
+  grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(180px, 1fr))';
+  grid.style.gap = '10px';
+  grid.style.marginBottom = '10px';
+
+  var items = _fixedViolations.filter(function(v) {
+    if (v.category !== category) return false;
+    if (degree && v.degree !== degree) return false;
+    var effectiveStage = (_schoolStage === 'both') ? _activeStage : _schoolStage;
+    if (effectiveStage === 'elementary' && v.stage === 'secondary') return false;
+    if (effectiveStage === 'secondary' && v.stage === 'elementary') return false;
+    if (effectiveStage === 'elementary' && degree === '5') return false;
+    return true;
+  });
+
+  if (!items.length) {
+    grid.style.display = 'block';
+    grid.innerHTML = '<p style="color:#999;font-size:12px;">لا توجد</p>';
+    return;
+  }
+
+  var palettes = {
+    absence:  { bg:'#e8f5ee', border:'#07A869', text:'#055c38' },
+    positive: { bg:'#e8f5ee', border:'#07A869', text:'#055c38' },
+    class:    { bg:'#f0f8ff', border:'#3D7EB9', text:'#0C3B6E' },
+    staff4:   { bg:'#fff3f0', border:'#E24B4A', text:'#7a1a1a' },
+    staff5:   { bg:'#fff0f0', border:'#791F1F', text:'#501313' },
+    beh1:     { bg:'#fdf8ee', border:'#C1B48A', text:'#6b5a2e' },
+    beh2:     { bg:'#f0f4fc', border:'#3D7EB9', text:'#0C3B6E' },
+    beh3:     { bg:'#e8faf9', border:'#0DA9A6', text:'#085856' },
+    beh4:     { bg:'#fff3f0', border:'#E24B4A', text:'#7a1a1a' },
+    beh5:     { bg:'#fff0f0', border:'#791F1F', text:'#501313' }
+  };
+
+  function getP(v) {
+    if (v.category === 'absence')  return palettes.absence;
+    if (v.category === 'positive') return palettes.positive;
+    if (v.category === 'class')    return palettes.class;
+    if (v.category === 'staff')    return v.degree === '4' ? palettes.staff4 : palettes.staff5;
+    return palettes['beh' + v.degree] || palettes.beh1;
+  }
+
+  var html = '';
+  items.forEach(function(v) {
+    var p = getP(v);
+    var isSel = _selectedViolations.some(function(s) { return s.id === v.id; });
+    var bg    = isSel ? p.border : p.bg;
+    var clr   = isSel ? '#fff'   : p.text;
+    var brd   = p.border;
+
+    var details = '';
+    if (v.has_children && v.children && v.children.length) {
+      details = v.children.map(function(child) {
+        var cs = _selectedViolations.some(function(s) { return s.id === v.id && s.subViolation === child; });
+        var e  = child.replace(/"/g,'&quot;');
+        return '<span data-pid="' + v.id + '" data-child="' + e + '" onclick="event.stopPropagation();selectChildByData(this)" style="display:inline-block;margin:2px;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid ' + (cs ? '#fff' : brd) + ';background:' + (cs ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.6)') + ';color:' + (cs ? '#fff' : p.text) + ';">' + child + '</span>';
+      }).join('') + '<span onclick="event.stopPropagation();addCustomSubViolation(' + v.id + ')" style="display:inline-block;margin:2px;padding:2px 8px;border-radius:20px;font-size:11px;cursor:pointer;border:1.5px dashed rgba(0,0,0,0.2);color:rgba(0,0,0,0.3);">+ أخرى</span>';
+    } else if (category === 'class') {
+      details = '<span style="font-size:11px;font-weight:600;color:' + (isSel ? 'rgba(255,255,255,0.8)' : p.border) + ';">صفية</span>';
+    } else if (category === 'positive') {
+      var st = v.sub_type || 'إيجابي';
+      details = '<span style="padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;border:1.5px solid ' + (isSel ? 'rgba(255,255,255,0.5)' : brd) + ';color:' + (isSel ? '#fff' : p.text) + ';">' + st + '</span>';
+    } else {
+      details = '<span onclick="event.stopPropagation();addCustomSubViolation(' + v.id + ')" style="padding:2px 8px;border-radius:20px;font-size:11px;cursor:pointer;border:1.5px dashed rgba(0,0,0,0.2);color:rgba(0,0,0,0.3);">+ أخرى</span>';
+    }
+
+    var selEntry = _selectedViolations.find(function(s) { return s.id === v.id; });
+    var act = (selEntry && selEntry.rowAction) ? selEntry.rowAction : '';
+
+    // كل بطاقة = عنصر grid مستقل
+    html += '<div id="fvRow_' + v.id + '" onclick="handleViolationClick(' + v.id + ')" '
+      + 'style="background:' + bg + ';border:2px solid ' + brd + ';border-radius:12px;padding:12px;cursor:pointer;transition:all .18s;display:flex;flex-direction:column;gap:6px;">'
+      + '<div style="font-size:12px;font-weight:700;color:' + clr + ';">' + (isSel ? '✓ ' : '') + v.name + '</div>'
+      + '<div onclick="event.stopPropagation()">' + details + '</div>'
+      + '<input type="text" placeholder="الإجراء..." onchange="updateRowAction(' + v.id + ',this.value)" onclick="event.stopPropagation()" '
+      + 'style="width:100%;padding:5px 8px;border:1.5px solid ' + (isSel ? 'rgba(255,255,255,0.4)' : brd) + ';border-radius:8px;font-size:11px;font-family:inherit;background:rgba(255,255,255,' + (isSel ? '0.2' : '0.8') + ');color:' + clr + ';box-sizing:border-box;" '
+      + 'value="' + act + '">'
+      + '</div>';
+  });
+
+  grid.innerHTML = html;
+}
+
+function updateRowAction(id, value) {
+  var entry = _selectedViolations.find(function(s) { return s.id === id; });
+  if (entry) entry.rowAction = value;
+}
+
+function renderAllViolationGrids() {
+  // الغياب
+  renderGrid('absence', null, 'fvGrid_absence');
+  // المخالفات السلوكية بالدرجات
+  ['1','2','3','4','5'].forEach(function(d) {
+    renderGrid('behavioral', d, 'fvGrid_behavioral_' + d);
+  });
+  // تجاه الهيئة
+  renderGrid('staff', '4', 'fvGrid_staff_4');
+  renderGrid('staff', '5', 'fvGrid_staff_5');
+  // الصفية
+  renderGrid('class', null, 'fvGrid_class');
+  // الإيجابي
+  renderGrid('positive', null, 'fvGrid_positive');
+}
+
+function switchFVTab(tab, btn) {
+  document.querySelectorAll('.fv-tab-content').forEach(function(c) { c.classList.remove('active'); });
+  // Reset all tab buttons to default style
+  ['absence','behavioral','staff','class','positive'].forEach(function(t) {
+    var b = document.getElementById('fvSideBtn_' + t);
+    if (b) { b.style.background = '#fff'; b.style.borderColor = '#C2C1C1'; }
+  });
+  // Activate selected tab
+  var c = document.getElementById('fvContent_' + tab);
+  if (c) c.classList.add('active');
+  if (btn) {
+    var tc = _tabColors[tab] || { bg:'#f5f9fc', border:'#07A869' };
+    btn.style.background = tc.bg;
+    btn.style.borderColor = tc.border;
+  }
+  var dBar = document.getElementById('fvDegreeBar_behavioral');
+  var sBar = document.getElementById('fvDegreeBar_staff');
+  if (dBar) dBar.style.display = tab === 'behavioral' ? 'flex' : 'none';
+  if (sBar) sBar.style.display = tab === 'staff'      ? 'flex' : 'none';
+}
+
+function switchDegree(deg, btn) {
+  document.querySelectorAll('#fvDegreeBar_behavioral .fv-degree-btn').forEach(function(b) { b.classList.remove('fv-degree-active'); });
+  if (btn) btn.classList.add('fv-degree-active');
+  ['1','2','3','4','5'].forEach(function(d) {
+    var grid = document.getElementById('fvGrid_behavioral_' + d);
+    if (grid) grid.style.display = d === deg ? 'grid' : 'none';
+  });
+}
+
+function switchStaffDegree(deg, btn) {
+  document.querySelectorAll('#fvDegreeBar_staff .fv-degree-btn').forEach(function(b) { b.classList.remove('fv-degree-active'); });
+  if (btn) btn.classList.add('fv-degree-active');
+  ['4','5'].forEach(function(d) {
+    var grid = document.getElementById('fvGrid_staff_' + d);
+    if (grid) grid.style.display = d === deg ? 'grid' : 'none';
+  });
+}
+
+function handleViolationClick(id) {
+  var viol = _fixedViolations.find(function(v) { return v.id === id; });
+  if (!viol) return;
+  // toggle تحديد الصف
+  var existing = _selectedViolations.findIndex(function(s) { return s.id === id && !s.subViolation; });
+  if (existing !== -1) {
+    _selectedViolations.splice(existing, 1);
+  } else {
+    _selectedViolations.push({ id: id, name: viol.name, subViolation: null, degree: viol.degree, category: viol.category, rowAction: '' });
+  }
+  refreshSelectedDisplay();
+  // إعادة رسم الجدول لتحديث الصف
+  var degKey = (viol.category === 'behavioral' || viol.category === 'staff') ? viol.degree : null;
+  renderGrid(viol.category, degKey, 'fvGrid_' + (viol.category === 'behavioral' ? 'behavioral_' + viol.degree : viol.category === 'staff' ? 'staff_' + viol.degree : viol.category));
+}
+
+function selectChildByData(btn) {
+  var parentId = parseInt(btn.getAttribute('data-pid'));
+  var childName = btn.getAttribute('data-child').replace(/&quot;/g,'"');
+  selectChildViolation(parentId, childName, btn);
+}
+
+function addCustomSubViolation(parentId) {
+  var viol = _fixedViolations.find(function(v) { return v.id === parentId; });
+  if (!viol) return;
+  var custom = prompt('أدخل النص المخصص:');
+  if (!custom || !custom.trim()) return;
+  _selectedViolations.push({ id: parentId, name: viol.name, subViolation: custom.trim(), degree: viol.degree, category: viol.category });
+  refreshSelectedDisplay();
+}
+
+function refreshSelectedDisplay() {
+  var area = document.getElementById('selectedViolationsArea');
+  var list = document.getElementById('selectedViolList');
+  var count = document.getElementById('selectedViolCount');
+
+  if (!_selectedViolations.length) {
+    if (area) area.style.display = 'none';
+    return;
+  }
+  if (area) area.style.display = 'block';
+  if (count) count.textContent = _selectedViolations.length;
+
+  var html = _selectedViolations.map(function(v, i) {
+    var label = v.name + (v.subViolation ? ' — ' + v.subViolation : '');
+    return '<span class="fv-selected-chip">'
+      + label
+      + '<button onclick="removeSelectedViol(' + i + ')">×</button>'
+      + '</span>';
+  }).join('');
+  if (list) list.innerHTML = html;
+
+  // تحقق من زر المحضر
+  checkReportBtn();
+  // تحديث المعاينة
+  updateFVPreview();
+}
+
+function clearAllSelectedViol() {
+  _selectedViolations = [];
+  _openParentId = null;
+  refreshSelectedDisplay();
+  renderAllViolationGrids();
+}
+
+function loadFixedViolations() {
+  try {
+    const stage = await GAS.getSchoolStage();
+    _schoolStage = stage || 'elementary';
+    var stageArea = document.getElementById('tStageSelectArea');
+    if (stageArea) stageArea.style.display = _schoolStage === 'both' ? 'block' : 'none';
+    _activeStage = _schoolStage === 'both' ? 'elementary' : _schoolStage;
+    var deg5 = document.getElementById('degBtn_5');
+    if (deg5) deg5.style.display = (_activeStage !== 'elementary') ? '' : 'none';
+    const violations = await GAS.getFixedViolations({ stage: 'both' });
+    _fixedViolations = violations || [];
+    renderAllViolationGrids();
+  } catch(e) { console.warn('loadFixedViolations error:', e); }
+}
+
+function tSelectStage(stage, btn) {
+  _activeStage = stage;
+  document.querySelectorAll('#tStageSelectArea .fv-degree-btn').forEach(function(b) { b.classList.remove('fv-degree-active'); });
+  if (btn) btn.classList.add('fv-degree-active');
+  var deg5 = document.getElementById('degBtn_5');
+  if (deg5) deg5.style.display = stage !== 'elementary' ? '' : 'none';
+  renderAllViolationGrids();
+}
+
+function submitFixedViolation() {
+  var selStudents = getSelectedStudents ? getSelectedStudents() : [];
+  if (!selStudents.length) { showAlert('recordAlert','error','اختر طالباً أولاً'); return; }
+  if (!_selectedViolations.length) { showAlert('recordAlert','error','اختر مخالفة أولاً'); return; }
+  showLoading();
+  try {
+    var violationsWithActions = _selectedViolations.map(function(v) {
+      return Object.assign({}, v, { actionText: v.rowAction || '' });
+    });
+    GAS.recordFixedViolation({
+      studentsData: selStudents,
+      violations: violationsWithActions,
+      actionText: '',
+      recorder: _teacherName || 'معلم',
+    }).then(function(result) {
+      hideLoading();
+      if (result && result.success) {
+        showAlert('recordAlert','success','✅ تم تسجيل المخالفة بنجاح');
+        _selectedViolations = [];
+        refreshSelectedDisplay();
+        renderAllViolationGrids();
+      } else {
+        showAlert('recordAlert','error','حدث خطأ: ' + (result && result.error ? result.error : 'غير معروف'));
+      }
+    });
+  } catch(e) {
+    hideLoading();
+    showAlert('recordAlert','error','خطأ: ' + e.message);
+  }
+}
+
+// تحميل المخالفات عند تحميل الصفحة
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function() { loadFixedViolations(); });
+} else {
+  loadFixedViolations();
+}
 
 </script>
 
