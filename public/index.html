@@ -1972,6 +1972,24 @@ tr:hover td{background:var(--em-ghost);}
 
   <!-- القسم 1: الفصل والطلاب -->
   <div class="card" style="padding:16px;margin-bottom:14px;">
+    <!-- اختيار المرحلة (يظهر فقط لمدارس كلاهما) -->
+    <div id="stageSelectArea" style="display:none;margin-bottom:10px;">
+      <label style="font-size:11px;font-weight:700;color:#555;display:block;margin-bottom:5px;">المرحلة الدراسية</label>
+      <div style="display:flex;gap:8px;">
+        <button class="fv-degree-btn fv-degree-active" id="stageBtn_elementary" onclick="selectStage('elementary',this)" style="flex:1;">ابتدائي</button>
+        <button class="fv-degree-btn" id="stageBtn_secondary" onclick="selectStage('secondary',this)" style="flex:1;">متوسط / ثانوي</button>
+      </div>
+    </div>
+
+    <!-- اختيار المرحلة (يظهر فقط لمدارس كلاهما) -->
+    <div id="stageSelectArea" style="display:none;margin-bottom:10px;">
+      <label style="font-size:11px;font-weight:700;color:#555;display:block;margin-bottom:5px;">المرحلة الدراسية</label>
+      <div style="display:flex;gap:8px;">
+        <button class="fv-degree-btn fv-degree-active" id="stageBtn_elementary" onclick="selectStage('elementary',this)" style="flex:1;">ابتدائي</button>
+        <button class="fv-degree-btn" id="stageBtn_secondary" onclick="selectStage('secondary',this)" style="flex:1;">متوسط / ثانوي</button>
+      </div>
+    </div>
+
     <div class="form-group" style="margin-bottom:10px;">
       <label style="font-size:11px;font-weight:700;color:#555;display:block;margin-bottom:5px;">الفصل</label>
       <select id="recordClass" onchange="loadClassStudents()"><option value="">-- اختر الفصل --</option></select>
@@ -3853,6 +3871,8 @@ function savePbtEdit(ot,i){const nt=document.getElementById('epbt_'+i).value.tri
 var _fixedViolations = [];
 var _selectedViolations = []; // [{name, subViolation, degree, category}]
 var _schoolStage = 'elementary';
+var _activeStage = 'elementary';
+var _activeStage = 'elementary';
 var _openParentId = null;
 
 // تحميل المخالفات الثابتة عند تحميل الصفحة
@@ -3862,17 +3882,43 @@ async function loadFixedViolations() {
     _schoolStage = stage || 'elementary';
     console.log('[FV] School stage:', _schoolStage);
 
-    // إظهار درجة 5 للمتوسط والثانوي
-    const deg5 = document.getElementById('degBtn_5');
-    if (deg5) deg5.style.display = (_schoolStage !== 'elementary') ? '' : 'none';
+    // إذا كانت المدرسة "كلاهما" — أظهر اختيار المرحلة
+    var stageArea = document.getElementById('stageSelectArea');
+    if (stageArea) stageArea.style.display = _schoolStage === 'both' ? 'block' : 'none';
 
-    const violations = await GAS.getFixedViolations({ stage: _schoolStage });
+    // المرحلة الفعلية للعرض
+    _activeStage = _schoolStage === 'both' ? 'elementary' : _schoolStage;
+
+    // إظهار درجة 5 للمتوسط والثانوي
+    var deg5 = document.getElementById('degBtn_5');
+    if (deg5) deg5.style.display = (_activeStage !== 'elementary') ? '' : 'none';
+
+    const violations = await GAS.getFixedViolations({ stage: 'both' });
     console.log('[FV] Violations loaded:', violations ? violations.length : 'null');
     _fixedViolations = violations || [];
     renderAllViolationGrids();
   } catch(e) {
     console.warn('loadFixedViolations error:', e);
   }
+}
+
+function selectStage(stage, btn) {
+  _activeStage = stage;
+  document.querySelectorAll('#stageSelectArea .fv-degree-btn').forEach(function(b) { b.classList.remove('fv-degree-active'); });
+  if (btn) btn.classList.add('fv-degree-active');
+  var deg5 = document.getElementById('degBtn_5');
+  if (deg5) deg5.style.display = stage !== 'elementary' ? '' : 'none';
+  renderAllViolationGrids();
+}
+
+function selectStage(stage, btn) {
+  _activeStage = stage;
+  document.querySelectorAll('#stageSelectArea .fv-degree-btn').forEach(function(b) { b.classList.remove('fv-degree-active'); });
+  if (btn) btn.classList.add('fv-degree-active');
+  // إظهار/إخفاء درجة 5
+  var deg5 = document.getElementById('degBtn_5');
+  if (deg5) deg5.style.display = stage !== 'elementary' ? '' : 'none';
+  renderAllViolationGrids();
 }
 
 function renderAllViolationGrids() {
@@ -3916,9 +3962,10 @@ function renderGrid(category, degree, gridId) {
   var items = _fixedViolations.filter(function(v) {
     if (v.category !== category) return false;
     if (degree && v.degree !== degree) return false;
-    if (_schoolStage === 'both' && degree === '5' && v.stage === 'elementary') return false;
-    if (_schoolStage === 'elementary' && v.stage === 'secondary') return false;
-    if (_schoolStage === 'secondary' && v.stage === 'elementary') return false;
+    var effectiveStage = (_schoolStage === 'both') ? _activeStage : _schoolStage;
+    if (effectiveStage === 'elementary' && v.stage === 'secondary') return false;
+    if (effectiveStage === 'secondary' && v.stage === 'elementary') return false;
+    if (effectiveStage === 'elementary' && degree === '5') return false;
     return true;
   });
 
