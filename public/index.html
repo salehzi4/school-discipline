@@ -4220,12 +4220,29 @@ function checkReportBtn() {
   btn.style.display = hasHighDegree ? 'inline-flex' : 'none';
 }
 
+var _tabColors = {
+  absence:    { bg:'#e8f5ee', border:'#07A869', iconColor:'#07A869' },
+  behavioral: { bg:'#fdf8ee', border:'#C1B48A', iconColor:'#C1B48A' },
+  staff:      { bg:'#f0f4fc', border:'#3D7EB9', iconColor:'#3D7EB9' },
+  class:      { bg:'#e8faf9', border:'#0DA9A6', iconColor:'#0DA9A6' },
+  positive:   { bg:'#e8f5ee', border:'#07A869', iconColor:'#07A869' }
+};
+
 function switchFVTab(tab, btn) {
   document.querySelectorAll('.fv-tab-content').forEach(function(c) { c.classList.remove('active'); });
-  document.querySelectorAll('.fv-top-tab').forEach(function(b) { b.classList.remove('fv-top-active'); });
+  // Reset all tab buttons to default style
+  ['absence','behavioral','staff','class','positive'].forEach(function(t) {
+    var b = document.getElementById('fvSideBtn_' + t);
+    if (b) { b.style.background = '#fff'; b.style.borderColor = '#C2C1C1'; }
+  });
+  // Activate selected tab
   var c = document.getElementById('fvContent_' + tab);
   if (c) c.classList.add('active');
-  if (btn) btn.classList.add('fv-top-active');
+  if (btn) {
+    var tc = _tabColors[tab] || { bg:'#f5f9fc', border:'#07A869' };
+    btn.style.background = tc.bg;
+    btn.style.borderColor = tc.border;
+  }
   var dBar = document.getElementById('fvDegreeBar_behavioral');
   var sBar = document.getElementById('fvDegreeBar_staff');
   if (dBar) dBar.style.display = tab === 'behavioral' ? 'flex' : 'none';
