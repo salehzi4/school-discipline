@@ -792,10 +792,10 @@ tr:hover td{background:var(--em-ghost);}
 
 .fv-degree-btn {
   padding: 6px 16px; border: 1.5px solid #C2C1C1; border-radius: 20px;
-  background: var(--surface); font-family: inherit; font-size: 12px; font-weight: 700;
-  color: #555; cursor: pointer; transition: all .15s;
+  background: transparent; font-family: inherit; font-size: 12px; font-weight: 700;
+  color: #999; cursor: pointer; transition: all .2s;
 }
-.fv-degree-btn:hover { border-color: #3D7EB9; color: #3D7EB9; }
+.fv-degree-btn:hover { border-color: #07A869; color: #07A869; }
 .fv-degree-active { background: #07A869 !important; color: #fff !important; border-color: #07A869 !important; }
 
 .fv-icons-grid {
@@ -4189,7 +4189,7 @@ function switchFVTab(tab, btn) {
 }
 
 function switchDegree(deg, btn) {
-  document.querySelectorAll('#fvContent_behavioral .fv-degree-btn').forEach(function(b) { b.classList.remove('fv-degree-active'); });
+  document.querySelectorAll('#fvDegreeBar_behavioral .fv-degree-btn').forEach(function(b) { b.classList.remove('fv-degree-active'); });
   if (btn) btn.classList.add('fv-degree-active');
   ['1','2','3','4','5'].forEach(function(d) {
     var grid = document.getElementById('fvGrid_behavioral_' + d);
@@ -4198,7 +4198,7 @@ function switchDegree(deg, btn) {
 }
 
 function switchStaffDegree(deg, btn) {
-  document.querySelectorAll('#fvContent_staff .fv-degree-btn').forEach(function(b) { b.classList.remove('fv-degree-active'); });
+  document.querySelectorAll('#fvDegreeBar_staff .fv-degree-btn').forEach(function(b) { b.classList.remove('fv-degree-active'); });
   if (btn) btn.classList.add('fv-degree-active');
   ['4','5'].forEach(function(d) {
     var grid = document.getElementById('fvGrid_staff_' + d);
