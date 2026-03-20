@@ -667,7 +667,7 @@ async function recordFixedViolation(body, sc) {
         severity: deg,
         degree: deg,
         category: cat === 'behavioral' ? 'سلوكية' : cat === 'staff' ? 'تجاه الهيئة' : cat === 'class' ? 'صفية' : cat === 'positive' ? 'إيجابية' : cat,
-        action_taken: actionText || '',
+        action_taken: viol.actionText || actionText || '',
         visible_to_parent: visibleToParent,
         referred_to_admin: referredToAdmin,
         referral_date: referralDate,
