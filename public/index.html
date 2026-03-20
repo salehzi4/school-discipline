@@ -3981,7 +3981,7 @@ function renderGrid(category, degree, gridId) {
     return palettes['beh' + v.degree] || palettes.beh1;
   }
 
-  var html = '<div style="display:flex;flex-direction:column;gap:8px;">';
+  var html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;">';
 
   items.forEach(function(v) {
     var p = getPalette(v);
