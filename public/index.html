@@ -2045,10 +2045,7 @@ tr:hover td{background:var(--em-ghost);}
         <label style="font-size:11px;font-weight:700;color:#555;display:block;margin-bottom:5px;">معاينة النص</label>
         <textarea id="fvPreviewText" rows="2" style="width:100%;padding:10px;border:1.5px solid #07A869;border-radius:10px;font-family:inherit;font-size:13px;resize:vertical;background:#e8f5ee;box-sizing:border-box;"></textarea>
       </div>
-      <div style="margin-bottom:12px;">
-        <label style="font-size:11px;font-weight:700;color:#555;display:block;margin-bottom:5px;">الإجراء المتخذ العام <span style="font-size:10px;color:#999;">(اختياري)</span></label>
-        <textarea id="fvActionText" rows="2" placeholder="اكتب الإجراء المتخذ..." style="width:100%;padding:10px;border:0.5px solid #C2C1C1;border-radius:10px;font-family:inherit;font-size:13px;resize:none;box-sizing:border-box;"></textarea>
-      </div>
+      <textarea id="fvActionText" style="display:none;"></textarea>
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
         <button onclick="submitFixedViolation()" style="flex:1;background:#15445A;color:#fff;border:none;padding:12px;border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">
           <span class="material-icons-round" style="font-size:15px;vertical-align:middle;">save</span> تسجيل المخالفة
