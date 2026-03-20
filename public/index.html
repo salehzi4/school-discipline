@@ -3910,6 +3910,12 @@ function renderGrid(category, degree, gridId) {
   var grid = document.getElementById(gridId);
   if (!grid) return;
 
+  // Set grid display on the container itself
+  grid.style.display = 'grid';
+  grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(180px, 1fr))';
+  grid.style.gap = '10px';
+  grid.style.marginBottom = '10px';
+
   var items = _fixedViolations.filter(function(v) {
     if (v.category !== category) return false;
     if (degree && v.degree !== degree) return false;
@@ -3920,25 +3926,25 @@ function renderGrid(category, degree, gridId) {
   });
 
   if (!items.length) {
-    grid.innerHTML = '<p style="color:#999;font-size:12px;padding:10px;">لا توجد</p>';
+    grid.style.display = 'block';
+    grid.innerHTML = '<p style="color:#999;font-size:12px;">لا توجد</p>';
     return;
   }
 
-  // ألوان حسب الفئة والدرجة
   var palettes = {
-    absence:  { bg:'#e8f5ee', border:'#07A869', text:'#055c38', pill:'#07A869' },
-    positive: { bg:'#e8f5ee', border:'#07A869', text:'#055c38', pill:'#07A869' },
-    class:    { bg:'#f0f8ff', border:'#3D7EB9', text:'#0C3B6E', pill:'#3D7EB9' },
-    staff4:   { bg:'#fff3f0', border:'#E24B4A', text:'#7a1a1a', pill:'#E24B4A' },
-    staff5:   { bg:'#fff0f0', border:'#791F1F', text:'#501313', pill:'#791F1F' },
-    beh1:     { bg:'#fdf8ee', border:'#C1B48A', text:'#6b5a2e', pill:'#C1B48A' },
-    beh2:     { bg:'#f0f4fc', border:'#3D7EB9', text:'#0C3B6E', pill:'#3D7EB9' },
-    beh3:     { bg:'#e8faf9', border:'#0DA9A6', text:'#085856', pill:'#0DA9A6' },
-    beh4:     { bg:'#fff3f0', border:'#E24B4A', text:'#7a1a1a', pill:'#E24B4A' },
-    beh5:     { bg:'#fff0f0', border:'#791F1F', text:'#501313', pill:'#791F1F' }
+    absence:  { bg:'#e8f5ee', border:'#07A869', text:'#055c38' },
+    positive: { bg:'#e8f5ee', border:'#07A869', text:'#055c38' },
+    class:    { bg:'#f0f8ff', border:'#3D7EB9', text:'#0C3B6E' },
+    staff4:   { bg:'#fff3f0', border:'#E24B4A', text:'#7a1a1a' },
+    staff5:   { bg:'#fff0f0', border:'#791F1F', text:'#501313' },
+    beh1:     { bg:'#fdf8ee', border:'#C1B48A', text:'#6b5a2e' },
+    beh2:     { bg:'#f0f4fc', border:'#3D7EB9', text:'#0C3B6E' },
+    beh3:     { bg:'#e8faf9', border:'#0DA9A6', text:'#085856' },
+    beh4:     { bg:'#fff3f0', border:'#E24B4A', text:'#7a1a1a' },
+    beh5:     { bg:'#fff0f0', border:'#791F1F', text:'#501313' }
   };
 
-  function getPalette(v) {
+  function getP(v) {
     if (v.category === 'absence')  return palettes.absence;
     if (v.category === 'positive') return palettes.positive;
     if (v.category === 'class')    return palettes.class;
@@ -3947,64 +3953,52 @@ function renderGrid(category, degree, gridId) {
   }
 
   var html = '';
-
   items.forEach(function(v) {
-    var p = getPalette(v);
-    var isSelected = _selectedViolations.some(function(s) { return s.id === v.id; });
-    var cardBg     = isSelected ? p.border : p.bg;
-    var cardText   = isSelected ? '#fff'   : p.text;
-    var cardBorder = isSelected ? p.border : p.border;
+    var p = getP(v);
+    var isSel = _selectedViolations.some(function(s) { return s.id === v.id; });
+    var bg    = isSel ? p.border : p.bg;
+    var clr   = isSel ? '#fff'   : p.text;
+    var brd   = p.border;
 
-    // التفاصيل / التوابع
-    var detailsHtml = '';
+    var details = '';
     if (v.has_children && v.children && v.children.length) {
-      detailsHtml = '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;" onclick="event.stopPropagation()">'
-        + v.children.map(function(child) {
-            var sel = _selectedViolations.some(function(s) { return s.id === v.id && s.subViolation === child; });
-            var e = child.replace(/"/g,'&quot;');
-            return '<span data-pid="' + v.id + '" data-child="' + e + '" onclick="event.stopPropagation();selectChildByData(this)" '
-              + 'style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid ' + (sel ? '#fff' : p.border) + ';background:' + (sel ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.5)') + ';color:' + (sel ? '#fff' : p.text) + ';">'
-              + child + '</span>';
-          }).join('')
-        + '<span onclick="event.stopPropagation();addCustomSubViolation(' + v.id + ')" '
-        + 'style="padding:3px 10px;border-radius:20px;font-size:11px;cursor:pointer;border:1.5px dashed rgba(0,0,0,0.2);color:rgba(0,0,0,0.3);">+ أخرى</span>'
-        + '</div>';
+      details = v.children.map(function(child) {
+        var cs = _selectedViolations.some(function(s) { return s.id === v.id && s.subViolation === child; });
+        var e  = child.replace(/"/g,'&quot;');
+        return '<span data-pid="' + v.id + '" data-child="' + e + '" onclick="event.stopPropagation();selectChildByData(this)" style="display:inline-block;margin:2px;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid ' + (cs ? '#fff' : brd) + ';background:' + (cs ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.6)') + ';color:' + (cs ? '#fff' : p.text) + ';">' + child + '</span>';
+      }).join('') + '<span onclick="event.stopPropagation();addCustomSubViolation(' + v.id + ')" style="display:inline-block;margin:2px;padding:2px 8px;border-radius:20px;font-size:11px;cursor:pointer;border:1.5px dashed rgba(0,0,0,0.2);color:rgba(0,0,0,0.3);">+ أخرى</span>';
     } else if (category === 'class') {
-      detailsHtml = '<div style="margin-top:4px;"><span style="font-size:11px;font-weight:600;color:' + (isSelected ? 'rgba(255,255,255,0.8)' : p.pill) + ';">صفية</span></div>';
+      details = '<span style="font-size:11px;font-weight:600;color:' + (isSel ? 'rgba(255,255,255,0.8)' : p.border) + ';">صفية</span>';
     } else if (category === 'positive') {
       var st = v.sub_type || 'إيجابي';
-      detailsHtml = '<div style="margin-top:4px;"><span style="padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;border:1.5px solid ' + (isSelected ? 'rgba(255,255,255,0.5)' : p.pill) + ';color:' + (isSelected ? '#fff' : p.pill) + ';">' + st + '</span></div>';
+      details = '<span style="padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;border:1.5px solid ' + (isSel ? 'rgba(255,255,255,0.5)' : brd) + ';color:' + (isSel ? '#fff' : p.text) + ';">' + st + '</span>';
     } else {
-      detailsHtml = '<div style="margin-top:4px;" onclick="event.stopPropagation()">'
-        + '<span onclick="event.stopPropagation();addCustomSubViolation(' + v.id + ')" '
-        + 'style="padding:3px 10px;border-radius:20px;font-size:11px;cursor:pointer;border:1.5px dashed rgba(0,0,0,0.2);color:rgba(0,0,0,0.3);">+ أخرى</span>'
-        + '</div>';
+      details = '<span onclick="event.stopPropagation();addCustomSubViolation(' + v.id + ')" style="padding:2px 8px;border-radius:20px;font-size:11px;cursor:pointer;border:1.5px dashed rgba(0,0,0,0.2);color:rgba(0,0,0,0.3);">+ أخرى</span>';
     }
 
-    // حقل الإجراء
     var selEntry = _selectedViolations.find(function(s) { return s.id === v.id; });
-    var existingAction = (selEntry && selEntry.rowAction) ? selEntry.rowAction : '';
-    var actionHtml = '<div style="margin-top:8px;" onclick="event.stopPropagation()">'
-      + '<input type="text" placeholder="الإجراء المتخذ (اختياري)..." '
-      + 'onchange="updateRowAction(' + v.id + ',this.value)" '
-      + 'style="width:100%;padding:6px 10px;border:1.5px solid ' + (isSelected ? 'rgba(255,255,255,0.4)' : p.border) + ';border-radius:8px;font-size:12px;font-family:inherit;background:' + (isSelected ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.8)') + ';color:' + cardText + ';box-sizing:border-box;" '
-      + 'value="' + existingAction + '">'
-      + '</div>';
+    var act = (selEntry && selEntry.rowAction) ? selEntry.rowAction : '';
 
+    // كل بطاقة = عنصر grid مستقل
     html += '<div id="fvRow_' + v.id + '" onclick="handleViolationClick(' + v.id + ')" '
-      + 'style="background:' + cardBg + ';border:2px solid ' + cardBorder + ';border-radius:12px;padding:12px 14px;cursor:pointer;transition:all .18s;">'
-      + '<div style="display:flex;align-items:center;justify-content:space-between;">'
-      + '<span style="font-size:13px;font-weight:700;color:' + cardText + ';">'
-      + (isSelected ? '✓ ' : '') + v.name + '</span>'
-      + (isSelected ? '<span style="font-size:10px;background:rgba(255,255,255,0.25);color:#fff;padding:2px 8px;border-radius:20px;font-weight:700;">مختار</span>' : '')
-      + '</div>'
-      + detailsHtml
-      + actionHtml
+      + 'style="background:' + bg + ';border:2px solid ' + brd + ';border-radius:12px;padding:12px;cursor:pointer;transition:all .18s;display:flex;flex-direction:column;gap:6px;">'
+      + '<div style="font-size:12px;font-weight:700;color:' + clr + ';">' + (isSel ? '✓ ' : '') + v.name + '</div>'
+      + '<div onclick="event.stopPropagation()">' + details + '</div>'
+      + '<input type="text" placeholder="الإجراء..." onchange="updateRowAction(' + v.id + ',this.value)" onclick="event.stopPropagation()" '
+      + 'style="width:100%;padding:5px 8px;border:1.5px solid ' + (isSel ? 'rgba(255,255,255,0.4)' : brd) + ';border-radius:8px;font-size:11px;font-family:inherit;background:rgba(255,255,255,' + (isSel ? '0.2' : '0.8') + ');color:' + clr + ';box-sizing:border-box;" '
+      + 'value="' + act + '">'
       + '</div>';
   });
 
   grid.innerHTML = html;
 }
+
+function updateRowAction(id, value) {
+  var entry = _selectedViolations.find(function(s) { return s.id === id; });
+  if (entry) entry.rowAction = value;
+}
+
+
 
 function updateRowAction(id, value) {
   var entry = _selectedViolations.find(function(s) { return s.id === id; });
