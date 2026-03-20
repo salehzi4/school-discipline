@@ -20,6 +20,15 @@
 .fv-top-tab { display:inline-flex;align-items:center;gap:6px;padding:11px 16px;border:none;background:transparent;border-bottom:3px solid transparent;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;color:#555;white-space:nowrap;transition:all .15s;flex-shrink:0; }
 .fv-top-tab:hover { color:#07A869;background:rgba(7,168,105,0.06); }
 .fv-top-active { border-bottom-color:#07A869 !important;color:#07A869 !important; }
+.fv-selected-chip {
+  display:inline-flex;align-items:center;gap:4px;padding:4px 10px;
+  background:#e8f5ee;border:1px solid #07A869;border-radius:20px;
+  font-size:11px;font-weight:600;color:#055c38;
+}
+.fv-selected-chip button {
+  background:none;border:none;cursor:pointer;color:#07A869;
+  font-size:14px;line-height:1;padding:0;font-weight:700;
+}
 </style>
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -2747,6 +2756,31 @@ if (document.readyState === 'loading') {
   loadFixedViolations();
 }
 
+
+function checkReportBtn() {
+  var btn = document.getElementById('fvCreateReportBtn');
+  if (!btn) return;
+  var hasBehavioral = _selectedViolations.some(function(v) { return v.category === 'behavioral'; });
+  btn.style.display = hasBehavioral ? 'block' : 'none';
+}
+
+function updateFVPreview() {
+  var area = document.getElementById('fvPreviewArea');
+  var txt  = document.getElementById('fvPreviewText');
+  if (!area || !txt) return;
+  if (!_selectedViolations.length) { area.style.display = 'none'; return; }
+  area.style.display = 'block';
+  var names = _selectedViolations.map(function(v) {
+    return v.name + (v.subViolation ? ' (' + v.subViolation + ')' : '');
+  }).join(' و ');
+  txt.value = 'تم رصد المخالفة التالية: ' + names;
+}
+
+function removeSelectedViol(idx) {
+  _selectedViolations.splice(idx, 1);
+  refreshSelectedDisplay();
+  renderAllViolationGrids();
+}
 </script>
 
 
