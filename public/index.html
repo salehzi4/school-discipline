@@ -796,7 +796,7 @@ tr:hover td{background:var(--em-ghost);}
   color: #555; cursor: pointer; transition: all .15s;
 }
 .fv-degree-btn:hover { border-color: #3D7EB9; color: #3D7EB9; }
-.fv-degree-active { background: #3D7EB9 !important; color: #fff !important; border-color: #3D7EB9 !important; }
+.fv-degree-active { background: #07A869 !important; color: #fff !important; border-color: #07A869 !important; }
 
 .fv-icons-grid {
   margin-bottom: 8px;
@@ -4182,11 +4182,15 @@ function switchFVTab(tab, btn) {
   var c = document.getElementById('fvContent_' + tab);
   if (c) c.classList.add('active');
   if (btn) btn.classList.add('fv-top-active');
+  var dBar = document.getElementById('fvDegreeBar_behavioral');
+  var sBar = document.getElementById('fvDegreeBar_staff');
+  if (dBar) dBar.style.display = tab === 'behavioral' ? 'flex' : 'none';
+  if (sBar) sBar.style.display = tab === 'staff'      ? 'flex' : 'none';
 }
 
 function switchDegree(deg, btn) {
-  document.querySelectorAll('.fv-degree-btn').forEach(function(b) { b.classList.remove('active'); });
-  if (btn) btn.classList.add('active');
+  document.querySelectorAll('#fvContent_behavioral .fv-degree-btn').forEach(function(b) { b.classList.remove('fv-degree-active'); });
+  if (btn) btn.classList.add('fv-degree-active');
   ['1','2','3','4','5'].forEach(function(d) {
     var grid = document.getElementById('fvGrid_behavioral_' + d);
     if (grid) grid.style.display = d === deg ? 'grid' : 'none';
@@ -4194,8 +4198,8 @@ function switchDegree(deg, btn) {
 }
 
 function switchStaffDegree(deg, btn) {
-  document.querySelectorAll('#fvContent_staff .fv-degree-btn').forEach(function(b) { b.classList.remove('active'); });
-  if (btn) btn.classList.add('active');
+  document.querySelectorAll('#fvContent_staff .fv-degree-btn').forEach(function(b) { b.classList.remove('fv-degree-active'); });
+  if (btn) btn.classList.add('fv-degree-active');
   ['4','5'].forEach(function(d) {
     var grid = document.getElementById('fvGrid_staff_' + d);
     if (grid) grid.style.display = d === deg ? 'grid' : 'none';
