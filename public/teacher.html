@@ -2671,7 +2671,7 @@ function clearAllSelectedViol() {
   renderAllViolationGrids();
 }
 
-function loadFixedViolations() {
+async function loadFixedViolations() {
   try {
     const stage = await GAS.getSchoolStage();
     _schoolStage = stage || 'elementary';
