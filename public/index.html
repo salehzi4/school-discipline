@@ -2024,7 +2024,7 @@ tr:hover td{background:var(--em-ghost);}
         </div>
 
         <div class="fv-tab-content" id="fvContent_behavioral">
-          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;padding:10px 14px 0;">
             <button class="fv-degree-btn fv-degree-active" onclick="switchDegree('1',this)" id="degBtn_1">الدرجة 1</button>
             <button class="fv-degree-btn" onclick="switchDegree('2',this)" id="degBtn_2">الدرجة 2</button>
             <button class="fv-degree-btn" onclick="switchDegree('3',this)" id="degBtn_3">الدرجة 3</button>
@@ -2056,7 +2056,7 @@ tr:hover td{background:var(--em-ghost);}
         </div>
 
         <!-- المختارة -->
-        <div id="selectedViolationsArea" style="display:none;background:#e8f5ee;border-radius:10px;padding:10px 12px;border:0.5px solid #07A869;margin-top:12px;">
+        <div id="selectedViolationsArea" style="display:none;background:#e8f5ee;border-radius:10px;padding:10px 12px;border:0.5px solid #07A869;margin:12px 14px 0;">
           <div style="font-size:11px;font-weight:700;color:#555;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
             <span class="material-icons-round" style="font-size:14px;color:#07A869;">playlist_add_check</span>
             المخالفات المختارة <span class="chip" id="selectedViolCount" style="background:#07A869;color:#fff;">0</span>
@@ -2066,7 +2066,7 @@ tr:hover td{background:var(--em-ghost);}
         </div>
 
         <!-- معاينة -->
-        <div id="fvPreviewArea" style="display:none;margin-top:12px;">
+        <div id="fvPreviewArea" style="display:none;margin-top:12px;padding:0 14px;">
           <label style="font-size:11px;font-weight:700;color:#555;display:block;margin-bottom:5px;">
             <span class="material-icons-round" style="font-size:13px;vertical-align:middle;color:#3D7EB9;">preview</span>
             معاينة النص <span style="font-size:10px;color:#999;">(يمكن التعديل)</span>
@@ -2075,13 +2075,13 @@ tr:hover td{background:var(--em-ghost);}
         </div>
 
         <!-- الإجراء المتخذ -->
-        <div style="margin-top:12px;">
+        <div style="margin-top:12px;padding:0 14px;">
           <label style="font-size:11px;font-weight:700;color:#555;display:block;margin-bottom:5px;">الإجراء المتخذ العام <span style="font-size:10px;color:#999;">(اختياري)</span></label>
           <textarea id="fvActionText" rows="2" placeholder="اكتب الإجراء المتخذ..." style="width:100%;padding:10px;border:0.5px solid #C2C1C1;border-radius:10px;font-family:inherit;font-size:13px;resize:none;box-sizing:border-box;"></textarea>
         </div>
 
         <!-- أزرار -->
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding:0 14px 14px;">
           <button class="btn" onclick="submitFixedViolation()" style="flex:1;background:#15445A;color:#fff;border:none;padding:12px;border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">
             <span class="material-icons-round" style="font-size:15px;vertical-align:middle;">save</span> تسجيل المخالفة
           </button>
