@@ -4707,26 +4707,45 @@ function loadViolationsLog(){
   GAS.getViolationsLog(fc,fd,ft).then(function(allRecords){
     hideLoading();
     // تطبيق فلاتر الفئة والمسجّل
+    // قراءة كل الفلاتر مرة واحدة
+    var _fstu = (document.getElementById('logFilterStudent')||{value:''}).value || '';
+    var _frec = (document.getElementById('logFilterRecorder')||{value:'الكل'}).value || 'الكل';
+    var _fcat = (document.getElementById('logFilterCategory')||{value:'الكل'}).value || 'الكل';
+    var _fc   = (document.getElementById('logFilterClass')||{value:'الكل'}).value || 'الكل';
+
     var records = allRecords.filter(function(r) {
-      if (fcat !== 'الكل') {
+      // فلتر الفصل
+      if (_fc !== 'الكل' && r.className !== _fc) return false;
+      // فلتر الطالب
+      if (_fstu && r.studentName !== _fstu) return false;
+      // فلتر الفئة
+      if (_fcat !== 'الكل') {
         var cat = r.category || '';
         var catMap = {'سلوكية':['سلوكية','behavioral'],'صفية':['صفية','class'],'تجاه الهيئة':['تجاه الهيئة','staff'],'غياب':['غياب','absence'],'إيجابية':['إيجابية','positive','إيجابي']};
-        var allowed = catMap[fcat] || [fcat];
+        var allowed = catMap[_fcat] || [_fcat];
         if (allowed.indexOf(cat) === -1) return false;
+      }
+      // فلتر المسجّل
+      if (_frec !== 'الكل') {
+        if (_frec === 'معلم' && r.recorder === 'الإدارة') return false;
+        if (_frec === 'الإدارة' && r.recorder !== 'الإدارة') return false;
       }
       return true;
     });
   // ── كل السجلات ──
   document.getElementById('logCountChip').textContent=records.length+' مخالفة';
-  // تعبئة قائمة أسماء الطلاب (مرتبطة بالفصل المختار)
+  // تعبئة قائمة أسماء الطلاب (مرتبطة بالفصل)
   var stuSel = document.getElementById('logFilterStudent');
   if (stuSel) {
-    var curStu = ((document.getElementById('logFilterStudent')||{}).value||'');
-    var baseRecords = fc === 'الكل' ? allRecords : allRecords.filter(function(r){ return r.className === fc; });
+    var curStu = stuSel.value;
+    var _fcNow = (document.getElementById('logFilterClass')||{value:'الكل'}).value || 'الكل';
+    var baseRecs = _fcNow === 'الكل' ? allRecords : allRecords.filter(function(r){ return r.className === _fcNow; });
     var stuNames = [];
-    baseRecords.forEach(function(r){ if(r.studentName && stuNames.indexOf(r.studentName)===-1) stuNames.push(r.studentName); });
+    baseRecs.forEach(function(r){ if(r.studentName && stuNames.indexOf(r.studentName)===-1) stuNames.push(r.studentName); });
     stuNames.sort();
     stuSel.innerHTML = '<option value="">كل الطلاب</option>' + stuNames.map(function(n){ return '<option value="'+n+'"'+(n===curStu?' selected':'')+'>'+n+'</option>'; }).join('');
+    // إذا الطالب المختار غير موجود في الفصل الجديد — امسحه
+    if (curStu && stuNames.indexOf(curStu) === -1) stuSel.value = '';
   }
   const tb=document.getElementById('violationsLogTableBody');
   if(!records.length){tb.innerHTML='<tr><td colspan="10" class="empty-state">لا توجد</td></tr>';}
