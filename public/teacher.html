@@ -2473,6 +2473,8 @@ var _fixedViolations = [];
 var _selectedViolations = [];
 var _schoolStage = 'elementary';
 var _activeStage = 'elementary';
+var _activeBehavioralDeg = '1';
+var _activeStaffDeg = '4';
 var _openParentId = null;
 
 var _tabColors = {
@@ -2579,16 +2581,31 @@ function updateRowAction(id, value) {
 function renderAllViolationGrids() {
   // الغياب
   renderGrid('absence', null, 'fvGrid_absence');
-  // المخالفات السلوكية بالدرجات
+
+  // السلوكية — ارسم فقط، لا تغير الـ display
   ['1','2','3','4','5'].forEach(function(d) {
+    var grid = document.getElementById('fvGrid_behavioral_' + d);
+    if (!grid) return;
+    var currentDisplay = grid.style.display;
     renderGrid('behavioral', d, 'fvGrid_behavioral_' + d);
+    // أعد الـ display لما كان عليه (إلا لو الدرجة 1 النشطة)
+    if (d !== _activeBehavioralDeg) {
+      grid.style.display = 'none';
+    }
   });
-  // تجاه الهيئة
-  renderGrid('staff', '4', 'fvGrid_staff_4');
-  renderGrid('staff', '5', 'fvGrid_staff_5');
-  // الصفية
+
+  // الهيئة
+  ['4','5'].forEach(function(d) {
+    var grid = document.getElementById('fvGrid_staff_' + d);
+    if (!grid) return;
+    renderGrid('staff', d, 'fvGrid_staff_' + d);
+    if (d !== _activeStaffDeg) {
+      grid.style.display = 'none';
+    }
+  });
+
+  // الصفية والإيجابي
   renderGrid('class', null, 'fvGrid_class');
-  // الإيجابي
   renderGrid('positive', null, 'fvGrid_positive');
 }
 
@@ -2613,6 +2630,7 @@ function switchFVTab(tab, btn) {
 }
 
 function switchDegree(deg, btn) {
+  _activeBehavioralDeg = deg;
   document.querySelectorAll('#fvDegreeBar_behavioral .fv-degree-btn').forEach(function(b) { b.classList.remove('fv-degree-active'); });
   if (btn) btn.classList.add('fv-degree-active');
   ['1','2','3','4','5'].forEach(function(d) {
@@ -2622,6 +2640,7 @@ function switchDegree(deg, btn) {
 }
 
 function switchStaffDegree(deg, btn) {
+  _activeStaffDeg = deg;
   document.querySelectorAll('#fvDegreeBar_staff .fv-degree-btn').forEach(function(b) { b.classList.remove('fv-degree-active'); });
   if (btn) btn.classList.add('fv-degree-active');
   ['4','5'].forEach(function(d) {
