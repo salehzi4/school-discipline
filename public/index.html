@@ -4706,15 +4706,9 @@ function loadViolationsLog(){
     var records = allRecords.filter(function(r) {
       if (fcat !== 'الكل') {
         var cat = r.category || '';
-        if (fcat === 'سلوكية'      && cat !== 'سلوكية') return false;
-        if (fcat === 'صفية'        && cat !== 'صفية') return false;
-        if (fcat === 'تجاه الهيئة' && cat !== 'تجاه الهيئة') return false;
-        if (fcat === 'غياب'        && cat !== 'غياب') return false;
-        if (fcat === 'إيجابية'     && cat !== 'إيجابية') return false;
-      }
-      if (frec !== 'الكل') {
-        if (frec === 'معلم'    && r.recorder === 'الإدارة') return false;
-        if (frec === 'الإدارة' && r.recorder !== 'الإدارة') return false;
+        var catMap = {'سلوكية':['سلوكية','behavioral'],'صفية':['صفية','class'],'تجاه الهيئة':['تجاه الهيئة','staff'],'غياب':['غياب','absence'],'إيجابية':['إيجابية','positive','إيجابي']};
+        var allowed = catMap[fcat] || [fcat];
+        if (allowed.indexOf(cat) === -1) return false;
       }
       return true;
     });
@@ -4795,7 +4789,40 @@ function adminToggleVis(btn){
     .setVisibleToParent(date, studentName, violationType, makeVisible);
 }
 function clearLogFilters(){document.getElementById('logFilterClass').value='الكل';document.getElementById('logFilterDate').value='';document.getElementById('logFilterType').value='الكل';loadViolationsLog();}
-function editVlRow(i,d,sn,ot,on){const r=document.getElementById('vlRow_'+i);let opts='';violationTypesData.forEach(v=>{opts+='<option value="'+esc(v.type)+'"'+(v.type===ot?' selected':'')+'>'+esc(v.type)+'</option>';});r.querySelector('.vl-cell-type').innerHTML='<select id="evlt_'+i+'" style="padding:4px;font-size:11px;border:1px solid var(--primary);border-radius:6px;">'+opts+'</select>';r.querySelector('td:last-child').innerHTML='<button class="btn btn-success btn-sm" onclick="saveVlEdit(\''+d.replace(/'/g,"\\'")+'\',\''+sn.replace(/'/g,"\\'")+'\',\''+ot.replace(/'/g,"\\'")+'\','+i+')" style="padding:4px 6px;">✅</button> <button class="btn btn-outline btn-sm" onclick="loadViolationsLog()" style="padding:4px 6px;">✕</button>';}
+function editVlRow(i,d,sn,ot,on){
+  var r = document.getElementById('vlRow_'+i);
+  if (!r) return;
+  // Store edit data
+  _editingRow = {i:i, date:d, studentName:sn, oldType:ot, notes:on};
+  // Show inline edit in the violation type cell
+  var typeCell = r.querySelector('.vl-cell-type');
+  if (!typeCell) return;
+  var opts = '<option value="">-- اختر --</option>';
+  if (violationTypesData) {
+    violationTypesData.forEach(function(v){ opts += '<option value="'+esc(v.type)+'"'+(v.type===ot?' selected':'')+'>'+esc(v.type)+'</option>'; });
+  }
+  typeCell.innerHTML = '<select id="evlt_'+i+'" style="padding:4px;font-size:11px;border:1px solid var(--primary);border-radius:6px;max-width:150px;">'+opts+'</select>';
+  var actCell = r.querySelector('td:last-child');
+  if (actCell) {
+    actCell.innerHTML = '<button class="btn btn-success btn-sm" onclick="saveVlEdit('+i+')" style="padding:4px 6px;"><span class="material-icons-round" style="font-size:14px;">save</span></button>'
+      +' <button class="btn btn-outline btn-sm" onclick="loadViolationsLog()" style="padding:4px 6px;"><span class="material-icons-round" style="font-size:14px;">close</span></button>';
+  }
+}
+
+var _editingRow = {};
+
+function saveVlEdit(i) {
+  var sel = document.getElementById('evlt_'+i);
+  if (!sel) return;
+  var newType = sel.value;
+  if (!newType) return;
+  var d = _editingRow.date, sn = _editingRow.studentName, ot = _editingRow.oldType;
+  showLoading();
+  GAS.updateViolation(d, sn, ot, newType, _editingRow.notes||'').then(function(){
+    hideLoading();
+    loadViolationsLog();
+  }).catch(function(e){ hideLoading(); console.error(e); });
+}
 function saveVlEdit(d,sn,ot,i){const nt=document.getElementById('evlt_'+i).value;showLoading();google.script.run.withSuccessHandler(function(r){hideLoading();if(r.success){loadViolationsLog();loadStats();}}).updateViolationLog(d,sn,ot,nt,'');}
 function delVlEntry(d,sn,vt){if(!confirm('حذف؟'))return;showLoading();google.script.run.withSuccessHandler(function(r){hideLoading();if(r.success){loadViolationsLog();loadStats();}}).deleteViolationLog(d,sn,vt);}
 
