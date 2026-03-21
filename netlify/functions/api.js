@@ -1004,13 +1004,13 @@ async function getAdvancedStats(dateFilter, sc) {
     sb('teachers', 'GET', `school_code=eq.${sc}&select=id`),
     sb('violations_log', 'GET', `school_code=eq.${sc}&select=class_name,violation_type,category,behavior_status,sub_type,recorded_at`),
     sb('messages_log', 'GET', `school_code=eq.${sc}&select=sent_at`),
-    sb('positive_behaviors_log', 'GET', `school_code=eq.${sc}&select=sub_type,recorded_at`),
+    sb('violations_log', 'GET', `school_code=eq.${sc}&category=eq.إيجابية&select=sub_type,recorded_at`),
     sb('reports', 'GET', `school_code=eq.${sc}&select=student_name,violation_type,read_at,created_at`)
   ]);
 
   let fv = Array.isArray(violationsRes) ? violationsRes : [];
   let fm = Array.isArray(messagesRes) ? messagesRes : [];
-  let fp = Array.isArray(posRes) ? posRes : [];
+  let fp = Array.isArray(violationsRes) ? violationsRes.filter(v => v.category === 'إيجابية' || v.category === 'positive' || v.category === 'إيجابي') : [];
   const allReports = Array.isArray(reportsRes) ? reportsRes : [];
 
   if (dateFilter) {
@@ -1230,7 +1230,7 @@ async function getFullReportData(dateFrom, dateTo, sc) {
   const [violationsRes, messagesRes, posRes, reportsRes] = await Promise.all([
     sb('violations_log', 'GET', `school_code=eq.${sc}&select=class_name,violation_type,category,behavior_status,sub_type,student_name,recorded_at`),
     sb('messages_log', 'GET', `school_code=eq.${sc}&select=sent_at`),
-    sb('positive_behaviors_log', 'GET', `school_code=eq.${sc}&select=sub_type,student_name,class_name,recorded_at`),
+    sb('violations_log', 'GET', `school_code=eq.${sc}&category=eq.إيجابية&select=sub_type,recorded_at`),
     sb('reports', 'GET', `school_code=eq.${sc}&select=student_name,violation_type,created_at,read_at`)
   ]);
   const inRange = (dateStr) => {
@@ -1242,7 +1242,7 @@ async function getFullReportData(dateFrom, dateTo, sc) {
   };
   const fv = (Array.isArray(violationsRes)?violationsRes:[]).filter(v=>inRange(fmtDate(v.recorded_at)));
   const fm = (Array.isArray(messagesRes)?messagesRes:[]).filter(m=>inRange(fmtDate(m.sent_at)));
-  const fp = (Array.isArray(posRes)?posRes:[]).filter(p=>inRange(fmtDate(p.recorded_at)));
+  const fp = (Array.isArray(violationsRes)?violationsRes:[]).filter(v=>(v.category==='إيجابية'||v.category==='positive')&&inRange(fmtDate(v.recorded_at)));
   const allRpts = Array.isArray(reportsRes)?reportsRes:[];
   const cc={},tc={};
   fv.forEach(v=>{cc[v.class_name]=(cc[v.class_name]||0)+1;});
