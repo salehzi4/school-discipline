@@ -3604,20 +3604,25 @@ function loadPositiveBehaviorsLogTable(){
   const fc=document.getElementById('posLogFilterClass')?document.getElementById('posLogFilterClass').value:'الكل';
   const fd=document.getElementById('posLogFilterDate')?document.getElementById('posLogFilterDate').value:'';
   showLoading();
-  google.script.run.withSuccessHandler(function(recs){
+  // قراءة من violations_log مع فئة إيجابية
+  GAS.getViolationsLog(fc, fd, 'الكل').then(function(allRecs){
     hideLoading();
-    document.getElementById('positiveCountChip').textContent=recs.length;
-    document.getElementById('positiveLogCount').textContent=recs.length;
+    var recs = (allRecs||[]).filter(function(r){ return r.category==='إيجابية' || r.category==='positive'; });
+    var cntEl=document.getElementById('positiveCountChip');
+    var cntEl2=document.getElementById('positiveLogCount');
+    if(cntEl) cntEl.textContent=recs.length;
+    if(cntEl2) cntEl2.textContent=recs.length;
     const tb=document.getElementById('positiveBehaviorsLogBody');
+    if(!tb) return;
     if(!recs.length){tb.innerHTML='<tr><td colspan="8" class="empty-state">لا توجد سجلات</td></tr>';return;}
     tb.innerHTML=recs.map(function(r,i){
-      var isD=(r.subType==='متميز');
+      var isD=(r.sub_type==='متميز'||r.subType==='متميز');
       var badge=isD
-        ?'<span style="padding:2px 8px;border-radius:8px;background:rgba(34,211,238,0.12);color:#0891b2;font-size:10px;font-weight:700;">🌟 متميز</span>'
-        :'<span style="padding:2px 8px;border-radius:8px;background:rgba(22,163,74,0.12);color:#16a34a;font-size:10px;font-weight:700;">⭐ إيجابي</span>';
-      return '<tr><td>'+(i+1)+'</td><td>'+r.date+'</td><td><strong>'+r.studentName+'</strong></td><td>'+r.className+'</td><td>'+r.behaviorType+'</td><td>'+badge+'</td><td>'+r.recorder+'</td><td style="font-size:11px;color:var(--text-3);">'+r.notes+'</td></tr>';
+        ?'<span style="padding:2px 8px;border-radius:8px;background:rgba(34,211,238,0.12);color:#0891b2;font-size:10px;">🌟 متميز</span>'
+        :'<span style="padding:2px 8px;border-radius:8px;background:rgba(22,163,74,0.12);color:#16a34a;font-size:10px;">⭐ إيجابي</span>';
+      return '<tr><td>'+(i+1)+'</td><td>'+r.date+'</td><td><strong>'+r.studentName+'</strong></td><td>'+r.className+'</td><td>'+r.violationType+'</td><td>'+badge+'</td><td>'+(r.actionTaken||'—')+'</td></tr>';
     }).join('');
-  }).getPositiveBehaviorsLog(fc,fd);
+  }).catch(function(e){ hideLoading(); console.error(e); });
 }
 
 function loadStats(){const df=document.getElementById('statDateFilter').value;showLoading();GAS.getAdvancedStats(df).then(function(s){hideLoading();
