@@ -1046,7 +1046,9 @@ async function getAdvancedStats(dateFilter, sc) {
     classRanking: Object.entries(cc).sort((a,b) => b[1]-a[1]).map(e => ({ name: e[0], count: e[1] })),
     typeRanking: Object.entries(tc).sort((a,b) => b[1]-a[1]).map(e => ({ name: e[0], count: e[1] })),
     classTypeRanking: Object.entries(tcCls).sort((a,b) => b[1]-a[1]).map(e => ({ name: e[0], count: e[1] })),
-    positiveRanking: []
+    positiveRanking: Object.entries(
+      fp.reduce((acc, v) => { acc[v.violation_type || v.name || 'إيجابي'] = (acc[v.violation_type || v.name || 'إيجابي'] || 0) + 1; return acc; }, {})
+    ).sort((a,b) => b[1]-a[1]).slice(0,5).map(e => ({ name: e[0], count: e[1] }))
   };
 }
 
