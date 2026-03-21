@@ -3898,6 +3898,8 @@ var _fixedViolations = [];
 var _selectedViolations = []; // [{name, subViolation, degree, category}]
 var _schoolStage = 'elementary';
 var _activeStage = 'elementary';
+var _activeBehavioralDeg = '1';
+var _activeStaffDeg = '4';
 var _activeStage = 'elementary';
 var _openParentId = null;
 
@@ -3950,16 +3952,31 @@ function selectStage(stage, btn) {
 function renderAllViolationGrids() {
   // الغياب
   renderGrid('absence', null, 'fvGrid_absence');
-  // المخالفات السلوكية بالدرجات
+
+  // السلوكية — ارسم فقط، لا تغير الـ display
   ['1','2','3','4','5'].forEach(function(d) {
+    var grid = document.getElementById('fvGrid_behavioral_' + d);
+    if (!grid) return;
+    var currentDisplay = grid.style.display;
     renderGrid('behavioral', d, 'fvGrid_behavioral_' + d);
+    // أعد الـ display لما كان عليه (إلا لو الدرجة 1 النشطة)
+    if (d !== _activeBehavioralDeg) {
+      grid.style.display = 'none';
+    }
   });
-  // تجاه الهيئة
-  renderGrid('staff', '4', 'fvGrid_staff_4');
-  renderGrid('staff', '5', 'fvGrid_staff_5');
-  // الصفية
+
+  // الهيئة
+  ['4','5'].forEach(function(d) {
+    var grid = document.getElementById('fvGrid_staff_' + d);
+    if (!grid) return;
+    renderGrid('staff', d, 'fvGrid_staff_' + d);
+    if (d !== _activeStaffDeg) {
+      grid.style.display = 'none';
+    }
+  });
+
+  // الصفية والإيجابي
   renderGrid('class', null, 'fvGrid_class');
-  // الإيجابي
   renderGrid('positive', null, 'fvGrid_positive');
 }
 
@@ -4035,7 +4052,7 @@ function renderGrid(category, degree, gridId) {
       details = v.children.map(function(child) {
         var cs = _selectedViolations.some(function(s) { return s.id === v.id && s.subViolation === child; });
         var e  = child.replace(/"/g,'&quot;');
-        return '<span data-pid="' + v.id + '" data-child="' + e + '" onclick="event.stopPropagation();selectChildByData(this)" style="display:inline-block;margin:2px;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid ' + (cs ? '#fff' : brd) + ';background:' + (cs ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.6)') + ';color:' + (cs ? '#fff' : p.text) + ';">' + child + '</span>';
+        return '<span data-pid="' + v.id + '" data-child="' + e + '" onclick="event.stopPropagation();selectChildByData(this)" style="display:inline-block;margin:2px;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:2px solid ' + (cs ? p.border : 'rgba(0,0,0,0.15)') + ';background:' + (cs ? p.border : 'rgba(255,255,255,0.4)') + ';color:' + (cs ? '#fff' : 'rgba(0,0,0,0.5)') + ';">' + child + '</span>';
       }).join('') + '<span onclick="event.stopPropagation();addCustomSubViolation(' + v.id + ')" style="display:inline-block;margin:2px;padding:2px 8px;border-radius:20px;font-size:11px;cursor:pointer;border:1.5px dashed rgba(0,0,0,0.2);color:rgba(0,0,0,0.3);">+ أخرى</span>';
     } else if (category === 'class') {
       details = '<span style="font-size:11px;font-weight:600;color:' + (isSel ? 'rgba(255,255,255,0.8)' : p.border) + ';">صفية</span>';
@@ -4275,6 +4292,7 @@ function switchFVTab(tab, btn) {
 }
 
 function switchDegree(deg, btn) {
+  _activeBehavioralDeg = deg;
   document.querySelectorAll('#fvDegreeBar_behavioral .fv-degree-btn').forEach(function(b) { b.classList.remove('fv-degree-active'); });
   if (btn) btn.classList.add('fv-degree-active');
   ['1','2','3','4','5'].forEach(function(d) {
@@ -4284,6 +4302,7 @@ function switchDegree(deg, btn) {
 }
 
 function switchStaffDegree(deg, btn) {
+  _activeStaffDeg = deg;
   document.querySelectorAll('#fvDegreeBar_staff .fv-degree-btn').forEach(function(b) { b.classList.remove('fv-degree-active'); });
   if (btn) btn.classList.add('fv-degree-active');
   ['4','5'].forEach(function(d) {
