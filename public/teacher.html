@@ -1782,65 +1782,35 @@ function loadMyLog(){
   if(!T)return;
   const fd=document.getElementById('myLogDate').value;
   showL();
-  google.script.run.withSuccessHandler(recs=>{
+  GAS.getMyViolations(fd, T.name||'').then(function(result){
     hideL();
-    const my=(recs.violations||recs||[]).filter(r=>r.recorder===T.name);
-    document.getElementById('myLogCount').textContent=my.length;
+    const recs = result && result.violations ? result.violations : [];
+    document.getElementById('myLogCount').textContent=recs.length;
     const tb=document.getElementById('myLogBody');
-    tb.innerHTML=my.length?my.map((r,i)=>{
+    tb.innerHTML=recs.length?recs.map(function(r,i){
       let icons='';
-      if(r.signature)  icons+='<span title="يوجد توقيع"  class="material-icons-round" style="font-size:14px;color:var(--primary);vertical-align:middle;">draw</span>';
-      if(r.fingerprint)icons+='<span title="يوجد بصمة"   class="material-icons-round" style="font-size:14px;color:var(--success);vertical-align:middle;">fingerprint</span>';
+      if(r.signature)   icons+='<span title="يوجد توقيع" class="material-icons-round" style="font-size:14px;color:var(--primary);vertical-align:middle;">draw</span>';
+      if(r.fingerprint) icons+='<span title="يوجد بصمة" class="material-icons-round" style="font-size:14px;color:var(--success);vertical-align:middle;">fingerprint</span>';
       if(r.referredToAdmin==='نعم') icons+='<span title="أُحيلت للإدارة" class="material-icons-round" style="font-size:14px;color:var(--danger);vertical-align:middle;">escalator_warning</span>';
 
-      // عمود الإجراء
-      const actionHtml = r.actionType
-        ? '<span style="font-size:10px;background:#f3f4f6;padding:2px 7px;border-radius:10px;color:#374151;">'+r.actionType+'</span>'
-          +(r.actionTaken?'<br><span style="font-size:10px;color:var(--text-3);">'+r.actionTaken+'</span>':'')
-        : '<span style="font-size:10px;color:var(--text-3);">—</span>';
+      const actionHtml = r.actionTaken
+        ? '<span style="font-size:11px;color:#374151;">'+r.actionTaken+'</span>'
+        : (r.actionType
+            ? '<span style="font-size:10px;background:#f3f4f6;padding:2px 7px;border-radius:10px;color:#374151;">'+r.actionType+'</span>'
+            : '<span style="font-size:10px;color:var(--text-3);">—</span>');
 
-      // زر الظهور لولي الأمر (بسيطة ومتوسطة فقط — الخطيرة والإيجابية تتحكم بها تلقائياً)
       const canToggleVis = r.category!=='إيجابية' && r.severity!=='خطيرة';
       const isVis = r.visibleToParent==='نعم';
       const visBtn = canToggleVis
-        ? `<button class="vis-toggle ${isVis?'yes':'no'}" onclick="toggleVis('${r.date}','${r.studentName}','${r.violationType}',${!isVis},this)">
-            <span class="material-icons-round" style="font-size:12px;">${isVis?'visibility':'visibility_off'}</span>
-            ${isVis?'ظاهر لولي الأمر':'مخفي عنه'}
-           </button>`
-        : (r.category==='إيجابية'
-            ? '<span style="font-size:10px;color:var(--ok);">✅ دائماً</span>'
-            : '<span style="font-size:10px;color:var(--danger);">🔴 إدارة</span>');
+        ? '<button class="vis-toggle '+(isVis?'yes':'no')+'" onclick="toggleVis(''+r.date+'',''+r.studentName+'',''+r.violationType+'','+(isVis?'false':'true')+',this)"><span class="material-icons-round" style="font-size:12px;">'+(isVis?'visibility':'visibility_off')+'</span> '+(isVis?'ظاهر':'مخفي')+'</button>'
+        : (r.category==='إيجابية'?'<span style="font-size:10px;color:var(--ok);">✅ دائماً</span>':'<span style="font-size:10px;color:var(--danger);">🔴 إدارة</span>');
 
-      return `<tr>
-        <td>${i+1}</td>
-        <td>${r.date}</td>
-        <td><strong>${r.studentName}</strong> ${icons}</td>
-        <td>${r.className}</td>
-        <td>${r.violationType}<br><span style="font-size:10px;color:var(--text-3);">${r.severity||'بسيطة'}</span></td>
-        <td>${actionHtml}</td>
-        <td>${visBtn}</td>
-      </tr>`;
+      return '<tr><td>'+(i+1)+'</td><td>'+r.date+'</td><td><strong>'+r.studentName+'</strong> '+icons+'</td><td>'+r.className+'</td><td>'+r.violationType+'</td><td>'+actionHtml+'</td><td>'+visBtn+'</td></tr>';
     }).join(''):'<tr><td colspan="7" class="empty-state">لا توجد</td></tr>';
-
-    // جلب السلوكيات الإيجابية وإضافتها
-    google.script.run.withSuccessHandler(posRecs=>{
-      if(!posRecs||!posRecs.length) return;
-      const myPos = posRecs.filter(r=>r.recorder===T.name);
-      if(!myPos.length) return;
-      const posRows = myPos.map((r,ii)=>`<tr>
-        <td>${my.length+ii+1}</td>
-        <td>${r.date}</td>
-        <td><strong>${r.studentName}</strong></td>
-        <td>${r.className}</td>
-        <td>${r.violationType||r.type||'—'}<br><span style="font-size:10px;color:var(--ok);">${r.subType==='متميز'?'🌟 متميز':'⭐ إيجابي'}</span></td>
-        <td><span style="font-size:10px;color:var(--text-3);">${r.notes||'—'}</span></td>
-        <td><span style="font-size:10px;color:var(--ok);">✅ دائماً</span></td>
-      </tr>`).join('');
-      const tb=document.getElementById('myLogBody');
-      if(tb) tb.innerHTML=(tb.innerHTML==='<tr><td colspan="7" class="empty-state">لا توجد</td></tr>'?'':tb.innerHTML)+posRows;
-      document.getElementById('myLogCount').textContent=my.length+myPos.length;
-    }).getPositiveBehaviorsLog('',fd,T.name||'');
-  }).getMyViolations(fd, T.name||'');
+  }).catch(function(e){
+    hideL();
+    console.error('loadMyLog error:', e);
+  });
 }
 
 // تبديل ظهور المخالفة لولي الأمر
