@@ -2852,7 +2852,14 @@ tr:hover td{background:var(--em-ghost);}
         <select id="logFilterClass" onchange="loadViolationsLog()"><option value="الكل">كل الفصول</option></select>
         <input type="date" id="logFilterDate" onchange="loadViolationsLog()">
         <select id="logFilterType" style="display:none;"><option value="الكل">كل المخالفات</option></select>
-        <select id="logFilterCategory" style="display:none;"><option value="الكل">كل الفئات</option></select>
+        <select id="logFilterCategory" onchange="loadViolationsLog()" style="font-family:inherit;padding:5px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px;">
+          <option value="الكل">كل الفئات</option>
+          <option value="سلوكية">سلوكية</option>
+          <option value="صفية">صفية وتعليمية</option>
+          <option value="تجاه الهيئة">تجاه الهيئة</option>
+          <option value="غياب">غياب</option>
+          <option value="إيجابية">سلوكيات إيجابية</option>
+        </select>
         <select id="logFilterRecorder" onchange="loadViolationsLog()" style="font-family:inherit;padding:5px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px;">
           <option value="الكل">كل المسجلين</option>
           <option value="معلم">المعلمون فقط</option>
