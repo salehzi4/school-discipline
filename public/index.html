@@ -4746,7 +4746,8 @@ function loadViolationsLog(){
     } else {
       return '<td><span style="font-size:10px;color:#dc2626;">🔴 محال</span></td>';
     }
-  })()+'<td style="white-space:nowrap;"><button class="btn btn-outline btn-sm" onclick="addFollowUp(\''+esc(r.date).replace(/'/g,"\\'")+'\',\''+esc(r.studentName).replace(/'/g,"\\'")+'\',\''+esc(r.violationType).replace(/'/g,"\\'")+'\')" style="padding:4px 6px;background:'+(r.treatmentDate?'rgba(6,214,160,0.08)':'')+'" title="'+(r.treatmentDate?'إضافة متابعة إضافية':'تسجيل معالجة')+'"><span class="material-icons-round" style="font-size:14px;color:'+(r.treatmentDate?'#06D6A0':'var(--primary)')+'">'+(r.treatmentDate?'add_task':'task_alt')+'</span></button> <button class="btn btn-outline btn-sm" onclick="editVlRow('+i+',\''+esc(r.date).replace(/'/g,"\\'")+'\',\''+esc(r.studentName).replace(/'/g,"\\'")+'\',\''+esc(r.violationType).replace(/'/g,"\\'")+'\',\''+esc(r.notes||'').replace(/'/g,"\\'")+'\')" style="padding:4px 6px;"><span class="material-icons-round" style="font-size:14px;">edit</span></button> +'<button class="btn btn-outline btn-sm" onclick="createReportFromLog(\''+esc(r.date).replace(/\'/g,"\\'")+'\''+',\''+esc(r.studentName).replace(/\'/g,"\\'")+'\''+',\''+esc(r.violationType).replace(/\'/g,"\\'")+'\''+',\''+esc(r.category||'سلوكية').replace(/\'/g,"\\'")+'\''+')" style="padding:4px 6px;" title="إنشاء محضر"><span class="material-icons-round" style="font-size:14px;color:#C1B48A;">description</span></button>' <button class="btn btn-danger btn-sm" onclick="delVlEntry(\''+esc(r.date).replace(/'/g,"\\'")+'\',\''+esc(r.studentName).replace(/'/g,"\\'")+'\',\''+esc(r.violationType).replace(/'/g,"\\'")+'\')" style="padding:4px 6px;"><span class="material-icons-round" style="font-size:14px;">delete</span></button></td></tr>';
+  })()+'<td style="white-space:nowrap;"><button class="btn btn-outline btn-sm" onclick="addFollowUp(\''+esc(r.date).replace(/'/g,"\\'")+'\',\''+esc(r.studentName).replace(/'/g,"\\'")+'\',\''+esc(r.violationType).replace(/'/g,"\\'")+'\')" style="padding:4px 6px;background:'+(r.treatmentDate?'rgba(6,214,160,0.08)':'')+'" title="'+(r.treatmentDate?'إضافة متابعة إضافية':'تسجيل معالجة')+'"><span class="material-icons-round" style="font-size:14px;color:'+(r.treatmentDate?'#06D6A0':'var(--primary)')+'">'+(r.treatmentDate?'add_task':'task_alt')+'</span></button> <button class="btn btn-outline btn-sm" onclick="editVlRow('+i+',\''+esc(r.date).replace(/'/g,"\\'")+'\',\''+esc(r.studentName).replace(/'/g,"\\'")+'\',\''+esc(r.violationType).replace(/'/g,"\\'")+'\',\''+esc(r.notes||'').replace(/'/g,"\\'")+'\')" style="padding:4px 6px;"><span class="material-icons-round" style="font-size:14px;">edit</span></button>'+' <button class="btn btn-outline btn-sm" data-date="'+esc(r.date)+'" data-student="'+esc(r.studentName)+'" data-vtype="'+esc(r.violationType)+'" data-cat="'+esc(r.category||'سلوكية')+'" onclick="createReportFromLogBtn(this)" style="padding:4px 6px;" title="إنشاء محضر"><span class="material-icons-round" style="font-size:14px;color:#C1B48A;">description</span></button>'
+    +' <button class="btn btn-danger btn-sm" onclick="delVlEntry(\''+esc(r.date).replace(/'/g,"\\'")+'\',\''+esc(r.studentName).replace(/'/g,"\\'")+'\',\''+esc(r.violationType).replace(/'/g,"\\'")+'\')" style="padding:4px 6px;"><span class="material-icons-round" style="font-size:14px;">delete</span></button></td></tr>';
     }).join('');}
   // ── الحالات المعالجة ──
   const treated=records.filter(r=>r.treatmentDate&&r.treatmentDate.trim()!=='');
@@ -7779,6 +7780,14 @@ function resetTeacherImport() {
   var fi = document.getElementById('tcImportFileInfo'); if(fi)  fi.style.display = 'none';
   var pv = document.getElementById('tcImportPreview');  if(pv)  pv.style.display = 'none';
   var ip = document.getElementById('tcFileInput');      if(ip)  ip.value = '';
+}
+
+function createReportFromLogBtn(btn) {
+  var date = btn.getAttribute('data-date');
+  var studentName = btn.getAttribute('data-student');
+  var violationType = btn.getAttribute('data-vtype');
+  var category = btn.getAttribute('data-cat');
+  createReportFromLog(date, studentName, violationType, category);
 }
 
 function createReportFromLog(date, studentName, violationType, category) {
