@@ -4716,6 +4716,15 @@ function loadViolationsLog(){
     });
   // ── كل السجلات ──
   document.getElementById('logCountChip').textContent=records.length+' مخالفة';
+  // تعبئة قائمة أسماء الطلاب
+  var stuSel = document.getElementById('logFilterStudent');
+  if (stuSel) {
+    var curStu = fstu;
+    var stuNames = [];
+    allRecords.forEach(function(r){ if(r.studentName && stuNames.indexOf(r.studentName)===-1) stuNames.push(r.studentName); });
+    stuNames.sort();
+    stuSel.innerHTML = '<option value="">كل الطلاب</option>' + stuNames.map(function(n){ return '<option value="'+n+'"'+(n===curStu?' selected':'')+'>'+n+'</option>'; }).join('');
+  }
   const tb=document.getElementById('violationsLogTableBody');
   if(!records.length){tb.innerHTML='<tr><td colspan="10" class="empty-state">لا توجد</td></tr>';}
   else{_vlVisData={};tb.innerHTML=records.map((r,i)=>{
