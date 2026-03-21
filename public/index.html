@@ -2838,10 +2838,7 @@ tr:hover td{background:var(--em-ghost);}
       <span class="material-icons-round" style="font-size:14px;vertical-align:middle;">check_circle</span> الحالات المعالجة
       <span class="chip" id="treatedCountChip" style="margin-right:4px;background:rgba(6,214,160,0.12);color:#06D6A0;">0</span>
     </button>
-    <button class="log-sub-tab" id="logTab_positive" onclick="switchLogTab('positive',this)" style="padding:10px 20px;border:none;background:none;font-family:inherit;font-size:12px;font-weight:700;color:var(--text-light);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .18s;">
-      <span class="material-icons-round" style="font-size:14px;vertical-align:middle;color:#16a34a;">emoji_events</span> السلوك الإيجابي والمتميز
-      <span class="chip" id="positiveCountChip" style="margin-right:4px;background:rgba(22,163,74,0.12);color:#16a34a;">0</span>
-    </button>
+    
   </div>
 
   <!-- قسم: كل السجلات -->
@@ -3623,7 +3620,7 @@ function loadPositiveBehaviorsLogTable(){
   }).getPositiveBehaviorsLog(fc,fd);
 }
 
-function loadStats(){const df=document.getElementById('statDateFilter').value;showLoading();google.script.run.withSuccessHandler(function(s){hideLoading();
+function loadStats(){const df=document.getElementById('statDateFilter').value;showLoading();GAS.getAdvancedStats(df).then(function(s){hideLoading();
   drawHomeSummary(s);
   // إحصاءات الرئيسية الجديدة
   const elStu=document.getElementById('statStudents');
@@ -3647,7 +3644,7 @@ function loadStats(){const df=document.getElementById('statDateFilter').value;sh
   if(posDetail) posDetail.innerHTML=(s.positiveRanking&&s.positiveRanking.length)?s.positiveRanking.map(t=>'<div class="stat-detail-row"><span>⭐ '+t.name+'</span><span class="count">'+t.count+'</span></div>').join(''):'<div class="empty-state">لا توجد سلوكيات إيجابية مسجلة</div>';
   const rptDetail=document.getElementById('reportsDetail');
   if(rptDetail) rptDetail.innerHTML=(s.topReports&&s.topReports.length)?s.topReports.map(t=>'<div class="stat-detail-row"><span>📋 '+t.name+'</span><span class="count">'+t.count+'</span></div>').join(''):'<div class="empty-state">لا توجد محاضر</div>';
-}).getAdvancedStats(df);}
+});}
 
 // ══ رسوم الملخص في الرئيسية ══
 let _summaryCharts = {};
@@ -4716,12 +4713,13 @@ function loadViolationsLog(){
     });
   // ── كل السجلات ──
   document.getElementById('logCountChip').textContent=records.length+' مخالفة';
-  // تعبئة قائمة أسماء الطلاب
+  // تعبئة قائمة أسماء الطلاب (مرتبطة بالفصل المختار)
   var stuSel = document.getElementById('logFilterStudent');
   if (stuSel) {
-    var curStu = fstu;
+    var curStu = ((document.getElementById('logFilterStudent')||{}).value||'');
+    var baseRecords = fc === 'الكل' ? allRecords : allRecords.filter(function(r){ return r.className === fc; });
     var stuNames = [];
-    allRecords.forEach(function(r){ if(r.studentName && stuNames.indexOf(r.studentName)===-1) stuNames.push(r.studentName); });
+    baseRecords.forEach(function(r){ if(r.studentName && stuNames.indexOf(r.studentName)===-1) stuNames.push(r.studentName); });
     stuNames.sort();
     stuSel.innerHTML = '<option value="">كل الطلاب</option>' + stuNames.map(function(n){ return '<option value="'+n+'"'+(n===curStu?' selected':'')+'>'+n+'</option>'; }).join('');
   }
