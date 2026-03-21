@@ -2751,7 +2751,7 @@ function submitFixedViolation() {
       studentsData: selStudents,
       violations: violationsWithActions,
       actionText: '',
-      recorder: tName || 'معلم',
+      recorder: sessionStorage.getItem('tName') || 'معلم',
     }).then(function(result) {
       hideL();
       if (result && result.success) {
