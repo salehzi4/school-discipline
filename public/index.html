@@ -2852,9 +2852,35 @@ tr:hover td{background:var(--em-ghost);}
         <select id="logFilterClass" onchange="loadViolationsLog()"><option value="الكل">كل الفصول</option></select>
         <input type="date" id="logFilterDate" onchange="loadViolationsLog()">
         <select id="logFilterType" onchange="loadViolationsLog()"><option value="الكل">كل المخالفات</option></select>
+        <select id="logFilterCategory" onchange="loadViolationsLog()" style="font-family:inherit;padding:5px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px;">
+          <option value="الكل">كل الفئات</option>
+          <option value="سلوكية">سلوكية</option>
+          <option value="صفية">صفية وتعليمية</option>
+          <option value="تجاه الهيئة">تجاه الهيئة</option>
+          <option value="غياب">غياب</option>
+          <option value="إيجابية">سلوكيات إيجابية</option>
+        </select>
+        <select id="logFilterRecorder" onchange="loadViolationsLog()" style="font-family:inherit;padding:5px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px;">
+          <option value="الكل">كل المسجلين</option>
+          <option value="معلم">المعلمون فقط</option>
+          <option value="الإدارة">الإدارة فقط</option>
+        </select>
+        <select id="logFilterCategory" onchange="loadViolationsLog()">
+          <option value="الكل">كل الفئات</option>
+          <option value="سلوكية">سلوكية</option>
+          <option value="صفية">صفية وتعليمية</option>
+          <option value="تجاه الهيئة">تجاه الهيئة</option>
+          <option value="غياب">غياب</option>
+          <option value="إيجابية">سلوكيات إيجابية</option>
+        </select>
+        <select id="logFilterRecorder" onchange="loadViolationsLog()">
+          <option value="الكل">كل المسجلين</option>
+          <option value="معلم">تسجيل المعلمين فقط</option>
+          <option value="الإدارة">تسجيل الإدارة فقط</option>
+        </select>
         <button class="btn btn-outline btn-sm" onclick="clearLogFilters()">مسح</button>
       </div>
-      <div class="table-wrapper"><table><thead><tr><th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>المخالفة</th><th>الإجراء المتخذ</th><th>التكرار</th><th>المسجّل</th><th>ولي الأمر 👁</th><th>إجراءات</th></tr></thead><tbody id="violationsLogTableBody"><tr><td colspan="8" class="empty-state">لا توجد</td></tr></tbody></table></div>
+      <div class="table-wrapper"><table><thead><tr><th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>نوع المخالفة</th><th>المخالفة</th><th>الإجراء المتخذ</th><th>التكرار</th><th>المسجّل</th><th>ولي الأمر 👁</th><th>إجراءات</th></tr></thead><tbody id="violationsLogTableBody"><tr><td colspan="8" class="empty-state">لا توجد</td></tr></tbody></table></div>
     </div>
   </div>
 
@@ -4664,7 +4690,40 @@ function switchLogTab(tab,btn){
   if(tab==='positive') loadPositiveBehaviorsLogTable();
 }
 
-function loadViolationsLog(){const fc=document.getElementById('logFilterClass').value,fd=document.getElementById('logFilterDate').value,ft=document.getElementById('logFilterType').value;showLoading();GAS.getViolationsLog(fc,fd,ft).then(function(records){hideLoading();
+function _getCategoryLabel(cat) {
+  var map = { 'سلوكية':'<span style="padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:#fdf8ee;color:#6b5a2e;border:1px solid #C1B48A;">سلوكية</span>',
+    'صفية':'<span style="padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:#e8faf9;color:#085856;border:1px solid #0DA9A6;">صفية</span>',
+    'تجاه الهيئة':'<span style="padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:#f0f4fc;color:#0C3B6E;border:1px solid #3D7EB9;">هيئة</span>',
+    'غياب':'<span style="padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:#e8f5ee;color:#055c38;border:1px solid #07A869;">غياب</span>',
+    'إيجابية':'<span style="padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:#e8f5ee;color:#055c38;border:1px solid #07A869;">إيجابي</span>' };
+  return map[cat] || '<span style="padding:2px 8px;border-radius:20px;font-size:10px;color:#999;border:1px solid #C2C1C1;">'+(cat||'—')+'</span>';
+}
+
+function loadViolationsLog(){
+  const fc=document.getElementById('logFilterClass').value;
+  const fd=document.getElementById('logFilterDate').value;
+  const ft=document.getElementById('logFilterType').value;
+  const fcat=(document.getElementById('logFilterCategory')||{}).value||'الكل';
+  const frec=(document.getElementById('logFilterRecorder')||{}).value||'الكل';
+  showLoading();
+  GAS.getViolationsLog(fc,fd,ft).then(function(allRecords){
+    hideLoading();
+    // تطبيق فلاتر الفئة والمسجّل
+    var records = allRecords.filter(function(r) {
+      if (fcat !== 'الكل') {
+        var cat = r.category || '';
+        if (fcat === 'سلوكية'      && cat !== 'سلوكية') return false;
+        if (fcat === 'صفية'        && cat !== 'صفية') return false;
+        if (fcat === 'تجاه الهيئة' && cat !== 'تجاه الهيئة') return false;
+        if (fcat === 'غياب'        && cat !== 'غياب') return false;
+        if (fcat === 'إيجابية'     && cat !== 'إيجابية') return false;
+      }
+      if (frec !== 'الكل') {
+        if (frec === 'معلم'    && r.recorder === 'الإدارة') return false;
+        if (frec === 'الإدارة' && r.recorder !== 'الإدارة') return false;
+      }
+      return true;
+    });
   // ── كل السجلات ──
   document.getElementById('logCountChip').textContent=records.length+' مخالفة';
   const tb=document.getElementById('violationsLogTableBody');
@@ -4687,7 +4746,7 @@ function loadViolationsLog(){const fc=document.getElementById('logFilterClass').
     } else {
       return '<td><span style="font-size:10px;color:#dc2626;">🔴 محال</span></td>';
     }
-  })()+'<td style="white-space:nowrap;"><button class="btn btn-outline btn-sm" onclick="addFollowUp(\''+esc(r.date).replace(/'/g,"\\'")+'\',\''+esc(r.studentName).replace(/'/g,"\\'")+'\',\''+esc(r.violationType).replace(/'/g,"\\'")+'\')" style="padding:4px 6px;background:'+(r.treatmentDate?'rgba(6,214,160,0.08)':'')+'" title="'+(r.treatmentDate?'إضافة متابعة إضافية':'تسجيل معالجة')+'"><span class="material-icons-round" style="font-size:14px;color:'+(r.treatmentDate?'#06D6A0':'var(--primary)')+'">'+(r.treatmentDate?'add_task':'task_alt')+'</span></button> <button class="btn btn-outline btn-sm" onclick="editVlRow('+i+',\''+esc(r.date).replace(/'/g,"\\'")+'\',\''+esc(r.studentName).replace(/'/g,"\\'")+'\',\''+esc(r.violationType).replace(/'/g,"\\'")+'\',\''+esc(r.notes||'').replace(/'/g,"\\'")+'\')" style="padding:4px 6px;"><span class="material-icons-round" style="font-size:14px;">edit</span></button> <button class="btn btn-danger btn-sm" onclick="delVlEntry(\''+esc(r.date).replace(/'/g,"\\'")+'\',\''+esc(r.studentName).replace(/'/g,"\\'")+'\',\''+esc(r.violationType).replace(/'/g,"\\'")+'\')" style="padding:4px 6px;"><span class="material-icons-round" style="font-size:14px;">delete</span></button></td></tr>';
+  })()+'<td style="white-space:nowrap;"><button class="btn btn-outline btn-sm" onclick="addFollowUp(\''+esc(r.date).replace(/'/g,"\\'")+'\',\''+esc(r.studentName).replace(/'/g,"\\'")+'\',\''+esc(r.violationType).replace(/'/g,"\\'")+'\')" style="padding:4px 6px;background:'+(r.treatmentDate?'rgba(6,214,160,0.08)':'')+'" title="'+(r.treatmentDate?'إضافة متابعة إضافية':'تسجيل معالجة')+'"><span class="material-icons-round" style="font-size:14px;color:'+(r.treatmentDate?'#06D6A0':'var(--primary)')+'">'+(r.treatmentDate?'add_task':'task_alt')+'</span></button> <button class="btn btn-outline btn-sm" onclick="editVlRow('+i+',\''+esc(r.date).replace(/'/g,"\\'")+'\',\''+esc(r.studentName).replace(/'/g,"\\'")+'\',\''+esc(r.violationType).replace(/'/g,"\\'")+'\',\''+esc(r.notes||'').replace(/'/g,"\\'")+'\')" style="padding:4px 6px;"><span class="material-icons-round" style="font-size:14px;">edit</span></button> +'<button class="btn btn-outline btn-sm" onclick="createReportFromLog(\''+esc(r.date).replace(/\'/g,"\\'")+'\''+',\''+esc(r.studentName).replace(/\'/g,"\\'")+'\''+',\''+esc(r.violationType).replace(/\'/g,"\\'")+'\''+',\''+esc(r.category||'سلوكية').replace(/\'/g,"\\'")+'\''+')" style="padding:4px 6px;" title="إنشاء محضر"><span class="material-icons-round" style="font-size:14px;color:#C1B48A;">description</span></button>' <button class="btn btn-danger btn-sm" onclick="delVlEntry(\''+esc(r.date).replace(/'/g,"\\'")+'\',\''+esc(r.studentName).replace(/'/g,"\\'")+'\',\''+esc(r.violationType).replace(/'/g,"\\'")+'\')" style="padding:4px 6px;"><span class="material-icons-round" style="font-size:14px;">delete</span></button></td></tr>';
     }).join('');}
   // ── الحالات المعالجة ──
   const treated=records.filter(r=>r.treatmentDate&&r.treatmentDate.trim()!=='');
@@ -7721,6 +7780,19 @@ function resetTeacherImport() {
   var pv = document.getElementById('tcImportPreview');  if(pv)  pv.style.display = 'none';
   var ip = document.getElementById('tcFileInput');      if(ip)  ip.value = '';
 }
+
+function createReportFromLog(date, studentName, violationType, category) {
+  if (category !== 'سلوكية' && category !== 'تجاه الهيئة') {
+    showAlert('vlAlert','error','المحضر يُنشأ للمخالفات السلوكية وتجاه الهيئة فقط');
+    return;
+  }
+  var vt = { type: violationType };
+  var studentData = { name: studentName, className: '' };
+  _rptBatchStudents = [studentData];
+  _rptCurrentIdx = 0;
+  _fillReportModal(studentData, vt, 0, 1);
+}
+
 </script>
 
 </body>
