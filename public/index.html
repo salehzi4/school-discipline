@@ -2028,7 +2028,7 @@ tr:hover td{background:var(--em-ghost);}
   <button id="fvSideBtn_staff" onclick="switchFVTab('staff',this)"
     style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 6px;border:2px solid #C2C1C1;border-radius:16px;background:#fff;cursor:pointer;font-family:inherit;transition:all .18s;">
     <span class="material-icons-round" style="font-size:28px;color:#3D7EB9;">supervisor_account</span>
-    <span style="font-size:10px;font-weight:700;color:#0C3B6E;text-align:center;">تجاه الهيئة</span>
+    <span style="font-size:10px;font-weight:700;color:#0C3B6E;text-align:center;">تجاه الهيئة التعليمية والادارية</span>
   </button>
 
   <button id="fvSideBtn_class" onclick="switchFVTab('class',this)"
@@ -3954,7 +3954,7 @@ function renderAllViolationGrids() {
   ['1','2','3','4','5'].forEach(function(d) {
     renderGrid('behavioral', d, 'fvGrid_behavioral_' + d);
   });
-  // تجاه الهيئة
+  // تجاه الهيئة التعليمية والادارية
   renderGrid('staff', '4', 'fvGrid_staff_4');
   renderGrid('staff', '5', 'fvGrid_staff_5');
   // الصفية
