@@ -2028,7 +2028,7 @@ tr:hover td{background:var(--em-ghost);}
   <button id="fvSideBtn_staff" onclick="switchFVTab('staff',this)"
     style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 6px;border:2px solid #C2C1C1;border-radius:16px;background:#fff;cursor:pointer;font-family:inherit;transition:all .18s;">
     <span class="material-icons-round" style="font-size:28px;color:#3D7EB9;">supervisor_account</span>
-    <span style="font-size:10px;font-weight:700;color:#0C3B6E;text-align:center;">تجاه الهيئة التعليمية والادارية</span>
+    <span style="font-size:10px;font-weight:700;color:#0C3B6E;text-align:center;">تجاه الهيئة</span>
   </button>
 
   <button id="fvSideBtn_class" onclick="switchFVTab('class',this)"
@@ -3954,7 +3954,7 @@ function renderAllViolationGrids() {
   ['1','2','3','4','5'].forEach(function(d) {
     renderGrid('behavioral', d, 'fvGrid_behavioral_' + d);
   });
-  // تجاه الهيئة التعليمية والادارية
+  // تجاه الهيئة
   renderGrid('staff', '4', 'fvGrid_staff_4');
   renderGrid('staff', '5', 'fvGrid_staff_5');
   // الصفية
@@ -4256,12 +4256,10 @@ var _tabColors = {
 
 function switchFVTab(tab, btn) {
   document.querySelectorAll('.fv-tab-content').forEach(function(c) { c.classList.remove('active'); });
-  // Reset all tab buttons to default style
   ['absence','behavioral','staff','class','positive'].forEach(function(t) {
     var b = document.getElementById('fvSideBtn_' + t);
     if (b) { b.style.background = '#fff'; b.style.borderColor = '#C2C1C1'; }
   });
-  // Activate selected tab
   var c = document.getElementById('fvContent_' + tab);
   if (c) c.classList.add('active');
   if (btn) {
@@ -4269,6 +4267,7 @@ function switchFVTab(tab, btn) {
     btn.style.background = tc.bg;
     btn.style.borderColor = tc.border;
   }
+  // إظهار أشرطة الدرجات فقط للتبويب المناسب
   var dBar = document.getElementById('fvDegreeBar_behavioral');
   var sBar = document.getElementById('fvDegreeBar_staff');
   if (dBar) dBar.style.display = tab === 'behavioral' ? 'flex' : 'none';
