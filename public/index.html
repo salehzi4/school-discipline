@@ -1731,6 +1731,10 @@ tr:hover td{background:var(--em-ghost);}
   <button class="sidebar-sub-btn" data-page="record" onclick="showPage('record',this)">
     <span class="material-icons-round">edit_note</span> رصد المخالفات والسلوك
   </button>
+  <button class="sidebar-sub-btn" data-page="referred" onclick="showPage('referred',this)">
+    <span class="material-icons-round" style="color:#f87171;">escalator_warning</span> الطلاب المحالون
+    <span id="refNavBadge2" style="display:none;background:#DC2626;color:#fff;font-size:9px;padding:1px 5px;border-radius:10px;margin-right:4px;"></span>
+  </button>
 
   <!-- ── السجلات ── -->
   <div class="sb-section-lbl">السجلات</div>
@@ -1775,10 +1779,7 @@ tr:hover td{background:var(--em-ghost);}
     <span class="material-icons-round">notifications_active</span> التنبيهات
     <span id="refNavBadge" style="display:none;background:#DC2626;color:#fff;font-size:9px;padding:1px 6px;border-radius:8px;margin-right:auto;font-weight:800;">0</span>
   </button>
-  <button class="sidebar-sub-btn" data-page="referred" onclick="showPage('referred',this)">
-    <span class="material-icons-round" style="color:#f87171;">escalator_warning</span> صندوق المُحالات
-    <span id="refNavBadge2" style="display:none;background:#DC2626;color:#fff;font-size:9px;padding:1px 6px;border-radius:8px;margin-right:auto;font-weight:800;">0</span>
-  </button>
+
 
   <!-- ── بوابات المستخدمين ── -->
   <div class="sb-section-lbl">بوابات المستخدمين</div>
@@ -2588,12 +2589,7 @@ tr:hover td{background:var(--em-ghost);}
   <!-- فلاتر -->
   <div class="card" style="padding:12px 16px;margin-bottom:14px;">
     <div class="filters-bar" style="flex-wrap:wrap;gap:8px;">
-      <select id="refFilterSeverity" onchange="loadReferredViolations()" style="min-width:130px;">
-        <option value="الكل">كل الخطورة</option>
-        <option value="خطيرة">خطيرة</option>
-        <option value="متكررة">متكررة</option>
-        <option value="متوسطة">متوسطة</option>
-      </select>
+
       <select id="refFilterClass" onchange="loadReferredViolations()" style="min-width:130px;">
         <option value="الكل">كل الفصول</option>
       </select>
@@ -7003,12 +6999,10 @@ function loadReferredViolations(){
 }
 
 function renderReferredCards(){
-  const sevF   = document.getElementById('refFilterSeverity')?.value||'الكل';
-  const clsF   = document.getElementById('refFilterClass')?.value||'الكل';
-  const statF  = document.getElementById('refFilterStatus')?.value||'الكل';
+  const clsF  = document.getElementById('refFilterClass')?.value||'الكل';
+  const statF = document.getElementById('refFilterStatus')?.value||'الكل';
 
   let data = _allReferred.filter(r=>{
-    if(sevF!=='الكل' && r.severity!==sevF) return false;
     if(clsF!=='الكل' && r.className!==clsF) return false;
     if(statF==='بانتظار' && r.adminDecision) return false;
     if(statF==='تم' && !r.adminDecision) return false;
@@ -7030,59 +7024,84 @@ function renderReferredCards(){
   }
 
   cont.innerHTML = data.map((r,i)=>{
-    const sevColor  = r.severity==='خطيرة'?'#DC2626':r.severity==='متوسطة'?'#D97706':'#059669';
-    const sevLabel  = r.severity==='خطيرة'?'🔴 خطيرة':r.severity==='متوسطة'?'🟠 متوسطة':'🟡 بسيطة';
-    const refReason = r.severity==='خطيرة'?'مخالفة خطيرة':'تكرار المخالفة';
+    const isVis = r.visibleToParent==='نعم';
+    const cardId = `ref_${i}_${Date.now()}`;
 
-    const actionHtml = r.actionType
-      ? `<div style="margin:8px 0;padding:8px 10px;background:rgba(0,0,0,.03);border-radius:8px;border-right:3px solid ${sevColor};">
-          <div style="font-size:10px;color:#6b7280;font-weight:700;">الإجراء المتخذ من المعلم:</div>
-          <div style="font-size:11px;font-weight:700;margin-top:2px;">${r.actionType}</div>
-          ${r.actionTaken?`<div style="font-size:11px;color:#374151;margin-top:2px;">${r.actionTaken}</div>`:''}
+    // الإجراء المتخذ
+    const actionHtml = (r.actionType||r.actionTaken)
+      ? `<div style="margin:8px 0;padding:8px 12px;background:#f0fdf4;border-radius:8px;border-right:3px solid #07A869;">
+          <div style="font-size:10px;color:#555;font-weight:700;margin-bottom:3px;">الإجراء المتخذ من المعلم</div>
+          <div style="font-size:12px;font-weight:600;color:#055c38;">${r.actionType||''} ${r.actionTaken?'— '+r.actionTaken:''}</div>
         </div>`
-      : '<div style="font-size:11px;color:#9ca3af;margin:6px 0;">لم يُسجَّل إجراء من المعلم</div>';
+      : `<div style="margin:8px 0;padding:8px 12px;background:#fef2f2;border-radius:8px;border-right:3px solid #E24B4A;">
+          <span style="font-size:11px;color:#E24B4A;font-weight:600;">⚠️ لم يُسجَّل إجراء من المعلم</span>
+        </div>`;
 
-    const visLabel = r.visibleToParent==='نعم'
-      ? '<span style="font-size:10px;color:#059669;font-weight:700;">👁 يظهر لولي الأمر</span>'
-      : '<span style="font-size:10px;color:#9ca3af;">مخفي عن ولي الأمر</span>';
+    // زر ولي الأمر — زر واحد toggle
+    const visBtn = `<button onclick="adminToggleVisCard('${r.date}','${esc(r.studentName)}','${esc(r.violationType)}',${!isVis},'${cardId}')"
+      style="font-size:11px;padding:5px 12px;border-radius:8px;border:1.5px solid ${isVis?'#07A869':'#C2C1C1'};background:${isVis?'#e8f5ee':'#fff'};color:${isVis?'#055c38':'#555'};font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:4px;">
+      <span class="material-icons-round" style="font-size:13px;">${isVis?'visibility':'visibility_off'}</span>
+      ${isVis?'ظاهر لولي الأمر':'مخفي عن ولي الأمر'}
+    </button>`;
 
-    const id = `ref_${i}_${Date.now()}`;
-    return `
-      <div class="card" style="border-right:4px solid ${sevColor};margin-bottom:12px;" id="${id}">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px;">
-          <div>
-            <div style="font-size:14px;font-weight:800;">${r.studentName} <span style="font-size:11px;color:#6b7280;font-weight:500;">— ${r.className}</span></div>
-            <div style="font-size:12px;color:#374151;margin-top:2px;">${r.violationType}</div>
-            <div style="font-size:10px;color:#9ca3af;margin-top:2px;">📅 ${r.referralDate||r.date} · ${r.recorder||'معلم'} · <em>${refReason}</em></div>
-          </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
-            <span style="padding:3px 10px;border-radius:12px;background:${sevColor}18;color:${sevColor};font-size:10px;font-weight:800;">${sevLabel}</span>
-            ${visLabel}
-          </div>
+    return `<div class="card" style="border-right:4px solid #15445A;margin-bottom:12px;padding:14px;" id="${cardId}">
+
+      <!-- معلومات المخالفة المنظمة -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+        <div>
+          <div style="font-size:10px;color:#888;font-weight:700;margin-bottom:2px;">اسم الطالب</div>
+          <div style="font-size:13px;font-weight:800;color:#15445A;">${r.studentName}</div>
         </div>
-        ${actionHtml}
-        <!-- أزرار القرار الإداري -->
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">
-          <button class="btn btn-outline btn-sm" onclick="adminToggleVis('${r.date}','${esc(r.studentName)}','${esc(r.violationType)}',true,'${id}')"
-            style="font-size:11px;border-color:var(--success);color:var(--success);">
-            <span class="material-icons-round" style="font-size:13px;">visibility</span> إظهار لولي الأمر
-          </button>
-          <button class="btn btn-outline btn-sm" onclick="adminToggleVis('${r.date}','${esc(r.studentName)}','${esc(r.violationType)}',false,'${id}')"
-            style="font-size:11px;">
-            <span class="material-icons-round" style="font-size:13px;">visibility_off</span> إخفاء
-          </button>
-          <button class="btn btn-primary btn-sm" onclick="adminCreateReport('${esc(r.studentName)}','${esc(r.className)}','${esc(r.violationType)}')"
-            style="font-size:11px;">
-            <span class="material-icons-round" style="font-size:13px;">description</span> إصدار محضر
-          </button>
-          <button class="btn btn-sm" onclick="addFollowUp('${r.date}','${esc(r.studentName)}','${esc(r.violationType)}')"
-            style="font-size:11px;background:rgba(6,214,160,0.1);border:none;color:#06D6A0;font-weight:700;">
-            <span class="material-icons-round" style="font-size:13px;">task_alt</span> المعالجة
-          </button>
+        <div>
+          <div style="font-size:10px;color:#888;font-weight:700;margin-bottom:2px;">الفصل</div>
+          <div style="font-size:13px;font-weight:700;">${r.className}</div>
         </div>
-      </div>`;
+        <div style="grid-column:1/-1;">
+          <div style="font-size:10px;color:#888;font-weight:700;margin-bottom:2px;">المخالفة</div>
+          <div style="font-size:12px;font-weight:700;color:#374151;">${r.violationType}</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:#888;font-weight:700;margin-bottom:2px;">المعلم</div>
+          <div style="font-size:12px;">${r.recorder||'—'}</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:#888;font-weight:700;margin-bottom:2px;">التاريخ والوقت</div>
+          <div style="font-size:12px;">${r.referralDate||r.date}</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:#888;font-weight:700;margin-bottom:2px;">عدد التكرار</div>
+          <div style="font-size:12px;font-weight:700;color:${(r.repeatCount||1)>2?'#E24B4A':'#374151'};">${r.repeatCount||1} مرة</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:#888;font-weight:700;margin-bottom:2px;">قرار الإدارة</div>
+          <div style="font-size:12px;">${r.adminDecision?'<span style="color:#07A869;font-weight:700;">✅ '+r.adminDecision+'</span>':'<span style="color:#D97706;font-weight:700;">⏳ بانتظار القرار</span>'}</div>
+        </div>
+      </div>
+
+      ${actionHtml}
+
+      <!-- أزرار -->
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);align-items:center;">
+        ${visBtn}
+        <button class="btn btn-primary btn-sm" onclick="adminCreateReport('${esc(r.studentName)}','${esc(r.className)}','${esc(r.violationType)}')"
+          style="font-size:11px;">
+          <span class="material-icons-round" style="font-size:13px;">description</span> إصدار محضر
+        </button>
+        <button class="btn btn-sm" onclick="addFollowUp('${r.date}','${esc(r.studentName)}','${esc(r.violationType)}')"
+          style="font-size:11px;background:rgba(6,214,160,0.1);border:none;color:#06D6A0;font-weight:700;">
+          <span class="material-icons-round" style="font-size:13px;">task_alt</span> المعالجة
+        </button>
+      </div>
+    </div>`;
   }).join('');
 }
+
+function adminToggleVisCard(date, studentName, vtype, newVis, cardId) {
+  GAS.toggleViolationVisibility(date, studentName, vtype, newVis).then(function(){
+    loadReferredViolations();
+  }).catch(function(e){ console.error(e); });
+}
+
 
 function clearRefFilters(){
   document.getElementById('refFilterSeverity').value='الكل';
