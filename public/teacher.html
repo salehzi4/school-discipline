@@ -2810,12 +2810,16 @@ function selectChildViolation(parentId, childName, btn) {
   if (existing !== -1) {
     _selectedViolations.splice(existing, 1);
   } else {
-    _selectedViolations.push({ id: parentId, name: viol.name, subViolation: childName, degree: viol.degree, category: viol.category });
+    // أزل أي إدخال سابق لنفس الأب بدون تابع
+    _selectedViolations = _selectedViolations.filter(function(s) { return !(s.id === parentId && !s.subViolation); });
+    _selectedViolations.push({ id: parentId, name: viol.name, subViolation: childName, degree: viol.degree, category: viol.category, rowAction: '' });
   }
   refreshSelectedDisplay();
-  // تحديث حالة الزر
-  var btn = document.querySelector('#fvChildren_' + parentId + ' .fv-child-btn[onclick*="' + childName.replace(/'/g,"\'") + '"]');
-  if (btn) btn.classList.toggle('selected', existing === -1);
+  // إعادة رسم البطاقة لتحديث التمييز البصري
+  var cat = viol.category;
+  var deg = (cat === 'behavioral' || cat === 'staff') ? viol.degree : null;
+  var gridId = 'fvGrid_' + (cat === 'behavioral' ? 'behavioral_' + viol.degree : cat === 'staff' ? 'staff_' + viol.degree : cat);
+  renderGrid(cat, deg, gridId);
 }
 </script>
 
