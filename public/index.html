@@ -2850,7 +2850,7 @@ tr:hover td{background:var(--em-ghost);}
       <div class="card-title"><span class="material-icons-round">history</span> سجل المخالفات</div>
       <div class="filters-bar">
         <select id="logFilterClass" onchange="loadViolationsLog()"><option value="الكل">كل الفصول</option></select>
-        <input type="text" id="logFilterStudent" placeholder="اسم الطالب..." onkeyup="loadViolationsLog()" style="padding:5px 10px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:12px;width:140px;">
+        <select id="logFilterStudent" onchange="loadViolationsLog()" style="font-family:inherit;padding:5px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px;"><option value="">كل الطلاب</option></select>
         <input type="date" id="logFilterDate" onchange="loadViolationsLog()">
         <select id="logFilterType" style="display:none;"><option value="الكل">كل المخالفات</option></select>
         <select id="logFilterCategory" onchange="loadViolationsLog()" style="font-family:inherit;padding:5px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px;">
