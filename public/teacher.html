@@ -2740,8 +2740,8 @@ function tSelectStage(stage, btn) {
 
 function submitFixedViolation() {
   var selStudents = getSelectedStudents ? getSelectedStudents() : [];
-  if (!selStudents.length) { showAlert('recordAlert','error','اختر طالباً أولاً'); return; }
-  if (!_selectedViolations.length) { showAlert('recordAlert','error','اختر مخالفة أولاً'); return; }
+  if (!selStudents.length) { showA('recordAlert','error','اختر طالباً أولاً'); return; }
+  if (!_selectedViolations.length) { showA('recordAlert','error','اختر مخالفة أولاً'); return; }
   showL();
   try {
     var violationsWithActions = _selectedViolations.map(function(v) {
@@ -2755,17 +2755,17 @@ function submitFixedViolation() {
     }).then(function(result) {
       hideL();
       if (result && result.success) {
-        showAlert('recordAlert','success','✅ تم تسجيل المخالفة بنجاح');
+        showA('recordAlert','success','✅ تم تسجيل المخالفة بنجاح');
         _selectedViolations = [];
         refreshSelectedDisplay();
         renderAllViolationGrids();
       } else {
-        showAlert('recordAlert','error','حدث خطأ: ' + (result && result.error ? result.error : 'غير معروف'));
+        showA('recordAlert','error','حدث خطأ: ' + (result && result.error ? result.error : 'غير معروف'));
       }
     });
   } catch(e) {
     hideL();
-    showAlert('recordAlert','error','خطأ: ' + e.message);
+    showA('recordAlert','error','خطأ: ' + e.message);
   }
 }
 
