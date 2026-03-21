@@ -1802,7 +1802,7 @@ function loadMyLog(){
       const canToggleVis = r.category!=='إيجابية' && r.severity!=='خطيرة';
       const isVis = r.visibleToParent==='نعم';
       const visBtn = canToggleVis
-        ? '<button class="vis-toggle '+(isVis?'yes':'no')+'" onclick="toggleVis(''+r.date+'',''+r.studentName+'',''+r.violationType+'','+(isVis?'false':'true')+',this)"><span class="material-icons-round" style="font-size:12px;">'+(isVis?'visibility':'visibility_off')+'</span> '+(isVis?'ظاهر':'مخفي')+'</button>'
+        ? '<button class="vis-toggle '+(isVis?'yes':'no')+'" onclick="toggleVis(this)"><span class="material-icons-round" style="font-size:12px;">'+(isVis?'visibility':'visibility_off')+'</span> '+(isVis?'ظاهر':'مخفي')+'</button>'
         : (r.category==='إيجابية'?'<span style="font-size:10px;color:var(--ok);">✅ دائماً</span>':'<span style="font-size:10px;color:var(--danger);">🔴 إدارة</span>');
 
       return '<tr><td>'+(i+1)+'</td><td>'+r.date+'</td><td><strong>'+r.studentName+'</strong> '+icons+'</td><td>'+r.className+'</td><td>'+r.violationType+'</td><td>'+actionHtml+'</td><td>'+visBtn+'</td></tr>';
