@@ -2723,7 +2723,7 @@ function submitFixedViolation() {
   var selStudents = getSelectedStudents ? getSelectedStudents() : [];
   if (!selStudents.length) { showAlert('recordAlert','error','اختر طالباً أولاً'); return; }
   if (!_selectedViolations.length) { showAlert('recordAlert','error','اختر مخالفة أولاً'); return; }
-  showLoading();
+  showL();
   try {
     var violationsWithActions = _selectedViolations.map(function(v) {
       return Object.assign({}, v, { actionText: v.rowAction || '' });
@@ -2734,7 +2734,7 @@ function submitFixedViolation() {
       actionText: '',
       recorder: _teacherName || 'معلم',
     }).then(function(result) {
-      hideLoading();
+      hideL();
       if (result && result.success) {
         showAlert('recordAlert','success','✅ تم تسجيل المخالفة بنجاح');
         _selectedViolations = [];
@@ -2745,7 +2745,7 @@ function submitFixedViolation() {
       }
     });
   } catch(e) {
-    hideLoading();
+    hideL();
     showAlert('recordAlert','error','خطأ: ' + e.message);
   }
 }
@@ -2781,6 +2781,22 @@ function removeSelectedViol(idx) {
   _selectedViolations.splice(idx, 1);
   refreshSelectedDisplay();
   renderAllViolationGrids();
+}
+
+function selectChildViolation(parentId, childName, btn) {
+  var viol = _fixedViolations.find(function(v) { return v.id === parentId; });
+  if (!viol) return;
+
+  var existing = _selectedViolations.findIndex(function(s) { return s.id === parentId && s.subViolation === childName; });
+  if (existing !== -1) {
+    _selectedViolations.splice(existing, 1);
+  } else {
+    _selectedViolations.push({ id: parentId, name: viol.name, subViolation: childName, degree: viol.degree, category: viol.category });
+  }
+  refreshSelectedDisplay();
+  // تحديث حالة الزر
+  var btn = document.querySelector('#fvChildren_' + parentId + ' .fv-child-btn[onclick*="' + childName.replace(/'/g,"\'") + '"]');
+  if (btn) btn.classList.toggle('selected', existing === -1);
 }
 </script>
 
