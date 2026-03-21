@@ -2851,29 +2851,13 @@ tr:hover td{background:var(--em-ghost);}
       <div class="filters-bar">
         <select id="logFilterClass" onchange="loadViolationsLog()"><option value="الكل">كل الفصول</option></select>
         <input type="date" id="logFilterDate" onchange="loadViolationsLog()">
-        <select id="logFilterType" onchange="loadViolationsLog()"><option value="الكل">كل المخالفات</option></select>
-        <select id="logFilterCategory" onchange="loadViolationsLog()" style="font-family:inherit;padding:5px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px;">
-          <option value="الكل">كل الفئات</option>
-          <option value="سلوكية">سلوكية</option>
-          <option value="صفية">صفية وتعليمية</option>
-          <option value="تجاه الهيئة">تجاه الهيئة</option>
-          <option value="غياب">غياب</option>
-          <option value="إيجابية">سلوكيات إيجابية</option>
-        </select>
+        <select id="logFilterType" style="display:none;"><option value="الكل">كل المخالفات</option></select>
+        <select id="logFilterCategory" style="display:none;"><option value="الكل">كل الفئات</option></select>
         <select id="logFilterRecorder" onchange="loadViolationsLog()" style="font-family:inherit;padding:5px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px;">
           <option value="الكل">كل المسجلين</option>
           <option value="معلم">المعلمون فقط</option>
           <option value="الإدارة">الإدارة فقط</option>
         </select>
-        <select id="logFilterCategory" onchange="loadViolationsLog()">
-          <option value="الكل">كل الفئات</option>
-          <option value="سلوكية">سلوكية</option>
-          <option value="صفية">صفية وتعليمية</option>
-          <option value="تجاه الهيئة">تجاه الهيئة</option>
-          <option value="غياب">غياب</option>
-          <option value="إيجابية">سلوكيات إيجابية</option>
-        </select>
-        
         <button class="btn btn-outline btn-sm" onclick="clearLogFilters()">مسح</button>
       </div>
       <div class="table-wrapper"><table><thead><tr><th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>نوع المخالفة</th><th>المخالفة</th><th>الإجراء المتخذ</th><th>التكرار</th><th>المسجّل</th><th>ولي الأمر 👁</th><th>إجراءات</th></tr></thead><tbody id="violationsLogTableBody"><tr><td colspan="8" class="empty-state">لا توجد</td></tr></tbody></table></div>
@@ -4687,11 +4671,18 @@ function switchLogTab(tab,btn){
 }
 
 function _getCategoryLabel(cat) {
-  var map = { 'سلوكية':'<span style="padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:#fdf8ee;color:#6b5a2e;border:1px solid #C1B48A;">سلوكية</span>',
-    'صفية':'<span style="padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:#e8faf9;color:#085856;border:1px solid #0DA9A6;">صفية</span>',
+  var map = {
+    'سلوكية':     '<span style="padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:#fdf8ee;color:#6b5a2e;border:1px solid #C1B48A;">سلوكية</span>',
+    'صفية':       '<span style="padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:#e8faf9;color:#085856;border:1px solid #0DA9A6;">صفية</span>',
     'تجاه الهيئة':'<span style="padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:#f0f4fc;color:#0C3B6E;border:1px solid #3D7EB9;">هيئة</span>',
-    'غياب':'<span style="padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:#e8f5ee;color:#055c38;border:1px solid #07A869;">غياب</span>',
-    'إيجابية':'<span style="padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:#e8f5ee;color:#055c38;border:1px solid #07A869;">إيجابي</span>' };
+    'غياب':       '<span style="padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:#e8f5ee;color:#055c38;border:1px solid #07A869;">غياب</span>',
+    'absence':    '<span style="padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:#e8f5ee;color:#055c38;border:1px solid #07A869;">غياب</span>',
+    'إيجابية':    '<span style="padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:#e8f5ee;color:#055c38;border:1px solid #07A869;">إيجابي</span>',
+    'behavioral': '<span style="padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:#fdf8ee;color:#6b5a2e;border:1px solid #C1B48A;">سلوكية</span>',
+    'class':      '<span style="padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:#e8faf9;color:#085856;border:1px solid #0DA9A6;">صفية</span>',
+    'staff':      '<span style="padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:#f0f4fc;color:#0C3B6E;border:1px solid #3D7EB9;">هيئة</span>',
+    'positive':   '<span style="padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:#e8f5ee;color:#055c38;border:1px solid #07A869;">إيجابي</span>'
+  };
   return map[cat] || '<span style="padding:2px 8px;border-radius:20px;font-size:10px;color:#999;border:1px solid #C2C1C1;">'+(cat||'—')+'</span>';
 }
 
