@@ -724,7 +724,7 @@ async function logMessagesBatch(messages, sender, sc) {
 //  قراءة السجلات
 // ═══════════════════════════════════════════════════════════
 async function getViolationsLog(filterClass, filterDate, filterType, sc) {
-  let params = `school_code=eq.${sc}&or=(deleted_by_admin.is.null,deleted_by_admin.is.false)&order=recorded_at.desc`;
+  let params = `school_code=eq.${sc}&order=recorded_at.desc`;
   if (filterClass && filterClass !== 'الكل') params += `&class_name=eq.${encodeURIComponent(filterClass)}`;
   if (filterDate) {
     const d = filterDate.replace(/-/g, '/');
@@ -735,7 +735,8 @@ async function getViolationsLog(filterClass, filterDate, filterType, sc) {
   if (filterType && filterType !== 'الكل') params += `&violation_type=eq.${encodeURIComponent(filterType)}`;
   const rows = await sb('violations_log', 'GET', params);
   if (!Array.isArray(rows)) return [];
-  return rows.map(r => ({
+  const filtered = rows.filter(r => !r.deleted_by_admin);
+  return filtered.map(r => ({
     date: fmtDate(r.recorded_at), studentName: r.student_name, className: r.class_name,
     violationType: r.violation_type, notes: r.notes || '', recorder: r.recorder || '',
     severity: r.severity || 'بسيطة', followUp: r.follow_up || '',
@@ -771,7 +772,8 @@ async function getPositiveBehaviorsLog(filterClass, filterDate, sc) {
   if (filterDate) params += `&recorded_at=gte.${filterDate}T00:00:00&recorded_at=lte.${filterDate}T23:59:59`;
   const rows = await sb('positive_behaviors_log', 'GET', params);
   if (!Array.isArray(rows)) return [];
-  return rows.map(r => ({
+  const activeRows = rows.filter(r => !r.deleted_by_admin);
+  return activeRows.map(r => ({
     date: fmtDate(r.recorded_at), studentName: r.student_name, className: r.class_name,
     behaviorType: r.behavior_type, notes: r.notes || '', recorder: r.recorder || '', subType: r.sub_type || 'إيجابي'
   }));
@@ -1132,7 +1134,7 @@ async function getRepeatedViolationsForAdmin(sc) {
 
 async function getReferredViolations(sc) {
   const rows = await sb('violations_log', 'GET',
-    `school_code=eq.${sc}&referred_to_admin=eq.نعم&or=(deleted_by_admin.is.null,deleted_by_admin.is.false)&order=referral_date.desc&select=*`);
+    `school_code=eq.${sc}&referred_to_admin=eq.نعم&order=referral_date.desc&select=*`);
   if (!Array.isArray(rows)) return [];
   return rows.map(r => ({
     date: fmtDate(r.recorded_at), studentName: r.student_name, className: r.class_name,
