@@ -1830,7 +1830,7 @@ function loadMyLog(){
       const canToggleVis = r.category!=='إيجابية' && r.severity!=='خطيرة';
       const isVis = r.visibleToParent==='نعم';
       const visBtn = canToggleVis
-        ? '<button class="vis-toggle '+(isVis?'yes':'no')+'" onclick="toggleVis(this)"><span class="material-icons-round" style="font-size:12px;">'+(isVis?'visibility':'visibility_off')+'</span> '+(isVis?'ظاهر':'مخفي')+'</button>'
+        ? '<button class="vis-toggle '+(isVis?'yes':'no')+'" data-date="'+r.date+'" data-name="'+r.studentName+'" data-vtype="'+r.violationType+'" data-vis="'+(isVis?'1':'0')+'" onclick="toggleVisBtn(this)"><span class="material-icons-round" style="font-size:12px;">'+(isVis?'visibility':'visibility_off')+'</span> '+(isVis?'ظاهر':'مخفي')+'</button>'
         : (r.category==='إيجابية'?'<span style="font-size:10px;color:var(--ok);">✅ دائماً</span>':'<span style="font-size:10px;color:var(--danger);">🔴 إدارة</span>');
 
       return '<tr><td>'+(i+1)+'</td><td>'+r.date+'</td><td><strong>'+r.studentName+'</strong> '+icons+'</td><td>'+r.className+'</td><td>'+r.violationType+'</td><td>'+actionHtml+'</td><td>'+visBtn+'</td></tr>';
@@ -1844,14 +1844,14 @@ function loadMyLog(){
 // تبديل ظهور المخالفة لولي الأمر
 function toggleVis(date,studentName,violationType,makeVisible,btn){
   showL();
-  google.script.run.withSuccessHandler(r=>{
+  GAS.setVisibleToParent(date,studentName,violationType,makeVisible).then(function(r){
     hideL();
-    if(r.success){
+    if(r && r.success){
       btn.className='vis-toggle '+(makeVisible?'yes':'no');
-      btn.innerHTML=`<span class="material-icons-round" style="font-size:12px;">${makeVisible?'visibility':'visibility_off'}</span>${makeVisible?'ظاهر لولي الأمر':'مخفي عنه'}`;
-      btn.setAttribute('onclick',`toggleVis('${date}','${studentName}','${violationType}',${!makeVisible},this)`);
+      btn.innerHTML='<span class="material-icons-round" style="font-size:12px;">'+(makeVisible?'visibility':'visibility_off')+'</span>'+(makeVisible?'ظاهر لولي الأمر':'مخفي عنه');
+      btn.setAttribute('data-vis', makeVisible ? '1' : '0');
     }
-  }).setVisibleToParent(date,studentName,violationType,makeVisible);
+  }).catch(function(e){ hideL(); console.error(e); });
 }
 
 function loadMyMsgs(){if(!T)return;const fd=document.getElementById('myMsgDate').value;showL();google.script.run.withSuccessHandler(msgs=>{hideL();const my=msgs.filter(m=>m.sender===T.name);document.getElementById('myMsgCount').textContent=my.length;const tb=document.getElementById('myMsgBody');tb.innerHTML=my.length?my.map((m,i)=>'<tr><td>'+(i+1)+'</td><td>'+m.date+'</td><td><strong>'+m.studentName+'</strong></td><td>'+m.className+'</td><td>'+m.violationType+'</td><td><span class="status-sent">'+m.status+'</span></td></tr>').join(''):'<tr><td colspan="6" class="empty-state">لا توجد</td></tr>';}).getMessagesLog('الكل',fd);}
@@ -2908,6 +2908,15 @@ function checkAutoReferral() {
   }
 }
 
+
+function toggleVisBtn(btn) {
+  var date = btn.getAttribute('data-date');
+  var name = btn.getAttribute('data-name');
+  var vtype = btn.getAttribute('data-vtype');
+  var isVis = btn.getAttribute('data-vis') === '1';
+  toggleVis(date, name, vtype, !isVis, btn);
+  btn.setAttribute('data-vis', isVis ? '0' : '1');
+}
 </script>
 
 
