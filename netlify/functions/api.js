@@ -646,20 +646,19 @@ async function recordFixedViolation(body, sc) {
         `school_code=eq.${sc}&student_name=eq.${encodeURIComponent(student.name)}&violation_type=eq.${encodeURIComponent(fullViolName)}&select=id`
       );
       const repeatCount = Array.isArray(existing) ? existing.length + 1 : 1;
-      // إحالة تلقائية عند تكرار المخالفة 3 مرات (درجة 1)
+
+      // تحديد الدرجة والإحالة
+      const isStaff = cat === 'staff';
+      const degNum = parseInt(deg) || 1;
+      const maxRefDeg = (stage === 'elementary') ? 4 : 5;
+      const autoRefer = isStaff || (degNum >= 2 && degNum <= maxRefDeg) || viol.referred_to_admin === 'نعم';
+      // إحالة تلقائية عند تكرار المخالفة 3 مرات (درجة 1 فقط)
       const repeatAutoRefer = degNum === 1 && repeatCount >= 3;
       const finalAutoRefer = autoRefer || repeatAutoRefer;
       // ملاحظة التكرار التلقائية
       const autoNotes = repeatAutoRefer
         ? 'الطالب قام بتكرار المخالفة (' + fullViolName + ') ' + repeatCount + ' مرات'
         : (notes || sub || '');
-
-      // تحديد الإحالة التلقائية
-      const isStaff = cat === 'staff';
-      const degNum = parseInt(deg) || 1;
-      // إحالة تلقائية: هيئة أو درجة 2+ (حسب المرحلة)
-      const maxRefDeg = stage === 'elementary' ? 4 : 5;
-      const autoRefer = isStaff || (degNum >= 2 && degNum <= maxRefDeg) || viol.referred_to_admin === 'نعم';
       const referredToAdmin = finalAutoRefer ? 'نعم' : 'لا';
       const referralDate = finalAutoRefer ? now : null;
 
@@ -671,7 +670,7 @@ async function recordFixedViolation(body, sc) {
         student_name: student.name,
         class_name: student.className,
         violation_type: fullViolName,
-        notes: sub || '',
+        notes: autoNotes || '',
         recorder: recorder || 'الإدارة',
         subject: subject || '',
         severity: deg,
