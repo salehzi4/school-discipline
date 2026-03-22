@@ -4746,30 +4746,65 @@ function loadViolationsLog(){
   }
   const tb=document.getElementById('violationsLogTableBody');
   if(!records.length){tb.innerHTML='<tr><td colspan="10" class="empty-state">لا توجد</td></tr>';}
-  else{_vlVisData={};tb.innerHTML=records.map((r,i)=>{
+  else{// تجميع نفس المخالفة للطالب في صف واحد
+    var grouped = {};
+    records.forEach(function(r) {
+      var key = r.studentName + '||' + r.violationType;
+      if (!grouped[key]) grouped[key] = { r: r, entries: [] };
+      grouped[key].entries.push({ date: r.date, action: r.actionTaken || r.actionType || '' });
+    });
+    var groupedRows = Object.values(grouped);
+    document.getElementById('logCountChip').textContent = groupedRows.length + ' مخالفة';
+    _vlVisData={};tb.innerHTML=groupedRows.map((g,i)=>{
+      const r = g.r;
+      const cnt = g.entries.length;
       const sc=r.severity==='خطيرة'?'var(--danger)':r.severity==='متوسطة'?'var(--accent)':'var(--success)';
       let icons = '';
       if(r.signature) icons += '<span title="يوجد توقيع" class="material-icons-round" style="font-size:14px;color:var(--primary);vertical-align:middle;cursor:pointer;" onclick="showSig(\''+r.signature+'\')">draw</span>';
       if(r.fingerprint) icons += '<span title="يوجد بصمة" class="material-icons-round" style="font-size:14px;color:var(--success);vertical-align:middle;">fingerprint</span>';
       const treatBadge=r.treatmentDate?'<span class="treated-badge"><span class="material-icons-round" style="font-size:10px;">check_circle</span>معالجة</span>':'<span class="pending-badge"><span class="material-icons-round" style="font-size:10px;">schedule</span>قيد المتابعة</span>';
-      return '<tr id="vlRow_'+i+'"><td>'+(i+1)+'</td><td>'+r.date+'</td><td><strong>'+r.studentName+'</strong> '+icons+'</td><td>'+r.className+'</td><td>'+_getCategoryLabel(r.category)+'</td><td class="vl-cell-type">'+r.violationType+'</td><td><span style="font-size:11px;color:var(--text-2);">'+(r.actionTaken||r.actionType?((r.actionType?'<span style="font-size:10px;background:#f3f4f6;padding:2px 7px;border-radius:8px;">'+r.actionType+'</span><br>':'')+( r.actionTaken?'<span style="font-size:10px;color:var(--text-3);">'+r.actionTaken+'</span>':'')):'<span style="color:var(--text-3);font-size:10px;">—</span>')+'</span></td><td style="text-align:center;"><span style="font-size:13px;font-weight:900;color:'+(r.repeatCount>2?'var(--danger)':r.repeatCount>1?'var(--warn)':'var(--text-3)')+';">'+(r.repeatCount||1)+'</span></td><td><span class="chip">'+r.recorder+'</span></td>'+(function(){
-    const canT=r.category!=='إيجابية'&&r.severity!=='خطيرة';
-    const isV=r.visibleToParent==='نعم';
-    if(canT){
-      var _vidx = '_vl_'+i;
-      _vlVisData[_vidx] = {date: r.date, student: r.studentName, vtype: r.violationType};
-      return '<td><button class="vis-toggle '+(isV?'yes':'no')+'" data-idx="'+_vidx+'" data-vis="'+(isV?'1':'0')+'" onclick="adminToggleVis(this)"><span class="material-icons-round" style="font-size:12px;">'+(isV?'visibility':'visibility_off')+'</span>'+(isV?'ظاهر':'مخفي')+'</button></td>';
-    } else if(r.category==='إيجابية'){
-      return '<td><span style="font-size:10px;color:#16a34a;">✅ دائماً</span></td>';
-    } else {
-      return '<td><span style="font-size:10px;color:#dc2626;">🔴 محال</span></td>';
-    }
-  })()+'<td style="white-space:nowrap;">'
-    +' <button class="btn btn-outline btn-sm" onclick="addFollowUp(\''+esc(r.date).replace(/'/g,"\\'")+'\''+',\''+esc(r.studentName).replace(/'/g,"\\'")+'\''+',\''+esc(r.violationType).replace(/'/g,"\\'")+'\')" style="padding:4px 6px;background:'+(r.treatmentDate?'rgba(6,214,160,0.08)':'')+'" title="'+(r.treatmentDate?'إضافة متابعة إضافية':'تسجيل معالجة')+'"><span class="material-icons-round" style="font-size:14px;color:'+(r.treatmentDate?'#06D6A0':'var(--primary)')+'">'+(r.treatmentDate?'add_task':'task_alt')+'</span></button>'
-    +' <button class="btn btn-outline btn-sm" data-date="'+esc(r.date)+'" data-student="'+esc(r.studentName)+'" data-vtype="'+esc(r.violationType)+'" data-cat="'+esc(r.category||'سلوكية')+'" onclick="createReportFromLogBtn(this)" style="padding:4px 6px;" title="إنشاء محضر"><span class="material-icons-round" style="font-size:14px;color:#C1B48A;">description</span></button>'
-    +(r.recorder==='الإدارة'?' <button class="btn btn-danger btn-sm" onclick="delVlEntry(\''+esc(r.date).replace(/'/g,"\\'")+'\''+',\''+esc(r.studentName).replace(/'/g,"\\'")+'\''+',\''+esc(r.violationType).replace(/'/g,"\\'")+'\')" style="padding:4px 6px;"><span class="material-icons-round" style="font-size:14px;">delete</span></button>':'')
-    +'</td></tr>';
 
+      // زر التفاصيل
+      const detId = 'vld_'+i;
+      const detailRows = g.entries.map(e=>'<div style="display:flex;gap:8px;padding:4px 0;border-bottom:1px solid #f0f0f0;font-size:11px;"><span style="color:#888;min-width:90px;">'+e.date+'</span><span style="color:#374151;">'+(e.action||'<span style="color:#ccc;">—</span>')+'</span></div>').join('');
+      const detailBtn = cnt > 1
+        ? '<div style="margin-top:4px;"><button onclick="toggleVlDetail(\''+detId+'\',this)" style="background:none;border:1px solid #C2C1C1;border-radius:6px;padding:2px 8px;font-size:10px;font-family:inherit;cursor:pointer;color:#666;">التفاصيل ▼</button>'
+          +'<div id="'+detId+'" style="display:none;margin-top:5px;background:#f8f9fa;border-radius:8px;padding:8px 10px;">'+detailRows+'</div></div>'
+        : '';
+
+      const actionHtml = r.actionTaken||r.actionType
+        ? (r.actionType?'<span style="font-size:10px;background:#f3f4f6;padding:2px 7px;border-radius:8px;">'+r.actionType+'</span><br>':'')+(r.actionTaken?'<span style="font-size:10px;color:var(--text-3);">'+r.actionTaken+'</span>':'')
+        : '<span style="color:var(--text-3);font-size:10px;">—</span>';
+
+      const canT=r.category!=='إيجابية'&&r.severity!=='خطيرة';
+      const isV=r.visibleToParent==='نعم';
+      var visCell;
+      if(canT){
+        var _vidx = '_vl_'+i;
+        _vlVisData[_vidx] = {date: r.date, student: r.studentName, vtype: r.violationType};
+        visCell = '<td><button class="vis-toggle '+(isV?'yes':'no')+'" data-idx="'+_vidx+'" data-vis="'+(isV?'1':'0')+'" onclick="adminToggleVis(this)"><span class="material-icons-round" style="font-size:12px;">'+(isV?'visibility':'visibility_off')+'</span>'+(isV?'ظاهر':'مخفي')+'</button></td>';
+      } else if(r.category==='إيجابية'){
+        visCell = '<td><span style="font-size:10px;color:#16a34a;">✅ دائماً</span></td>';
+      } else {
+        visCell = '<td><span style="font-size:10px;color:#dc2626;">🔴 محال</span></td>';
+      }
+
+      return '<tr id="vlRow_'+i+'">'
+        +'<td>'+(i+1)+'</td>'
+        +'<td>'+r.date+'</td>'
+        +'<td><strong>'+r.studentName+'</strong> '+icons+'</td>'
+        +'<td>'+r.className+'</td>'
+        +'<td>'+_getCategoryLabel(r.category)+'</td>'
+        +'<td class="vl-cell-type">'+r.violationType+detailBtn+'</td>'
+        +'<td><span style="font-size:11px;color:var(--text-2);">'+actionHtml+'</span></td>'
+        +'<td style="text-align:center;"><span style="font-size:13px;font-weight:900;color:'+(cnt>2?'var(--danger)':cnt>1?'var(--warn)':'var(--text-3)')+';">'+cnt+'</span></td>'
+        +'<td><span class="chip">'+r.recorder+'</span></td>'
+        +visCell
+        +'<td style="white-space:nowrap;">'
+        +' <button class="btn btn-outline btn-sm" onclick="addFollowUp(\''+esc(r.date).replace(/'/g,"\\'")+'\''+',\''+esc(r.studentName).replace(/'/g,"\\'")+'\''+',\''+esc(r.violationType).replace(/'/g,"\\'")+'\')" style="padding:4px 6px;background:'+(r.treatmentDate?'rgba(6,214,160,0.08)':'')+'" title="'+(r.treatmentDate?'إضافة متابعة إضافية':'تسجيل معالجة')+'"><span class="material-icons-round" style="font-size:14px;color:'+(r.treatmentDate?'#06D6A0':'var(--primary)')+'">'+(r.treatmentDate?'add_task':'task_alt')+'</span></button>'
+        +' <button class="btn btn-outline btn-sm" data-date="'+esc(r.date)+'" data-student="'+esc(r.studentName)+'" data-vtype="'+esc(r.violationType)+'" data-cat="'+esc(r.category||'سلوكية')+'" onclick="createReportFromLogBtn(this)" style="padding:4px 6px;" title="إنشاء محضر"><span class="material-icons-round" style="font-size:14px;color:#C1B48A;">description</span></button>'
+        +(r.recorder==='الإدارة'?' <button class="btn btn-danger btn-sm" onclick="delVlEntry(\''+esc(r.date).replace(/'/g,"\\'")+'\''+',\''+esc(r.studentName).replace(/'/g,"\\'")+'\''+',\''+esc(r.violationType).replace(/'/g,"\\'")+'\')" style="padding:4px 6px;"><span class="material-icons-round" style="font-size:14px;">delete</span></button>':'')
+        +'</td></tr>';
     }).join('');}
   // ── الحالات المعالجة ──
   const treated=records.filter(r=>r.treatmentDate&&r.treatmentDate.trim()!=='');
