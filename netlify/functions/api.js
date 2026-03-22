@@ -655,10 +655,10 @@ async function recordFixedViolation(body, sc) {
       // إحالة تلقائية عند تكرار المخالفة 3 مرات (درجة 1 فقط)
       const repeatAutoRefer = degNum === 1 && repeatCount >= 3;
       const finalAutoRefer = autoRefer || repeatAutoRefer;
-      // ملاحظة التكرار التلقائية
-      const autoNotes = repeatAutoRefer
+      // ملاحظة الإحالة للإدارة (تظهر في صفحة الطلاب المحالون)
+      const referralNote = repeatAutoRefer
         ? 'الطالب قام بتكرار المخالفة (' + fullViolName + ') ' + repeatCount + ' مرات'
-        : (notes || sub || '');
+        : (degNum >= 2 ? 'مخالفة درجة ' + degNum : '');
       const referredToAdmin = finalAutoRefer ? 'نعم' : 'لا';
       const referralDate = finalAutoRefer ? now : null;
 
@@ -670,7 +670,7 @@ async function recordFixedViolation(body, sc) {
         student_name: student.name,
         class_name: student.className,
         violation_type: fullViolName,
-        notes: autoNotes || '',
+        notes: notes || sub || '',
         recorder: recorder || 'الإدارة',
         subject: subject || '',
         severity: deg,
@@ -681,7 +681,8 @@ async function recordFixedViolation(body, sc) {
         referred_to_admin: referredToAdmin,
         referral_date: referralDate,
         repeat_count: repeatCount,
-        sub_violation: sub
+        sub_violation: sub,
+        referral_note: referralNote || ''
       };
 
       results.push(row);
@@ -1138,7 +1139,9 @@ async function getReferredViolations(sc) {
     referralDate: fmtDate(r.referral_date), behaviorStatus: r.behavior_status||'',
     adminDecision: r.treatment_date ? fmtDate(r.treatment_date) : '',
     followUpNotes: r.follow_up || '',
-    repeatCount: r.repeat_count || 1
+    repeatCount: r.repeat_count || 1,
+    referralNote: r.referral_note || '',
+    subject: r.subject || ''
   }));
 }
 
