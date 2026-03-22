@@ -1027,6 +1027,33 @@ tr:hover td{background:var(--em-ghost);}
 
       <textarea id="fvActionText" style="display:none;"></textarea>
 
+      <!-- ملاحظات المعلم -->
+      <div style="margin-bottom:10px;">
+        <label style="font-size:11px;font-weight:700;color:#555;display:block;margin-bottom:5px;">
+          <span class="material-icons-round" style="font-size:13px;vertical-align:middle;color:#3D7EB9;">notes</span>
+          ملاحظات المعلم
+        </label>
+        <textarea id="teacherNotes" rows="2" placeholder="اكتب ملاحظاتك هنا..." style="width:100%;padding:10px;border:1px solid #C2C1C1;border-radius:10px;font-family:inherit;font-size:13px;resize:none;box-sizing:border-box;"></textarea>
+      </div>
+
+      <!-- اسم المادة -->
+      <div style="margin-bottom:12px;">
+        <label style="font-size:11px;font-weight:700;color:#555;display:block;margin-bottom:5px;">
+          <span class="material-icons-round" style="font-size:13px;vertical-align:middle;color:#3D7EB9;">menu_book</span>
+          المادة <span style="font-size:10px;color:#999;">(اختياري)</span>
+        </label>
+        <input type="text" id="teacherSubject" placeholder="مثل: رياضيات، لغة عربية..." style="width:100%;padding:8px 12px;border:1px solid #C2C1C1;border-radius:10px;font-family:inherit;font-size:13px;box-sizing:border-box;">
+      </div>
+
+      <!-- إحالة تلقائية -->
+      <div id="autoReferralAlert" style="display:none;margin-bottom:10px;padding:10px 14px;background:#fef2f2;border:1.5px solid #E24B4A;border-radius:10px;">
+        <div style="font-size:12px;font-weight:700;color:#E24B4A;display:flex;align-items:center;gap:6px;">
+          <span class="material-icons-round" style="font-size:16px;">escalator_warning</span>
+          <span id="autoReferralText"></span>
+        </div>
+        <div style="font-size:11px;color:#555;margin-top:4px;">سيتم إحالة الطالب تلقائياً للإدارة عند التسجيل</div>
+      </div>
+
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
         <button onclick="submitFixedViolation()" style="flex:1;background:#15445A;color:#fff;border:none;padding:12px;border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">
           <span class="material-icons-round" style="font-size:15px;vertical-align:middle;">save</span> تسجيل المخالفة
@@ -2675,6 +2702,9 @@ function refreshSelectedDisplay() {
   checkReportBtn();
   // تحديث المعاينة
   updateFVPreview();
+
+  // تحقق من الإحالة التلقائية
+  if (typeof checkAutoReferral === 'function') checkAutoReferral();
 }
 
 function clearAllSelectedViol() {
@@ -2712,31 +2742,53 @@ function submitFixedViolation() {
   var selStudents = getSelectedStudents ? getSelectedStudents() : [];
   if (!selStudents.length) { showA('recordAlert','error','اختر طالباً أولاً'); return; }
   if (!_selectedViolations.length) { showA('recordAlert','error','اختر مخالفة أولاً'); return; }
+
+  var teacherNotes   = (document.getElementById('teacherNotes')||{}).value || '';
+  var teacherSubject = (document.getElementById('teacherSubject')||{}).value || '';
+  var stage = _activeStage || _schoolStage || 'elementary';
+  var maxRefDeg = stage === 'elementary' ? 4 : 5;
+
   showL();
-  try {
-    var violationsWithActions = _selectedViolations.map(function(v) {
-      return Object.assign({}, v, { actionText: v.rowAction || '' });
+  var violationsWithActions = _selectedViolations.map(function(v) {
+    var deg = parseInt(v.degree) || 1;
+    var shouldRefer = deg >= 2 && deg <= maxRefDeg;
+    return Object.assign({}, v, {
+      actionText: v.rowAction || '',
+      notes: teacherNotes,
+      subject: teacherSubject,
+      referred_to_admin: shouldRefer ? 'نعم' : undefined
     });
-    GAS.recordFixedViolation({
-      studentsData: selStudents,
-      violations: violationsWithActions,
-      actionText: '',
-      recorder: sessionStorage.getItem('tName') || 'معلم',
-    }).then(function(result) {
-      hideL();
-      if (result && result.success) {
-        showA('recordAlert','success','✅ تم تسجيل المخالفة بنجاح');
-        _selectedViolations = [];
-        refreshSelectedDisplay();
-        renderAllViolationGrids();
-      } else {
-        showA('recordAlert','error','حدث خطأ: ' + (result && result.error ? result.error : 'غير معروف'));
-      }
-    });
-  } catch(e) {
+  });
+
+  GAS.recordFixedViolation({
+    studentsData: selStudents,
+    violations: violationsWithActions,
+    actionText: '',
+    recorder: sessionStorage.getItem('tName') || 'معلم',
+    notes: teacherNotes,
+    subject: teacherSubject,
+    stage: stage
+  }).then(function(result) {
+    hideL();
+    if (result && result.success) {
+      // إعادة تعيين
+      _selectedViolations = [];
+      var notesEl = document.getElementById('teacherNotes');
+      var subEl   = document.getElementById('teacherSubject');
+      if(notesEl){ notesEl.value=''; notesEl.readOnly=false; notesEl.style.background=''; notesEl.style.color=''; }
+      if(subEl)    subEl.value='';
+      var alertDiv = document.getElementById('autoReferralAlert');
+      if(alertDiv) alertDiv.style.display='none';
+      refreshSelectedDisplay();
+      renderAllViolationGrids();
+      showA('recordAlert','success','✅ تم تسجيل المخالفة بنجاح');
+    } else {
+      showA('recordAlert','error','حدث خطأ: ' + (result && result.error ? result.error : 'غير معروف'));
+    }
+  }).catch(function(e) {
     hideL();
     showA('recordAlert','error','خطأ: ' + e.message);
-  }
+  });
 }
 
 // تحميل المخالفات عند تحميل الصفحة
@@ -2791,6 +2843,75 @@ function selectChildViolation(parentId, childName, btn) {
   var gridId = 'fvGrid_' + (cat === 'behavioral' ? 'behavioral_' + viol.degree : cat === 'staff' ? 'staff_' + viol.degree : cat);
   renderGrid(cat, deg, gridId);
 }
+
+// ══ Auto-referral logic ══
+
+function checkAutoReferral() {
+  var alert_div = document.getElementById('autoReferralAlert');
+  var alert_txt = document.getElementById('autoReferralText');
+  if (!alert_div || !_selectedViolations.length) {
+    if(alert_div) alert_div.style.display = 'none';
+    return;
+  }
+
+  var shouldRefer = false;
+  var referMsg = '';
+
+  for (var i = 0; i < _selectedViolations.length; i++) {
+    var v = _selectedViolations[i];
+    var deg = parseInt(v.degree) || 1;
+    var stage = _activeStage || _schoolStage || 'elementary';
+
+    // الدرجة 1: تحقق من عدد التكرار
+    if (deg === 1) {
+      // نحسب التكرار من قاعدة البيانات
+      var student = getSelectedStudents()[0];
+      if (student) {
+        GAS.getRepeatCount(student.name, v.name, '').then(function(count) {
+          var repeatCount = (count || 0) + 1; // +1 للتسجيل الحالي
+          if (repeatCount >= 3) {
+            document.getElementById('autoReferralAlert').style.display = 'block';
+            document.getElementById('autoReferralText').textContent =
+              'تكرار المخالفة ' + repeatCount + ' مرة — سيتم الإحالة التلقائية';
+            // ضع النص تلقائياً في ملاحظات المعلم
+            var notesEl = document.getElementById('teacherNotes');
+            if (notesEl && !notesEl.readOnly) {
+              notesEl.value = 'الطالب قام بتكرار المخالفة (' + v.name + ') ' + repeatCount + ' مرات';
+              notesEl.readOnly = true;
+              notesEl.style.background = '#fef2f2';
+              notesEl.style.color = '#E24B4A';
+            }
+          }
+        }).catch(function(){});
+        return;
+      }
+    }
+
+    // الدرجة 2+ — إحالة فورية
+    var maxDeg = stage === 'elementary' ? 4 : 5;
+    if (deg >= 2 && deg <= maxDeg) {
+      shouldRefer = true;
+      referMsg = 'مخالفة درجة ' + deg + ' — إحالة تلقائية للإدارة';
+      break;
+    }
+  }
+
+  if (shouldRefer) {
+    alert_div.style.display = 'block';
+    if(alert_txt) alert_txt.textContent = referMsg;
+  } else {
+    alert_div.style.display = 'none';
+    // إعادة تعيين الملاحظات إذا لم يعد هناك إحالة
+    var notesEl = document.getElementById('teacherNotes');
+    if (notesEl && notesEl.readOnly) {
+      notesEl.readOnly = false;
+      notesEl.style.background = '';
+      notesEl.style.color = '';
+      notesEl.value = '';
+    }
+  }
+}
+
 </script>
 
 
