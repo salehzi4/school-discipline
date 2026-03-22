@@ -680,7 +680,9 @@ async function recordFixedViolation(body, sc) {
         referred_to_admin: referredToAdmin,
         referral_date: referralDate,
         repeat_count: repeatCount,
-        sub_violation: sub
+        sub_violation: sub,
+        referral_note: referralNote || '',
+        subject: subject || ''
       };
 
       results.push(row);
