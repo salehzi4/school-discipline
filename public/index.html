@@ -7042,6 +7042,20 @@ function renderReferredCards(){
       ? `<span style="color:#07A869;font-weight:700;">✅ ${r.followUpNotes||''} ${r.followUpNotes?'—':''} ${r.adminDecision}</span>`
       : `<span style="color:#D97706;font-weight:700;">⏳ بانتظار القرار</span>`;
 
+    // سبب الإحالة (نص تلقائي)
+    const referralNoteHtml = r.referralNote
+      ? `<div style="margin:6px 0;padding:7px 12px;background:#fef9ee;border-radius:8px;border-right:3px solid #C1B48A;">
+          <div style="font-size:10px;color:#888;font-weight:700;margin-bottom:2px;">سبب الإحالة</div>
+          <div style="font-size:12px;font-weight:600;color:#6b5a2e;">${r.referralNote}</div>
+        </div>` : '';
+
+    // المادة
+    const subjectHtml = r.subject
+      ? `<div>
+          <div style="font-size:10px;color:#888;font-weight:700;margin-bottom:2px;">المادة</div>
+          <div style="font-size:12px;">${r.subject}</div>
+        </div>` : '';
+
     // زر ولي الأمر — واحد فقط
     const visBtn = `<button id="visBtn_${cardId}" onclick="adminToggleVisCard('${r.date}','${esc(r.studentName)}','${esc(r.violationType)}',${!isVis},'${cardId}')"
       style="font-size:11px;padding:5px 12px;border-radius:8px;border:1.5px solid ${isVis?'#07A869':'#C2C1C1'};background:${isVis?'#e8f5ee':'#fff'};color:${isVis?'#055c38':'#555'};font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:4px;">
@@ -7082,7 +7096,9 @@ function renderReferredCards(){
           <div style="font-size:10px;color:#888;font-weight:700;margin-bottom:2px;">قرار الإدارة</div>
           <div style="font-size:12px;">${decisionHtml}</div>
         </div>
+        ${subjectHtml}
       </div>
+      ${referralNoteHtml}
       ${actionHtml}
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);align-items:center;">
         ${visBtn}
