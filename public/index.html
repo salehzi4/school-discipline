@@ -4854,7 +4854,14 @@ function saveVlEdit(i) {
   }).catch(function(e){ hideLoading(); console.error(e); });
 }
 function saveVlEdit(d,sn,ot,i){const nt=document.getElementById('evlt_'+i).value;showLoading();google.script.run.withSuccessHandler(function(r){hideLoading();if(r.success){loadViolationsLog();loadStats();}}).updateViolationLog(d,sn,ot,nt,'');}
-function delVlEntry(d,sn,vt){if(!confirm('حذف؟'))return;showLoading();google.script.run.withSuccessHandler(function(r){hideLoading();if(r.success){loadViolationsLog();loadStats();}}).deleteViolationLog(d,sn,vt);}
+function delVlEntry(d,sn,vt){
+  if(!confirm('سيتم إخفاء المخالفة من السجلات — لن تُحذف من سجل المعلم. هل تريد المتابعة؟')) return;
+  showLoading();
+  GAS.deleteViolationLog(d,sn,vt).then(function(r){
+    hideLoading();
+    if(r && r.success){ loadViolationsLog(); loadStats(); }
+  }).catch(function(e){ hideLoading(); console.error(e); });
+}
 
 // Teachers
 function buildTeacherClassCheckboxes(){google.script.run.withSuccessHandler(function(classes){const c=document.getElementById('teacherClassesCheckboxes');c.innerHTML=classes.map((cl,i)=>'<label style="display:flex;align-items:center;gap:4px;font-size:12px;cursor:pointer;background:rgba(27,73,101,0.04);padding:4px 8px;border-radius:6px;"><input type="checkbox" value="'+cl+'" class="tc-class-cb" style="width:14px;height:14px;accent-color:var(--primary);">'+cl+'</label>').join('');}).getClasses();}
