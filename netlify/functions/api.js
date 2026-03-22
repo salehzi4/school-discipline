@@ -157,6 +157,7 @@ async function dispatch(action, body, schoolCode) {
     case 'getRepeatedViolations':      return getRepeatedViolations(body.filterClasses, schoolCode);
     case 'getRepeatedViolationsForAdmin':return getRepeatedViolationsForAdmin(schoolCode);
     case 'getReferredViolations':      return getReferredViolations(schoolCode);
+    case 'getMyReferredViolations':    return getMyReferredViolations(body.teacherName, schoolCode);
     case 'getMyViolations':            return getMyViolations(body.dateFilter, body.teacherName, schoolCode);
 
     // ── ملف الطالب ──
@@ -1130,6 +1131,21 @@ async function getRepeatedViolations(filterClasses, sc) {
 
 async function getRepeatedViolationsForAdmin(sc) {
   return getRepeatedViolations(null, sc);
+}
+
+async function getMyReferredViolations(teacherName, sc) {
+  let params = `school_code=eq.${sc}&referred_to_admin=eq.نعم&order=referral_date.desc&select=*`;
+  if (teacherName) params += `&recorder=eq.${encodeURIComponent(teacherName)}`;
+  const rows = await sb('violations_log', 'GET', params);
+  if (!Array.isArray(rows)) return [];
+  return rows.filter(r => !r.deleted_by_admin).map(r => ({
+    date: fmtDate(r.recorded_at), studentName: r.student_name, className: r.class_name,
+    violationType: r.violation_type, recorder: r.recorder||'',
+    referralDate: fmtDate(r.referral_date),
+    adminDecision: r.treatment_date ? fmtDate(r.treatment_date) : '',
+    followUpNotes: r.follow_up || '',
+    repeatCount: r.repeat_count || 1
+  }));
 }
 
 async function getReferredViolations(sc) {
