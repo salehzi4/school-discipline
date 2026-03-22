@@ -627,7 +627,7 @@ async function getRepeatCount(studentName, violationName, sc) {
 }
 
 async function recordFixedViolation(body, sc) {
-  const { studentsData, violations, actionText, recorder, degree, category, subViolation } = body;
+  const { studentsData, violations, actionText, recorder, degree, category, subViolation, notes, subject, stage } = body;
   // violations = array of { name, subViolation, degree, category }
   const now = new Date().toISOString();
   const results = [];
@@ -646,13 +646,22 @@ async function recordFixedViolation(body, sc) {
         `school_code=eq.${sc}&student_name=eq.${encodeURIComponent(student.name)}&violation_type=eq.${encodeURIComponent(fullViolName)}&select=id`
       );
       const repeatCount = Array.isArray(existing) ? existing.length + 1 : 1;
+      // إحالة تلقائية عند تكرار المخالفة 3 مرات (درجة 1)
+      const repeatAutoRefer = degNum === 1 && repeatCount >= 3;
+      const finalAutoRefer = autoRefer || repeatAutoRefer;
+      // ملاحظة التكرار التلقائية
+      const autoNotes = repeatAutoRefer
+        ? 'الطالب قام بتكرار المخالفة (' + fullViolName + ') ' + repeatCount + ' مرات'
+        : (notes || sub || '');
 
       // تحديد الإحالة التلقائية
       const isStaff = cat === 'staff';
       const degNum = parseInt(deg) || 1;
-      const autoRefer = isStaff || degNum >= 2;
-      const referredToAdmin = autoRefer ? 'نعم' : 'لا';
-      const referralDate = autoRefer ? now : null;
+      // إحالة تلقائية: هيئة أو درجة 2+ (حسب المرحلة)
+      const maxRefDeg = stage === 'elementary' ? 4 : 5;
+      const autoRefer = isStaff || (degNum >= 2 && degNum <= maxRefDeg) || viol.referred_to_admin === 'نعم';
+      const referredToAdmin = finalAutoRefer ? 'نعم' : 'لا';
+      const referralDate = finalAutoRefer ? now : null;
 
       // تحديد الظهور لولي الأمر
       const visibleToParent = (cat === 'positive' || cat === 'absence') ? 'نعم' : 'لا';
@@ -664,6 +673,7 @@ async function recordFixedViolation(body, sc) {
         violation_type: fullViolName,
         notes: sub || '',
         recorder: recorder || 'الإدارة',
+        subject: subject || '',
         severity: deg,
         degree: deg,
         category: cat === 'behavioral' ? 'سلوكية' : cat === 'staff' ? 'تجاه الهيئة' : cat === 'class' ? 'صفية' : cat === 'positive' ? 'إيجابية' : cat,
