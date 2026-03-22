@@ -672,7 +672,6 @@ async function recordFixedViolation(body, sc) {
         violation_type: fullViolName,
         notes: notes || sub || '',
         recorder: recorder || 'الإدارة',
-        subject: subject || '',
         severity: deg,
         degree: deg,
         category: cat === 'behavioral' ? 'سلوكية' : cat === 'staff' ? 'تجاه الهيئة' : cat === 'class' ? 'صفية' : cat === 'positive' ? 'إيجابية' : cat,
@@ -681,8 +680,7 @@ async function recordFixedViolation(body, sc) {
         referred_to_admin: referredToAdmin,
         referral_date: referralDate,
         repeat_count: repeatCount,
-        sub_violation: sub,
-        referral_note: referralNote || ''
+        sub_violation: sub
       };
 
       results.push(row);
