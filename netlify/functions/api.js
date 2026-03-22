@@ -1127,7 +1127,9 @@ async function getReferredViolations(sc) {
     actionType: r.action_type||'', actionTaken: r.action_taken||'',
     visibleToParent: r.visible_to_parent||'لا', referredToAdmin: r.referred_to_admin||'لا',
     referralDate: fmtDate(r.referral_date), behaviorStatus: r.behavior_status||'',
-    adminDecision: fmtDate(r.treatment_date)
+    adminDecision: r.treatment_date ? fmtDate(r.treatment_date) : '',
+    followUpNotes: r.follow_up || '',
+    repeatCount: r.repeat_count || 1
   }));
 }
 
