@@ -724,7 +724,7 @@ async function logMessagesBatch(messages, sender, sc) {
 //  قراءة السجلات
 // ═══════════════════════════════════════════════════════════
 async function getViolationsLog(filterClass, filterDate, filterType, sc) {
-  let params = `school_code=eq.${sc}&order=recorded_at.desc`;
+  let params = `school_code=eq.${sc}&deleted_by_admin=neq.true&order=recorded_at.desc`;
   if (filterClass && filterClass !== 'الكل') params += `&class_name=eq.${encodeURIComponent(filterClass)}`;
   if (filterDate) {
     const d = filterDate.replace(/-/g, '/');
@@ -800,7 +800,8 @@ async function updateViolationLog(date, studentName, oldType, newType, newNotes,
 async function deleteViolationLog(date, studentName, violationType, sc) {
   const id = await findViolationId(date, studentName, violationType, sc);
   if (!id) return { success: false };
-  await sb('violations_log', 'DELETE', `id=eq.${id}`);
+  // Soft delete - mark as deleted instead of actually deleting
+  await sb('violations_log', 'PATCH', `id=eq.${id}`, { deleted_by_admin: true });
   return { success: true, message: 'تم الحذف ✅' };
 }
 
@@ -1131,7 +1132,7 @@ async function getRepeatedViolationsForAdmin(sc) {
 
 async function getReferredViolations(sc) {
   const rows = await sb('violations_log', 'GET',
-    `school_code=eq.${sc}&referred_to_admin=eq.نعم&order=referral_date.desc&select=*`);
+    `school_code=eq.${sc}&referred_to_admin=eq.نعم&deleted_by_admin=neq.true&order=referral_date.desc&select=*`);
   if (!Array.isArray(rows)) return [];
   return rows.map(r => ({
     date: fmtDate(r.recorded_at), studentName: r.student_name, className: r.class_name,
@@ -1149,7 +1150,7 @@ async function getReferredViolations(sc) {
 }
 
 async function getMyViolations(dateFilter, teacherName, sc) {
-  let params = `school_code=eq.${sc}&select=*&order=recorded_at.desc`;
+  let params = `school_code=eq.${sc}&deleted_by_admin=neq.true&select=*&order=recorded_at.desc`;
   if (teacherName) params += `&recorder=eq.${encodeURIComponent(teacherName)}`;
   if (dateFilter) params += `&recorded_at=gte.${dateFilter}T00:00:00&recorded_at=lte.${dateFilter}T23:59:59`;
   const rows = await sb('violations_log', 'GET', params);
