@@ -1813,32 +1813,81 @@ function loadMyLog(){
   GAS.getMyViolations(fd, T.name||'').then(function(result){
     hideL();
     const recs = result && result.violations ? result.violations : [];
-    document.getElementById('myLogCount').textContent=recs.length;
-    const tb=document.getElementById('myLogBody');
-    tb.innerHTML=recs.length?recs.map(function(r,i){
-      let icons='';
-      if(r.signature)   icons+='<span title="يوجد توقيع" class="material-icons-round" style="font-size:14px;color:var(--primary);vertical-align:middle;">draw</span>';
-      if(r.fingerprint) icons+='<span title="يوجد بصمة" class="material-icons-round" style="font-size:14px;color:var(--success);vertical-align:middle;">fingerprint</span>';
-      if(r.referredToAdmin==='نعم') icons+='<span title="أُحيلت للإدارة" class="material-icons-round" style="font-size:14px;color:var(--danger);vertical-align:middle;">escalator_warning</span>';
 
-      const actionHtml = r.actionTaken
-        ? '<span style="font-size:11px;color:#374151;">'+r.actionTaken+'</span>'
+    // ── تجميع نفس المخالفة في صف واحد ──
+    var grouped = {};
+    recs.forEach(function(r){
+      var key = r.studentName + '||' + r.violationType;
+      if(!grouped[key]){
+        grouped[key] = { r: r, entries: [] };
+      }
+      grouped[key].entries.push({ date: r.date, action: r.actionTaken || r.actionType || '' });
+    });
+    var rows = Object.values(grouped);
+
+    document.getElementById('myLogCount').textContent = rows.length;
+    const tb = document.getElementById('myLogBody');
+    if(!rows.length){
+      tb.innerHTML = '<tr><td colspan="8" class="empty-state">لا توجد</td></tr>';
+      return;
+    }
+
+    tb.innerHTML = rows.map(function(g, i){
+      var r = g.r;
+      var cnt = g.entries.length;
+      var icons = '';
+      if(r.signature)    icons += '<span title="يوجد توقيع" class="material-icons-round" style="font-size:14px;color:var(--primary);vertical-align:middle;">draw</span>';
+      if(r.fingerprint)  icons += '<span title="يوجد بصمة" class="material-icons-round" style="font-size:14px;color:var(--success);vertical-align:middle;">fingerprint</span>';
+      if(r.referredToAdmin==='نعم') icons += '<span title="أُحيلت للإدارة" class="material-icons-round" style="font-size:14px;color:var(--danger);vertical-align:middle;">escalator_warning</span>';
+
+      // زر التفاصيل
+      var detailId = 'detail_' + i;
+      var detailRows = g.entries.map(function(e, j){
+        return '<div style="display:flex;gap:8px;padding:5px 0;border-bottom:1px solid #f0f0f0;font-size:11px;">'
+          + '<span style="color:#888;min-width:80px;">' + e.date + '</span>'
+          + '<span style="color:#374151;">' + (e.action || '<span style="color:#ccc;">—</span>') + '</span>'
+          + '</div>';
+      }).join('');
+      var detailBtn = cnt > 1
+        ? '<button onclick="toggleDetail(\'' + detailId + '\',this)" style="background:none;border:1px solid #C2C1C1;border-radius:6px;padding:2px 8px;font-size:10px;font-family:inherit;cursor:pointer;color:#666;">التفاصيل ▼</button>'
+          + '<div id="' + detailId + '" style="display:none;margin-top:6px;background:#f8f9fa;border-radius:8px;padding:8px 10px;">' + detailRows + '</div>'
+        : '';
+
+      var actionHtml = r.actionTaken
+        ? '<span style="font-size:11px;color:#374151;">' + r.actionTaken + '</span>'
         : (r.actionType
-            ? '<span style="font-size:10px;background:#f3f4f6;padding:2px 7px;border-radius:10px;color:#374151;">'+r.actionType+'</span>'
-            : '<span style="font-size:10px;color:var(--text-3);">—</span>');
+          ? '<span style="font-size:10px;background:#f3f4f6;padding:2px 7px;border-radius:8px;">' + r.actionType + '</span>'
+          : '<span style="font-size:10px;color:var(--text-3);">—</span>');
 
-      const canToggleVis = r.category!=='إيجابية' && r.severity!=='خطيرة';
-      const isVis = r.visibleToParent==='نعم';
-      const visBtn = canToggleVis
-        ? '<button class="vis-toggle '+(isVis?'yes':'no')+'" data-date="'+r.date+'" data-name="'+r.studentName+'" data-vtype="'+r.violationType+'" data-vis="'+(isVis?'1':'0')+'" onclick="toggleVisBtn(this)"><span class="material-icons-round" style="font-size:12px;">'+(isVis?'visibility':'visibility_off')+'</span> '+(isVis?'ظاهر':'مخفي')+'</button>'
+      var isVis = r.visibleToParent === 'نعم';
+      var canToggle = r.category !== 'إيجابية' && r.severity !== 'خطيرة';
+      var visBtn = canToggle
+        ? '<button class="vis-toggle ' + (isVis?'yes':'no') + '" data-date="' + r.date + '" data-name="' + r.studentName + '" data-vtype="' + r.violationType + '" data-vis="' + (isVis?'1':'0') + '" onclick="toggleVisBtn(this)"><span class="material-icons-round" style="font-size:12px;">' + (isVis?'visibility':'visibility_off') + '</span> ' + (isVis?'ظاهر':'مخفي') + '</button>'
         : (r.category==='إيجابية'?'<span style="font-size:10px;color:var(--ok);">✅ دائماً</span>':'<span style="font-size:10px;color:var(--danger);">🔴 إدارة</span>');
 
-      return '<tr><td>'+(i+1)+'</td><td>'+r.date+'</td><td><strong>'+r.studentName+'</strong> '+icons+'</td><td>'+r.className+'</td><td>'+r.violationType+'</td><td>'+actionHtml+'</td><td style="text-align:center;font-weight:900;color:'+((r.repeatCount||1)>2?'#E24B4A':'#999')+';">'+(r.repeatCount||1)+'</td><td>'+visBtn+'</td></tr>';
-    }).join(''):'<tr><td colspan="8" class="empty-state">لا توجد</td></tr>';
+      return '<tr>'
+        + '<td>' + (i+1) + '</td>'
+        + '<td>' + r.date + '</td>'
+        + '<td><strong>' + r.studentName + '</strong> ' + icons + '</td>'
+        + '<td>' + r.className + '</td>'
+        + '<td>' + r.violationType + (detailBtn ? '<div style="margin-top:4px;">' + detailBtn + '</div>' : '') + '</td>'
+        + '<td>' + actionHtml + '</td>'
+        + '<td style="text-align:center;font-weight:900;color:' + (cnt>2?'#E24B4A':'#999') + ';font-size:14px;">' + cnt + '</td>'
+        + '<td>' + visBtn + '</td>'
+        + '</tr>';
+    }).join('');
   }).catch(function(e){
     hideL();
     console.error('loadMyLog error:', e);
   });
+}
+
+function toggleDetail(id, btn){
+  var el = document.getElementById(id);
+  if(!el) return;
+  var open = el.style.display !== 'none';
+  el.style.display = open ? 'none' : 'block';
+  btn.textContent = open ? 'التفاصيل ▼' : 'التفاصيل ▲';
 }
 
 // تبديل ظهور المخالفة لولي الأمر
