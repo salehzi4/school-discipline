@@ -1156,6 +1156,7 @@ document.addEventListener('DOMContentLoaded', function() {
         subjects: tSubjects || '',
         classes: tClasses ? JSON.parse(tClasses) : []
       };
+      sessionStorage.setItem('tName', tName || '');
       enter();
       return;
     } catch(e) {}
@@ -2764,7 +2765,7 @@ function submitFixedViolation() {
     studentsData: selStudents,
     violations: violationsWithActions,
     actionText: '',
-    recorder: sessionStorage.getItem('tName') || 'معلم',
+    recorder: (T && T.name) || sessionStorage.getItem('tName') || 'معلم',
     notes: teacherNotes,
     subject: teacherSubject,
     stage: stage
