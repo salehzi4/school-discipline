@@ -7025,7 +7025,7 @@ function renderReferredCards(){
 
   cont.innerHTML = data.map((r,i)=>{
     const isVis = r.visibleToParent==='نعم';
-    const cardId = `ref_${i}_${Date.now()}`;
+    const cardId = `ref_${i}`;
 
     // الإجراء المتخذ
     const actionHtml = (r.actionType||r.actionTaken)
@@ -7037,17 +7037,23 @@ function renderReferredCards(){
           <span style="font-size:11px;color:#E24B4A;font-weight:600;">⚠️ لم يُسجَّل إجراء من المعلم</span>
         </div>`;
 
-    // زر ولي الأمر — زر واحد toggle
-    const visBtn = `<button onclick="adminToggleVisCard('${r.date}','${esc(r.studentName)}','${esc(r.violationType)}',${!isVis},'${cardId}')"
-      style="font-size:11px;padding:5px 12px;border-radius:8px;border:1.5px solid ${isVis?'#07A869':'#C2C1C1'};background:${isVis?'#e8f5ee':'#fff'};color:${isVis?'#055c38':'#555'};font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:4px;">
+    // قرار الإدارة = ملاحظات المعالجة + التاريخ
+    const decisionHtml = r.adminDecision
+      ? `<span style="color:#07A869;font-weight:700;">✅ ${r.followUpNotes||''} ${r.followUpNotes?'—':''} ${r.adminDecision}</span>`
+      : `<span style="color:#D97706;font-weight:700;">⏳ بانتظار القرار</span>`;
+
+    // زر ولي الأمر — واحد فقط
+    const visBtn = `<button id="visBtn_${cardId}" onclick="adminToggleVisCard('${r.date}','${esc(r.studentName)}','${esc(r.violationType)}',${!isVis},'${cardId}')"
+      style="font-size:11px;padding:5px 12px;border-radius:8px;border:1.5px solid ${isVis?'#07A869':'#C2C1C1'};background:${isVis?'#e8f5ee':'#fff'};color:${isVis?'#055c38':'#555'};font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:4px;">
       <span class="material-icons-round" style="font-size:13px;">${isVis?'visibility':'visibility_off'}</span>
-      ${isVis?'ظاهر لولي الأمر':'مخفي عن ولي الأمر'}
+      <span id="visTxt_${cardId}">${isVis?'ظاهر لولي الأمر':'مخفي عن ولي الأمر'}</span>
     </button>`;
 
-    return `<div class="card" style="border-right:4px solid #15445A;margin-bottom:12px;padding:14px;" id="${cardId}">
+    // اسم المعلم (recorder بدل "الإدارة")
+    const recorderName = r.recorder && r.recorder !== 'الإدارة' ? r.recorder : (r.recorder||'—');
 
-      <!-- معلومات المخالفة المنظمة -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+    return `<div class="card" style="border-right:4px solid #15445A;margin-bottom:12px;padding:14px;" id="${cardId}">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
         <div>
           <div style="font-size:10px;color:#888;font-weight:700;margin-bottom:2px;">اسم الطالب</div>
           <div style="font-size:13px;font-weight:800;color:#15445A;">${r.studentName}</div>
@@ -7061,8 +7067,8 @@ function renderReferredCards(){
           <div style="font-size:12px;font-weight:700;color:#374151;">${r.violationType}</div>
         </div>
         <div>
-          <div style="font-size:10px;color:#888;font-weight:700;margin-bottom:2px;">المعلم</div>
-          <div style="font-size:12px;">${r.recorder||'—'}</div>
+          <div style="font-size:10px;color:#888;font-weight:700;margin-bottom:2px;">المعلم المحيل</div>
+          <div style="font-size:12px;">${recorderName}</div>
         </div>
         <div>
           <div style="font-size:10px;color:#888;font-weight:700;margin-bottom:2px;">التاريخ والوقت</div>
@@ -7074,17 +7080,13 @@ function renderReferredCards(){
         </div>
         <div>
           <div style="font-size:10px;color:#888;font-weight:700;margin-bottom:2px;">قرار الإدارة</div>
-          <div style="font-size:12px;">${r.adminDecision?'<span style="color:#07A869;font-weight:700;">✅ '+r.adminDecision+'</span>':'<span style="color:#D97706;font-weight:700;">⏳ بانتظار القرار</span>'}</div>
+          <div style="font-size:12px;">${decisionHtml}</div>
         </div>
       </div>
-
       ${actionHtml}
-
-      <!-- أزرار -->
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);align-items:center;">
         ${visBtn}
-        <button class="btn btn-primary btn-sm" onclick="adminCreateReport('${esc(r.studentName)}','${esc(r.className)}','${esc(r.violationType)}')"
-          style="font-size:11px;">
+        <button class="btn btn-primary btn-sm" onclick="adminCreateReport('${esc(r.studentName)}','${esc(r.className)}','${esc(r.violationType)}')" style="font-size:11px;">
           <span class="material-icons-round" style="font-size:13px;">description</span> إصدار محضر
         </button>
         <button class="btn btn-sm" onclick="addFollowUp('${r.date}','${esc(r.studentName)}','${esc(r.violationType)}')"
@@ -7095,6 +7097,21 @@ function renderReferredCards(){
     </div>`;
   }).join('');
 }
+
+function adminToggleVisCard(date, studentName, vtype, newVis, cardId) {
+  const btn = document.getElementById('visBtn_' + cardId);
+  const txt = document.getElementById('visTxt_' + cardId);
+  if(btn) {
+    btn.style.borderColor = newVis ? '#07A869' : '#C2C1C1';
+    btn.style.background  = newVis ? '#e8f5ee' : '#fff';
+    btn.style.color       = newVis ? '#055c38' : '#555';
+    btn.querySelector('.material-icons-round').textContent = newVis ? 'visibility' : 'visibility_off';
+    btn.setAttribute('onclick', `adminToggleVisCard('${date}','${studentName}','${vtype}',${!newVis},'${cardId}')`);
+  }
+  if(txt) txt.textContent = newVis ? 'ظاهر لولي الأمر' : 'مخفي عن ولي الأمر';
+  GAS.toggleViolationVisibility(date, studentName, vtype, newVis).catch(function(e){ console.error(e); });
+}
+
 
 function adminToggleVisCard(date, studentName, vtype, newVis, cardId) {
   GAS.toggleViolationVisibility(date, studentName, vtype, newVis).then(function(){
