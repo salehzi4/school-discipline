@@ -652,12 +652,15 @@ async function recordFixedViolation(body, sc) {
       const degNum = parseInt(deg) || 1;
       const maxRefDeg = (stage === 'elementary') ? 4 : 5;
       const autoRefer = isStaff || (degNum >= 2 && degNum <= maxRefDeg) || viol.referred_to_admin === 'نعم';
-      // إحالة تلقائية عند تكرار المخالفة 3 مرات (درجة 1 فقط)
-      const repeatAutoRefer = degNum === 1 && repeatCount >= 3;
+      // إحالة تلقائية عند التكرار 3 مرات (درجة 1 سلوكية، صفية، غياب بدون عذر)
+      const isAbsenceNoExcuse = cat === 'absence' && (fullViolName.includes('بدون عذر') || fullViolName.includes('بدون عذر'));
+      const isClass = cat === 'class';
+      const repeatAutoRefer = (degNum === 1 || isClass || isAbsenceNoExcuse) && repeatCount >= 3;
       const finalAutoRefer = autoRefer || repeatAutoRefer;
       // ملاحظة الإحالة للإدارة (تظهر في صفحة الطلاب المحالون)
+      const catLabel = isClass ? 'المخالفة الصفية' : (isAbsenceNoExcuse ? 'الغياب بدون عذر' : 'المخالفة');
       const referralNote = repeatAutoRefer
-        ? 'الطالب قام بتكرار المخالفة (' + fullViolName + ') ' + repeatCount + ' مرات'
+        ? 'الطالب قام بتكرار ' + catLabel + ' (' + fullViolName + ') ' + repeatCount + ' مرات'
         : (degNum >= 2 ? 'مخالفة درجة ' + degNum : '');
       const referredToAdmin = finalAutoRefer ? 'نعم' : 'لا';
       const referralDate = finalAutoRefer ? now : null;
