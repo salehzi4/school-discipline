@@ -681,7 +681,6 @@ async function recordFixedViolation(body, sc) {
         referral_date: referralDate,
         repeat_count: repeatCount,
         sub_violation: sub,
-        referral_note: referralNote || '',
         subject: subject || ''
       };
 
