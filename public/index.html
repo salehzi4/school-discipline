@@ -7109,12 +7109,12 @@ function adminToggleVisCard(date, studentName, vtype, newVis, cardId) {
     btn.setAttribute('onclick', `adminToggleVisCard('${date}','${studentName}','${vtype}',${!newVis},'${cardId}')`);
   }
   if(txt) txt.textContent = newVis ? 'ظاهر لولي الأمر' : 'مخفي عن ولي الأمر';
-  GAS.toggleViolationVisibility(date, studentName, vtype, newVis).catch(function(e){ console.error(e); });
+  GAS.setVisibleToParent(date, studentName, vtype, newVis).catch(function(e){ console.error(e); });
 }
 
 
 function adminToggleVisCard(date, studentName, vtype, newVis, cardId) {
-  GAS.toggleViolationVisibility(date, studentName, vtype, newVis).then(function(){
+  GAS.setVisibleToParent(date, studentName, vtype, newVis).then(function(){
     loadReferredViolations();
   }).catch(function(e){ console.error(e); });
 }
