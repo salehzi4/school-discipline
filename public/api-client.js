@@ -127,6 +127,7 @@
     getRepeatedViolations:         (filterClasses)   => callAPI('getRepeatedViolations', { filterClasses }),
     getRepeatedViolationsForAdmin: ()                => callAPI('getRepeatedViolationsForAdmin'),
     getReferredViolations:         ()                => callAPI('getReferredViolations'),
+    getMyReferredViolations:       (teacherName)      => callAPI('getMyReferredViolations', { teacherName }),
     getMyViolations:               (dateFilter, teacherName) => callAPI('getMyViolations', { dateFilter, teacherName }),
 
     // ملف الطالب
