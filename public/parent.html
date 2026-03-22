@@ -721,8 +721,9 @@ function doLogout(){
   sessionStorage.removeItem('loggedIn');
   sessionStorage.removeItem('userRole');
   sessionStorage.removeItem('schoolCode');
+  // أعد تحميل الصفحة بدون params الطالب — يظهر شاشة الدخول
   var sc = new URLSearchParams(window.location.search).get('school') || '';
-  window.location.href = '/?school=' + sc;
+  window.location.href = '/parent.html?school=' + sc;
 }
 
 /* ══ CHECK NEW REPORTS ══ */
