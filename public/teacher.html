@@ -1833,7 +1833,7 @@ function loadMyLog(){
         ? '<button class="vis-toggle '+(isVis?'yes':'no')+'" data-date="'+r.date+'" data-name="'+r.studentName+'" data-vtype="'+r.violationType+'" data-vis="'+(isVis?'1':'0')+'" onclick="toggleVisBtn(this)"><span class="material-icons-round" style="font-size:12px;">'+(isVis?'visibility':'visibility_off')+'</span> '+(isVis?'ظاهر':'مخفي')+'</button>'
         : (r.category==='إيجابية'?'<span style="font-size:10px;color:var(--ok);">✅ دائماً</span>':'<span style="font-size:10px;color:var(--danger);">🔴 إدارة</span>');
 
-      return '<tr><td>'+(i+1)+'</td><td>'+r.date+'</td><td><strong>'+r.studentName+'</strong> '+icons+'</td><td>'+r.className+'</td><td>'+r.violationType+'</td><td>'+actionHtml+'</td><td>'+visBtn+'</td></tr>';
+      return '<tr><td>'+(i+1)+'</td><td>'+r.date+'</td><td><strong>'+r.studentName+'</strong> '+icons+'</td><td>'+r.className+'</td><td>'+r.violationType+'</td><td>'+actionHtml+'</td><td style="text-align:center;font-weight:900;color:'+((r.repeatCount||1)>2?'#E24B4A':'#999')+';">'+(r.repeatCount||1)+'</td><td>'+visBtn+'</td></tr>';
     }).join(''):'<tr><td colspan="8" class="empty-state">لا توجد</td></tr>';
   }).catch(function(e){
     hideL();
