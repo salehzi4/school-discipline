@@ -732,7 +732,7 @@ function checkNewReports(name, cls){
     var hasNew = reports.some(function(r){ return r.status==='بانتظار الاستلام'||r.status==='تم الاستلام'; });
     var g=$('globalActionsAlert');
     if(g) g.classList.toggle('show', hasNew);
-  }).getReportsByStudent(name, cls);
+  }).catch(function(){});
 }
 
 /* ══ LOAD PROFILE ══ */
@@ -912,7 +912,7 @@ function loadReportCount(name, cls){
     $('im_reports').textContent = cnt + ' محضر — ' + rImp + ' تم الاطلاع';
     // أضف المحاضر للتقويم
     if(P){ P.reports = reports||[]; buildCalEvents(P); renderCal(); }
-  }).getReportsByStudent(name, cls);
+  }).catch(function(){});
 }
 
 /* ══ DRAW DONUT ══ */
