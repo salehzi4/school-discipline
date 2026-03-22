@@ -1074,7 +1074,7 @@ tr:hover td{background:var(--em-ghost);}
     <button class="pt-print" onclick="printSection('mylog')"><span class="material-icons-round">print</span> طباعة</button>
     <button class="pt-pdf" onclick="exportPDF('mylog')"><span class="material-icons-round">picture_as_pdf</span> PDF</button>
   </div>
-<div class="card"><div class="card-title"><span class="material-icons-round">history</span> سجلاتي</div><div class="filters-bar"><input type="date" id="myLogDate" onchange="loadMyLog()"><button class="btn btn-outline btn-sm" onclick="document.getElementById('myLogDate').value='';loadMyLog();">الكل</button><span class="chip" id="myLogCount">0</span></div><div class="table-wrapper"><table><thead><tr><th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>المخالفة</th><th>الإجراء المتخذ</th><th title="تحكم بظهور المخالفة في ملف الطالب لدى ولي الأمر">ولي الأمر 👁</th></tr></thead><tbody id="myLogBody"><tr><td colspan="7" class="empty-state">لا توجد</td></tr></tbody></table></div></div></div>
+<div class="card"><div class="card-title"><span class="material-icons-round">history</span> سجلاتي</div><div class="filters-bar"><input type="date" id="myLogDate" onchange="loadMyLog()"><button class="btn btn-outline btn-sm" onclick="document.getElementById('myLogDate').value='';loadMyLog();">الكل</button><span class="chip" id="myLogCount">0</span></div><div class="table-wrapper"><table><thead><tr><th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>المخالفة</th><th>الإجراء المتخذ</th><th>التكرار</th><th title="تحكم بظهور المخالفة في ملف الطالب لدى ولي الأمر">ولي الأمر 👁</th></tr></thead><tbody id="myLogBody"><tr><td colspan="7" class="empty-state">لا توجد</td></tr></tbody></table></div></div></div>
 
 <div class="page-section" id="page-mymessages">
 <div class="page-toolbar">
@@ -1834,7 +1834,7 @@ function loadMyLog(){
         : (r.category==='إيجابية'?'<span style="font-size:10px;color:var(--ok);">✅ دائماً</span>':'<span style="font-size:10px;color:var(--danger);">🔴 إدارة</span>');
 
       return '<tr><td>'+(i+1)+'</td><td>'+r.date+'</td><td><strong>'+r.studentName+'</strong> '+icons+'</td><td>'+r.className+'</td><td>'+r.violationType+'</td><td>'+actionHtml+'</td><td>'+visBtn+'</td></tr>';
-    }).join(''):'<tr><td colspan="7" class="empty-state">لا توجد</td></tr>';
+    }).join(''):'<tr><td colspan="8" class="empty-state">لا توجد</td></tr>';
   }).catch(function(e){
     hideL();
     console.error('loadMyLog error:', e);
