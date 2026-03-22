@@ -7042,10 +7042,13 @@ function renderReferredCards(){
       ? `<span style="color:#07A869;font-weight:700;">✅ ${r.followUpNotes||''} ${r.followUpNotes?'—':''} ${r.adminDecision}</span>`
       : `<span style="color:#D97706;font-weight:700;">⏳ بانتظار القرار</span>`;
 
-    // سبب الإحالة (نص تلقائي)
+    // ملاحظات المعلم (سبب الإحالة التلقائي)
     const referralNoteHtml = r.referralNote
-      ? `<div style="margin:6px 0;padding:7px 12px;background:#fef9ee;border-radius:8px;border-right:3px solid #C1B48A;">
-          <div style="font-size:10px;color:#888;font-weight:700;margin-bottom:2px;">سبب الإحالة</div>
+      ? `<div style="margin:8px 0;padding:10px 14px;background:#fef9ee;border-radius:10px;border-right:3px solid #C1B48A;">
+          <div style="font-size:10px;color:#888;font-weight:700;margin-bottom:4px;">
+            <span class="material-icons-round" style="font-size:12px;vertical-align:middle;">notes</span>
+            ملاحظات المعلم
+          </div>
           <div style="font-size:12px;font-weight:600;color:#6b5a2e;">${r.referralNote}</div>
         </div>` : '';
 
