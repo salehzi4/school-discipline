@@ -2775,8 +2775,8 @@ function submitFixedViolation() {
       _selectedViolations = [];
       var notesEl = document.getElementById('teacherNotes');
       var subEl   = document.getElementById('teacherSubject');
-      if(notesEl){ notesEl.value=''; notesEl.readOnly=false; notesEl.style.background=''; notesEl.style.color=''; }
-      if(subEl)    subEl.value='';
+      if(notesEl) notesEl.value='';
+      if(subEl)   subEl.value='';
       var alertDiv = document.getElementById('autoReferralAlert');
       if(alertDiv) alertDiv.style.display='none';
       refreshSelectedDisplay();
@@ -2875,12 +2875,7 @@ function checkAutoReferral() {
               'تكرار المخالفة ' + repeatCount + ' مرة — سيتم الإحالة التلقائية';
             // ضع النص تلقائياً في ملاحظات المعلم
             var notesEl = document.getElementById('teacherNotes');
-            if (notesEl && !notesEl.readOnly) {
-              notesEl.value = 'الطالب قام بتكرار المخالفة (' + v.name + ') ' + repeatCount + ' مرات';
-              notesEl.readOnly = true;
-              notesEl.style.background = '#fef2f2';
-              notesEl.style.color = '#E24B4A';
-            }
+            // ملاحظة الإحالة تظهر في صفحة الطلاب المحالون فقط، لا في خانة ملاحظات المعلم
           }
         }).catch(function(){});
         return;
