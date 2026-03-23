@@ -801,10 +801,13 @@ async function updateViolationLog(date, studentName, oldType, newType, newNotes,
 }
 
 async function deleteViolationLog(date, studentName, violationType, sc) {
-  const id = await findViolationId(date, studentName, violationType, sc);
-  if (!id) return { success: false };
-  // Soft delete - mark as deleted instead of actually deleting
-  await sb('violations_log', 'PATCH', `id=eq.${id}`, { deleted_by_admin: true });
+  const rows = await sb('violations_log', 'GET',
+    `school_code=eq.${sc}&student_name=eq.${encodeURIComponent(studentName)}&violation_type=eq.${encodeURIComponent(violationType)}&select=id,recorded_at&order=recorded_at.desc`);
+  if (!Array.isArray(rows) || !rows.length) return { success: false };
+  // حذف جميع سجلات نفس المخالفة للطالب
+  for (const r of rows) {
+    await sb('violations_log', 'DELETE', `id=eq.${r.id}`);
+  }
   return { success: true, message: 'تم الحذف ✅' };
 }
 
