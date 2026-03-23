@@ -938,10 +938,10 @@ async function getStudentProfile(studentName, className, viewerRole, sc) {
   }
 
   // سجل المخالفات
-  let vParams = `school_code=eq.${sc}&student_name=eq.${encodeURIComponent(studentName)}&class_name=eq.${encodeURIComponent(className)}&order=recorded_at.asc`;
+  let vParams = `school_code=eq.${sc}&student_name=eq.${encodeURIComponent(studentName)}&order=recorded_at.asc`;
   if (role === 'parent') vParams += `&visible_to_parent=eq.نعم`;
   const vRows = await sb('violations_log', 'GET', vParams);
-  const allRecs = Array.isArray(vRows) ? vRows.map(r => ({
+  const allRecs = Array.isArray(vRows) ? vRows.filter(r => !r.deleted_by_admin && (!className || r.class_name === className)).map(r => ({
     date: fmtDate(r.recorded_at), type: r.violation_type, notes: r.notes || '',
     recorder: r.recorder || '', severity: r.severity || 'بسيطة', followUp: r.follow_up || '',
     signature: r.student_signature || '', fingerprint: r.fingerprint || '',
