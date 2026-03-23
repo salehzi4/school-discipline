@@ -652,11 +652,13 @@ async function recordFixedViolation(body, sc) {
       const isStaff = cat === 'staff';
       const degNum = parseInt(deg) || 1;
       const maxRefDeg = (stage === 'elementary') ? 4 : 5;
-      const autoRefer = isStaff || (degNum >= 2 && degNum <= maxRefDeg) || viol.referred_to_admin === 'نعم';
-      // إحالة تلقائية عند التكرار 3 مرات (درجة 1 سلوكية، صفية، غياب بدون عذر)
-      const isAbsenceNoExcuse = cat === 'absence' && (fullViolName.includes('بدون عذر') || fullViolName.includes('بدون عذر'));
+      const isAdmin = (recorder || '') === 'الإدارة';
+      // الإدارة لا تُحال تلقائياً أبداً
+      const autoRefer = !isAdmin && (isStaff || (degNum >= 2 && degNum <= maxRefDeg) || viol.referred_to_admin === 'نعم');
+      // إحالة تلقائية عند التكرار 3 مرات (درجة 1 سلوكية، صفية، غياب بدون عذر) — للمعلم فقط
+      const isAbsenceNoExcuse = cat === 'absence' && fullViolName.includes('بدون عذر');
       const isClass = cat === 'class';
-      const repeatAutoRefer = (degNum === 1 || isClass || isAbsenceNoExcuse) && repeatCount >= 3;
+      const repeatAutoRefer = !isAdmin && (degNum === 1 || isClass || isAbsenceNoExcuse) && repeatCount >= 3;
       const finalAutoRefer = autoRefer || repeatAutoRefer;
       // ملاحظة الإحالة للإدارة (تظهر في صفحة الطلاب المحالون)
       const catLabel = isClass ? 'المخالفة الصفية' : (isAbsenceNoExcuse ? 'الغياب بدون عذر' : 'المخالفة');
