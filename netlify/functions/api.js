@@ -960,8 +960,9 @@ async function getStudentProfile(studentName, className, viewerRole, sc) {
     referralDate: fmtDate(r.referral_date)
   })) : [];
 
-  const violations      = allRecs.filter(r => r.category === 'سلوكية');
+  const violations      = allRecs.filter(r => r.category === 'سلوكية' || r.category === 'تجاه الهيئة');
   const classViolations = allRecs.filter(r => r.category === 'صفية');
+  const absenceViolations = allRecs.filter(r => r.category === 'غياب' || r.category === 'absence');
 
   // السلوك الإيجابي (من violations_log)
   const positiveBehaviors = allRecs.filter(r => r.category === 'إيجابية');
@@ -1005,6 +1006,8 @@ async function getStudentProfile(studentName, className, viewerRole, sc) {
     name: studentName, className, phone, nationalId, score, level, color,
     classScore, posScore,
     totalViolations: violations.length, totalClassViolations: classViolations.length,
+    totalAbsenceExcused: absenceViolations.filter(r => !r.type.includes('بدون عذر')).length,
+    totalAbsenceNoExcuse: absenceViolations.filter(r => r.type.includes('بدون عذر')).length,
     totalPositive: positiveBehaviors.length, totalMessages: messages.length,
     typeBreakdown: Object.entries(typeCounts).sort((a,b) => b[1]-a[1]).map(e => ({ type: e[0], count: e[1] })),
     posBreakdown: Object.entries(posTypeCounts).sort((a,b) => b[1]-a[1]).map(e => ({ type: e[0], count: e[1] })),
@@ -1060,6 +1063,10 @@ async function getAdvancedStats(dateFilter, sc) {
     totalReports: allReports.length, totalReportsResponded,
     totalImproved: fv.filter(v => v.behavior_status === 'تحسن' && v.category === 'سلوكية').length,
     totalClassImproved: fv.filter(v => v.behavior_status === 'تحسن' && v.category === 'صفية').length,
+    totalAbsenceExcused: fv.filter(v => (v.category === 'غياب' || v.category === 'absence') && !v.violation_type.includes('بدون عذر')).length,
+    totalAbsenceUnexcused: fv.filter(v => (v.category === 'غياب' || v.category === 'absence') && v.violation_type.includes('بدون عذر')).length,
+    totalAbsenceExcused: fv.filter(v => v.category === 'غياب' && !v.violation_type.includes('بدون عذر')).length,
+    totalAbsenceNoExcuse: fv.filter(v => v.category === 'غياب' && v.violation_type.includes('بدون عذر')).length,
     topReports,
     topClass: Object.keys(cc).length ? Object.entries(cc).sort((a,b) => b[1]-a[1])[0][0] : '-',
     classRanking: Object.entries(cc).sort((a,b) => b[1]-a[1]).map(e => ({ name: e[0], count: e[1] })),
