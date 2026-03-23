@@ -940,13 +940,9 @@ async function getStudentProfile(studentName, className, viewerRole, sc) {
   // سجل المخالفات — جلب الكل ثم فلترة في JS
   const vRows = await sb('violations_log', 'GET',
     `school_code=eq.${sc}&student_name=eq.${encodeURIComponent(studentName)}&order=recorded_at.asc`);
-  console.log('[DEBUG] vRows count:', Array.isArray(vRows) ? vRows.length : 'not array', 'role:', role, 'className:', className);
-  if (Array.isArray(vRows) && vRows.length > 0) {
-    console.log('[DEBUG] sample:', JSON.stringify({ class_name: vRows[0].class_name, visible: vRows[0].visible_to_parent, deleted: vRows[0].deleted_by_admin }));
-  }
   const allRecs = Array.isArray(vRows) ? vRows.filter(r => {
     if (r.deleted_by_admin) return false;
-    if (className && r.class_name !== className) return false;
+    // تجاهل فلتر الفصل بسبب تباين التخزين
     if (role === 'parent' && r.visible_to_parent !== 'نعم') return false;
     return true;
   }).map(r => ({
