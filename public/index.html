@@ -1833,6 +1833,16 @@ tr:hover td{background:var(--em-ghost);}
     </div>
     <div class="home-collapse-body">
       <div class="stats-grid-new">
+        <!-- بطاقة الغياب -->
+        <div class="stat-card-new" style="--sc-accent:#0369a1;cursor:pointer;" onclick="toggleStatDetail('absenceDetail',this)">
+          <span class="material-icons-round sc-ico">event_busy</span>
+          <div class="sc-val" id="statAbsence">0</div>
+          <div class="sc-lbl">الغياب</div>
+          <div class="stat-detail" id="absenceDetail" style="display:none;">
+            <div class="stat-detail-row"><span>بعذر</span><span class="count" id="statAbsenceExcused">0</span></div>
+            <div class="stat-detail-row"><span>بدون عذر</span><span class="count" id="statAbsenceNoExcuse">0</span></div>
+          </div>
+        </div>
         <div class="stat-card-new" style="--sc-accent:#1565C0;cursor:default;">
           <span class="material-icons-round sc-ico">groups</span>
           <div class="sc-val" id="statStudents">0</div>
@@ -1895,6 +1905,27 @@ tr:hover td{background:var(--em-ghost);}
             <!-- صف الرسوم الدائرية CSS — 3 بطاقات -->
       <div class="summary-charts-grid">
                 <!-- بطاقة الغياب -->
+        <!-- بطاقة الغياب -->
+        <div class="summary-chart-card" style="--sc:#0369a1;">
+          <div class="scc-title"><span class="material-icons-round">event_busy</span> الغياب</div>
+          <div class="scc-chart-wrap">
+            <div class="css-donut-wrap">
+              <svg viewBox="0 0 110 110" width="110" height="110">
+                <circle class="css-donut-track" cx="55" cy="55" r="43"/>
+                <circle class="css-donut-fill" id="donutFill1Absence" cx="55" cy="55" r="43" stroke="#0369a1" stroke-dasharray="0 270"/>
+                <circle class="css-donut-fill2" id="donutFill2Absence" cx="55" cy="55" r="43" stroke="#ef4444" stroke-dasharray="0 270"/>
+              </svg>
+              <div class="css-donut-label" onclick="donutToggle('Absence')" style="cursor:pointer;">
+                <span class="css-donut-num" id="donutAbsenceLbl">0</span>
+                <span class="css-donut-sub" id="donutAbsenceSub">بعذر</span>
+              </div>
+            </div>
+          </div>
+          <div class="scc-legend">
+            <span class="scc-dot" style="background:#0369a1;cursor:pointer;" onclick="donutShow('Absence',0)"></span><span>بعذر</span>
+            <span class="scc-dot" style="background:#ef4444;margin-right:8px;cursor:pointer;" onclick="donutShow('Absence',1)"></span><span>بدون عذر</span>
+          </div>
+        </div>
         <div class="summary-chart-card" style="--sc:#D97706;">
           <div class="scc-title"><span class="material-icons-round">event_busy</span> الغياب</div>
           <div class="scc-chart-wrap">
@@ -3697,14 +3728,14 @@ function loadStats(){const df=document.getElementById('statDateFilter').value;sh
   if(elViol) elViol.textContent=s.totalViolations||0;
   const elCls=document.getElementById('statClassViolations');
   if(elCls) elCls.textContent=s.totalClassViolations||0;
+  const elAbs=document.getElementById('statAbsence');
+  if(elAbs) elAbs.textContent=(s.totalAbsenceExcused||0)+(s.totalAbsenceNoExcuse||0);
+  const elAbsEx=document.getElementById('statAbsenceExcused');
+  if(elAbsEx) elAbsEx.textContent=s.totalAbsenceExcused||0;
+  const elAbsNo=document.getElementById('statAbsenceNoExcuse');
+  if(elAbsNo) elAbsNo.textContent=s.totalAbsenceNoExcuse||0;
   const elPos=document.getElementById('statPositive');
   if(elPos) elPos.textContent=s.totalPositive||0;
-  const elAbs=document.getElementById('statAbsence');
-  const absTotal = (s.totalAbsenceExcused||0) + (s.totalAbsenceUnexcused||0);
-  if(elAbs) elAbs.textContent=absTotal;
-  const absDetail=document.getElementById('absenceDetail');
-  if(absDetail) absDetail.innerHTML='<div class="stat-detail-row"><span>بعذر</span><span class="count">'+(s.totalAbsenceExcused||0)+'</span></div>'
-    +'<div class="stat-detail-row"><span>بدون عذر</span><span class="count">'+(s.totalAbsenceUnexcused||0)+'</span></div>';
   const elRpts=document.getElementById('statReports');
   if(elRpts) elRpts.textContent=s.totalReports||0;
   // التفاصيل
@@ -3743,6 +3774,7 @@ function drawHomeSummary(s) {
   window._donutCur = {Behavior:0, Class:0, Positive:0, Reports:0};
 
   const _colorMap = {
+    Absence:  ['#0369a1', '#ef4444'],
     Behavior: ['#dc3545','#22c55e'],
     Class:    ['#f97316','#22c55e'],
     Positive: ['#16a34a','#22d3ee'],
@@ -3767,6 +3799,7 @@ function drawHomeSummary(s) {
 
   drawDonut('Absence', 'donutFill1Absence', 'donutFill2Absence', 'donutAbsenceLbl', 'donutAbsenceSub', absExc, absNoEx);
   drawDonut('Absence', 'donutFill1Absence', 'donutFill2Absence', 'donutAbsenceLbl', 'donutAbsenceSub', absEx, absUnex);
+  drawDonut('Absence', 'donutFill1Absence', 'donutFill2Absence', 'donutAbsenceLbl', 'donutAbsenceSub', absEx, absNo);
   drawDonut('Behavior','donutFill1Behavior','donutFill2Behavior','donutBehaviorLbl','donutBehaviorSub',viol,violImp);
   drawDonut('Class',   'donutFill1Class',   'donutFill2Class',   'donutClassLbl',   'donutClassSub',   cls, clsImp);
   drawDonut('Positive','donutFill1Positive','donutFill2Positive','donutPositiveLbl','donutPositiveSub',pos, dist);
