@@ -1081,7 +1081,7 @@ tr:hover td{background:var(--em-ghost);}
         <select id="myLogFilterVtype" onchange="loadMyLog()" style="font-family:inherit;padding:5px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px;"><option value="">كل المخالفات</option></select>
         <button class="btn btn-outline btn-sm" onclick="clearMyLogFilters()">مسح</button>
         <span class="chip" id="myLogCount">0</span>
-      </div><div class="table-wrapper"><table><thead><tr><th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>المخالفة</th><th>الإجراء المتخذ</th><th>التكرار</th><th title="تحكم بظهور المخالفة في ملف الطالب لدى ولي الأمر">ولي الأمر 👁</th></tr></thead><tbody id="myLogBody"><tr><td colspan="7" class="empty-state">لا توجد</td></tr></tbody></table></div></div></div>
+      </div><div class="table-wrapper"><table><thead><tr><th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>المخالفة</th><th>الإجراء المتخذ</th><th>التكرار</th><th title="تحكم بظهور المخالفة في ملف الطالب لدى ولي الأمر">ولي الأمر 👁</th><th>إجراءات</th></tr></thead><tbody id="myLogBody"><tr><td colspan="7" class="empty-state">لا توجد</td></tr></tbody></table></div></div></div>
 
 <div class="page-section" id="page-mymessages">
 <div class="page-toolbar">
@@ -1855,7 +1855,7 @@ function loadMyLog(){
     document.getElementById('myLogCount').textContent = rows.length;
     const tb = document.getElementById('myLogBody');
     if(!rows.length){
-      tb.innerHTML = '<tr><td colspan="8" class="empty-state">لا توجد</td></tr>';
+      tb.innerHTML = '<tr><td colspan="9" class="empty-state">لا توجد</td></tr>';
       return;
     }
 
@@ -1889,6 +1889,7 @@ function loadMyLog(){
         ? '<button class="vis-toggle '+(isVis?'yes':'no')+'" data-date="'+r.date+'" data-name="'+r.studentName+'" data-vtype="'+r.violationType+'" data-vis="'+(isVis?'1':'0')+'" onclick="toggleVisBtn(this)"><span class="material-icons-round" style="font-size:12px;">'+(isVis?'visibility':'visibility_off')+'</span> '+(isVis?'ظاهر':'مخفي')+'</button>'
         : (r.category==='إيجابية'?'<span style="font-size:10px;color:var(--ok);">✅ دائماً</span>':'<span style="font-size:10px;color:var(--danger);">🔴 إدارة</span>');
 
+      var delBtn = '<button class="btn btn-danger btn-sm" onclick="tDelViolation(\''+r.date.replace(/\'/g,"\\'")+'\''+',\''+r.studentName.replace(/\'/g,"\\'")+'\''+',\''+r.violationType.replace(/\'/g,"\\'")+'\')" style="padding:4px 6px;" title="حذف"><span class="material-icons-round" style="font-size:14px;">delete</span></button>';
       return '<tr>'
         + '<td>'+(i+1)+'</td>'
         + '<td>'+r.date+'</td>'
@@ -1898,6 +1899,7 @@ function loadMyLog(){
         + '<td>'+actionHtml+'</td>'
         + '<td style="text-align:center;font-weight:900;color:'+( cnt>2?'#E24B4A':'#999')+';font-size:14px;">'+cnt+'</td>'
         + '<td>'+visBtn+'</td>'
+        + '<td>'+delBtn+'</td>'
         + '</tr>';
     }).join('');
   }).catch(function(e){ hideL(); console.error('loadMyLog error:', e); });
@@ -3725,7 +3727,17 @@ tr:hover td{background:var(--em-ghost);}
   .stat-num { font-size: 18px !important; }
 }
 </style>
-<script src="/api-client.js"></script>
+<script src="/api-client.js">
+function tDelViolation(date, studentName, violationType) {
+  if(!confirm('حذف المخالفة؟')) return;
+  showL();
+  GAS.deleteViolationLog(date, studentName, violationType).then(function(r){
+    hideL();
+    if(r && r.success) loadMyLog();
+    else showA('recordAlert','error','فشل الحذف');
+  }).catch(function(e){ hideL(); console.error(e); });
+}
+</script>
 
 </head>
 <body>
