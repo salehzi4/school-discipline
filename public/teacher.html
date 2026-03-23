@@ -3042,6 +3042,16 @@ function toggleVisBtn(btn) {
   toggleVis(date, name, vtype, !isVis, btn);
   btn.setAttribute('data-vis', isVis ? '0' : '1');
 }
+
+function tDelViolation(date, studentName, violationType) {
+  if(!confirm('حذف المخالفة؟')) return;
+  showL();
+  GAS.deleteViolationLog(date, studentName, violationType).then(function(r){
+    hideL();
+    if(r && r.success) loadMyLog();
+    else showA('recordAlert','error','فشل الحذف');
+  }).catch(function(e){ hideL(); console.error(e); });
+}
 </script>
 
 
@@ -3728,15 +3738,7 @@ tr:hover td{background:var(--em-ghost);}
 }
 </style>
 <script src="/api-client.js">
-function tDelViolation(date, studentName, violationType) {
-  if(!confirm('حذف المخالفة؟')) return;
-  showL();
-  GAS.deleteViolationLog(date, studentName, violationType).then(function(r){
-    hideL();
-    if(r && r.success) loadMyLog();
-    else showA('recordAlert','error','فشل الحذف');
-  }).catch(function(e){ hideL(); console.error(e); });
-}
+
 </script>
 
 </head>
