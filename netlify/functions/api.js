@@ -823,16 +823,14 @@ async function addFollowUp(date, studentName, violationType, followUpText, behav
 }
 
 async function setVisibleToParent(date, studentName, violationType, visible, sc) {
-  const datePart = date.split(' ')[0];
+  // تحديث جميع سجلات نفس المخالفة لنفس الطالب
   const rows = await sb('violations_log', 'GET',
-    `school_code=eq.${sc}&student_name=eq.${encodeURIComponent(studentName)}&violation_type=eq.${encodeURIComponent(violationType)}&select=id,recorded_at`);
-  if (!Array.isArray(rows)) return { success: false };
-  const matches = rows.filter(r => fmtDate(r.recorded_at).startsWith(datePart));
-  const toUpdate = matches.length ? matches : rows;
-  for (const r of toUpdate) {
+    `school_code=eq.${sc}&student_name=eq.${encodeURIComponent(studentName)}&violation_type=eq.${encodeURIComponent(violationType)}&select=id`);
+  if (!Array.isArray(rows) || !rows.length) return { success: false };
+  for (const r of rows) {
     await sb('violations_log', 'PATCH', `id=eq.${r.id}`, { visible_to_parent: visible ? 'نعم' : 'لا' });
   }
-  return { success: toUpdate.length > 0 };
+  return { success: true };
 }
 
 async function referViolationToAdmin(studentName, violationType, className, sc) {
@@ -956,13 +954,8 @@ async function getStudentProfile(studentName, className, viewerRole, sc) {
   const violations      = allRecs.filter(r => r.category === 'سلوكية');
   const classViolations = allRecs.filter(r => r.category === 'صفية');
 
-  // السلوك الإيجابي
-  const pRows = await sb('positive_behaviors_log', 'GET',
-    `school_code=eq.${sc}&student_name=eq.${encodeURIComponent(studentName)}&class_name=eq.${encodeURIComponent(className)}&order=recorded_at.asc`);
-  const positiveBehaviors = Array.isArray(pRows) ? pRows.map(r => ({
-    date: fmtDate(r.recorded_at), type: r.behavior_type, notes: r.notes || '',
-    recorder: r.recorder || '', subType: r.sub_type || 'إيجابي', category: 'إيجابية', visibleToParent: 'نعم'
-  })) : [];
+  // السلوك الإيجابي (من violations_log)
+  const positiveBehaviors = allRecs.filter(r => r.category === 'إيجابية');
 
   // الرسائل
   const mRows = await sb('messages_log', 'GET',
