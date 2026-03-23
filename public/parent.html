@@ -391,6 +391,50 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
     <div class="sec-lbl" style="--c:#0A5C44;">المؤشرات</div>
     <div class="ind-grid">
 
+      <!-- بطاقة الغياب -->
+            <div class="ind-card" style="--c:#D97706;--c-border:#fcd34d;">
+        <div class="ind-body">
+          <div class="ind-title"><span class="material-icons-round" style="font-size:14px;">event_busy</span> الغياب</div>
+          <div class="ind-donut-wrap">
+            <svg viewBox="0 0 80 80" width="80" height="80">
+              <circle class="ind-track" cx="40" cy="40" r="30"/>
+              <circle class="ind-fill" id="dAbsence" cx="40" cy="40" r="30" stroke="#D97706" stroke-dasharray="0 188"/>
+              <circle class="ind-fill2" id="dAbsence2" cx="40" cy="40" r="30" stroke="#EF4444" stroke-dasharray="0 188"/>
+            </svg>
+            <div class="ind-lbl-wrap" onclick="indToggle('absence')">
+              <span class="ind-num" id="iAbsenceNum">0</span>
+              <span class="ind-sub" id="iAbsenceSub">بعذر</span>
+            </div>
+          </div>
+          <div class="ind-legend">
+            <span class="ind-dot" style="background:#D97706;" onclick="indShow('absence',0)"></span><span>بعذر</span>
+            <span class="ind-dot" style="background:#EF4444;margin-right:6px;" onclick="indShow('absence',1)"></span><span>بدون عذر</span>
+          </div>
+          <div class="ind-sub-txt" id="im_absence">0 بعذر — 0 بدون عذر</div>
+        </div>
+      </div>
+<div class="ind-card" style="--c:#D97706;--c-border:#fcd34d;">
+        <div class="ind-body">
+          <div class="donut-wrap">
+            <svg viewBox="0 0 90 90">
+              <circle class="d-track" cx="45" cy="45" r="38"/>
+              <circle class="d-fill" id="df1_absence" cx="45" cy="45" r="38" stroke="#D97706"/>
+              <circle class="d-fill2" id="df2_absence" cx="45" cy="45" r="38" stroke="#ef4444"/>
+            </svg>
+            <div class="donut-center" onclick="donutToggle('absence')" style="cursor:pointer;">
+              <span class="ds-num" id="dn_absence">0</span>
+              <span class="ds-lbl" id="ds_absence">بعذر</span>
+            </div>
+          </div>
+        </div>
+        <div class="ind-title">مؤشر الغياب</div>
+        <div class="ind-meta" id="im_absence">بعذر vs بدون عذر</div>
+        <button class="ind-btn" style="background:#D97706;" onclick="toggleDetails('absence_detail')">
+          <span class="material-icons-round" style="font-size:14px;">expand_more</span> التفاصيل
+        </button>
+        <div class="detail-panel" id="absence_detail" style="display:none;"></div>
+      </div>
+
       <div class="ind-card" style="--c:var(--red);--c-border:#fca5a5;">
         <div class="ind-body">
           <div class="donut-wrap">
@@ -755,8 +799,17 @@ function loadProfile(name, cls){
 function renderAll(p){
   $('heroName').textContent  = p.name    || '—';
   $('heroClass').textContent = p.className || '—';
-  $('ovBehavior').textContent = (p.violations||[]).length;
-  $('ovClass').textContent    = (p.classViolations||[]).length;
+  var absExcused   = (p.violations||[]).filter(function(v){ return (v.category==='غياب'||v.category==='absence') && !v.type.includes('بدون عذر'); }).length
+                   + (p.classViolations||[]).filter(function(v){ return (v.category==='غياب'||v.category==='absence') && !v.type.includes('بدون عذر'); }).length;
+  var absUnexcused = (p.violations||[]).filter(function(v){ return (v.category==='غياب'||v.category==='absence') && v.type.includes('بدون عذر'); }).length
+                   + (p.classViolations||[]).filter(function(v){ return (v.category==='غياب'||v.category==='absence') && v.type.includes('بدون عذر'); }).length;
+  // استخدام جميع السجلات للغياب
+  var allAbsence = (p.violations||[]).concat(p.classViolations||[]).filter(function(v){ return v.category==='غياب'||v.category==='absence'; });
+  absExcused   = allAbsence.filter(function(v){ return !v.type.includes('بدون عذر'); }).length;
+  absUnexcused = allAbsence.filter(function(v){ return v.type.includes('بدون عذر'); }).length;
+  if($('ovAbsence')) $('ovAbsence').textContent = absExcused + absUnexcused;
+  $('ovBehavior').textContent = (p.violations||[]).filter(function(v){ return v.category!=='غياب'&&v.category!=='absence'; }).length;
+  $('ovClass').textContent    = (p.classViolations||[]).filter(function(v){ return v.category!=='غياب'&&v.category!=='absence'; }).length;
   $('ovPositive').textContent = (p.positiveBehaviors||[]).length;
   loadReportCount(p.name, p.className);
   var vList = p.violations||[];
@@ -765,8 +818,10 @@ function renderAll(p){
   var vImp  = vList.filter(function(v){ return v.followUp && v.followUp.trim(); }).length;
   var cImp  = cList.filter(function(v){ return v.followUp && v.followUp.trim(); }).length;
   var pDist = pList.filter(function(v){ return (v.subType==='متميز')||(v.type&&v.type.indexOf('متميز')>-1); }).length;
-  drawDonut('behavior', vList.length, vImp);
-  drawDonut('class',    cList.length, cImp);
+  drawDonut('behavior', vList.filter(function(v){return v.category!=='غياب'&&v.category!=='absence';}).length, vImp);
+  drawDonut('class',    cList.filter(function(v){return v.category!=='غياب'&&v.category!=='absence';}).length, cImp);
+  if(typeof indDrawAbsence === 'function') indDrawAbsence(absExcused, absUnexcused);
+  if($('im_absence')) $('im_absence').textContent = absExcused + ' بعذر — ' + absUnexcused + ' بدون عذر';
   drawDonut('positive', pList.length - pDist, pDist);
   buildDetailList('behavior', vList,  'var(--red)',    ['recorder','subject','treatmentDate','notes','actionTaken']);
   buildDetailList('class',    cList,  'var(--orange)', ['recorder','subject','treatmentDate','notes','actionTaken']);
@@ -927,12 +982,13 @@ function drawDonut(key, v1, v2){
   if(f1) setTimeout(function(){ f1.style.strokeDasharray = d1+' '+(circ-d1); }, 100);
   if(f2) setTimeout(function(){ f2.style.strokeDasharray = d2+' '+(circ-d2); f2.style.strokeDashoffset = -d1; }, 100);
   if(lbl) lbl.textContent = v1;
-  var subMap = {behavior:'مخالفة', class:'مخالفة', positive:'إيجابي', reports:'محضر'};
+  var subMap = {behavior:'مخالفة', class:'مخالفة', positive:'إيجابي', reports:'محضر', absence:'بعذر'};
   if(sub) sub.textContent = subMap[key]||'';
   var metaMap = {
     behavior: v1+' مخالفة — '+v2+' تحسّن',
     class:    v1+' مخالفة — '+v2+' تحسّن',
-    positive: (v1)+' إيجابي — '+v2+' متميز'
+    positive: (v1)+' إيجابي — '+v2+' متميز',
+    absence:  v1+' بعذر — '+v2+' بدون عذر'
   };
   if(meta && metaMap[key]) meta.textContent = metaMap[key];
 }
@@ -1674,7 +1730,42 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
 .global-alert.show{display:flex;}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.75;transform:scale(1.1);}}
 </style>
-<script src="/api-client.js"></script>
+<script src="/api-client.js">
+function indDrawAbsence(excused, unexcused) {
+  var total = excused + unexcused;
+  var circ = 188;
+  var d1 = total ? Math.round((excused/total)*circ) : 0;
+  var d2 = total ? Math.round((unexcused/total)*circ) : 0;
+  var el1 = document.getElementById('dAbsence');
+  var el2 = document.getElementById('dAbsence2');
+  var num = document.getElementById('iAbsenceNum');
+  var sub = document.getElementById('iAbsenceSub');
+  if(el1) el1.setAttribute('stroke-dasharray', d1+' '+(circ-d1));
+  if(el2) el2.setAttribute('stroke-dasharray', d2+' '+(circ-d2));
+  if(num) num.textContent = excused;
+  if(sub) sub.textContent = 'بعذر';
+  window._absVals = [{v:excused,lbl:'بعذر'},{v:unexcused,lbl:'بدون عذر'}];
+  window._absCur  = 0;
+}
+
+function indToggle(key) {
+  if(key!=='absence') return;
+  var cur = window._absCur || 0;
+  var next = cur === 0 ? 1 : 0;
+  indShow(key, next);
+}
+
+function indShow(key, idx) {
+  if(key!=='absence') return;
+  window._absCur = idx;
+  var vals = window._absVals || [{v:0},{v:0}];
+  var colors = ['#D97706','#EF4444'];
+  var num = document.getElementById('iAbsenceNum');
+  var sub = document.getElementById('iAbsenceSub');
+  if(num) { num.textContent = vals[idx].v; num.style.color = colors[idx]; }
+  if(sub) { sub.textContent = vals[idx].lbl; sub.style.color = colors[idx]; }
+}
+</script>
 
 </head>
 <body>
