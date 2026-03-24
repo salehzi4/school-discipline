@@ -444,7 +444,7 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
             </div>
           </div>
           <div class="ind-title">مؤشر السلوكيات</div>
-          <div class="ind-meta" id="im_behavior">المخالفات vs التحسّن</div>
+          <div class="ind-meta" id="im_behavior">المخالفات السلوكية</div>
         </div>
         <button class="ind-btn" style="background:var(--red);" onclick="toggleDetails('behavior',this)">
           <span class="material-icons-round">expand_more</span> عرض التفاصيل
@@ -474,7 +474,7 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
             </div>
           </div>
           <div class="ind-title">مؤشر السلوكيات</div>
-          <div class="ind-meta" id="im_class">المخالفات الصفية vs التحسّن</div>
+          <div class="ind-meta" id="im_class">المخالفات الصفية</div>
         </div>
         <button class="ind-btn" style="background:var(--orange);" onclick="toggleDetails('class',this)">
           <span class="material-icons-round">expand_more</span> عرض التفاصيل
@@ -812,8 +812,8 @@ function renderAll(p){
   var vList = p.violations||[];
   var cList = p.classViolations||[];
   var pList = p.positiveBehaviors||[];
-  var vImp  = vList.filter(function(v){ return v.followUp && v.followUp.trim(); }).length;
-  var cImp  = cList.filter(function(v){ return v.followUp && v.followUp.trim(); }).length;
+  var vImp  = 0;
+  var cImp  = 0;
   var pDist = pList.filter(function(v){ return (v.subType==='متميز')||(v.type&&v.type.indexOf('متميز')>-1); }).length;
   drawDonut('behavior', vList.filter(function(v){return v.category!=='غياب'&&v.category!=='absence';}).length, vImp);
   drawDonut('class',    cList.filter(function(v){return v.category!=='غياب'&&v.category!=='absence';}).length, cImp);
@@ -982,8 +982,8 @@ function drawDonut(key, v1, v2){
   var subMap = {behavior:'مخالفة', class:'مخالفة', positive:'إيجابي', reports:'محضر', absence:'بعذر'};
   if(sub) sub.textContent = subMap[key]||'';
   var metaMap = {
-    behavior: v1+' مخالفة — '+v2+' تحسّن',
-    class:    v1+' مخالفة — '+v2+' تحسّن',
+    behavior: v1+' مخالفة',
+    class:    v1+' مخالفة',
     positive: (v1)+' إيجابي — '+v2+' متميز',
     absence:  v1+' بعذر — '+v2+' بدون عذر'
   };
@@ -1920,7 +1920,7 @@ function indShow(key, idx) {
             </div>
           </div>
           <div class="ind-title">مؤشر السلوكيات</div>
-          <div class="ind-meta" id="im_behavior">المخالفات vs التحسّن</div>
+          <div class="ind-meta" id="im_behavior">المخالفات السلوكية</div>
         </div>
         <button class="ind-btn" style="background:var(--red);" onclick="toggleDetails('behavior',this)">
           <span class="material-icons-round">expand_more</span> عرض التفاصيل
@@ -1950,7 +1950,7 @@ function indShow(key, idx) {
             </div>
           </div>
           <div class="ind-title">مؤشر السلوكيات</div>
-          <div class="ind-meta" id="im_class">المخالفات الصفية vs التحسّن</div>
+          <div class="ind-meta" id="im_class">المخالفات الصفية</div>
         </div>
         <button class="ind-btn" style="background:var(--orange);" onclick="toggleDetails('class',this)">
           <span class="material-icons-round">expand_more</span> عرض التفاصيل
