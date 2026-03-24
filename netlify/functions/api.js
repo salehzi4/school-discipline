@@ -548,9 +548,8 @@ async function deletePositiveBehaviorType(typeName, sc) {
 async function recordViolation(body, sc) {
   const { studentsData, violationType, notes, recorder, severity, signature, fingerprint, category, score, subject, actionType, actionTaken, subType, visibleToParentOverride } = body;
   const isPositive  = (category === 'إيجابية');
-  const isAbsence   = (category === 'absence' || category === 'غياب');
   const isDangerous = (severity === 'خطيرة');
-  const visibleToParent = (isPositive || isAbsence) ? 'نعم' : (isDangerous ? 'لا' : (visibleToParentOverride === 'نعم' ? 'نعم' : 'لا'));
+  const visibleToParent = isPositive ? 'نعم' : (isDangerous ? 'لا' : (visibleToParentOverride === 'نعم' ? 'نعم' : 'لا'));
   const referredToAdmin = isDangerous ? 'نعم' : 'لا';
   const now = new Date().toISOString();
 
@@ -1013,7 +1012,6 @@ async function getStudentProfile(studentName, className, viewerRole, sc) {
     typeBreakdown: Object.entries(typeCounts).sort((a,b) => b[1]-a[1]).map(e => ({ type: e[0], count: e[1] })),
     posBreakdown: Object.entries(posTypeCounts).sort((a,b) => b[1]-a[1]).map(e => ({ type: e[0], count: e[1] })),
     violations: violations.reverse(), classViolations: classViolations.reverse(),
-    absenceViolations: absenceViolations.reverse(),
     positiveBehaviors: positiveBehaviors.reverse(), messages: messages.reverse()
   };
 }
@@ -1222,6 +1220,13 @@ async function saveReport(data, sc) {
     status: 'بانتظار الاستلام', violation_date: data.violationDate || new Date().toISOString(),
     notes: data.bodyText || data.notes || ''
   });
+  // تعليم الإحالة كـ "تمت المعالجة" في violations_log إذا كانت محالة
+  if (data.studentName && data.violationType) {
+    await sb('violations_log', 'PATCH',
+      `school_code=eq.${sc}&student_name=eq.${encodeURIComponent(data.studentName)}&violation_type=eq.${encodeURIComponent(data.violationType)}&referred_to_admin=eq.نعم&treatment_date=is.null`,
+      { treatment_date: new Date().toISOString(), follow_up: 'تم إصدار محضر رقم ' + reportNum }
+    );
+  }
   return { success: true, reportNum, message: 'تم حفظ المحضر ✅' };
 }
 
