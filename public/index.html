@@ -1937,7 +1937,7 @@ tr:hover td{background:var(--em-ghost);}
           </div>
           <div class="scc-legend">
             <span class="scc-dot" style="background:#dc3545;cursor:pointer;" onclick="donutShow('Behavior',0)"></span><span>مخالفات</span>
-            <span class="scc-dot" style="background:#22c55e;margin-right:8px;cursor:pointer;" onclick="donutShow('Behavior',1)"></span><span>تحسن</span>
+            <span class="scc-dot" style="background:#22c55e;margin-right:8px;cursor:pointer;" onclick="donutShow('Behavior',1)"></span>
           </div>
         </div>
         <!-- بطاقة 2: المخالفات الصفية -->
@@ -1958,7 +1958,7 @@ tr:hover td{background:var(--em-ghost);}
           </div>
           <div class="scc-legend">
             <span class="scc-dot" style="background:#f97316;cursor:pointer;" onclick="donutShow('Class',0)"></span><span>مخالفات</span>
-            <span class="scc-dot" style="background:#22c55e;margin-right:8px;cursor:pointer;" onclick="donutShow('Class',1)"></span><span>تحسن</span>
+            <span class="scc-dot" style="background:#22c55e;margin-right:8px;cursor:pointer;" onclick="donutShow('Class',1)"></span>
           </div>
         </div>
         <!-- بطاقة 3: السلوك الإيجابي والمتميز -->
@@ -3308,24 +3308,7 @@ tr:hover td{background:var(--em-ghost);}
 
 
 
-    <!-- التحسن والمعالجة -->
-    <div class="card" style="margin-bottom:14px;">
-      <div class="card-title" style="font-size:13px;"><span class="material-icons-round" style="color:#3498db;font-size:16px;">trending_up</span> مؤشر التحسن والمعالجة</div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;" id="frImproveGrid">
-        <div style="background:var(--bg);border-radius:10px;padding:14px;text-align:center;">
-          <div style="font-size:24px;font-weight:900;color:#27ae60;" id="frImproved">0</div>
-          <div style="font-size:11px;color:var(--text-3);">حالة تحسّن سلوكي</div>
-        </div>
-        <div style="background:var(--bg);border-radius:10px;padding:14px;text-align:center;">
-          <div style="font-size:24px;font-weight:900;color:#e74c3c;" id="frRepeat">0</div>
-          <div style="font-size:11px;color:var(--text-3);">حالة تكرار</div>
-        </div>
-        <div style="background:var(--bg);border-radius:10px;padding:14px;text-align:center;">
-          <div style="font-size:24px;font-weight:900;color:#f39c12;" id="frImproveRate">0%</div>
-          <div style="font-size:11px;color:var(--text-3);">نسبة التحسن</div>
-        </div>
-      </div>
-    </div>
+
 
     <!-- أولياء الأمور -->
     <div class="card" style="margin-bottom:14px;">
@@ -3439,12 +3422,12 @@ tr:hover td{background:var(--em-ghost);}
       <label style="font-size:12px;font-weight:700;margin-bottom:6px;display:block;">حالة السلوك بعد المعالجة</label>
       <div style="display:flex;gap:10px;">
         <label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:8px 14px;border-radius:8px;border:1.5px solid var(--border);flex:1;">
-          <input type="radio" name="fuBehaviorStatus" value="تحسن" style="accent-color:#16a34a;">
+          
           <span class="material-icons-round" style="font-size:16px;color:#16a34a;">trending_up</span>
-          <span style="font-size:12px;font-weight:700;color:#16a34a;">تحسن</span>
+          
         </label>
         <label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:8px 14px;border-radius:8px;border:1.5px solid var(--border);flex:1;">
-          <input type="radio" name="fuBehaviorStatus" value="لم يتحسن" style="accent-color:#dc3545;">
+          
           <span class="material-icons-round" style="font-size:16px;color:#dc3545;">trending_down</span>
           <span style="font-size:12px;font-weight:700;color:#dc3545;">لم يتحسن</span>
         </label>
@@ -3718,8 +3701,8 @@ function drawHomeSummary(s) {
 
   window._donutVals = {
     Absence:  [{v:absEx,  lbl:'بعذر',    sub:'بعذر'},   {v:absNo,  lbl:'بدون عذر', sub:'بدون عذر'}],
-    Behavior: [{v:viol,  lbl:'مخالفات', sub:'مخالفة'}, {v:violImp, lbl:'تحسّن',  sub:'تحسّن'}],
-    Class:    [{v:cls,   lbl:'مخالفات', sub:'مخالفة'}, {v:clsImp,  lbl:'تحسّن',  sub:'تحسّن'}],
+    Behavior: [{v:viol, lbl:'مخالفات', sub:'مخالفة'}, {v:0, lbl:'', sub:''}],
+    Class:    [{v:cls,  lbl:'مخالفات', sub:'مخالفة'}, {v:0, lbl:'', sub:''}],
     Positive: [{v:pos,   lbl:'إيجابي',  sub:'إيجابي'}, {v:dist,    lbl:'متميز',  sub:'متميز'}],
     Reports:  [{v:rpts,  lbl:'المحاضر', sub:'محضر'},   {v:rptRes,  lbl:'استجاب', sub:'استجاب'}],
   };
@@ -3782,8 +3765,11 @@ function donutShow(key, idx) {
 }
 
 function donutToggle(key) {
-  if (!window._donutVals) return;
-  const next = ((window._donutCur[key] || 0) + 1) % window._donutVals[key].length;
+  if (!window._donutVals || !window._donutVals[key]) return;
+  const vals = window._donutVals[key];
+  const cur  = window._donutCur[key] || 0;
+  let next = (cur + 1) % vals.length;
+  if (!vals[next].lbl) return;
   donutShow(key, next);
 }
 
@@ -4874,10 +4860,7 @@ function loadViolationsLog(){
   } else {
     ttb.innerHTML=treated.map((r,i)=>{
       const followText=r.followUp?r.followUp.split('\n').map(l=>'<div style="margin-bottom:3px;">'+l+'</div>').join(''):'—';
-      return '<tr><td>'+(i+1)+'</td><td>'+r.date+'</td><td><strong>'+r.studentName+'</strong></td><td>'+r.className+'</td><td>'+r.violationType+'</td><td><span class="treated-badge"><span class="material-icons-round" style="font-size:11px;">check_circle</span>'+r.treatmentDate+'</span></td><td style="font-size:11px;max-width:250px;">'+followText+'</td><td>'+('<div style="display:flex;gap:5px;flex-wrap:wrap;">'
-        +'<button onclick="updateBehaviorStatus(\''+esc(r.date)+'\''+',\''+esc(r.studentName)+'\''+',\''+esc(r.violationType)+'\''+',\'تحسن\''+')" style="padding:3px 10px;border-radius:20px;border:1.5px solid;font-size:10px;font-weight:700;cursor:pointer;transition:all .15s;background:'+(r.behaviorStatus==='تحسن'?'#16a34a':'transparent')+';color:'+(r.behaviorStatus==='تحسن'?'#fff':'#16a34a')+';border-color:#16a34a;">✅ تحسن</button>'
-        +'<button onclick="updateBehaviorStatus(\''+esc(r.date)+'\''+',\''+esc(r.studentName)+'\''+',\''+esc(r.violationType)+'\''+',\'لم يتحسن\''+')" style="padding:3px 10px;border-radius:20px;border:1.5px solid;font-size:10px;font-weight:700;cursor:pointer;transition:all .15s;background:'+(r.behaviorStatus==='لم يتحسن'?'#dc3545':'transparent')+';color:'+(r.behaviorStatus==='لم يتحسن'?'#fff':'#dc3545')+';border-color:#dc3545;">⚠️ لم يتحسن</button>'
-        +'</div>')+'</td></tr>';
+      return '<tr><td>'+(i+1)+'</td><td>'+r.date+'</td><td><strong>'+r.studentName+'</strong></td><td>'+r.className+'</td><td>'+r.violationType+'</td><td><span class="treated-badge"><span class="material-icons-round" style="font-size:11px;">check_circle</span>'+r.treatmentDate+'</span></td><td style="font-size:11px;max-width:250px;">'+followText+'</td></tr>';
     }).join('');
   }
 });}
@@ -5496,8 +5479,7 @@ function updateBehaviorStatus(date,studentName,violationType,newStatus){
 function confirmFollowUp(){
   const txt=document.getElementById('fuText').value.trim();
   if(!txt){document.getElementById('fuText').style.borderColor='var(--danger)';return;}
-  const statusEl=document.querySelector('input[name="fuBehaviorStatus"]:checked');
-  const behaviorStatus=statusEl?statusEl.value:'';
+  const behaviorStatus='';
   document.getElementById('followUpModal').style.display='none';
   const {d,sn,vt}=window._fuData;
   showLoading();
@@ -6544,7 +6526,6 @@ function loadFullReport() {
       var tpc = document.getElementById('frTopPosClasses');
       if(tpc) tpc.innerHTML = (d.positiveClasses&&d.positiveClasses.length) ? d.positiveClasses.slice(0,5).map(function(r,i){return '<div class="fr-rank-row" style="--fc:#27ae60"><span class="fr-rank-num">'+(i+1)+'</span><span class="fr-rank-name">'+esc(r.name)+'</span><span class="fr-rank-count" style="background:#27ae60;">'+r.count+'</span></div>';}).join('') : '<div class="empty-state">لا توجد بيانات</div>';
       // (سجل المحاضر أُزيل من التقرير الشامل)
-      // التحسن
       var imp = d.totalImproved||0, rep = d.repeatCount||0, tot = imp+rep;
       document.getElementById('frImproved').textContent = imp;
       document.getElementById('frRepeat').textContent = rep;
@@ -6818,12 +6799,7 @@ function getPageData(pageId) {
             </div>
           </div>
 
-          <div class="section-hd">📊 مؤشر التحسن والمعالجة</div>
-          ${extractStats([
-            ['frImproved','حالة تحسّن','#27ae60'],
-            ['frRepeat','حالة تكرار','#e74c3c'],
-            ['frImproveRate','نسبة التحسن','#f39c12']
-          ])}
+          
 
           <div class="section-hd">👨‍👩‍👦 إحصاءات التواصل مع أولياء الأمور</div>
           ${extractStats([
