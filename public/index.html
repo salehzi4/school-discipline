@@ -3758,14 +3758,14 @@ function drawHomeSummary(s) {
   const clsImp  = s.totalClassImproved   || 0;
   const pos     = s.totalPositive        || 0;
   const dist    = s.totalDistinct        || 0;
-  const absExc  = s.totalAbsenceExcused  || 0;
-  const absNoEx = s.totalAbsenceNoExcuse || 0;
+  const absEx   = s.totalAbsenceExcused  || 0;
+  const absNo   = s.totalAbsenceNoExcuse || 0;
 
   const rpts  = s.totalReports          || 0;
   const rptRes= s.totalReportsResponded || 0;
 
   window._donutVals = {
-    Absence:  [{v:absExc, lbl:'بعذر',    sub:'بعذر'},   {v:absNoEx, lbl:'بدون عذر', sub:'بدون عذر'}],
+    Absence:  [{v:absEx,  lbl:'بعذر',    sub:'بعذر'},   {v:absNo,  lbl:'بدون عذر', sub:'بدون عذر'}],
     Behavior: [{v:viol,  lbl:'مخالفات', sub:'مخالفة'}, {v:violImp, lbl:'تحسّن',  sub:'تحسّن'}],
     Class:    [{v:cls,   lbl:'مخالفات', sub:'مخالفة'}, {v:clsImp,  lbl:'تحسّن',  sub:'تحسّن'}],
     Positive: [{v:pos,   lbl:'إيجابي',  sub:'إيجابي'}, {v:dist,    lbl:'متميز',  sub:'متميز'}],
@@ -3798,8 +3798,6 @@ function drawHomeSummary(s) {
   }
 
   drawDonut('Absence', 'donutFill1Absence', 'donutFill2Absence', 'donutAbsenceLbl', 'donutAbsenceSub', absExc, absNoEx);
-  drawDonut('Absence', 'donutFill1Absence', 'donutFill2Absence', 'donutAbsenceLbl', 'donutAbsenceSub', absEx, absUnex);
-  drawDonut('Absence', 'donutFill1Absence', 'donutFill2Absence', 'donutAbsenceLbl', 'donutAbsenceSub', absEx, absNo);
   drawDonut('Behavior','donutFill1Behavior','donutFill2Behavior','donutBehaviorLbl','donutBehaviorSub',viol,violImp);
   drawDonut('Class',   'donutFill1Class',   'donutFill2Class',   'donutClassLbl',   'donutClassSub',   cls, clsImp);
   drawDonut('Positive','donutFill1Positive','donutFill2Positive','donutPositiveLbl','donutPositiveSub',pos, dist);
