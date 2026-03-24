@@ -426,7 +426,27 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
           </div>
         </div>
       </div>
-
+<div class="ind-card" style="--c:#D97706;--c-border:#fcd34d;">
+        <div class="ind-body">
+          <div class="donut-wrap">
+            <svg viewBox="0 0 90 90">
+              <circle class="d-track" cx="45" cy="45" r="38"/>
+              <circle class="d-fill" id="df1_absence" cx="45" cy="45" r="38" stroke="#D97706"/>
+              <circle class="d-fill2" id="df2_absence" cx="45" cy="45" r="38" stroke="#ef4444"/>
+            </svg>
+            <div class="donut-center" onclick="donutToggle('absence')" style="cursor:pointer;">
+              <span class="ds-num" id="dn_absence">0</span>
+              <span class="ds-lbl" id="ds_absence">بعذر</span>
+            </div>
+          </div>
+        </div>
+        <div class="ind-title">مؤشر الغياب</div>
+        <div class="ind-meta" id="im_absence">بعذر vs بدون عذر</div>
+        <button class="ind-btn" style="background:#D97706;" onclick="toggleDetails('absence_detail')">
+          <span class="material-icons-round" style="font-size:14px;">expand_more</span> التفاصيل
+        </button>
+        <div class="detail-panel" id="absence_detail" style="display:none;"></div>
+      </div>
 
       <div class="ind-card" style="--c:var(--red);--c-border:#fca5a5;">
         <div class="ind-body">
@@ -796,8 +816,10 @@ function renderAll(p){
                    + (p.classViolations||[]).filter(function(v){ return (v.category==='غياب'||v.category==='absence') && !v.type.includes('بدون عذر'); }).length;
   var absUnexcused = (p.violations||[]).filter(function(v){ return (v.category==='غياب'||v.category==='absence') && v.type.includes('بدون عذر'); }).length
                    + (p.classViolations||[]).filter(function(v){ return (v.category==='غياب'||v.category==='absence') && v.type.includes('بدون عذر'); }).length;
-  // استخدام جميع السجلات للغياب
-  var allAbsence = (p.violations||[]).concat(p.classViolations||[]).filter(function(v){ return v.category==='غياب'||v.category==='absence'; });
+  // استخدام قائمة absenceViolations المنفصلة من API
+  var allAbsence = (p.absenceViolations && p.absenceViolations.length)
+    ? p.absenceViolations
+    : (p.violations||[]).concat(p.classViolations||[]).filter(function(v){ return v.category==='غياب'||v.category==='absence'; });
   absExcused   = allAbsence.filter(function(v){ return !v.type.includes('بدون عذر'); }).length;
   absUnexcused = allAbsence.filter(function(v){ return v.type.includes('بدون عذر'); }).length;
   if($('ovAbsence')) $('ovAbsence').textContent = absExcused + absUnexcused;
@@ -818,6 +840,7 @@ function renderAll(p){
   buildDetailList('behavior', vList,  'var(--red)',    ['recorder','subject','treatmentDate','notes','actionTaken']);
   buildDetailList('class',    cList,  'var(--orange)', ['recorder','subject','treatmentDate','notes','actionTaken']);
   buildDetailList('positive', pList,  '#059669',       ['recorder','notes']);
+  buildDetailList('absence',  allAbsence, '#0369a1',    ['recorder','date','notes']);
   // ابن التقويم
   buildCalEvents(p);
   renderCal();
