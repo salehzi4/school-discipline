@@ -1871,24 +1871,7 @@ tr:hover td{background:var(--em-ghost);}
           <div class="sc-lbl">السلوك الإيجابي</div>
           <div class="stat-details" id="positiveDetail"></div>
         </div>
-        <div class="stat-card-new" style="--sc-accent:#D97706;" onclick="toggleStatDetail('absenceDetail')">
-          <span class="material-icons-round sc-ico">event_busy</span>
-          <div class="sc-val" id="statAbsence">0</div>
-          <div class="sc-lbl">الغياب</div>
-          <div class="stat-details" id="absenceDetail"></div>
-        </div>
-        <div class="stat-card-new" style="--sc-accent:#0A5C44;" onclick="toggleStatDetail('reportsDetail')">
-          <span class="material-icons-round sc-ico">folder_open</span>
-          <div class="sc-val" id="statReports">0</div>
-          <div class="sc-lbl">عدد المحاضر</div>
-          <div class="stat-details" id="reportsDetail"></div>
-        </div>
-        <div class="stat-card-new" style="--sc-accent:#D97706;" onclick="toggleStatDetail('absenceDetail')">
-          <span class="material-icons-round sc-ico">event_busy</span>
-          <div class="sc-val" id="statAbsence">0</div>
-          <div class="sc-lbl">الغياب</div>
-          <div class="stat-details" id="absenceDetail"></div>
-        </div>
+
       </div>
     </div>
   </div><!-- end homeStatsWrap -->
@@ -1926,47 +1909,7 @@ tr:hover td{background:var(--em-ghost);}
             <span class="scc-dot" style="background:#ef4444;margin-right:8px;cursor:pointer;" onclick="donutShow('Absence',1)"></span><span>بدون عذر</span>
           </div>
         </div>
-        <div class="summary-chart-card" style="--sc:#D97706;">
-          <div class="scc-title"><span class="material-icons-round">event_busy</span> الغياب</div>
-          <div class="scc-chart-wrap">
-            <div class="css-donut-wrap">
-              <svg viewBox="0 0 110 110" width="110" height="110">
-                <circle class="css-donut-track" cx="55" cy="55" r="43"/>
-                <circle class="css-donut-fill" id="donutFill1Absence" cx="55" cy="55" r="43" stroke="#D97706" stroke-dasharray="0 270"/>
-                <circle class="css-donut-fill2" id="donutFill2Absence" cx="55" cy="55" r="43" stroke="#EF4444" stroke-dasharray="0 270"/>
-              </svg>
-              <div class="css-donut-label" onclick="donutToggle('Absence')" style="cursor:pointer;">
-                <span class="css-donut-num" id="donutAbsenceLbl">0</span>
-                <span class="css-donut-sub" id="donutAbsenceSub">بعذر</span>
-              </div>
-            </div>
-          </div>
-          <div class="scc-legend">
-            <span class="scc-dot" style="background:#D97706;cursor:pointer;" onclick="donutShow('Absence',0)"></span><span>بعذر</span>
-            <span class="scc-dot" style="background:#EF4444;margin-right:8px;cursor:pointer;" onclick="donutShow('Absence',1)"></span><span>بدون عذر</span>
-          </div>
-        </div>
-<!-- بطاقة 0: الغياب -->
-        <div class="summary-chart-card" style="--sc:#D97706;">
-          <div class="scc-title"><span class="material-icons-round">event_busy</span> الغياب</div>
-          <div class="scc-chart-wrap">
-            <div class="css-donut-wrap">
-              <svg viewBox="0 0 110 110" width="110" height="110">
-                <circle class="css-donut-track" cx="55" cy="55" r="43"/>
-                <circle class="css-donut-fill" id="donutFill1Absence" cx="55" cy="55" r="43" stroke="#D97706" stroke-dasharray="0 270"/>
-                <circle class="css-donut-fill2" id="donutFill2Absence" cx="55" cy="55" r="43" stroke="#ef4444" stroke-dasharray="0 270"/>
-              </svg>
-              <div class="css-donut-label" onclick="donutToggle('Absence')" style="cursor:pointer;">
-                <span class="css-donut-num" id="donutAbsenceLbl">0</span>
-                <span class="css-donut-sub" id="donutAbsenceSub">بعذر</span>
-              </div>
-            </div>
-          </div>
-          <div class="scc-legend">
-            <span class="scc-dot" style="background:#D97706;cursor:pointer;" onclick="donutShow('Absence',0)"></span><span>بعذر</span>
-            <span class="scc-dot" style="background:#ef4444;margin-right:8px;cursor:pointer;" onclick="donutShow('Absence',1)"></span><span>بدون عذر</span>
-          </div>
-        </div>
+
         <!-- بطاقة 1: المخالفات السلوكية -->
         <div class="summary-chart-card" style="--sc:#dc3545;">
           <div class="scc-title"><span class="material-icons-round">warning_amber</span> المخالفات السلوكية</div>
