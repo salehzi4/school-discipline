@@ -273,14 +273,14 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
 
 /* ══ RESPONSIVE ══ */
 @media(max-width:640px){
-  .overview-grid{grid-template-columns:1fr 1fr;}
-  .ind-grid{grid-template-columns:1fr 1fr;}
+  .overview-grid{grid-template-columns:repeat(5,1fr);}
+  .ind-grid{grid-template-columns:repeat(5,1fr);}
   .sb-name{font-size:20px;}
   .sb-class{font-size:16px;}
 }
 @media(max-width:400px){
-  .overview-grid{grid-template-columns:1fr 1fr;}
-  .ind-grid{grid-template-columns:1fr 1fr;}
+  .overview-grid{grid-template-columns:repeat(3,1fr);}
+  .ind-grid{grid-template-columns:repeat(3,1fr);}
 }
 
 /* ══ GLOBAL ALERT ══ */
@@ -366,11 +366,6 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
 
     <div class="sec-lbl" style="--c:#0A5C44;">نظرة عامة</div>
     <div class="overview-grid">
-      <div class="ov-card" style="--c:#0369a1;--c-pale:#dbeafe;--c-border:#93c5fd;">
-        <div class="ov-icon"><span class="material-icons-round">event_busy</span></div>
-        <div class="ov-num" id="ovAbsence">0</div>
-        <div class="ov-lbl">الغياب</div>
-      </div>
       <div class="ov-card" style="--c:var(--red);--c-pale:var(--red-pale);--c-border:#fca5a5;">
         <div class="ov-icon"><span class="material-icons-round">warning_amber</span></div>
         <div class="ov-num" id="ovBehavior">0</div>
@@ -397,36 +392,48 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
     <div class="ind-grid">
 
       <!-- بطاقة الغياب -->
-            <div class="ind-card" style="--c:#0369a1;--c-border:#93c5fd;">
+            <div class="ind-card" style="--c:#D97706;--c-border:#fcd34d;">
+        <div class="ind-body">
+          <div class="ind-title"><span class="material-icons-round" style="font-size:14px;">event_busy</span> الغياب</div>
+          <div class="ind-donut-wrap">
+            <svg viewBox="0 0 80 80" width="80" height="80">
+              <circle class="ind-track" cx="40" cy="40" r="30"/>
+              <circle class="ind-fill" id="dAbsence" cx="40" cy="40" r="30" stroke="#D97706" stroke-dasharray="0 188"/>
+              <circle class="ind-fill2" id="dAbsence2" cx="40" cy="40" r="30" stroke="#EF4444" stroke-dasharray="0 188"/>
+            </svg>
+            <div class="ind-lbl-wrap" onclick="indToggle('absence')">
+              <span class="ind-num" id="iAbsenceNum">0</span>
+              <span class="ind-sub" id="iAbsenceSub">بعذر</span>
+            </div>
+          </div>
+          <div class="ind-legend">
+            <span class="ind-dot" style="background:#D97706;" onclick="indShow('absence',0)"></span><span>بعذر</span>
+            <span class="ind-dot" style="background:#EF4444;margin-right:6px;" onclick="indShow('absence',1)"></span><span>بدون عذر</span>
+          </div>
+          <div class="ind-sub-txt" id="im_absence">0 بعذر — 0 بدون عذر</div>
+        </div>
+      </div>
+<div class="ind-card" style="--c:#D97706;--c-border:#fcd34d;">
         <div class="ind-body">
           <div class="donut-wrap">
             <svg viewBox="0 0 90 90">
               <circle class="d-track" cx="45" cy="45" r="38"/>
-              <circle class="d-fill2" id="dAbsence2" cx="45" cy="45" r="38" stroke="#EF4444" stroke-dasharray="0 239"/>
-              <circle class="d-fill1" id="dAbsence" cx="45" cy="45" r="38" stroke="#0369a1" stroke-dasharray="0 239"/>
+              <circle class="d-fill" id="df1_absence" cx="45" cy="45" r="38" stroke="#D97706"/>
+              <circle class="d-fill2" id="df2_absence" cx="45" cy="45" r="38" stroke="#ef4444"/>
             </svg>
-            <div class="donut-center" onclick="indToggle('absence')" style="cursor:pointer;">
-              <div class="donut-num" id="iAbsenceNum" style="color:#0369a1;">0</div>
-              <div class="donut-sub" id="iAbsenceSub">بعذر</div>
+            <div class="donut-center" onclick="donutToggle('absence')" style="cursor:pointer;">
+              <span class="ds-num" id="dn_absence">0</span>
+              <span class="ds-lbl" id="ds_absence">بعذر</span>
             </div>
           </div>
-          <div class="ind-title">مؤشر الغياب</div>
-          <div class="ind-meta" id="im_absence">0 بعذر — 0 بدون عذر</div>
         </div>
-        <button class="ind-btn" style="background:#0369a1;" onclick="toggleDetails('absence',this)">
-          <span class="material-icons-round">expand_more</span> عرض التفاصيل
+        <div class="ind-title">مؤشر الغياب</div>
+        <div class="ind-meta" id="im_absence">بعذر vs بدون عذر</div>
+        <button class="ind-btn" style="background:#D97706;" onclick="toggleDetails('absence_detail')">
+          <span class="material-icons-round" style="font-size:14px;">expand_more</span> التفاصيل
         </button>
-        <div class="details-panel" id="dp_absence">
-          <div class="dp-inner">
-            <div class="dp-close-row">
-              <div class="dp-title">سجل الغياب</div>
-              <button class="dp-close" onclick="closeDetails('absence')"><span class="material-icons-round" style="font-size:12px;">close</span> إغلاق</button>
-            </div>
-            <div id="dpl_absence"></div>
-          </div>
-        </div>
+        <div class="detail-panel" id="absence_detail" style="display:none;"></div>
       </div>
-
 
       <div class="ind-card" style="--c:var(--red);--c-border:#fca5a5;">
         <div class="ind-body">
@@ -1638,7 +1645,7 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
 .sec-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
 
 /* ══ OVERVIEW CARDS ══ */
-.overview-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
+.overview-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px;}
 .ov-card{background:var(--surface);border:1.5px solid var(--c-border,var(--border));border-radius:var(--r);padding:14px 12px;text-align:center;position:relative;overflow:hidden;transition:transform .18s,box-shadow .18s;cursor:default;}
 .ov-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--c,var(--em));}
 .ov-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.08);}
@@ -1648,7 +1655,7 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
 .ov-lbl{font-size:10px;font-weight:700;color:var(--text-3);margin-top:4px;}
 
 /* ══ INDICATORS GRID ══ */
-.ind-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.ind-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
 .ind-card{background:var(--surface);border:1.5px solid var(--c-border,var(--border));border-radius:var(--r);overflow:hidden;transition:box-shadow .18s;}
 .ind-card:hover{box-shadow:0 4px 18px rgba(0,0,0,.08);}
 .ind-body{padding:14px 12px 10px;text-align:center;}
@@ -1707,14 +1714,14 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
 
 /* ══ RESPONSIVE ══ */
 @media(max-width:640px){
-  .overview-grid{grid-template-columns:1fr 1fr;}
-  .ind-grid{grid-template-columns:1fr 1fr;}
+  .overview-grid{grid-template-columns:repeat(5,1fr);}
+  .ind-grid{grid-template-columns:repeat(5,1fr);}
   .sb-name{font-size:20px;}
   .sb-class{font-size:16px;}
 }
 @media(max-width:400px){
-  .overview-grid{grid-template-columns:1fr 1fr;}
-  .ind-grid{grid-template-columns:1fr 1fr;}
+  .overview-grid{grid-template-columns:repeat(3,1fr);}
+  .ind-grid{grid-template-columns:repeat(3,1fr);}
 }
 
 </script>
@@ -1753,11 +1760,11 @@ function indToggle(key) {
 function indShow(key, idx) {
   if(key!=='absence') return;
   window._absCur = idx;
-  var vals = window._absVals || [{v:0,lbl:'بعذر'},{v:0,lbl:'بدون عذر'}];
-  var colors = ['#0369a1','#EF4444'];
+  var vals = window._absVals || [{v:0},{v:0}];
+  var colors = ['#D97706','#EF4444'];
   var num = document.getElementById('iAbsenceNum');
   var sub = document.getElementById('iAbsenceSub');
-  if(num) { num.textContent = vals[idx].v; num.style.color = colors[idx]; num.style.transform='scale(1.2)'; setTimeout(function(){num.style.transform='';},300); }
+  if(num) { num.textContent = vals[idx].v; num.style.color = colors[idx]; }
   if(sub) { sub.textContent = vals[idx].lbl; sub.style.color = colors[idx]; }
 }
 </script>
@@ -1838,11 +1845,6 @@ function indShow(key, idx) {
 
     <div class="sec-lbl" style="--c:#0A5C44;">نظرة عامة</div>
     <div class="overview-grid">
-      <div class="ov-card" style="--c:#0369a1;--c-pale:#dbeafe;--c-border:#93c5fd;">
-        <div class="ov-icon"><span class="material-icons-round">event_busy</span></div>
-        <div class="ov-num" id="ovAbsence">0</div>
-        <div class="ov-lbl">الغياب</div>
-      </div>
       <div class="ov-card" style="--c:var(--red);--c-pale:var(--red-pale);--c-border:#fca5a5;">
         <div class="ov-icon"><span class="material-icons-round">warning_amber</span></div>
         <div class="ov-num" id="ovBehavior">0</div>
@@ -1867,36 +1869,6 @@ function indShow(key, idx) {
 
     <div class="sec-lbl" style="--c:#0A5C44;">المؤشرات</div>
     <div class="ind-grid">
-
-      <div class="ind-card" style="--c:#0369a1;--c-border:#93c5fd;">
-        <div class="ind-body">
-          <div class="donut-wrap">
-            <svg viewBox="0 0 90 90">
-              <circle class="d-track" cx="45" cy="45" r="38"/>
-              <circle class="d-fill2" id="dAbsence2" cx="45" cy="45" r="38" stroke="#EF4444" stroke-dasharray="0 239"/>
-              <circle class="d-fill1" id="dAbsence" cx="45" cy="45" r="38" stroke="#0369a1" stroke-dasharray="0 239"/>
-            </svg>
-            <div class="donut-center" onclick="indToggle('absence')" style="cursor:pointer;">
-              <div class="donut-num" id="iAbsenceNum" style="color:#0369a1;">0</div>
-              <div class="donut-sub" id="iAbsenceSub">بعذر</div>
-            </div>
-          </div>
-          <div class="ind-title">مؤشر الغياب</div>
-          <div class="ind-meta" id="im_absence">0 بعذر — 0 بدون عذر</div>
-        </div>
-        <button class="ind-btn" style="background:#0369a1;" onclick="toggleDetails('absence',this)">
-          <span class="material-icons-round">expand_more</span> عرض التفاصيل
-        </button>
-        <div class="details-panel" id="dp_absence">
-          <div class="dp-inner">
-            <div class="dp-close-row">
-              <div class="dp-title">سجل الغياب</div>
-              <button class="dp-close" onclick="closeDetails('absence')"><span class="material-icons-round" style="font-size:12px;">close</span> إغلاق</button>
-            </div>
-            <div id="dpl_absence"></div>
-          </div>
-        </div>
-      </div>
 
       <div class="ind-card" style="--c:var(--red);--c-border:#fca5a5;">
         <div class="ind-body">
