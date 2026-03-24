@@ -1476,7 +1476,7 @@ function drawTeacherSummary(s) {
   const topDist  = s.myDistinct    || 0;
 
   window._tDonutVals = {
-    'Abs': [{v: d.absenceExcused||0, lbl:'بعذر', sub:'بعذر'}, {v: d.absenceNoExcuse||0, lbl:'بدون عذر', sub:'بدون عذر'}],
+    'Abs': [{v: s.absenceExcused||0, lbl:'بعذر', sub:'بعذر'}, {v: s.absenceNoExcuse||0, lbl:'بدون عذر', sub:'بدون عذر'}],
     Referred: [{v:referred, sub:'محال'}, {v:improved, sub:'تحسّن'}],
     TopViol:  [{v:topViol,  sub:'سلوكية'},{v:topClass, sub:'صفية'}],
     TopPos:   [{v:topPos,   sub:'إيجابي'},{v:topDist,  sub:'متميز'}],
