@@ -1738,8 +1738,8 @@ function indDrawAbsence(excused, unexcused) {
   var num = document.getElementById('iAbsenceNum');
   var sub = document.getElementById('iAbsenceSub');
   var meta = document.getElementById('im_absence');
-  if(el1) el1.style.strokeDasharray = d1 + ' ' + (circ - d1);
-  if(el2) { el2.style.strokeDasharray = d2 + ' ' + (circ - d2); el2.style.strokeDashoffset = -d1; }
+  if(el1) el1.setAttribute('stroke-dasharray', d1 + ' ' + (circ - d1));
+  if(el2) { el2.setAttribute('stroke-dasharray', d2 + ' ' + (circ - d2)); el2.setAttribute('stroke-dashoffset', -d1); }
   if(num) { num.textContent = excused; num.style.color = '#0369a1'; }
   if(sub) sub.textContent = 'بعذر';
   if(meta) meta.textContent = excused + ' بعذر — ' + unexcused + ' بدون عذر';
