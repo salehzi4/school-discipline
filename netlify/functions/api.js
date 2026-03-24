@@ -548,8 +548,9 @@ async function deletePositiveBehaviorType(typeName, sc) {
 async function recordViolation(body, sc) {
   const { studentsData, violationType, notes, recorder, severity, signature, fingerprint, category, score, subject, actionType, actionTaken, subType, visibleToParentOverride } = body;
   const isPositive  = (category === 'إيجابية');
+  const isAbsence   = (category === 'absence' || category === 'غياب');
   const isDangerous = (severity === 'خطيرة');
-  const visibleToParent = isPositive ? 'نعم' : (isDangerous ? 'لا' : (visibleToParentOverride === 'نعم' ? 'نعم' : 'لا'));
+  const visibleToParent = (isPositive || isAbsence) ? 'نعم' : (isDangerous ? 'لا' : (visibleToParentOverride === 'نعم' ? 'نعم' : 'لا'));
   const referredToAdmin = isDangerous ? 'نعم' : 'لا';
   const now = new Date().toISOString();
 
@@ -1012,6 +1013,7 @@ async function getStudentProfile(studentName, className, viewerRole, sc) {
     typeBreakdown: Object.entries(typeCounts).sort((a,b) => b[1]-a[1]).map(e => ({ type: e[0], count: e[1] })),
     posBreakdown: Object.entries(posTypeCounts).sort((a,b) => b[1]-a[1]).map(e => ({ type: e[0], count: e[1] })),
     violations: violations.reverse(), classViolations: classViolations.reverse(),
+    absenceViolations: absenceViolations.reverse(),
     positiveBehaviors: positiveBehaviors.reverse(), messages: messages.reverse()
   };
 }
