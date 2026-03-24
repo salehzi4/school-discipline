@@ -1985,7 +1985,7 @@ tr:hover td{background:var(--em-ghost);}
           </div>
           <div class="scc-legend">
             <span class="scc-dot" style="background:#dc3545;cursor:pointer;" onclick="donutShow('Behavior',0)"></span><span>مخالفات</span>
-            <span class="scc-dot" style="background:#22c55e;margin-right:8px;cursor:pointer;" onclick="donutShow('Behavior',1)"></span><span>تحسن</span>
+            <span class="scc-dot" 
           </div>
         </div>
         <!-- بطاقة 2: المخالفات الصفية -->
@@ -2006,7 +2006,7 @@ tr:hover td{background:var(--em-ghost);}
           </div>
           <div class="scc-legend">
             <span class="scc-dot" style="background:#f97316;cursor:pointer;" onclick="donutShow('Class',0)"></span><span>مخالفات</span>
-            <span class="scc-dot" style="background:#22c55e;margin-right:8px;cursor:pointer;" onclick="donutShow('Class',1)"></span><span>تحسن</span>
+            <span class="scc-dot" 
           </div>
         </div>
         <!-- بطاقة 3: السلوك الإيجابي والمتميز -->
@@ -2682,32 +2682,21 @@ tr:hover td{background:var(--em-ghost);}
     </div>
   </div>
 
-  <!-- فلتر الفصل + تبويبان -->
+  <!-- فلاتر -->
   <div class="card" style="padding:12px 16px;margin-bottom:14px;">
-    <div class="filters-bar" style="flex-wrap:wrap;gap:8px;align-items:center;">
-      <select id="refFilterClass" onchange="renderReferredCards()" style="min-width:130px;">
+    <div class="filters-bar" style="flex-wrap:wrap;gap:8px;">
+
+      <select id="refFilterClass" onchange="loadReferredViolations()" style="min-width:130px;">
         <option value="الكل">كل الفصول</option>
       </select>
+      <select id="refFilterStatus" onchange="loadReferredViolations()" style="min-width:130px;">
+        <option value="الكل">كل الحالات</option>
+        <option value="بانتظار">بانتظار القرار</option>
+        <option value="تم">تم اتخاذ قرار</option>
+      </select>
+      <button class="btn btn-outline btn-sm" onclick="clearRefFilters()">مسح الفلاتر</button>
       <span class="chip" id="refCountChip">0</span>
     </div>
-  </div>
-
-  <!-- تبويبان -->
-  <div style="display:flex;gap:0;margin-bottom:14px;border-radius:12px;overflow:hidden;border:1.5px solid var(--border);">
-    <button id="refTab_pending" onclick="switchRefTab('pending')"
-      style="flex:1;padding:10px 0;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;border:none;
-             background:#D97706;color:#fff;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s;">
-      <span class="material-icons-round" style="font-size:16px;">pending</span>
-      قيد المعالجة
-      <span id="refBadgePending" style="background:rgba(255,255,255,0.3);color:#fff;border-radius:20px;padding:1px 8px;font-size:11px;">0</span>
-    </button>
-    <button id="refTab_done" onclick="switchRefTab('done')"
-      style="flex:1;padding:10px 0;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;border:none;
-             background:var(--surface);color:var(--text-muted);display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s;">
-      <span class="material-icons-round" style="font-size:16px;">check_circle</span>
-      تمت المعالجة
-      <span id="refBadgeDone" style="background:rgba(5,150,105,0.15);color:#059669;border-radius:20px;padding:1px 8px;font-size:11px;">0</span>
-    </button>
   </div>
 
   <!-- بطاقات المُحالات -->
@@ -3367,26 +3356,7 @@ tr:hover td{background:var(--em-ghost);}
 
 
 
-    <!-- التحسن والمعالجة -->
-    <div class="card" style="margin-bottom:14px;">
-      <div class="card-title" style="font-size:13px;"><span class="material-icons-round" style="color:#3498db;font-size:16px;">trending_up</span> مؤشر التحسن والمعالجة</div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;" id="frImproveGrid">
-        <div style="background:var(--bg);border-radius:10px;padding:14px;text-align:center;">
-          <div style="font-size:24px;font-weight:900;color:#27ae60;" id="frImproved">0</div>
-          <div style="font-size:11px;color:var(--text-3);">حالة تحسّن سلوكي</div>
-        </div>
-        <div style="background:var(--bg);border-radius:10px;padding:14px;text-align:center;">
-          <div style="font-size:24px;font-weight:900;color:#e74c3c;" id="frRepeat">0</div>
-          <div style="font-size:11px;color:var(--text-3);">حالة تكرار</div>
-        </div>
-        <div style="background:var(--bg);border-radius:10px;padding:14px;text-align:center;">
-          <div style="font-size:24px;font-weight:900;color:#f39c12;" id="frImproveRate">0%</div>
-          <div style="font-size:11px;color:var(--text-3);">نسبة التحسن</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- أولياء الأمور -->
+        <!-- أولياء الأمور -->
     <div class="card" style="margin-bottom:14px;">
       <div class="card-title" style="font-size:13px;"><span class="material-icons-round" style="color:var(--gold);font-size:16px;">family_restroom</span> إحصاءات أولياء الأمور</div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
@@ -3493,22 +3463,7 @@ tr:hover td{background:var(--em-ghost);}
       <textarea id="fuText" rows="3" placeholder="اكتب ما تم اتخاذه من إجراء..." onkeydown="if(event.ctrlKey&&event.key==='Enter')confirmFollowUp()" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:13px;resize:vertical;background:var(--surface);color:var(--text);"></textarea>
       <div style="font-size:10px;color:var(--text-light);margin-top:4px;">Ctrl+Enter للتأكيد السريع</div>
     </div>
-    <!-- حالة السلوك -->
-    <div class="form-group" style="margin-top:10px;">
-      <label style="font-size:12px;font-weight:700;margin-bottom:6px;display:block;">حالة السلوك بعد المعالجة</label>
-      <div style="display:flex;gap:10px;">
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:8px 14px;border-radius:8px;border:1.5px solid var(--border);flex:1;">
-          <input type="radio" name="fuBehaviorStatus" value="تحسن" style="accent-color:#16a34a;">
-          <span class="material-icons-round" style="font-size:16px;color:#16a34a;">trending_up</span>
-          <span style="font-size:12px;font-weight:700;color:#16a34a;">تحسن</span>
-        </label>
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:8px 14px;border-radius:8px;border:1.5px solid var(--border);flex:1;">
-          <input type="radio" name="fuBehaviorStatus" value="لم يتحسن" style="accent-color:#dc3545;">
-          <span class="material-icons-round" style="font-size:16px;color:#dc3545;">trending_down</span>
-          <span style="font-size:12px;font-weight:700;color:#dc3545;">لم يتحسن</span>
-        </label>
-      </div>
-    </div>
+
     <div style="display:flex;gap:10px;margin-top:16px;">
       <button class="btn btn-primary" onclick="confirmFollowUp()" style="flex:1;">
         <span class="material-icons-round" style="font-size:15px;">verified</span> تأكيد المعالجة
@@ -3763,44 +3718,40 @@ function loadStats(){const df=document.getElementById('statDateFilter').value;sh
 // ══ رسوم الملخص في الرئيسية ══
 let _summaryCharts = {};
 function drawHomeSummary(s) {
-  const viol    = s.totalViolations      || 0;
-  const violImp = s.totalImproved        || 0;
-  const cls     = s.totalClassViolations || 0;
-  const clsImp  = s.totalClassImproved   || 0;
-  const pos     = s.totalPositive        || 0;
-  const dist    = s.totalDistinct        || 0;
-  const absEx   = s.totalAbsenceExcused  || 0;
-  const absNo   = s.totalAbsenceNoExcuse || 0;
-
-  const rpts  = s.totalReports          || 0;
-  const rptRes= s.totalReportsResponded || 0;
+  const viol  = s.totalViolations      || 0;
+  const cls   = s.totalClassViolations || 0;
+  const pos   = s.totalPositive        || 0;
+  const dist  = s.totalDistinct        || 0;
+  const absEx = s.totalAbsenceExcused  || 0;
+  const absNo = s.totalAbsenceNoExcuse || 0;
+  const rpts  = s.totalReports         || 0;
+  const rptRes= s.totalReportsResponded|| 0;
 
   window._donutVals = {
-    Absence:  [{v:absEx,  lbl:'بعذر',    sub:'بعذر'},   {v:absNo,  lbl:'بدون عذر', sub:'بدون عذر'}],
-    Behavior: [{v:viol,  lbl:'مخالفات', sub:'مخالفة'}, {v:violImp, lbl:'تحسّن',  sub:'تحسّن'}],
-    Class:    [{v:cls,   lbl:'مخالفات', sub:'مخالفة'}, {v:clsImp,  lbl:'تحسّن',  sub:'تحسّن'}],
-    Positive: [{v:pos,   lbl:'إيجابي',  sub:'إيجابي'}, {v:dist,    lbl:'متميز',  sub:'متميز'}],
-    Reports:  [{v:rpts,  lbl:'المحاضر', sub:'محضر'},   {v:rptRes,  lbl:'استجاب', sub:'استجاب'}],
+    Absence:  [{v:absEx, lbl:'بعذر',    sub:'بعذر'},   {v:absNo,  lbl:'بدون عذر', sub:'بدون عذر'}],
+    Behavior: [{v:viol,  lbl:'مخالفات', sub:'مخالفة'}, {v:0,      lbl:'',         sub:''}],
+    Class:    [{v:cls,   lbl:'مخالفات', sub:'مخالفة'}, {v:0,      lbl:'',         sub:''}],
+    Positive: [{v:pos,   lbl:'إيجابي',  sub:'إيجابي'}, {v:dist,   lbl:'متميز',    sub:'متميز'}],
+    Reports:  [{v:rpts,  lbl:'المحاضر', sub:'محضر'},   {v:rptRes, lbl:'استجاب',   sub:'استجاب'}],
   };
   window._donutCur = {Behavior:0, Class:0, Positive:0, Reports:0};
 
   const _colorMap = {
     Absence:  ['#0369a1', '#ef4444'],
-    Behavior: ['#dc3545','#22c55e'],
-    Class:    ['#f97316','#22c55e'],
-    Positive: ['#16a34a','#22d3ee'],
-    Reports:  ['#7c3aed','#22c55e']
+    Behavior: ['#dc3545', '#dc3545'],
+    Class:    ['#f97316', '#f97316'],
+    Positive: ['#16a34a', '#22d3ee'],
+    Reports:  ['#7c3aed', '#22c55e']
   };
 
   function drawDonut(key, f1Id, f2Id, lblId, subId, v1, v2) {
     const circ = 2 * Math.PI * 43;
-    const total = (v1 + v2) || 1;
-    const d1 = (v1 / total) * circ;
-    const d2 = (v2 / total) * circ;
+    const total = v1 || 1;
+    const d1 = circ;
     const f1 = document.getElementById(f1Id);
     const f2 = document.getElementById(f2Id);
-    if (f1) f1.style.strokeDasharray = d1 + ' ' + (circ - d1);
-    if (f2) { f2.style.strokeDasharray = d2 + ' ' + (circ - d2); f2.style.strokeDashoffset = -d1; }
+    if (f1) f1.style.strokeDasharray = (v1 ? d1 : 0) + ' ' + circ;
+    if (f2) { f2.style.strokeDasharray = '0 ' + circ; }
     const lbl = document.getElementById(lblId);
     const sub = document.getElementById(subId);
     const initColor = _colorMap[key] ? _colorMap[key][0] : 'var(--em)';
@@ -3809,10 +3760,10 @@ function drawHomeSummary(s) {
   }
 
   drawDonut('Absence', 'donutFill1Absence', 'donutFill2Absence', 'donutAbsenceLbl', 'donutAbsenceSub', absEx, absNo);
-  drawDonut('Behavior','donutFill1Behavior','donutFill2Behavior','donutBehaviorLbl','donutBehaviorSub',viol,violImp);
-  drawDonut('Class',   'donutFill1Class',   'donutFill2Class',   'donutClassLbl',   'donutClassSub',   cls, clsImp);
-  drawDonut('Positive','donutFill1Positive','donutFill2Positive','donutPositiveLbl','donutPositiveSub',pos, dist);
-  drawDonut('Reports', 'donutFill1Reports', 'donutFill2Reports', 'donutReportsLbl', 'donutReportsSub', rpts,rptRes);
+  drawDonut('Behavior','donutFill1Behavior','donutFill2Behavior','donutBehaviorLbl','donutBehaviorSub',viol, 0);
+  drawDonut('Class',   'donutFill1Class',   'donutFill2Class',   'donutClassLbl',   'donutClassSub',   cls,  0);
+  drawDonut('Positive','donutFill1Positive','donutFill2Positive','donutPositiveLbl','donutPositiveSub',pos,  dist);
+  drawDonut('Reports', 'donutFill1Reports', 'donutFill2Reports', 'donutReportsLbl', 'donutReportsSub', rpts, rptRes);
 }
 
 function donutShow(key, idx) {
@@ -4933,10 +4884,7 @@ function loadViolationsLog(){
   } else {
     ttb.innerHTML=treated.map((r,i)=>{
       const followText=r.followUp?r.followUp.split('\n').map(l=>'<div style="margin-bottom:3px;">'+l+'</div>').join(''):'—';
-      return '<tr><td>'+(i+1)+'</td><td>'+r.date+'</td><td><strong>'+r.studentName+'</strong></td><td>'+r.className+'</td><td>'+r.violationType+'</td><td><span class="treated-badge"><span class="material-icons-round" style="font-size:11px;">check_circle</span>'+r.treatmentDate+'</span></td><td style="font-size:11px;max-width:250px;">'+followText+'</td><td>'+('<div style="display:flex;gap:5px;flex-wrap:wrap;">'
-        +'<button onclick="updateBehaviorStatus(\''+esc(r.date)+'\''+',\''+esc(r.studentName)+'\''+',\''+esc(r.violationType)+'\''+',\'تحسن\''+')" style="padding:3px 10px;border-radius:20px;border:1.5px solid;font-size:10px;font-weight:700;cursor:pointer;transition:all .15s;background:'+(r.behaviorStatus==='تحسن'?'#16a34a':'transparent')+';color:'+(r.behaviorStatus==='تحسن'?'#fff':'#16a34a')+';border-color:#16a34a;">✅ تحسن</button>'
-        +'<button onclick="updateBehaviorStatus(\''+esc(r.date)+'\''+',\''+esc(r.studentName)+'\''+',\''+esc(r.violationType)+'\''+',\'لم يتحسن\''+')" style="padding:3px 10px;border-radius:20px;border:1.5px solid;font-size:10px;font-weight:700;cursor:pointer;transition:all .15s;background:'+(r.behaviorStatus==='لم يتحسن'?'#dc3545':'transparent')+';color:'+(r.behaviorStatus==='لم يتحسن'?'#fff':'#dc3545')+';border-color:#dc3545;">⚠️ لم يتحسن</button>'
-        +'</div>')+'</td></tr>';
+      return '<tr><td>'+(i+1)+'</td><td>'+r.date+'</td><td><strong>'+r.studentName+'</strong></td><td>'+r.className+'</td><td>'+r.violationType+'</td><td><span class="treated-badge"><span class="material-icons-round" style="font-size:11px;">check_circle</span>'+r.treatmentDate+'</span></td><td style="font-size:11px;max-width:250px;">'+followText+'</td><td></td></tr>';
     }).join('');
   }
 });}
@@ -5541,23 +5489,12 @@ function addFollowUp(d,sn,vt){
   document.getElementById('followUpModal').style.display='flex';
   setTimeout(()=>document.getElementById('fuText').focus(),100);
 }
-function updateBehaviorStatus(date,studentName,violationType,newStatus){
-  showLoading();
-  google.script.run.withSuccessHandler(function(r){
-    hideLoading();
-    if(r.success){
-      loadViolationsLog();
-      loadStats();
-    }
-  }).addFollowUp(date,studentName,violationType,'',newStatus);
-}
+
 
 function confirmFollowUp(){
   const txt=document.getElementById('fuText').value.trim();
   if(!txt){document.getElementById('fuText').style.borderColor='var(--danger)';return;}
-  const statusEl=document.querySelector('input[name="fuBehaviorStatus"]:checked');
-  const behaviorStatus=statusEl?statusEl.value:'';
-  document.getElementById('followUpModal').style.display='none';
+    document.getElementById('followUpModal').style.display='none';
   const {d,sn,vt}=window._fuData;
   showLoading();
   google.script.run.withSuccessHandler(function(r){
@@ -5567,7 +5504,7 @@ function confirmFollowUp(){
       loadStats();
       showAlert && showAlert('recordAlert','success','✅ تمت المعالجة وتسجيلها في الحالات المعالجة');
     }
-  }).addFollowUp(d,sn,vt,txt,behaviorStatus);
+  }).addFollowUp(d,sn,vt,txt,'');
 }
 
 function copyUrl(elId){
@@ -6603,8 +6540,7 @@ function loadFullReport() {
       var tpc = document.getElementById('frTopPosClasses');
       if(tpc) tpc.innerHTML = (d.positiveClasses&&d.positiveClasses.length) ? d.positiveClasses.slice(0,5).map(function(r,i){return '<div class="fr-rank-row" style="--fc:#27ae60"><span class="fr-rank-num">'+(i+1)+'</span><span class="fr-rank-name">'+esc(r.name)+'</span><span class="fr-rank-count" style="background:#27ae60;">'+r.count+'</span></div>';}).join('') : '<div class="empty-state">لا توجد بيانات</div>';
       // (سجل المحاضر أُزيل من التقرير الشامل)
-      // التحسن
-      var imp = d.totalImproved||0, rep = d.repeatCount||0, tot = imp+rep;
+      var imp = 0, rep = d.repeatCount||0, tot = rep;
       document.getElementById('frImproved').textContent = imp;
       document.getElementById('frRepeat').textContent = rep;
       document.getElementById('frImproveRate').textContent = tot>0 ? Math.round(imp/tot*100)+'%' : '0%';
@@ -6877,12 +6813,7 @@ function getPageData(pageId) {
             </div>
           </div>
 
-          <div class="section-hd">📊 مؤشر التحسن والمعالجة</div>
-          ${extractStats([
-            ['frImproved','حالة تحسّن','#27ae60'],
-            ['frRepeat','حالة تكرار','#e74c3c'],
-            ['frImproveRate','نسبة التحسن','#f39c12']
-          ])}
+          
 
           <div class="section-hd">👨‍👩‍👦 إحصاءات التواصل مع أولياء الأمور</div>
           ${extractStats([
@@ -7139,28 +7070,6 @@ function loadReferredCount(){
 
 let _allReferred = [];
 
-var _refCurrentTab = 'pending';
-
-function switchRefTab(tab) {
-  _refCurrentTab = tab;
-  var btnPending = document.getElementById('refTab_pending');
-  var btnDone    = document.getElementById('refTab_done');
-  if (btnPending && btnDone) {
-    if (tab === 'pending') {
-      btnPending.style.background = '#D97706';
-      btnPending.style.color = '#fff';
-      btnDone.style.background = 'var(--surface)';
-      btnDone.style.color = 'var(--text-muted)';
-    } else {
-      btnDone.style.background = '#059669';
-      btnDone.style.color = '#fff';
-      btnPending.style.background = 'var(--surface)';
-      btnPending.style.color = 'var(--text-muted)';
-    }
-  }
-  renderReferredCards();
-}
-
 function loadReferredViolations(){
   showLoading();
   google.script.run.withSuccessHandler(function(data){
@@ -7186,14 +7095,13 @@ function loadReferredViolations(){
 }
 
 function renderReferredCards(){
-  const clsF = document.getElementById('refFilterClass')?.value||'الكل';
-  const tab  = _refCurrentTab || 'pending';
+  const clsF  = document.getElementById('refFilterClass')?.value||'الكل';
+  const statF = document.getElementById('refFilterStatus')?.value||'الكل';
 
-  // فلترة حسب الفصل والتبويب
   let data = _allReferred.filter(r=>{
     if(clsF!=='الكل' && r.className!==clsF) return false;
-    if(tab==='pending' && r.adminDecision) return false;
-    if(tab==='done'    && !r.adminDecision) return false;
+    if(statF==='بانتظار' && r.adminDecision) return false;
+    if(statF==='تم' && !r.adminDecision) return false;
     return true;
   });
 
@@ -7204,11 +7112,6 @@ function renderReferredCards(){
   document.getElementById('refPendingCount').textContent = pending;
   document.getElementById('refDoneCount').textContent    = done;
   document.getElementById('refCountChip').textContent    = data.length;
-  // تحديث badges التبويبين
-  var bp = document.getElementById('refBadgePending');
-  var bd = document.getElementById('refBadgeDone');
-  if(bp) bp.textContent = pending;
-  if(bd) bd.textContent = done;
 
   const cont = document.getElementById('referredCardsContainer');
   if(!data.length){
@@ -7301,13 +7204,10 @@ function renderReferredCards(){
         <button class="btn btn-primary btn-sm" onclick="adminCreateReport('${esc(r.studentName)}','${esc(r.className)}','${esc(r.violationType)}')" style="font-size:11px;">
           <span class="material-icons-round" style="font-size:13px;">description</span> إصدار محضر
         </button>
-        ${!r.adminDecision ? `<button class="btn btn-sm" onclick="addFollowUp('${r.date}','${esc(r.studentName)}','${esc(r.violationType)}')"
+        <button class="btn btn-sm" onclick="addFollowUp('${r.date}','${esc(r.studentName)}','${esc(r.violationType)}')"
           style="font-size:11px;background:rgba(6,214,160,0.1);border:none;color:#06D6A0;font-weight:700;">
           <span class="material-icons-round" style="font-size:13px;">task_alt</span> المعالجة
-        </button>` : `<button class="btn btn-sm" onclick="addFollowUp('${r.date}','${esc(r.studentName)}','${esc(r.violationType)}')"
-          style="font-size:11px;background:rgba(5,150,105,0.1);border:none;color:#059669;font-weight:700;">
-          <span class="material-icons-round" style="font-size:13px;">edit</span> تعديل
-        </button>`}
+        </button>
       </div>
     </div>`;
   }).join('');
@@ -7338,8 +7238,8 @@ function adminToggleVisCard(date, studentName, vtype, newVis, cardId) {
 function clearRefFilters(){
   document.getElementById('refFilterSeverity').value='الكل';
   document.getElementById('refFilterClass').value='الكل';
-  _refCurrentTab = 'pending';
-  switchRefTab('pending');
+  document.getElementById('refFilterStatus').value='الكل';
+  renderReferredCards();
 }
 
 // adminToggleVis (v8 قديمة - حُذفت)
