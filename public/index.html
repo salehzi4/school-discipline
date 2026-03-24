@@ -3746,12 +3746,13 @@ function drawHomeSummary(s) {
 
   function drawDonut(key, f1Id, f2Id, lblId, subId, v1, v2) {
     const circ = 2 * Math.PI * 43;
-    const total = v1 || 1;
-    const d1 = circ;
+    const total = (v1 + v2) || 1;
+    const d1 = (v1 / total) * circ;
+    const d2 = (v2 / total) * circ;
     const f1 = document.getElementById(f1Id);
     const f2 = document.getElementById(f2Id);
-    if (f1) f1.style.strokeDasharray = (v1 ? d1 : 0) + ' ' + circ;
-    if (f2) { f2.style.strokeDasharray = '0 ' + circ; }
+    if (f1) f1.style.strokeDasharray = d1 + ' ' + (circ - d1);
+    if (f2) { f2.style.strokeDasharray = d2 + ' ' + (circ - d2); f2.style.strokeDashoffset = -d1; }
     const lbl = document.getElementById(lblId);
     const sub = document.getElementById(subId);
     const initColor = _colorMap[key] ? _colorMap[key][0] : 'var(--em)';
