@@ -851,8 +851,8 @@ tr:hover td{background:var(--em-ghost);}
             <div class="css-donut-wrap">
               <svg viewBox="0 0 110 110" width="110" height="110">
                 <circle class="css-donut-track" cx="55" cy="55" r="43"/>
-                <circle class="css-donut-fill" id="tDonutFill1Abs" cx="55" cy="55" r="43" stroke="#0369a1" stroke-dasharray="0 270"/>
                 <circle class="css-donut-fill2" id="tDonutFill2Abs" cx="55" cy="55" r="43" stroke="#ef4444" stroke-dasharray="0 270"/>
+                <circle class="css-donut-fill" id="tDonutFill1Abs" cx="55" cy="55" r="43" stroke="#0369a1" stroke-dasharray="0 270"/>
               </svg>
               <div class="css-donut-label" onclick="tDonutToggle('Abs')" style="cursor:pointer;">
                 <span class="css-donut-num" id="tDonutAbsLbl">0</span>
@@ -1468,25 +1468,22 @@ function updateSidebarActive(page) {
 function showPage(p,b){document.querySelectorAll('.page-section').forEach(s=>s.classList.remove('active'));const el=document.getElementById('page-'+p);if(el)el.classList.add('active');document.querySelectorAll('.tab-btn').forEach(t=>t.classList.remove('active'));if(b&&b.classList&&b.classList.contains('sidebar-sub-btn')){}else if(b)b.classList.add('active');sessionStorage.setItem('tTab',p);if(p==='mylog')loadMyLog();if(p==='mymessages')loadMyMsgs();if(p==='alerts')loadAlerts();if(p==='home')loadTeacherStats();if(p==='referred-log')loadReferredLog();updateSidebarActive(p);}
 // ══ رسوم ملخص المعلم (CSS دوائر بدون مكتبة) ══
 function drawTeacherSummary(s) {
-  const referred = s.referredCount  || 0;
-  const improved = s.improvedCount  || 0;
-  const topViol  = s.myViolations   || 0;
-  const topClass = s.myClassViol    || 0;
-  const topPos   = s.myPositive     || 0;
-  const topDist  = s.myDistinct     || 0;
-  const absEx    = s.absenceExcused  || 0;
-  const absNo    = s.absenceNoExcuse || 0;
+  const referred = s.referredCount || 0;
+  const improved = s.improvedCount || 0;
+  const topViol  = s.myViolations  || 0;
+  const topClass = s.myClassViol   || 0;
+  const topPos   = s.myPositive    || 0;
+  const topDist  = s.myDistinct    || 0;
 
   window._tDonutVals = {
-    Abs:      [{v:absEx,   lbl:'بعذر',    sub:'بعذر'},    {v:absNo,    lbl:'بدون عذر', sub:'بدون عذر'}],
-    Referred: [{v:referred,lbl:'محالون',  sub:'محال'},    {v:improved, lbl:'تحسّن',    sub:'تحسّن'}],
-    TopViol:  [{v:topViol, lbl:'سلوكية',  sub:'سلوكية'}, {v:topClass, lbl:'صفية',     sub:'صفية'}],
-    TopPos:   [{v:topPos,  lbl:'إيجابي',  sub:'إيجابي'}, {v:topDist,  lbl:'متميز',    sub:'متميز'}],
+    'Abs': [{v: d.absenceExcused||0, lbl:'بعذر', sub:'بعذر'}, {v: d.absenceNoExcuse||0, lbl:'بدون عذر', sub:'بدون عذر'}],
+    Referred: [{v:referred, sub:'محال'}, {v:improved, sub:'تحسّن'}],
+    TopViol:  [{v:topViol,  sub:'سلوكية'},{v:topClass, sub:'صفية'}],
+    TopPos:   [{v:topPos,   sub:'إيجابي'},{v:topDist,  sub:'متميز'}],
   };
-  window._tDonutCur = {Abs:0, Referred:0, TopViol:0, TopPos:0};
+  window._tDonutCur = {Referred:0, TopViol:0, TopPos:0};
 
   const _tColorMap = {
-    Abs:      ['#0369a1','#ef4444'],
     Referred: ['#dc3545','#22c55e'],
     TopViol:  ['#dc3545','#f97316'],
     TopPos:   ['#16a34a','#22d3ee']
@@ -1508,7 +1505,6 @@ function drawTeacherSummary(s) {
     if (sub) { sub.textContent = window._tDonutVals[key][0].sub; sub.style.color = initColor; }
   }
 
-  drawDonut('Abs',     'tDonutFill1Abs',     'tDonutFill2Abs',     'tDonutAbsLbl',     'tDonutAbsSub',     absEx,    absNo);
   drawDonut('Referred','tDonutFill1Referred','tDonutFill2Referred','tDonutReferredLbl','tDonutReferredSub',referred,improved);
   drawDonut('TopViol', 'tDonutFill1TopViol', 'tDonutFill2TopViol', 'tDonutTopViolLbl', 'tDonutTopViolSub', topViol, topClass);
   drawDonut('TopPos',  'tDonutFill1TopPos',  'tDonutFill2TopPos',  'tDonutTopPosLbl',  'tDonutTopPosSub',  topPos,  topDist);
@@ -1521,7 +1517,6 @@ function tDonutShow(key, idx) {
   const lbl = document.getElementById('tDonut' + key + 'Lbl');
   const sub = document.getElementById('tDonut' + key + 'Sub');
   const colorMap = {
-    Abs:      ['#0369a1','#ef4444'],
     Referred: ['#dc3545','#22c55e'],
     TopViol:  ['#dc3545','#f97316'],
     TopPos:   ['#16a34a','#22d3ee']
