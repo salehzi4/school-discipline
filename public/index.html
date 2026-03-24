@@ -1871,7 +1871,24 @@ tr:hover td{background:var(--em-ghost);}
           <div class="sc-lbl">السلوك الإيجابي</div>
           <div class="stat-details" id="positiveDetail"></div>
         </div>
-
+        <div class="stat-card-new" style="--sc-accent:#D97706;" onclick="toggleStatDetail('absenceDetail')">
+          <span class="material-icons-round sc-ico">event_busy</span>
+          <div class="sc-val" id="statAbsence">0</div>
+          <div class="sc-lbl">الغياب</div>
+          <div class="stat-details" id="absenceDetail"></div>
+        </div>
+        <div class="stat-card-new" style="--sc-accent:#0A5C44;" onclick="toggleStatDetail('reportsDetail')">
+          <span class="material-icons-round sc-ico">folder_open</span>
+          <div class="sc-val" id="statReports">0</div>
+          <div class="sc-lbl">عدد المحاضر</div>
+          <div class="stat-details" id="reportsDetail"></div>
+        </div>
+        <div class="stat-card-new" style="--sc-accent:#D97706;" onclick="toggleStatDetail('absenceDetail')">
+          <span class="material-icons-round sc-ico">event_busy</span>
+          <div class="sc-val" id="statAbsence">0</div>
+          <div class="sc-lbl">الغياب</div>
+          <div class="stat-details" id="absenceDetail"></div>
+        </div>
       </div>
     </div>
   </div><!-- end homeStatsWrap -->
@@ -1909,7 +1926,47 @@ tr:hover td{background:var(--em-ghost);}
             <span class="scc-dot" style="background:#ef4444;margin-right:8px;cursor:pointer;" onclick="donutShow('Absence',1)"></span><span>بدون عذر</span>
           </div>
         </div>
-
+        <div class="summary-chart-card" style="--sc:#D97706;">
+          <div class="scc-title"><span class="material-icons-round">event_busy</span> الغياب</div>
+          <div class="scc-chart-wrap">
+            <div class="css-donut-wrap">
+              <svg viewBox="0 0 110 110" width="110" height="110">
+                <circle class="css-donut-track" cx="55" cy="55" r="43"/>
+                <circle class="css-donut-fill" id="donutFill1Absence" cx="55" cy="55" r="43" stroke="#D97706" stroke-dasharray="0 270"/>
+                <circle class="css-donut-fill2" id="donutFill2Absence" cx="55" cy="55" r="43" stroke="#EF4444" stroke-dasharray="0 270"/>
+              </svg>
+              <div class="css-donut-label" onclick="donutToggle('Absence')" style="cursor:pointer;">
+                <span class="css-donut-num" id="donutAbsenceLbl">0</span>
+                <span class="css-donut-sub" id="donutAbsenceSub">بعذر</span>
+              </div>
+            </div>
+          </div>
+          <div class="scc-legend">
+            <span class="scc-dot" style="background:#D97706;cursor:pointer;" onclick="donutShow('Absence',0)"></span><span>بعذر</span>
+            <span class="scc-dot" style="background:#EF4444;margin-right:8px;cursor:pointer;" onclick="donutShow('Absence',1)"></span><span>بدون عذر</span>
+          </div>
+        </div>
+<!-- بطاقة 0: الغياب -->
+        <div class="summary-chart-card" style="--sc:#D97706;">
+          <div class="scc-title"><span class="material-icons-round">event_busy</span> الغياب</div>
+          <div class="scc-chart-wrap">
+            <div class="css-donut-wrap">
+              <svg viewBox="0 0 110 110" width="110" height="110">
+                <circle class="css-donut-track" cx="55" cy="55" r="43"/>
+                <circle class="css-donut-fill" id="donutFill1Absence" cx="55" cy="55" r="43" stroke="#D97706" stroke-dasharray="0 270"/>
+                <circle class="css-donut-fill2" id="donutFill2Absence" cx="55" cy="55" r="43" stroke="#ef4444" stroke-dasharray="0 270"/>
+              </svg>
+              <div class="css-donut-label" onclick="donutToggle('Absence')" style="cursor:pointer;">
+                <span class="css-donut-num" id="donutAbsenceLbl">0</span>
+                <span class="css-donut-sub" id="donutAbsenceSub">بعذر</span>
+              </div>
+            </div>
+          </div>
+          <div class="scc-legend">
+            <span class="scc-dot" style="background:#D97706;cursor:pointer;" onclick="donutShow('Absence',0)"></span><span>بعذر</span>
+            <span class="scc-dot" style="background:#ef4444;margin-right:8px;cursor:pointer;" onclick="donutShow('Absence',1)"></span><span>بدون عذر</span>
+          </div>
+        </div>
         <!-- بطاقة 1: المخالفات السلوكية -->
         <div class="summary-chart-card" style="--sc:#dc3545;">
           <div class="scc-title"><span class="material-icons-round">warning_amber</span> المخالفات السلوكية</div>
@@ -2625,21 +2682,32 @@ tr:hover td{background:var(--em-ghost);}
     </div>
   </div>
 
-  <!-- فلاتر -->
+  <!-- فلتر الفصل + تبويبان -->
   <div class="card" style="padding:12px 16px;margin-bottom:14px;">
-    <div class="filters-bar" style="flex-wrap:wrap;gap:8px;">
-
-      <select id="refFilterClass" onchange="loadReferredViolations()" style="min-width:130px;">
+    <div class="filters-bar" style="flex-wrap:wrap;gap:8px;align-items:center;">
+      <select id="refFilterClass" onchange="renderReferredCards()" style="min-width:130px;">
         <option value="الكل">كل الفصول</option>
       </select>
-      <select id="refFilterStatus" onchange="loadReferredViolations()" style="min-width:130px;">
-        <option value="الكل">كل الحالات</option>
-        <option value="بانتظار">بانتظار القرار</option>
-        <option value="تم">تم اتخاذ قرار</option>
-      </select>
-      <button class="btn btn-outline btn-sm" onclick="clearRefFilters()">مسح الفلاتر</button>
       <span class="chip" id="refCountChip">0</span>
     </div>
+  </div>
+
+  <!-- تبويبان -->
+  <div style="display:flex;gap:0;margin-bottom:14px;border-radius:12px;overflow:hidden;border:1.5px solid var(--border);">
+    <button id="refTab_pending" onclick="switchRefTab('pending')"
+      style="flex:1;padding:10px 0;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;border:none;
+             background:#D97706;color:#fff;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s;">
+      <span class="material-icons-round" style="font-size:16px;">pending</span>
+      قيد المعالجة
+      <span id="refBadgePending" style="background:rgba(255,255,255,0.3);color:#fff;border-radius:20px;padding:1px 8px;font-size:11px;">0</span>
+    </button>
+    <button id="refTab_done" onclick="switchRefTab('done')"
+      style="flex:1;padding:10px 0;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;border:none;
+             background:var(--surface);color:var(--text-muted);display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s;">
+      <span class="material-icons-round" style="font-size:16px;">check_circle</span>
+      تمت المعالجة
+      <span id="refBadgeDone" style="background:rgba(5,150,105,0.15);color:#059669;border-radius:20px;padding:1px 8px;font-size:11px;">0</span>
+    </button>
   </div>
 
   <!-- بطاقات المُحالات -->
@@ -7071,6 +7139,28 @@ function loadReferredCount(){
 
 let _allReferred = [];
 
+var _refCurrentTab = 'pending';
+
+function switchRefTab(tab) {
+  _refCurrentTab = tab;
+  var btnPending = document.getElementById('refTab_pending');
+  var btnDone    = document.getElementById('refTab_done');
+  if (btnPending && btnDone) {
+    if (tab === 'pending') {
+      btnPending.style.background = '#D97706';
+      btnPending.style.color = '#fff';
+      btnDone.style.background = 'var(--surface)';
+      btnDone.style.color = 'var(--text-muted)';
+    } else {
+      btnDone.style.background = '#059669';
+      btnDone.style.color = '#fff';
+      btnPending.style.background = 'var(--surface)';
+      btnPending.style.color = 'var(--text-muted)';
+    }
+  }
+  renderReferredCards();
+}
+
 function loadReferredViolations(){
   showLoading();
   google.script.run.withSuccessHandler(function(data){
@@ -7096,13 +7186,14 @@ function loadReferredViolations(){
 }
 
 function renderReferredCards(){
-  const clsF  = document.getElementById('refFilterClass')?.value||'الكل';
-  const statF = document.getElementById('refFilterStatus')?.value||'الكل';
+  const clsF = document.getElementById('refFilterClass')?.value||'الكل';
+  const tab  = _refCurrentTab || 'pending';
 
+  // فلترة حسب الفصل والتبويب
   let data = _allReferred.filter(r=>{
     if(clsF!=='الكل' && r.className!==clsF) return false;
-    if(statF==='بانتظار' && r.adminDecision) return false;
-    if(statF==='تم' && !r.adminDecision) return false;
+    if(tab==='pending' && r.adminDecision) return false;
+    if(tab==='done'    && !r.adminDecision) return false;
     return true;
   });
 
@@ -7113,6 +7204,11 @@ function renderReferredCards(){
   document.getElementById('refPendingCount').textContent = pending;
   document.getElementById('refDoneCount').textContent    = done;
   document.getElementById('refCountChip').textContent    = data.length;
+  // تحديث badges التبويبين
+  var bp = document.getElementById('refBadgePending');
+  var bd = document.getElementById('refBadgeDone');
+  if(bp) bp.textContent = pending;
+  if(bd) bd.textContent = done;
 
   const cont = document.getElementById('referredCardsContainer');
   if(!data.length){
@@ -7205,10 +7301,13 @@ function renderReferredCards(){
         <button class="btn btn-primary btn-sm" onclick="adminCreateReport('${esc(r.studentName)}','${esc(r.className)}','${esc(r.violationType)}')" style="font-size:11px;">
           <span class="material-icons-round" style="font-size:13px;">description</span> إصدار محضر
         </button>
-        <button class="btn btn-sm" onclick="addFollowUp('${r.date}','${esc(r.studentName)}','${esc(r.violationType)}')"
+        ${!r.adminDecision ? `<button class="btn btn-sm" onclick="addFollowUp('${r.date}','${esc(r.studentName)}','${esc(r.violationType)}')"
           style="font-size:11px;background:rgba(6,214,160,0.1);border:none;color:#06D6A0;font-weight:700;">
           <span class="material-icons-round" style="font-size:13px;">task_alt</span> المعالجة
-        </button>
+        </button>` : `<button class="btn btn-sm" onclick="addFollowUp('${r.date}','${esc(r.studentName)}','${esc(r.violationType)}')"
+          style="font-size:11px;background:rgba(5,150,105,0.1);border:none;color:#059669;font-weight:700;">
+          <span class="material-icons-round" style="font-size:13px;">edit</span> تعديل
+        </button>`}
       </div>
     </div>`;
   }).join('');
@@ -7239,8 +7338,8 @@ function adminToggleVisCard(date, studentName, vtype, newVis, cardId) {
 function clearRefFilters(){
   document.getElementById('refFilterSeverity').value='الكل';
   document.getElementById('refFilterClass').value='الكل';
-  document.getElementById('refFilterStatus').value='الكل';
-  renderReferredCards();
+  _refCurrentTab = 'pending';
+  switchRefTab('pending');
 }
 
 // adminToggleVis (v8 قديمة - حُذفت)
