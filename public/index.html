@@ -652,7 +652,7 @@ body { font-family: 'IBM Plex Sans Arabic', sans-serif; background: var(--bg); c
 /* home collapse sections */
 .home-collapse-wrap{background:var(--surface);border-radius:14px;border:1.5px solid var(--border);margin-bottom:14px;overflow:visible;box-shadow:0 2px 8px rgba(0,0,0,.05);}
 /* ── summary chart cards ── */
-.summary-charts-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;width:100%;overflow:hidden;}
+.summary-charts-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;width:100%;overflow:hidden;}
 .summary-chart-card{background:var(--surface);border-radius:12px;border:1.5px solid var(--border);padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.05);display:flex;flex-direction:column;gap:8px;border-top:3px solid var(--sc);}
 .scc-title{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:800;color:var(--sc);}
 .scc-title .material-icons-round{font-size:14px;}
@@ -1871,24 +1871,14 @@ tr:hover td{background:var(--em-ghost);}
           <div class="sc-lbl">السلوك الإيجابي</div>
           <div class="stat-details" id="positiveDetail"></div>
         </div>
-        <div class="stat-card-new" style="--sc-accent:#D97706;" onclick="toggleStatDetail('absenceDetail')">
-          <span class="material-icons-round sc-ico">event_busy</span>
-          <div class="sc-val" id="statAbsence">0</div>
-          <div class="sc-lbl">الغياب</div>
-          <div class="stat-details" id="absenceDetail"></div>
-        </div>
+
         <div class="stat-card-new" style="--sc-accent:#0A5C44;" onclick="toggleStatDetail('reportsDetail')">
           <span class="material-icons-round sc-ico">folder_open</span>
           <div class="sc-val" id="statReports">0</div>
           <div class="sc-lbl">عدد المحاضر</div>
           <div class="stat-details" id="reportsDetail"></div>
         </div>
-        <div class="stat-card-new" style="--sc-accent:#D97706;" onclick="toggleStatDetail('absenceDetail')">
-          <span class="material-icons-round sc-ico">event_busy</span>
-          <div class="sc-val" id="statAbsence">0</div>
-          <div class="sc-lbl">الغياب</div>
-          <div class="stat-details" id="absenceDetail"></div>
-        </div>
+
       </div>
     </div>
   </div><!-- end homeStatsWrap -->
@@ -1926,47 +1916,9 @@ tr:hover td{background:var(--em-ghost);}
             <span class="scc-dot" style="background:#ef4444;margin-right:8px;cursor:pointer;" onclick="donutShow('Absence',1)"></span><span>بدون عذر</span>
           </div>
         </div>
-        <div class="summary-chart-card" style="--sc:#D97706;">
-          <div class="scc-title"><span class="material-icons-round">event_busy</span> الغياب</div>
-          <div class="scc-chart-wrap">
-            <div class="css-donut-wrap">
-              <svg viewBox="0 0 110 110" width="110" height="110">
-                <circle class="css-donut-track" cx="55" cy="55" r="43"/>
-                <circle class="css-donut-fill" id="donutFill1Absence" cx="55" cy="55" r="43" stroke="#D97706" stroke-dasharray="0 270"/>
-                <circle class="css-donut-fill2" id="donutFill2Absence" cx="55" cy="55" r="43" stroke="#EF4444" stroke-dasharray="0 270"/>
-              </svg>
-              <div class="css-donut-label" onclick="donutToggle('Absence')" style="cursor:pointer;">
-                <span class="css-donut-num" id="donutAbsenceLbl">0</span>
-                <span class="css-donut-sub" id="donutAbsenceSub">بعذر</span>
-              </div>
-            </div>
-          </div>
-          <div class="scc-legend">
-            <span class="scc-dot" style="background:#D97706;cursor:pointer;" onclick="donutShow('Absence',0)"></span><span>بعذر</span>
-            <span class="scc-dot" style="background:#EF4444;margin-right:8px;cursor:pointer;" onclick="donutShow('Absence',1)"></span><span>بدون عذر</span>
-          </div>
-        </div>
+
 <!-- بطاقة 0: الغياب -->
-        <div class="summary-chart-card" style="--sc:#D97706;">
-          <div class="scc-title"><span class="material-icons-round">event_busy</span> الغياب</div>
-          <div class="scc-chart-wrap">
-            <div class="css-donut-wrap">
-              <svg viewBox="0 0 110 110" width="110" height="110">
-                <circle class="css-donut-track" cx="55" cy="55" r="43"/>
-                <circle class="css-donut-fill" id="donutFill1Absence" cx="55" cy="55" r="43" stroke="#D97706" stroke-dasharray="0 270"/>
-                <circle class="css-donut-fill2" id="donutFill2Absence" cx="55" cy="55" r="43" stroke="#ef4444" stroke-dasharray="0 270"/>
-              </svg>
-              <div class="css-donut-label" onclick="donutToggle('Absence')" style="cursor:pointer;">
-                <span class="css-donut-num" id="donutAbsenceLbl">0</span>
-                <span class="css-donut-sub" id="donutAbsenceSub">بعذر</span>
-              </div>
-            </div>
-          </div>
-          <div class="scc-legend">
-            <span class="scc-dot" style="background:#D97706;cursor:pointer;" onclick="donutShow('Absence',0)"></span><span>بعذر</span>
-            <span class="scc-dot" style="background:#ef4444;margin-right:8px;cursor:pointer;" onclick="donutShow('Absence',1)"></span><span>بدون عذر</span>
-          </div>
-        </div>
+
         <!-- بطاقة 1: المخالفات السلوكية -->
         <div class="summary-chart-card" style="--sc:#dc3545;">
           <div class="scc-title"><span class="material-icons-round">warning_amber</span> المخالفات السلوكية</div>
@@ -1975,7 +1927,7 @@ tr:hover td{background:var(--em-ghost);}
               <svg viewBox="0 0 110 110" width="110" height="110">
                 <circle class="css-donut-track" cx="55" cy="55" r="43"/>
                 <circle class="css-donut-fill" id="donutFill1Behavior" cx="55" cy="55" r="43" stroke="#dc3545" stroke-dasharray="0 270"/>
-                <circle class="css-donut-fill2" id="donutFill2Behavior" cx="55" cy="55" r="43" stroke="#22c55e" stroke-dasharray="0 270"/>
+                <circle class="css-donut-fill2" id="donutFill2Behavior" cx="55" cy="55" r="43" stroke="#22c55e" stroke-dasharray="0 270" opacity="0"/>
               </svg>
               <div class="css-donut-label" onclick="donutToggle('Behavior')" style="cursor:pointer;">
                 <span class="css-donut-num" id="donutBehaviorLbl">0</span>
@@ -1985,7 +1937,7 @@ tr:hover td{background:var(--em-ghost);}
           </div>
           <div class="scc-legend">
             <span class="scc-dot" style="background:#dc3545;cursor:pointer;" onclick="donutShow('Behavior',0)"></span><span>مخالفات</span>
-            <span class="scc-dot" 
+            <span class="scc-dot" style="background:#22c55e;margin-right:8px;cursor:pointer;" onclick="donutShow('Behavior',1)"></span><span>تحسن</span>
           </div>
         </div>
         <!-- بطاقة 2: المخالفات الصفية -->
@@ -1996,7 +1948,7 @@ tr:hover td{background:var(--em-ghost);}
               <svg viewBox="0 0 110 110" width="110" height="110">
                 <circle class="css-donut-track" cx="55" cy="55" r="43"/>
                 <circle class="css-donut-fill" id="donutFill1Class" cx="55" cy="55" r="43" stroke="#f97316" stroke-dasharray="0 270"/>
-                <circle class="css-donut-fill2" id="donutFill2Class" cx="55" cy="55" r="43" stroke="#22c55e" stroke-dasharray="0 270"/>
+                <circle class="css-donut-fill2" id="donutFill2Class" cx="55" cy="55" r="43" stroke="#22c55e" stroke-dasharray="0 270" opacity="0"/>
               </svg>
               <div class="css-donut-label" onclick="donutToggle('Class')" style="cursor:pointer;">
                 <span class="css-donut-num" id="donutClassLbl">0</span>
@@ -2006,7 +1958,7 @@ tr:hover td{background:var(--em-ghost);}
           </div>
           <div class="scc-legend">
             <span class="scc-dot" style="background:#f97316;cursor:pointer;" onclick="donutShow('Class',0)"></span><span>مخالفات</span>
-            <span class="scc-dot" 
+            <span class="scc-dot" style="background:#22c55e;margin-right:8px;cursor:pointer;" onclick="donutShow('Class',1)"></span><span>تحسن</span>
           </div>
         </div>
         <!-- بطاقة 3: السلوك الإيجابي والمتميز -->
@@ -3356,7 +3308,26 @@ tr:hover td{background:var(--em-ghost);}
 
 
 
-        <!-- أولياء الأمور -->
+    <!-- التحسن والمعالجة -->
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-title" style="font-size:13px;"><span class="material-icons-round" style="color:#3498db;font-size:16px;">trending_up</span> مؤشر التحسن والمعالجة</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;" id="frImproveGrid">
+        <div style="background:var(--bg);border-radius:10px;padding:14px;text-align:center;">
+          <div style="font-size:24px;font-weight:900;color:#27ae60;" id="frImproved">0</div>
+          <div style="font-size:11px;color:var(--text-3);">حالة تحسّن سلوكي</div>
+        </div>
+        <div style="background:var(--bg);border-radius:10px;padding:14px;text-align:center;">
+          <div style="font-size:24px;font-weight:900;color:#e74c3c;" id="frRepeat">0</div>
+          <div style="font-size:11px;color:var(--text-3);">حالة تكرار</div>
+        </div>
+        <div style="background:var(--bg);border-radius:10px;padding:14px;text-align:center;">
+          <div style="font-size:24px;font-weight:900;color:#f39c12;" id="frImproveRate">0%</div>
+          <div style="font-size:11px;color:var(--text-3);">نسبة التحسن</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- أولياء الأمور -->
     <div class="card" style="margin-bottom:14px;">
       <div class="card-title" style="font-size:13px;"><span class="material-icons-round" style="color:var(--gold);font-size:16px;">family_restroom</span> إحصاءات أولياء الأمور</div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
@@ -3463,7 +3434,22 @@ tr:hover td{background:var(--em-ghost);}
       <textarea id="fuText" rows="3" placeholder="اكتب ما تم اتخاذه من إجراء..." onkeydown="if(event.ctrlKey&&event.key==='Enter')confirmFollowUp()" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:13px;resize:vertical;background:var(--surface);color:var(--text);"></textarea>
       <div style="font-size:10px;color:var(--text-light);margin-top:4px;">Ctrl+Enter للتأكيد السريع</div>
     </div>
-
+    <!-- حالة السلوك -->
+    <div class="form-group" style="margin-top:10px;">
+      <label style="font-size:12px;font-weight:700;margin-bottom:6px;display:block;">حالة السلوك بعد المعالجة</label>
+      <div style="display:flex;gap:10px;">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:8px 14px;border-radius:8px;border:1.5px solid var(--border);flex:1;">
+          <input type="radio" name="fuBehaviorStatus" value="تحسن" style="accent-color:#16a34a;">
+          <span class="material-icons-round" style="font-size:16px;color:#16a34a;">trending_up</span>
+          <span style="font-size:12px;font-weight:700;color:#16a34a;">تحسن</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:8px 14px;border-radius:8px;border:1.5px solid var(--border);flex:1;">
+          <input type="radio" name="fuBehaviorStatus" value="لم يتحسن" style="accent-color:#dc3545;">
+          <span class="material-icons-round" style="font-size:16px;color:#dc3545;">trending_down</span>
+          <span style="font-size:12px;font-weight:700;color:#dc3545;">لم يتحسن</span>
+        </label>
+      </div>
+    </div>
     <div style="display:flex;gap:10px;margin-top:16px;">
       <button class="btn btn-primary" onclick="confirmFollowUp()" style="flex:1;">
         <span class="material-icons-round" style="font-size:15px;">verified</span> تأكيد المعالجة
@@ -3718,30 +3704,33 @@ function loadStats(){const df=document.getElementById('statDateFilter').value;sh
 // ══ رسوم الملخص في الرئيسية ══
 let _summaryCharts = {};
 function drawHomeSummary(s) {
-  const viol  = s.totalViolations      || 0;
-  const cls   = s.totalClassViolations || 0;
-  const pos   = s.totalPositive        || 0;
-  const dist  = s.totalDistinct        || 0;
-  const absEx = s.totalAbsenceExcused  || 0;
-  const absNo = s.totalAbsenceNoExcuse || 0;
-  const rpts  = s.totalReports         || 0;
-  const rptRes= s.totalReportsResponded|| 0;
+  const viol    = s.totalViolations      || 0;
+  const violImp = s.totalImproved        || 0;
+  const cls     = s.totalClassViolations || 0;
+  const clsImp  = s.totalClassImproved   || 0;
+  const pos     = s.totalPositive        || 0;
+  const dist    = s.totalDistinct        || 0;
+  const absEx   = s.totalAbsenceExcused  || 0;
+  const absNo   = s.totalAbsenceNoExcuse || 0;
+
+  const rpts  = s.totalReports          || 0;
+  const rptRes= s.totalReportsResponded || 0;
 
   window._donutVals = {
-    Absence:  [{v:absEx, lbl:'بعذر',    sub:'بعذر'},   {v:absNo,  lbl:'بدون عذر', sub:'بدون عذر'}],
-    Behavior: [{v:viol,  lbl:'مخالفات', sub:'مخالفة'}, {v:0,      lbl:'',         sub:''}],
-    Class:    [{v:cls,   lbl:'مخالفات', sub:'مخالفة'}, {v:0,      lbl:'',         sub:''}],
-    Positive: [{v:pos,   lbl:'إيجابي',  sub:'إيجابي'}, {v:dist,   lbl:'متميز',    sub:'متميز'}],
-    Reports:  [{v:rpts,  lbl:'المحاضر', sub:'محضر'},   {v:rptRes, lbl:'استجاب',   sub:'استجاب'}],
+    Absence:  [{v:absEx,  lbl:'بعذر',    sub:'بعذر'},   {v:absNo,  lbl:'بدون عذر', sub:'بدون عذر'}],
+    Behavior: [{v:viol,  lbl:'مخالفات', sub:'مخالفة'}, {v:violImp, lbl:'تحسّن',  sub:'تحسّن'}],
+    Class:    [{v:cls,   lbl:'مخالفات', sub:'مخالفة'}, {v:clsImp,  lbl:'تحسّن',  sub:'تحسّن'}],
+    Positive: [{v:pos,   lbl:'إيجابي',  sub:'إيجابي'}, {v:dist,    lbl:'متميز',  sub:'متميز'}],
+    Reports:  [{v:rpts,  lbl:'المحاضر', sub:'محضر'},   {v:rptRes,  lbl:'استجاب', sub:'استجاب'}],
   };
   window._donutCur = {Behavior:0, Class:0, Positive:0, Reports:0};
 
   const _colorMap = {
     Absence:  ['#0369a1', '#ef4444'],
-    Behavior: ['#dc3545', '#dc3545'],
-    Class:    ['#f97316', '#f97316'],
-    Positive: ['#16a34a', '#22d3ee'],
-    Reports:  ['#7c3aed', '#22c55e']
+    Behavior: ['#dc3545','#22c55e'],
+    Class:    ['#f97316','#22c55e'],
+    Positive: ['#16a34a','#22d3ee'],
+    Reports:  ['#7c3aed','#22c55e']
   };
 
   function drawDonut(key, f1Id, f2Id, lblId, subId, v1, v2) {
@@ -3761,10 +3750,10 @@ function drawHomeSummary(s) {
   }
 
   drawDonut('Absence', 'donutFill1Absence', 'donutFill2Absence', 'donutAbsenceLbl', 'donutAbsenceSub', absEx, absNo);
-  drawDonut('Behavior','donutFill1Behavior','donutFill2Behavior','donutBehaviorLbl','donutBehaviorSub',viol, 0);
-  drawDonut('Class',   'donutFill1Class',   'donutFill2Class',   'donutClassLbl',   'donutClassSub',   cls,  0);
-  drawDonut('Positive','donutFill1Positive','donutFill2Positive','donutPositiveLbl','donutPositiveSub',pos,  dist);
-  drawDonut('Reports', 'donutFill1Reports', 'donutFill2Reports', 'donutReportsLbl', 'donutReportsSub', rpts, rptRes);
+  drawDonut('Behavior','donutFill1Behavior','donutFill2Behavior','donutBehaviorLbl','donutBehaviorSub',viol,violImp);
+  drawDonut('Class',   'donutFill1Class',   'donutFill2Class',   'donutClassLbl',   'donutClassSub',   cls, clsImp);
+  drawDonut('Positive','donutFill1Positive','donutFill2Positive','donutPositiveLbl','donutPositiveSub',pos, dist);
+  drawDonut('Reports', 'donutFill1Reports', 'donutFill2Reports', 'donutReportsLbl', 'donutReportsSub', rpts,rptRes);
 }
 
 function donutShow(key, idx) {
@@ -4885,7 +4874,10 @@ function loadViolationsLog(){
   } else {
     ttb.innerHTML=treated.map((r,i)=>{
       const followText=r.followUp?r.followUp.split('\n').map(l=>'<div style="margin-bottom:3px;">'+l+'</div>').join(''):'—';
-      return '<tr><td>'+(i+1)+'</td><td>'+r.date+'</td><td><strong>'+r.studentName+'</strong></td><td>'+r.className+'</td><td>'+r.violationType+'</td><td><span class="treated-badge"><span class="material-icons-round" style="font-size:11px;">check_circle</span>'+r.treatmentDate+'</span></td><td style="font-size:11px;max-width:250px;">'+followText+'</td><td></td></tr>';
+      return '<tr><td>'+(i+1)+'</td><td>'+r.date+'</td><td><strong>'+r.studentName+'</strong></td><td>'+r.className+'</td><td>'+r.violationType+'</td><td><span class="treated-badge"><span class="material-icons-round" style="font-size:11px;">check_circle</span>'+r.treatmentDate+'</span></td><td style="font-size:11px;max-width:250px;">'+followText+'</td><td>'+('<div style="display:flex;gap:5px;flex-wrap:wrap;">'
+        +'<button onclick="updateBehaviorStatus(\''+esc(r.date)+'\''+',\''+esc(r.studentName)+'\''+',\''+esc(r.violationType)+'\''+',\'تحسن\''+')" style="padding:3px 10px;border-radius:20px;border:1.5px solid;font-size:10px;font-weight:700;cursor:pointer;transition:all .15s;background:'+(r.behaviorStatus==='تحسن'?'#16a34a':'transparent')+';color:'+(r.behaviorStatus==='تحسن'?'#fff':'#16a34a')+';border-color:#16a34a;">✅ تحسن</button>'
+        +'<button onclick="updateBehaviorStatus(\''+esc(r.date)+'\''+',\''+esc(r.studentName)+'\''+',\''+esc(r.violationType)+'\''+',\'لم يتحسن\''+')" style="padding:3px 10px;border-radius:20px;border:1.5px solid;font-size:10px;font-weight:700;cursor:pointer;transition:all .15s;background:'+(r.behaviorStatus==='لم يتحسن'?'#dc3545':'transparent')+';color:'+(r.behaviorStatus==='لم يتحسن'?'#fff':'#dc3545')+';border-color:#dc3545;">⚠️ لم يتحسن</button>'
+        +'</div>')+'</td></tr>';
     }).join('');
   }
 });}
@@ -5490,12 +5482,23 @@ function addFollowUp(d,sn,vt){
   document.getElementById('followUpModal').style.display='flex';
   setTimeout(()=>document.getElementById('fuText').focus(),100);
 }
-
+function updateBehaviorStatus(date,studentName,violationType,newStatus){
+  showLoading();
+  google.script.run.withSuccessHandler(function(r){
+    hideLoading();
+    if(r.success){
+      loadViolationsLog();
+      loadStats();
+    }
+  }).addFollowUp(date,studentName,violationType,'',newStatus);
+}
 
 function confirmFollowUp(){
   const txt=document.getElementById('fuText').value.trim();
   if(!txt){document.getElementById('fuText').style.borderColor='var(--danger)';return;}
-    document.getElementById('followUpModal').style.display='none';
+  const statusEl=document.querySelector('input[name="fuBehaviorStatus"]:checked');
+  const behaviorStatus=statusEl?statusEl.value:'';
+  document.getElementById('followUpModal').style.display='none';
   const {d,sn,vt}=window._fuData;
   showLoading();
   google.script.run.withSuccessHandler(function(r){
@@ -5505,7 +5508,7 @@ function confirmFollowUp(){
       loadStats();
       showAlert && showAlert('recordAlert','success','✅ تمت المعالجة وتسجيلها في الحالات المعالجة');
     }
-  }).addFollowUp(d,sn,vt,txt,'');
+  }).addFollowUp(d,sn,vt,txt,behaviorStatus);
 }
 
 function copyUrl(elId){
@@ -6541,7 +6544,8 @@ function loadFullReport() {
       var tpc = document.getElementById('frTopPosClasses');
       if(tpc) tpc.innerHTML = (d.positiveClasses&&d.positiveClasses.length) ? d.positiveClasses.slice(0,5).map(function(r,i){return '<div class="fr-rank-row" style="--fc:#27ae60"><span class="fr-rank-num">'+(i+1)+'</span><span class="fr-rank-name">'+esc(r.name)+'</span><span class="fr-rank-count" style="background:#27ae60;">'+r.count+'</span></div>';}).join('') : '<div class="empty-state">لا توجد بيانات</div>';
       // (سجل المحاضر أُزيل من التقرير الشامل)
-      var imp = 0, rep = d.repeatCount||0, tot = rep;
+      // التحسن
+      var imp = d.totalImproved||0, rep = d.repeatCount||0, tot = imp+rep;
       document.getElementById('frImproved').textContent = imp;
       document.getElementById('frRepeat').textContent = rep;
       document.getElementById('frImproveRate').textContent = tot>0 ? Math.round(imp/tot*100)+'%' : '0%';
@@ -6814,7 +6818,12 @@ function getPageData(pageId) {
             </div>
           </div>
 
-          
+          <div class="section-hd">📊 مؤشر التحسن والمعالجة</div>
+          ${extractStats([
+            ['frImproved','حالة تحسّن','#27ae60'],
+            ['frRepeat','حالة تكرار','#e74c3c'],
+            ['frImproveRate','نسبة التحسن','#f39c12']
+          ])}
 
           <div class="section-hd">👨‍👩‍👦 إحصاءات التواصل مع أولياء الأمور</div>
           ${extractStats([
