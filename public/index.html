@@ -3843,12 +3843,13 @@ function drawBehaviorDonut(degData, stage) {
     {id:'bStf4',v:stf[4]||0},{id:'bStf5',v:stf[5]||0},
   ];
   var offset = 0;
+  var quarterCirc = circ / 4; // تعويض عدم وجود rotate(-90)
   segs.forEach(function(s) {
     var el = document.getElementById(s.id);
     if (!el) return;
     var len = total > 0 ? (s.v / total) * circ : 0;
     el.setAttribute('stroke-dasharray', len + ' ' + (circ - len));
-    el.setAttribute('stroke-dashoffset', -offset);
+    el.setAttribute('stroke-dashoffset', quarterCirc - offset);
     el.style.transition = 'stroke-dasharray .35s, stroke-dashoffset .35s, opacity .2s';
     el.style.opacity = '1';
     offset += len;
