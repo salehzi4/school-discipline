@@ -4603,7 +4603,7 @@ function handleViolationClick(id) {
   if (existing !== -1) {
     _selectedViolations.splice(existing, 1);
   } else {
-    _selectedViolations.push({ id: id, name: viol.name, subViolation: null, degree: viol.degree, category: viol.category, rowAction: '' });
+    _selectedViolations.push({ id: id, name: viol.name, subViolation: null, degree: viol.degree, category: viol.category, sub_type: viol.sub_type || null, rowAction: '' });
   }
   refreshSelectedDisplay();
   // إعادة رسم الجدول لتحديث الصف
@@ -4627,7 +4627,7 @@ function selectChildViolation(parentId, childName, btn) {
   } else {
     // أزل أي إدخال سابق لنفس الأب بدون تابع
     _selectedViolations = _selectedViolations.filter(function(s) { return !(s.id === parentId && !s.subViolation); });
-    _selectedViolations.push({ id: parentId, name: viol.name, subViolation: childName, degree: viol.degree, category: viol.category, rowAction: '' });
+    _selectedViolations.push({ id: parentId, name: viol.name, subViolation: childName, degree: viol.degree, category: viol.category, sub_type: viol.sub_type || null, rowAction: '' });
   }
   refreshSelectedDisplay();
   // إعادة رسم البطاقة لتحديث التمييز البصري
