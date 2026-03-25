@@ -662,7 +662,7 @@ body { font-family: 'IBM Plex Sans Arabic', sans-serif; background: var(--bg); c
 .css-donut-wrap{position:relative;width:110px;height:110px;flex-shrink:0;}
 .css-donut-wrap svg{transform:rotate(-90deg);}
 .css-donut-track{fill:none;stroke:var(--border);stroke-width:12;}
-.css-donut-fill{fill:none;stroke-width:12;stroke-linecap:round;transition:stroke-dasharray .7s ease;}
+.css-donut-fill{fill:none;stroke-width:10;stroke-linecap:round;transition:stroke-dasharray .7s ease;}
 .css-donut-fill2{fill:none;stroke-width:12;stroke-linecap:round;transition:stroke-dasharray .7s ease;}
 .css-donut-label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;}
 .css-donut-num{font-size:20px;font-weight:900;line-height:1;transition:transform .3s, color .2s;}
@@ -1926,13 +1926,13 @@ tr:hover td{background:var(--em-ghost);}
             <div class="css-donut-wrap">
               <svg viewBox="0 0 110 110" width="110" height="110">
                 <circle class="css-donut-track" cx="55" cy="55" r="43"/>
-                <circle class="css-donut-fill" id="bDeg1" cx="55" cy="55" r="43" stroke="#FBBF24" stroke-dasharray="0 270" stroke-linecap="butt"/>
-                <circle class="css-donut-fill" id="bDeg2" cx="55" cy="55" r="43" stroke="#F97316" stroke-dasharray="0 270" stroke-linecap="butt"/>
-                <circle class="css-donut-fill" id="bDeg3" cx="55" cy="55" r="43" stroke="#E24B4A" stroke-dasharray="0 270" stroke-linecap="butt"/>
-                <circle class="css-donut-fill" id="bDeg4" cx="55" cy="55" r="43" stroke="#A32D2D" stroke-dasharray="0 270" stroke-linecap="butt"/>
-                <circle class="css-donut-fill" id="bDeg5" cx="55" cy="55" r="43" stroke="#501313" stroke-dasharray="0 270" stroke-linecap="butt"/>
-                <circle class="css-donut-fill" id="bStf4" cx="55" cy="55" r="43" stroke="#7C3AED" stroke-dasharray="0 270" stroke-linecap="butt"/>
-                <circle class="css-donut-fill" id="bStf5" cx="55" cy="55" r="43" stroke="#3C3489" stroke-dasharray="0 270" stroke-linecap="butt"/>
+                <circle fill="none" stroke-width="12" id="bDeg1" cx="55" cy="55" r="43" stroke="#FBBF24" stroke-dasharray="0 270" stroke-linecap="butt" style="transition:stroke-dasharray .35s,stroke-dashoffset .35s,opacity .2s;"/>
+                <circle fill="none" stroke-width="12" id="bDeg2" cx="55" cy="55" r="43" stroke="#F97316" stroke-dasharray="0 270" stroke-linecap="butt" style="transition:stroke-dasharray .35s,stroke-dashoffset .35s,opacity .2s;"/>
+                <circle fill="none" stroke-width="12" id="bDeg3" cx="55" cy="55" r="43" stroke="#E24B4A" stroke-dasharray="0 270" stroke-linecap="butt" style="transition:stroke-dasharray .35s,stroke-dashoffset .35s,opacity .2s;"/>
+                <circle fill="none" stroke-width="12" id="bDeg4" cx="55" cy="55" r="43" stroke="#A32D2D" stroke-dasharray="0 270" stroke-linecap="butt" style="transition:stroke-dasharray .35s,stroke-dashoffset .35s,opacity .2s;"/>
+                <circle fill="none" stroke-width="12" id="bDeg5" cx="55" cy="55" r="43" stroke="#501313" stroke-dasharray="0 270" stroke-linecap="butt" style="transition:stroke-dasharray .35s,stroke-dashoffset .35s,opacity .2s;"/>
+                <circle fill="none" stroke-width="12" id="bStf4" cx="55" cy="55" r="43" stroke="#7C3AED" stroke-dasharray="0 270" stroke-linecap="butt" style="transition:stroke-dasharray .35s,stroke-dashoffset .35s,opacity .2s;"/>
+                <circle fill="none" stroke-width="12" id="bStf5" cx="55" cy="55" r="43" stroke="#3C3489" stroke-dasharray="0 270" stroke-linecap="butt" style="transition:stroke-dasharray .35s,stroke-dashoffset .35s,opacity .2s;"/>
                 <circle id="bSolidRing" cx="55" cy="55" r="43" fill="none" stroke="#FBBF24" stroke-width="12" stroke-dasharray="0 270" stroke-linecap="butt"/>
                 <!-- نسب داخل القطع بـ textPath -->
                 <defs>
