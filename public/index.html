@@ -1937,7 +1937,7 @@ tr:hover td{background:var(--em-ghost);}
           </div>
           <div class="scc-legend">
             <span class="scc-dot" style="background:#dc3545;cursor:pointer;" onclick="donutShow('Behavior',0)"></span><span>مخالفات</span>
-            <span class="scc-dot" style="background:#22c55e;margin-right:8px;cursor:pointer;" onclick="donutShow('Behavior',1)"></span>
+            
           </div>
         </div>
         <!-- بطاقة 2: المخالفات الصفية -->
@@ -1958,7 +1958,7 @@ tr:hover td{background:var(--em-ghost);}
           </div>
           <div class="scc-legend">
             <span class="scc-dot" style="background:#f97316;cursor:pointer;" onclick="donutShow('Class',0)"></span><span>مخالفات</span>
-            <span class="scc-dot" style="background:#22c55e;margin-right:8px;cursor:pointer;" onclick="donutShow('Class',1)"></span>
+            
           </div>
         </div>
         <!-- بطاقة 3: السلوك الإيجابي والمتميز -->
@@ -3426,22 +3426,7 @@ tr:hover td{background:var(--em-ghost);}
       <textarea id="fuText" rows="3" placeholder="اكتب ما تم اتخاذه من إجراء..." onkeydown="if(event.ctrlKey&&event.key==='Enter')confirmFollowUp()" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:13px;resize:vertical;background:var(--surface);color:var(--text);"></textarea>
       <div style="font-size:10px;color:var(--text-light);margin-top:4px;">Ctrl+Enter للتأكيد السريع</div>
     </div>
-    <!-- حالة السلوك -->
-    <div class="form-group" style="margin-top:10px;">
-      <label style="font-size:12px;font-weight:700;margin-bottom:6px;display:block;">حالة السلوك بعد المعالجة</label>
-      <div style="display:flex;gap:10px;">
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:8px 14px;border-radius:8px;border:1.5px solid var(--border);flex:1;">
-          
-          <span class="material-icons-round" style="font-size:16px;color:#16a34a;">trending_up</span>
-          
-        </label>
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:8px 14px;border-radius:8px;border:1.5px solid var(--border);flex:1;">
-          
-          <span class="material-icons-round" style="font-size:16px;color:#dc3545;">trending_down</span>
-          <span style="font-size:12px;font-weight:700;color:#dc3545;">لم يتحسن</span>
-        </label>
-      </div>
-    </div>
+    
     <div style="display:flex;gap:10px;margin-top:16px;">
       <button class="btn btn-primary" onclick="confirmFollowUp()" style="flex:1;">
         <span class="material-icons-round" style="font-size:15px;">verified</span> تأكيد المعالجة
