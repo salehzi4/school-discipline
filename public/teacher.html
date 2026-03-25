@@ -1532,8 +1532,11 @@ function tDonutShow(key, idx) {
 }
 
 function tDonutToggle(key) {
-  if (!window._tDonutVals) return;
-  const next = ((window._tDonutCur[key] || 0) + 1) % window._tDonutVals[key].length;
+  if (!window._tDonutVals || !window._tDonutVals[key]) return;
+  const vals = window._tDonutVals[key];
+  const cur  = window._tDonutCur[key] || 0;
+  const next = (cur + 1) % vals.length;
+  if (!vals[next].lbl) return;
   tDonutShow(key, next);
 }
 
