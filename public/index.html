@@ -1935,20 +1935,13 @@ tr:hover td{background:var(--em-ghost);}
                 <circle class="css-donut-fill" id="bStf5" cx="55" cy="55" r="43" stroke="#3C3489" stroke-dasharray="0 270" stroke-linecap="butt"/>
                 <circle id="bSolidRing" cx="55" cy="55" r="43" fill="none" stroke="#FBBF24" stroke-width="10" stroke-dasharray="0 270" stroke-linecap="butt" transform="rotate(-90 55 55)"/>
                 <!-- labels خارج الدائرة -->
-                <text id="bV_d1" font-size="7" font-weight="600" fill="#FBBF24" text-anchor="middle" dominant-baseline="auto" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
-                <text id="bP_d1" font-size="6" fill="#FBBF24" text-anchor="middle" dominant-baseline="auto" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
-                <text id="bV_d2" font-size="7" font-weight="600" fill="#F97316" text-anchor="middle" dominant-baseline="auto" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
-                <text id="bP_d2" font-size="6" fill="#F97316" text-anchor="middle" dominant-baseline="auto" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
-                <text id="bV_d3" font-size="7" font-weight="600" fill="#E24B4A" text-anchor="middle" dominant-baseline="auto" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
-                <text id="bP_d3" font-size="6" fill="#E24B4A" text-anchor="middle" dominant-baseline="auto" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
-                <text id="bV_d4" font-size="7" font-weight="600" fill="#A32D2D" text-anchor="middle" dominant-baseline="auto" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
-                <text id="bP_d4" font-size="6" fill="#A32D2D" text-anchor="middle" dominant-baseline="auto" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
-                <text id="bV_d5" font-size="7" font-weight="600" fill="#501313" text-anchor="middle" dominant-baseline="auto" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
-                <text id="bP_d5" font-size="6" fill="#501313" text-anchor="middle" dominant-baseline="auto" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
-                <text id="bV_s4" font-size="7" font-weight="600" fill="#7C3AED" text-anchor="middle" dominant-baseline="auto" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
-                <text id="bP_s4" font-size="6" fill="#7C3AED" text-anchor="middle" dominant-baseline="auto" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
-                <text id="bV_s5" font-size="7" font-weight="600" fill="#3C3489" text-anchor="middle" dominant-baseline="auto" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
-                <text id="bP_s5" font-size="6" fill="#3C3489" text-anchor="middle" dominant-baseline="auto" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
+                <text id="bV_d1" font-size="8" font-weight="600" fill="#FBBF24" text-anchor="middle" dominant-baseline="middle" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
+                <text id="bV_d2" font-size="8" font-weight="600" fill="#F97316" text-anchor="middle" dominant-baseline="middle" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
+                <text id="bV_d3" font-size="8" font-weight="600" fill="#E24B4A" text-anchor="middle" dominant-baseline="middle" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
+                <text id="bV_d4" font-size="8" font-weight="600" fill="#A32D2D" text-anchor="middle" dominant-baseline="middle" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
+                <text id="bV_d5" font-size="8" font-weight="600" fill="#501313" text-anchor="middle" dominant-baseline="middle" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
+                <text id="bV_s4" font-size="8" font-weight="600" fill="#7C3AED" text-anchor="middle" dominant-baseline="middle" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
+                <text id="bV_s5" font-size="8" font-weight="600" fill="#3C3489" text-anchor="middle" dominant-baseline="middle" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
               </svg>
               <div class="css-donut-label" style="cursor:default;">
                 <span class="css-donut-num" id="donutBehaviorLbl">0</span>
@@ -3750,7 +3743,7 @@ function _bCalcPos() {
   var showD5 = (_behaviorStage !== 'elementary');
   var vals = {d1:beh[1]||0,d2:beh[2]||0,d3:beh[3]||0,d4:beh[4]||0,
               d5:showD5?(beh[5]||0):0,s4:stf[4]||0,s5:stf[5]||0};
-  var circ = _behaviorCirc; var r = 56; var cx = 55; var cy = 55;
+  var circ = _behaviorCirc; var r = 68; var cx = 55; var cy = 55;
   var off = 0; _bSegPos = [];
   keys.forEach(function(k){
     var len = _behaviorTotal > 0 ? (vals[k]/_behaviorTotal)*circ : 0;
@@ -3764,17 +3757,15 @@ function _bCalcPos() {
 function _bPlaceLabel(k, show) {
   var sd = _bSegPos.find(function(s){return s.k===k;});
   var vEl = document.getElementById('bV_'+k);
-  var pEl = document.getElementById('bP_'+k);
-  if (!sd || !vEl || !pEl) return;
+  if (!sd || !vEl) return;
   if (!show || sd.len < 3) {
-    vEl.setAttribute('opacity','0'); pEl.setAttribute('opacity','0'); return;
+    vEl.setAttribute('opacity','0'); return;
   }
   var pct = _behaviorTotal > 0 ? Math.round((sd.v/_behaviorTotal)*100) : 0;
-  vEl.setAttribute('x', sd.x); vEl.setAttribute('y', sd.y - 3);
-  vEl.textContent = sd.v;
-  pEl.setAttribute('x', sd.x); pEl.setAttribute('y', sd.y + 7);
-  pEl.textContent = pct + '%';
-  vEl.setAttribute('opacity','1'); pEl.setAttribute('opacity','1');
+  vEl.setAttribute('x', sd.x);
+  vEl.setAttribute('y', sd.y);
+  vEl.textContent = sd.v + ' ' + pct + '%';
+  vEl.setAttribute('opacity','1');
 }
 
 function bHoverHide() {
