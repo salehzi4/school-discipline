@@ -681,6 +681,7 @@ async function recordFixedViolation(body, sc) {
         severity: deg,
         degree: deg,
         category: cat === 'behavioral' ? 'سلوكية' : cat === 'staff' ? 'تجاه الهيئة' : cat === 'class' ? 'صفية' : cat === 'positive' ? 'إيجابية' : cat,
+        sub_type: (cat === 'positive') ? (viol.sub_type || 'إيجابي') : null,
         action_taken: viol.actionText || actionText || '',
         visible_to_parent: visibleToParent,
         referred_to_admin: referredToAdmin,
@@ -1024,7 +1025,7 @@ async function getAdvancedStats(dateFilter, sc) {
   const [studentsRes, teachersRes, violationsRes, messagesRes, posRes, reportsRes] = await Promise.all([
     sb('students', 'GET', `school_code=eq.${sc}&select=id`),
     sb('teachers', 'GET', `school_code=eq.${sc}&select=id`),
-    sb('violations_log', 'GET', `school_code=eq.${sc}&select=class_name,violation_type,category,behavior_status,sub_type,degree,recorded_at`),
+    sb('violations_log', 'GET', `school_code=eq.${sc}&select=class_name,violation_type,category,behavior_status,sub_type,recorded_at`),
     sb('messages_log', 'GET', `school_code=eq.${sc}&select=sent_at`),
     sb('violations_log', 'GET', `school_code=eq.${sc}&category=eq.إيجابية&select=sub_type,recorded_at`),
     sb('reports', 'GET', `school_code=eq.${sc}&select=student_name,violation_type,read_at,created_at`)
@@ -1065,19 +1066,6 @@ async function getAdvancedStats(dateFilter, sc) {
     totalClassImproved: fv.filter(v => v.behavior_status === 'تحسن' && v.category === 'صفية').length,
     totalAbsenceExcused: fv.filter(v => (v.category === 'غياب' || v.category === 'absence') && !(v.violation_type||'').includes('بدون عذر')).length,
     totalAbsenceNoExcuse: fv.filter(v => (v.category === 'غياب' || v.category === 'absence') && (v.violation_type||'').includes('بدون عذر')).length,
-    violationsByDegree: (() => {
-      const beh = {1:0, 2:0, 3:0, 4:0, 5:0};
-      const stf = {4:0, 5:0};
-      fv.filter(v => v.category === 'سلوكية').forEach(v => {
-        const d = parseInt(v.degree) || 1;
-        if (beh[d] !== undefined) beh[d]++;
-      });
-      fv.filter(v => v.category === 'تجاه الهيئة').forEach(v => {
-        const d = parseInt(v.degree) || 4;
-        if (stf[d] !== undefined) stf[d]++;
-      });
-      return { behavioral: beh, staff: stf };
-    })(),
     topReports,
     topClass: Object.keys(cc).length ? Object.entries(cc).sort((a,b) => b[1]-a[1])[0][0] : '-',
     classRanking: Object.entries(cc).sort((a,b) => b[1]-a[1]).map(e => ({ name: e[0], count: e[1] })),
