@@ -681,7 +681,6 @@ async function recordFixedViolation(body, sc) {
         severity: deg,
         degree: deg,
         category: cat === 'behavioral' ? 'سلوكية' : cat === 'staff' ? 'تجاه الهيئة' : cat === 'class' ? 'صفية' : cat === 'positive' ? 'إيجابية' : cat,
-        sub_type: (cat === 'positive') ? (viol.sub_type || 'إيجابي') : null,
         action_taken: viol.actionText || actionText || '',
         visible_to_parent: visibleToParent,
         referred_to_admin: referredToAdmin,
@@ -696,8 +695,26 @@ async function recordFixedViolation(body, sc) {
     }
   }
 
-  await sb('violations_log', 'POST', '', results);
-  return { success: true, message: `تم تسجيل ${results.length} مخالفة ✅` };
+  // فصل السلوكيات الإيجابية عن المخالفات
+  const positiveRows = results.filter(r => r.category === 'إيجابية');
+  const violationRows = results.filter(r => r.category !== 'إيجابية');
+
+  if (violationRows.length) {
+    await sb('violations_log', 'POST', '', violationRows);
+  }
+  if (positiveRows.length) {
+    const posRows = positiveRows.map(r => ({
+      school_code: r.school_code,
+      student_name: r.student_name,
+      class_name: r.class_name,
+      behavior_type: r.violation_type,
+      notes: r.notes || '',
+      recorder: r.recorder,
+      sub_type: r.sub_type || 'إيجابي'
+    }));
+    await sb('positive_behaviors_log', 'POST', '', posRows);
+  }
+  return { success: true, message: `تم التسجيل ✅` };
 }
 
 async function recordPositiveBehavior(body, sc) {
@@ -1027,13 +1044,13 @@ async function getAdvancedStats(dateFilter, sc) {
     sb('teachers', 'GET', `school_code=eq.${sc}&select=id`),
     sb('violations_log', 'GET', `school_code=eq.${sc}&select=class_name,violation_type,category,behavior_status,sub_type,recorded_at`),
     sb('messages_log', 'GET', `school_code=eq.${sc}&select=sent_at`),
-    sb('violations_log', 'GET', `school_code=eq.${sc}&category=eq.إيجابية&select=sub_type,recorded_at`),
+    sb('positive_behaviors_log', 'GET', `school_code=eq.${sc}&select=sub_type,recorded_at`),
     sb('reports', 'GET', `school_code=eq.${sc}&select=student_name,violation_type,read_at,created_at`)
   ]);
 
   let fv = Array.isArray(violationsRes) ? violationsRes : [];
   let fm = Array.isArray(messagesRes) ? messagesRes : [];
-  let fp = Array.isArray(violationsRes) ? violationsRes.filter(v => v.category === 'إيجابية' || v.category === 'positive' || v.category === 'إيجابي') : [];
+  let fp = Array.isArray(posRes) ? posRes : [];
   const allReports = Array.isArray(reportsRes) ? reportsRes : [];
 
   if (dateFilter) {
@@ -1072,7 +1089,7 @@ async function getAdvancedStats(dateFilter, sc) {
     typeRanking: Object.entries(tc).sort((a,b) => b[1]-a[1]).map(e => ({ name: e[0], count: e[1] })),
     classTypeRanking: Object.entries(tcCls).sort((a,b) => b[1]-a[1]).map(e => ({ name: e[0], count: e[1] })),
     positiveRanking: Object.entries(
-      fp.reduce((acc, v) => { acc[v.violation_type || v.name || 'إيجابي'] = (acc[v.violation_type || v.name || 'إيجابي'] || 0) + 1; return acc; }, {})
+      fp.reduce((acc, v) => { acc[v.behavior_type || v.violation_type || v.name || 'إيجابي'] = (acc[v.behavior_type || v.violation_type || v.name || 'إيجابي'] || 0) + 1; return acc; }, {})
     ).sort((a,b) => b[1]-a[1]).slice(0,5).map(e => ({ name: e[0], count: e[1] }))
   };
 }
