@@ -2024,18 +2024,35 @@ tr:hover td{background:var(--em-ghost);}
             <div class="css-donut-wrap">
               <svg viewBox="0 0 110 110" width="110" height="110">
                 <circle class="css-donut-track" cx="55" cy="55" r="43"/>
-                <circle class="css-donut-fill" id="donutFill1Positive" cx="55" cy="55" r="43" stroke="#16a34a" stroke-dasharray="0 270"/>
-                <circle class="css-donut-fill2" id="donutFill2Positive" cx="55" cy="55" r="43" stroke="#22d3ee" stroke-dasharray="0 270"/>
+                <circle fill="none" stroke-width="10" id="pPos" cx="55" cy="55" r="43" stroke="#16a34a" stroke-dasharray="0 270" stroke-linecap="butt" style="transition:stroke-dasharray .35s,stroke-dashoffset .35s,opacity .2s;"/>
+                <circle fill="none" stroke-width="10" id="pDis" cx="55" cy="55" r="43" stroke="#22d3ee" stroke-dasharray="0 270" stroke-linecap="butt" style="transition:stroke-dasharray .35s,stroke-dashoffset .35s,opacity .2s;"/>
+                <circle id="pSolidRing" cx="55" cy="55" r="43" fill="none" stroke="#16a34a" stroke-width="10" stroke-dasharray="0 270" stroke-linecap="butt"/>
+                <defs>
+                  <path id="pArc_pos" fill="none"/>
+                  <path id="pArc_dis" fill="none"/>
+                </defs>
+                <text font-size="7" fill="white" font-weight="600" id="pTxt_pos" opacity="0" style="transition:opacity .2s;"><textPath href="#pArc_pos" startOffset="50%" text-anchor="middle"></textPath></text>
+                <text font-size="7" fill="white" font-weight="600" id="pTxt_dis" opacity="0" style="transition:opacity .2s;"><textPath href="#pArc_dis" startOffset="50%" text-anchor="middle"></textPath></text>
               </svg>
-              <div class="css-donut-label" onclick="donutToggle('Positive')" style="cursor:pointer;">
+              <div class="css-donut-label" style="cursor:default;">
                 <span class="css-donut-num" id="donutPositiveLbl">0</span>
                 <span class="css-donut-sub" id="donutPositiveSub">إيجابي</span>
               </div>
             </div>
           </div>
-          <div class="scc-legend">
-            <span class="scc-dot" style="background:#16a34a;cursor:pointer;" onclick="donutShow('Positive',0)"></span><span>إيجابي</span>
-            <span class="scc-dot" style="background:#22d3ee;margin-right:8px;cursor:pointer;" onclick="donutShow('Positive',1)"></span><span>متميز</span>
+          <div class="scc-legend" style="flex-direction:column;gap:2px;align-items:stretch;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:3px 5px;border-radius:4px;cursor:pointer;" onclick="positiveDegSelect('all')" id="pLegAll" onmouseenter="pHoverShow('all')" onmouseleave="pHoverHide()">
+              <div style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,#16a34a,#22d3ee);display:inline-block;"></span><span style="font-size:10px;">الكل</span></div>
+              <span style="font-size:11px;font-weight:700;" id="pLblAll">0</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:3px 5px;border-radius:4px;cursor:pointer;" onclick="positiveDegSelect('pos')" id="pLegPos" onmouseenter="pHoverShow('pos')" onmouseleave="pHoverHide()">
+              <div style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:#16a34a;display:inline-block;"></span><span style="font-size:10px;">إيجابي</span></div>
+              <span style="font-size:11px;font-weight:700;color:#16a34a;" id="pLblPos">0</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:3px 5px;border-radius:4px;cursor:pointer;" onclick="positiveDegSelect('dis')" id="pLegDis" onmouseenter="pHoverShow('dis')" onmouseleave="pHoverHide()">
+              <div style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:#22d3ee;display:inline-block;"></span><span style="font-size:10px;">متميز</span></div>
+              <span style="font-size:11px;font-weight:700;color:#22d3ee;" id="pLblDis">0</span>
+            </div>
           </div>
         </div>
         <!-- بطاقة 4: المحاضر واستجابة أولياء الأمر -->
@@ -3932,6 +3949,140 @@ function behaviorDegSelect(key) {
   });
 }
 
+// ══ شارت السلوك الإيجابي والمتميز ══
+var _positiveData = {pos:0, dis:0};
+var _positiveTotal = 0;
+var _positiveCirc = 2 * Math.PI * 43;
+var _positiveCurSel = 'all';
+
+function _pArcPath(sa, ea, r) {
+  var cx=55, cy=55;
+  var x1=cx+r*Math.cos(sa), y1=cy+r*Math.sin(sa);
+  var x2=cx+r*Math.cos(ea), y2=cy+r*Math.sin(ea);
+  var large=(ea-sa)>Math.PI?1:0;
+  return 'M'+x1.toFixed(3)+','+y1.toFixed(3)+' A'+r+','+r+' 0 '+large+',1 '+x2.toFixed(3)+','+y2.toFixed(3);
+}
+
+function _pBuildArcs() {
+  var circ = _positiveCirc; var off = 0;
+  var keys = [{k:'pos',id:'pPos',tid:'pTxt_pos',aid:'pArc_pos'},
+              {k:'dis',id:'pDis',tid:'pTxt_dis',aid:'pArc_dis'}];
+  keys.forEach(function(s) {
+    var len = _positiveTotal > 0 ? (_positiveData[s.k]/_positiveTotal)*circ : 0;
+    var sa = -Math.PI/2 + (off/circ)*2*Math.PI;
+    var ea = -Math.PI/2 + ((off+len)/circ)*2*Math.PI;
+    var pct = _positiveTotal > 0 ? Math.round((_positiveData[s.k]/_positiveTotal)*100) : 0;
+    var arcEl = document.getElementById(s.aid);
+    if (arcEl && len > 5) arcEl.setAttribute('d', _pArcPath(sa, ea, 43));
+    else if (arcEl) arcEl.setAttribute('d','');
+    var tp = document.querySelector('#'+s.tid+' textPath');
+    if (tp) tp.textContent = (pct > 5 && _positiveData[s.k] > 0) ? pct+'%' : '';
+    off += len;
+  });
+}
+
+function drawPositiveDonut(pos, dis) {
+  _positiveData = {pos: pos||0, dis: dis||0};
+  _positiveTotal = (pos||0) + (dis||0);
+  var circ = _positiveCirc; var qc = circ/4;
+  var segs = [{id:'pPos',v:pos||0},{id:'pDis',v:dis||0}];
+  var offset = 0;
+  segs.forEach(function(s) {
+    var el = document.getElementById(s.id);
+    if (!el) return;
+    var len = _positiveTotal > 0 ? (s.v/_positiveTotal)*circ : 0;
+    el.setAttribute('stroke-dasharray', len+' '+(circ-len));
+    el.setAttribute('stroke-dashoffset', qc - offset);
+    el.style.opacity = '1';
+    offset += len;
+  });
+  // إخفاء solidRing
+  var sr = document.getElementById('pSolidRing');
+  if (sr) sr.setAttribute('stroke-dasharray','0 '+(circ+10));
+  // تحديث labels
+  var lblAll=document.getElementById('pLblAll'), lblPos=document.getElementById('pLblPos'), lblDis=document.getElementById('pLblDis');
+  if(lblAll) lblAll.textContent = _positiveTotal;
+  if(lblPos) lblPos.textContent = pos||0;
+  if(lblDis) lblDis.textContent = dis||0;
+  _pBuildArcs();
+  positiveDegSelect('all');
+}
+
+function pHoverHide() {
+  ['pos','dis'].forEach(function(k){
+    var t = document.getElementById('pTxt_'+k);
+    if(t) t.setAttribute('opacity','0');
+  });
+}
+
+function pHoverShow(key) {
+  if (_positiveCurSel !== 'all') return;
+  pHoverHide();
+  if (key === 'all') {
+    ['pos','dis'].forEach(function(k){
+      var tp = document.querySelector('#pTxt_'+k+' textPath');
+      if(tp && tp.textContent) document.getElementById('pTxt_'+k).setAttribute('opacity','1');
+    });
+  } else {
+    var tp = document.querySelector('#pTxt_'+key+' textPath');
+    if(tp && tp.textContent) document.getElementById('pTxt_'+key).setAttribute('opacity','1');
+  }
+}
+
+function positiveDegSelect(key) {
+  _positiveCurSel = key;
+  pHoverHide();
+  var circ = _positiveCirc;
+  var map = {
+    all: {v:_positiveTotal,  c:'#16a34a', lbl:'إيجابي'},
+    pos: {v:_positiveData.pos, c:'#16a34a', lbl:'إيجابي'},
+    dis: {v:_positiveData.dis, c:'#22d3ee', lbl:'متميز'},
+  };
+  var sel = map[key] || map['all'];
+  // وسط الدائرة
+  var lbl = document.getElementById('donutPositiveLbl');
+  var sub = document.getElementById('donutPositiveSub');
+  if(lbl){ lbl.textContent=sel.v; lbl.style.color=sel.c;
+           lbl.style.transform='scale(1.2)'; setTimeout(function(){lbl.style.transform='';},250); }
+  if(sub){ sub.textContent=sel.lbl; sub.style.color=sel.c; }
+  // رسم
+  if (key === 'all') {
+    // إعادة رسم الكل
+    var qc = circ/4; var offset=0;
+    [{id:'pPos',k:'pos'},{id:'pDis',k:'dis'}].forEach(function(s){
+      var el=document.getElementById(s.id);
+      var len=_positiveTotal>0?(_positiveData[s.k]/_positiveTotal)*circ:0;
+      el.setAttribute('stroke-dasharray',len+' '+(circ-len));
+      el.setAttribute('stroke-dashoffset',qc-offset);
+      el.style.opacity='1';
+      offset+=len;
+    });
+    var sr=document.getElementById('pSolidRing');
+    if(sr) sr.setAttribute('stroke-dasharray','0 '+(circ+10));
+  } else {
+    // إخفاء الأجزاء وإظهار solidRing
+    ['pPos','pDis'].forEach(function(id){
+      var el=document.getElementById(id);
+      if(el) el.style.opacity='0';
+    });
+    var sr=document.getElementById('pSolidRing');
+    if(sr){
+      sr.setAttribute('stroke', sel.c);
+      var len=_positiveTotal>0?(sel.v/_positiveTotal)*circ:0;
+      sr.setAttribute('stroke-dasharray', len+' '+circ);
+      sr.setAttribute('stroke-dashoffset', circ/4);
+    }
+    // إظهار النسبة
+    var tp = document.querySelector('#pTxt_'+key+' textPath');
+    if(tp && tp.textContent) document.getElementById('pTxt_'+key).setAttribute('opacity','1');
+  }
+  // تمييز السطر المختار
+  ['all','pos','dis'].forEach(function(k){
+    var row = document.getElementById('pLeg'+k.charAt(0).toUpperCase()+k.slice(1));
+    if(row) row.style.background = (k===key)?'var(--surface-2,rgba(0,0,0,0.06))':'';
+  });
+}
+
 function drawHomeSummary(s) {
   const viol    = s.totalViolations      || 0;
   const violImp = s.totalImproved        || 0;
@@ -3984,7 +4135,7 @@ function drawHomeSummary(s) {
     drawBehaviorDonut(s.violationsByDegree, typeof _schoolStage !== 'undefined' ? _schoolStage : 'elementary');
   }
   drawDonut('Class',   'donutFill1Class',   'donutFill2Class',   'donutClassLbl',   'donutClassSub',   cls, clsImp);
-  drawDonut('Positive','donutFill1Positive','donutFill2Positive','donutPositiveLbl','donutPositiveSub',pos, dist);
+  drawPositiveDonut(pos, dist);
   drawDonut('Reports', 'donutFill1Reports', 'donutFill2Reports', 'donutReportsLbl', 'donutReportsSub', rpts,rptRes);
 }
 
