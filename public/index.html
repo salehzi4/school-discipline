@@ -1978,7 +1978,7 @@ tr:hover td{background:var(--em-ghost);}
                 <div style="display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:#A32D2D;display:inline-block;"></span><span style="font-size:10px;">د4 سلوكية</span></div>
                 <span style="font-size:10px;font-weight:700;color:#A32D2D;" id="bLblD4">0</span>
               </div>
-              <div style="display:flex;align-items:center;justify-content:space-between;padding:3px 5px;border-radius:4px;cursor:pointer;" onclick="behaviorDegSelect('d5')" id="bLegD5" onmouseenter="bHoverShow('d5')" onmouseleave="bHoverHide()">
+              <div style="display:none;align-items:center;justify-content:space-between;padding:3px 5px;border-radius:4px;cursor:pointer;" onclick="behaviorDegSelect('d5')" id="bLegD5" onmouseenter="bHoverShow('d5')" onmouseleave="bHoverHide()">
                 <div style="display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:#501313;display:inline-block;"></span><span style="font-size:10px;">د5 سلوكية</span></div>
                 <span style="font-size:10px;font-weight:700;color:#501313;" id="bLblD5">0</span>
               </div>
@@ -3960,7 +3960,10 @@ function drawHomeSummary(s) {
   }
 
   drawDonut('Absence', 'donutFill1Absence', 'donutFill2Absence', 'donutAbsenceLbl', 'donutAbsenceSub', absEx, absNo);
-    if (s.violationsByDegree) drawBehaviorDonut(s.violationsByDegree, typeof _schoolStage !== 'undefined' ? _schoolStage : 'elementary');
+    if (s.violationsByDegree) {
+    window._lastViolationsByDegree = s.violationsByDegree;
+    drawBehaviorDonut(s.violationsByDegree, typeof _schoolStage !== 'undefined' ? _schoolStage : 'elementary');
+  }
   drawDonut('Class',   'donutFill1Class',   'donutFill2Class',   'donutClassLbl',   'donutClassSub',   cls, clsImp);
   drawDonut('Positive','donutFill1Positive','donutFill2Positive','donutPositiveLbl','donutPositiveSub',pos, dist);
   drawDonut('Reports', 'donutFill1Reports', 'donutFill2Reports', 'donutReportsLbl', 'donutReportsSub', rpts,rptRes);
@@ -7322,6 +7325,7 @@ function loadReferredViolations(){
     const pending = data.filter(r=>!r.adminDecision).length;
     if(badge){ badge.textContent=pending; badge.style.display=pending?'inline':'none'; }
     if(homeBadge){ homeBadge.textContent=pending; homeBadge.style.display=pending?'inline':'none'; }
+    if (window._lastViolationsByDegree) { drawBehaviorDonut(window._lastViolationsByDegree, _schoolStage || 'elementary'); }
   }).getReferredViolations();
 }
 
