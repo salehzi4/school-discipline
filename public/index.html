@@ -2634,21 +2634,30 @@ tr:hover td{background:var(--em-ghost);}
     </div>
   </div>
 
-  <!-- فلاتر -->
+  <!-- فلتر الفصل -->
   <div class="card" style="padding:12px 16px;margin-bottom:14px;">
-    <div class="filters-bar" style="flex-wrap:wrap;gap:8px;">
-
-      <select id="refFilterClass" onchange="loadReferredViolations()" style="min-width:130px;">
+    <div class="filters-bar" style="flex-wrap:wrap;gap:8px;align-items:center;">
+      <select id="refFilterClass" onchange="renderReferredCards()" style="min-width:130px;">
         <option value="الكل">كل الفصول</option>
       </select>
-      <select id="refFilterStatus" onchange="loadReferredViolations()" style="min-width:130px;">
-        <option value="الكل">كل الحالات</option>
-        <option value="بانتظار">بانتظار القرار</option>
-        <option value="تم">تم اتخاذ قرار</option>
-      </select>
-      <button class="btn btn-outline btn-sm" onclick="clearRefFilters()">مسح الفلاتر</button>
       <span class="chip" id="refCountChip">0</span>
     </div>
+  </div>
+
+  <!-- تبويبان -->
+  <div style="display:flex;gap:0;margin-bottom:14px;border-radius:12px;overflow:hidden;border:1.5px solid var(--border);">
+    <button id="refTab_pending" onclick="switchRefTab('pending')"
+      style="flex:1;padding:10px 0;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;border:none;background:#D97706;color:#fff;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s;">
+      <span class="material-icons-round" style="font-size:16px;">pending</span>
+      قيد المعالجة
+      <span id="refBadgePending" style="background:rgba(255,255,255,0.3);color:#fff;border-radius:20px;padding:1px 8px;font-size:11px;">0</span>
+    </button>
+    <button id="refTab_done" onclick="switchRefTab('done')"
+      style="flex:1;padding:10px 0;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;border:none;background:var(--surface);color:var(--text-muted);display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s;">
+      <span class="material-icons-round" style="font-size:16px;">check_circle</span>
+      تمت المعالجة
+      <span id="refBadgeDone" style="background:rgba(5,150,105,0.15);color:#059669;border-radius:20px;padding:1px 8px;font-size:11px;">0</span>
+    </button>
   </div>
 
   <!-- بطاقات المُحالات -->
@@ -7056,6 +7065,24 @@ function loadReferredCount(){
 
 let _allReferred = [];
 
+var _refCurrentTab = 'pending';
+
+function switchRefTab(tab) {
+  _refCurrentTab = tab;
+  var bp = document.getElementById('refTab_pending');
+  var bd = document.getElementById('refTab_done');
+  if (bp && bd) {
+    if (tab === 'pending') {
+      bp.style.background = '#D97706'; bp.style.color = '#fff';
+      bd.style.background = 'var(--surface)'; bd.style.color = 'var(--text-muted)';
+    } else {
+      bd.style.background = '#059669'; bd.style.color = '#fff';
+      bp.style.background = 'var(--surface)'; bp.style.color = 'var(--text-muted)';
+    }
+  }
+  renderReferredCards();
+}
+
 function loadReferredViolations(){
   showLoading();
   google.script.run.withSuccessHandler(function(data){
@@ -7081,13 +7108,13 @@ function loadReferredViolations(){
 }
 
 function renderReferredCards(){
-  const clsF  = document.getElementById('refFilterClass')?.value||'الكل';
-  const statF = document.getElementById('refFilterStatus')?.value||'الكل';
+  const clsF = document.getElementById('refFilterClass')?.value||'الكل';
+  const tab  = _refCurrentTab || 'pending';
 
   let data = _allReferred.filter(r=>{
     if(clsF!=='الكل' && r.className!==clsF) return false;
-    if(statF==='بانتظار' && r.adminDecision) return false;
-    if(statF==='تم' && !r.adminDecision) return false;
+    if(tab==='pending' && r.adminDecision) return false;
+    if(tab==='done'    && !r.adminDecision) return false;
     return true;
   });
 
@@ -7098,6 +7125,10 @@ function renderReferredCards(){
   document.getElementById('refPendingCount').textContent = pending;
   document.getElementById('refDoneCount').textContent    = done;
   document.getElementById('refCountChip').textContent    = data.length;
+  var bp = document.getElementById('refBadgePending');
+  var bd = document.getElementById('refBadgeDone');
+  if(bp) bp.textContent = pending;
+  if(bd) bd.textContent = done;
 
   const cont = document.getElementById('referredCardsContainer');
   if(!data.length){
