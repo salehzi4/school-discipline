@@ -1318,7 +1318,7 @@ tr:hover td{background:var(--em-ghost);}
 /* شبكة الإحصاءات */
 .stats-grid-new {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 8px;
 }
 @media screen and (max-width: 900px) {
@@ -1762,7 +1762,7 @@ tr:hover td{background:var(--em-ghost);}
   <button class="sidebar-sub-btn" data-page="messages" onclick="showPage('messages',this)">
     <span class="material-icons-round">chat</span> سجل الرسائل
   </button>
-  <button class="sidebar-sub-btn" data-page="profile" onclick="showPage('profile',this)">
+  <button class="sidebar-sub-btn" data-page="profile" style="display:none;" onclick="showPage('profile',this)">
     <span class="material-icons-round">person_search</span> ملف الطالب
   </button>
 
@@ -1774,7 +1774,7 @@ tr:hover td{background:var(--em-ghost);}
   <button class="sidebar-sub-btn" data-page="students" onclick="showPage('students',this)">
     <span class="material-icons-round">groups</span> إدارة الطلاب
   </button>
-  <button class="sidebar-sub-btn" data-page="violations" onclick="showPage('violations',this)">
+  <button class="sidebar-sub-btn" data-page="violations" style="display:none;" onclick="showPage('violations',this)">
     <span class="material-icons-round">rule</span> إدارة المخالفات
   </button>
   <button class="sidebar-sub-btn" data-page="teachers" onclick="showPage('teachers',this)">
@@ -1783,10 +1783,10 @@ tr:hover td{background:var(--em-ghost);}
 
   <!-- ── التقارير والتحليلات ── -->
   <div class="sb-section-lbl">التقارير والتحليلات</div>
-  <button class="sidebar-sub-btn" data-page="charts" onclick="showPage('charts',this)">
+  <button class="sidebar-sub-btn" data-page="charts" style="display:none;" onclick="showPage('charts',this)">
     <span class="material-icons-round">analytics</span> التحليلات
   </button>
-  <button class="sidebar-sub-btn" data-page="alerts" onclick="showPage('alerts',this)">
+  <button class="sidebar-sub-btn" data-page="alerts" style="display:none;" onclick="showPage('alerts',this)">
     <span class="material-icons-round">notifications_active</span> التنبيهات
     <span id="refNavBadge" style="display:none;background:#DC2626;color:#fff;font-size:9px;padding:1px 6px;border-radius:8px;margin-right:auto;font-weight:800;">0</span>
   </button>
@@ -1794,10 +1794,10 @@ tr:hover td{background:var(--em-ghost);}
 
   <!-- ── بوابات المستخدمين ── -->
   <div class="sb-section-lbl">بوابات المستخدمين</div>
-  <button class="sidebar-sub-btn" data-page="attachments" onclick="showPage('attachments',this)">
+  <button class="sidebar-sub-btn" data-page="attachments" style="display:none;" onclick="showPage('attachments',this)">
     <span class="material-icons-round">school</span> صفحة المعلم
   </button>
-  <button class="sidebar-sub-btn" data-page="attachments" onclick="showPage('attachments',this)">
+  <button class="sidebar-sub-btn" data-page="attachments" style="display:none;" onclick="showPage('attachments',this)">
     <span class="material-icons-round">family_restroom</span> صفحة ولي الأمر
   </button>
 
