@@ -1924,7 +1924,7 @@ tr:hover td{background:var(--em-ghost);}
           <div class="scc-title"><span class="material-icons-round">warning_amber</span> المخالفات السلوكية</div>
           <div class="scc-chart-wrap">
             <div class="css-donut-wrap">
-              <svg viewBox="-15 -15 140 140" width="110" height="110">
+              <svg viewBox="0 0 110 110" width="110" height="110">
                 <circle class="css-donut-track" cx="55" cy="55" r="43"/>
                 <circle class="css-donut-fill" id="bDeg1" cx="55" cy="55" r="43" stroke="#FBBF24" stroke-dasharray="0 270" stroke-linecap="butt"/>
                 <circle class="css-donut-fill" id="bDeg2" cx="55" cy="55" r="43" stroke="#F97316" stroke-dasharray="0 270" stroke-linecap="butt"/>
@@ -1933,24 +1933,30 @@ tr:hover td{background:var(--em-ghost);}
                 <circle class="css-donut-fill" id="bDeg5" cx="55" cy="55" r="43" stroke="#501313" stroke-dasharray="0 270" stroke-linecap="butt"/>
                 <circle class="css-donut-fill" id="bStf4" cx="55" cy="55" r="43" stroke="#7C3AED" stroke-dasharray="0 270" stroke-linecap="butt"/>
                 <circle class="css-donut-fill" id="bStf5" cx="55" cy="55" r="43" stroke="#3C3489" stroke-dasharray="0 270" stroke-linecap="butt"/>
-                <circle id="bSolidRing" cx="55" cy="55" r="43" fill="none" stroke="#FBBF24" stroke-width="10" stroke-dasharray="0 270" stroke-linecap="butt" transform="rotate(-90 55 55)"/>
-                <!-- labels خارج الدائرة -->
-
+                <circle id="bSolidRing" cx="55" cy="55" r="43" fill="none" stroke="#FBBF24" stroke-width="12" stroke-dasharray="0 270" stroke-linecap="butt"/>
+                <!-- نسب داخل القطع بـ textPath -->
+                <defs>
+                  <path id="bArc_d1" fill="none"/>
+                  <path id="bArc_d2" fill="none"/>
+                  <path id="bArc_d3" fill="none"/>
+                  <path id="bArc_d4" fill="none"/>
+                  <path id="bArc_d5" fill="none"/>
+                  <path id="bArc_s4" fill="none"/>
+                  <path id="bArc_s5" fill="none"/>
+                </defs>
+                <text font-size="7" fill="white" font-weight="600" id="bTxt_d1" opacity="0" style="transition:opacity .2s;"><textPath href="#bArc_d1" startOffset="50%" text-anchor="middle"></textPath></text>
+                <text font-size="7" fill="white" font-weight="600" id="bTxt_d2" opacity="0" style="transition:opacity .2s;"><textPath href="#bArc_d2" startOffset="50%" text-anchor="middle"></textPath></text>
+                <text font-size="7" fill="white" font-weight="600" id="bTxt_d3" opacity="0" style="transition:opacity .2s;"><textPath href="#bArc_d3" startOffset="50%" text-anchor="middle"></textPath></text>
+                <text font-size="7" fill="white" font-weight="600" id="bTxt_d4" opacity="0" style="transition:opacity .2s;"><textPath href="#bArc_d4" startOffset="50%" text-anchor="middle"></textPath></text>
+                <text font-size="7" fill="white" font-weight="600" id="bTxt_d5" opacity="0" style="transition:opacity .2s;"><textPath href="#bArc_d5" startOffset="50%" text-anchor="middle"></textPath></text>
+                <text font-size="7" fill="white" font-weight="600" id="bTxt_s4" opacity="0" style="transition:opacity .2s;"><textPath href="#bArc_s4" startOffset="50%" text-anchor="middle"></textPath></text>
+                <text font-size="7" fill="white" font-weight="600" id="bTxt_s5" opacity="0" style="transition:opacity .2s;"><textPath href="#bArc_s5" startOffset="50%" text-anchor="middle"></textPath></text>
               </svg>
               <div class="css-donut-label" style="cursor:default;">
                 <span class="css-donut-num" id="donutBehaviorLbl">0</span>
                 <span class="css-donut-sub" id="donutBehaviorSub">مخالفة</span>
               </div>
-              <!-- labels خارج الدائرة — HTML بدل SVG text -->
-              <div id="bLabelsWrap" style="position:absolute;inset:0;pointer-events:none;direction:ltr;">
-                <div id="bV_d1" style="position:absolute;font-size:8px;font-weight:700;color:#FBBF24;white-space:nowrap;display:none;transform:translate(-50%,-50%);"></div>
-                <div id="bV_d2" style="position:absolute;font-size:8px;font-weight:700;color:#F97316;white-space:nowrap;display:none;transform:translate(-50%,-50%);"></div>
-                <div id="bV_d3" style="position:absolute;font-size:8px;font-weight:700;color:#E24B4A;white-space:nowrap;display:none;transform:translate(-50%,-50%);"></div>
-                <div id="bV_d4" style="position:absolute;font-size:8px;font-weight:700;color:#A32D2D;white-space:nowrap;display:none;transform:translate(-50%,-50%);"></div>
-                <div id="bV_d5" style="position:absolute;font-size:8px;font-weight:700;color:#501313;white-space:nowrap;display:none;transform:translate(-50%,-50%);"></div>
-                <div id="bV_s4" style="position:absolute;font-size:8px;font-weight:700;color:#7C3AED;white-space:nowrap;display:none;transform:translate(-50%,-50%);"></div>
-                <div id="bV_s5" style="position:absolute;font-size:8px;font-weight:700;color:#3C3489;white-space:nowrap;display:none;transform:translate(-50%,-50%);"></div>
-              </div>
+
             </div>
           </div>
           <div class="scc-legend" id="behaviorLegend" style="flex-direction:column;gap:2px;align-items:stretch;">
@@ -3739,49 +3745,44 @@ var _behaviorCirc    = 2 * Math.PI * 43;
 var _behaviorKeys    = ['bDeg1','bDeg2','bDeg3','bDeg4','bDeg5','bStf4','bStf5'];
 
 // حساب مواضع الـ labels خارج الدائرة
-var _bSegPos = [];
-function _bCalcPos() {
-  var keys = ['d1','d2','d3','d4','d5','s4','s5'];
+function _bArcPath(sa, ea, r) {
+  var cx=55, cy=55;
+  var x1=cx+r*Math.cos(sa), y1=cy+r*Math.sin(sa);
+  var x2=cx+r*Math.cos(ea), y2=cy+r*Math.sin(ea);
+  var large=(ea-sa)>Math.PI?1:0;
+  return 'M'+x1.toFixed(3)+','+y1.toFixed(3)+' A'+r+','+r+' 0 '+large+',1 '+x2.toFixed(3)+','+y2.toFixed(3);
+}
+
+function _bBuildArcs() {
+  var keys=['d1','d2','d3','d4','d5','s4','s5'];
   var beh  = _behaviorDegData.behavioral || {1:0,2:0,3:0,4:0,5:0};
   var stf  = _behaviorDegData.staff || {4:0,5:0};
   var showD5 = (_behaviorStage !== 'elementary');
   var vals = {d1:beh[1]||0,d2:beh[2]||0,d3:beh[3]||0,d4:beh[4]||0,
               d5:showD5?(beh[5]||0):0,s4:stf[4]||0,s5:stf[5]||0};
-  var circ = _behaviorCirc; var r = 78; var cx = 55; var cy = 55;
-  var off = 0; _bSegPos = [];
-  var segIdMap = {d1:'bDeg1',d2:'bDeg2',d3:'bDeg3',d4:'bDeg4',d5:'bDeg5',s4:'bStf4',s5:'bStf5'};
-  var quarterCirc = circ / 4;
+  var circ = _behaviorCirc;
+  var off = 0;
   keys.forEach(function(k){
     var len = _behaviorTotal > 0 ? (vals[k]/_behaviorTotal)*circ : 0;
-    // نستخدم نفس offset المحفوظة من drawBehaviorDonut
-    var segOff = (window._bSegOffsets && window._bSegOffsets[segIdMap[k]])
-                 ? window._bSegOffsets[segIdMap[k]].start : off;
-    // الزاوية الفعلية: تبدأ من قمة الدائرة (-π/2) + موضع منتصف القطعة
-    var mid = -Math.PI/2 + (segOff + len/2) / circ * 2*Math.PI;
-    var xPct = (cx + r*Math.cos(mid) + 15) / 140 * 100;
-    var yPct = (cy + r*Math.sin(mid) + 15) / 140 * 100;
-    _bSegPos.push({k:k, v:vals[k], len:len, xPct:xPct, yPct:yPct});
+    var sa = -Math.PI/2 + (off/circ)*2*Math.PI;
+    var ea = -Math.PI/2 + ((off+len)/circ)*2*Math.PI;
+    var pct = _behaviorTotal > 0 ? Math.round((vals[k]/_behaviorTotal)*100) : 0;
+    // تحديث مسار القوس
+    var arcEl = document.getElementById('bArc_'+k);
+    if (arcEl && len > 5) arcEl.setAttribute('d', _bArcPath(sa, ea, 43));
+    else if (arcEl) arcEl.setAttribute('d', '');
+    // تحديث نص النسبة
+    var tp = document.querySelector('#bTxt_'+k+' textPath');
+    if (tp) tp.textContent = (pct > 5 && vals[k] > 0) ? pct+'%' : '';
     off += len;
   });
 }
 
-function _bPlaceLabel(k, show) {
-  var sd = _bSegPos.find(function(s){return s.k===k;});
-  var vEl = document.getElementById('bV_'+k);
-  if (!sd || !vEl) return;
-  if (!show || sd.len < 3) {
-    vEl.style.display = 'none'; return;
-  }
-  var pct = _behaviorTotal > 0 ? Math.round((sd.v/_behaviorTotal)*100) : 0;
-  vEl.style.left = sd.xPct + '%';
-  vEl.style.top  = sd.yPct + '%';
-  vEl.textContent = pct + '%';
-  vEl.style.display = 'block';
-}
 
 function bHoverHide() {
   ['d1','d2','d3','d4','d5','s4','s5'].forEach(function(k){
-    _bPlaceLabel(k, false);
+    var t = document.getElementById('bTxt_'+k);
+    if (t) t.setAttribute('opacity','0');
   });
 }
 
@@ -3789,9 +3790,17 @@ function bHoverShow(key) {
   if (_behaviorCurSel !== 'all') return;
   bHoverHide();
   if (key === 'all') {
-    ['d1','d2','d3','d4','d5','s4','s5'].forEach(function(k){ _bPlaceLabel(k, true); });
+    ['d1','d2','d3','d4','d5','s4','s5'].forEach(function(k){
+      var tp = document.querySelector('#bTxt_'+k+' textPath');
+      if (tp && tp.textContent) {
+        document.getElementById('bTxt_'+k).setAttribute('opacity','1');
+      }
+    });
   } else {
-    _bPlaceLabel(key, true);
+    var tp = document.querySelector('#bTxt_'+key+' textPath');
+    if (tp && tp.textContent) {
+      document.getElementById('bTxt_'+key).setAttribute('opacity','1');
+    }
   }
 }
 
@@ -3846,8 +3855,7 @@ function drawBehaviorDonut(degData, stage) {
   ];
   var offset = 0;
   var quarterCirc = circ / 4;
-  window._bSegOffsets = {}; // نحفظ offsets لكل segment
-  segs.forEach(function(s) {
+    segs.forEach(function(s) {
     var el = document.getElementById(s.id);
     if (!el) return;
     var len = total > 0 ? (s.v / total) * circ : 0;
@@ -3872,7 +3880,7 @@ function drawBehaviorDonut(degData, stage) {
   var sr = document.getElementById('bSolidRing');
   if (sr) sr.setAttribute('stroke-dasharray','0 '+(_behaviorCirc+10));
 
-  _bCalcPos();
+  _bBuildArcs();
   behaviorDegSelect('all');
 }
 
@@ -3909,7 +3917,10 @@ function behaviorDegSelect(key) {
     _bDrawMulti();
   } else {
     _bDrawSolid(sel.c, sel.v);
-    _bPlaceLabel(key, true);
+    var tp = document.querySelector('#bTxt_'+key+' textPath');
+    if (tp && tp.textContent) {
+      document.getElementById('bTxt_'+key).setAttribute('opacity','1');
+    }
   }
 
   // تمييز السطر المختار
