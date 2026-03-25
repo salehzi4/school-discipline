@@ -1900,7 +1900,7 @@ tr:hover td{background:var(--em-ghost);}
           <div class="scc-title"><span class="material-icons-round">event_busy</span> الغياب</div>
           <div class="scc-chart-wrap">
             <div class="css-donut-wrap">
-              <svg viewBox="0 0 110 110" width="110" height="110">
+              <svg viewBox="-20 -20 150 150" width="110" height="110">
                 <circle class="css-donut-track" cx="55" cy="55" r="43"/>
                 <circle class="css-donut-fill" id="donutFill1Absence" cx="55" cy="55" r="43" stroke="#0369a1" stroke-dasharray="0 270"/>
                 <circle class="css-donut-fill2" id="donutFill2Absence" cx="55" cy="55" r="43" stroke="#ef4444" stroke-dasharray="0 270"/>
@@ -1924,7 +1924,7 @@ tr:hover td{background:var(--em-ghost);}
           <div class="scc-title"><span class="material-icons-round">warning_amber</span> المخالفات السلوكية</div>
           <div class="scc-chart-wrap">
             <div class="css-donut-wrap">
-              <svg viewBox="0 0 110 110" width="110" height="110">
+              <svg viewBox="-15 -15 140 140" width="110" height="110">
                 <circle class="css-donut-track" cx="55" cy="55" r="43"/>
                 <circle class="css-donut-fill" id="bDeg1" cx="55" cy="55" r="43" stroke="#FBBF24" stroke-dasharray="0 270" stroke-linecap="butt"/>
                 <circle class="css-donut-fill" id="bDeg2" cx="55" cy="55" r="43" stroke="#F97316" stroke-dasharray="0 270" stroke-linecap="butt"/>
@@ -3752,8 +3752,8 @@ function _bCalcPos() {
   keys.forEach(function(k){
     var len = _behaviorTotal > 0 ? (vals[k]/_behaviorTotal)*circ : 0;
     var mid = -Math.PI/2 + (off + len/2)/circ * 2*Math.PI;
-    var xPct = (cx + r*Math.cos(mid)) / 110 * 100;
-    var yPct = (cy + r*Math.sin(mid)) / 110 * 100;
+    var xPct = (cx + r*Math.cos(mid) + 15) / 140 * 100;
+    var yPct = (cy + r*Math.sin(mid) + 15) / 140 * 100;
     _bSegPos.push({k:k, v:vals[k], len:len, xPct:xPct, yPct:yPct});
     off += len;
   });
@@ -3769,7 +3769,7 @@ function _bPlaceLabel(k, show) {
   var pct = _behaviorTotal > 0 ? Math.round((sd.v/_behaviorTotal)*100) : 0;
   vEl.style.left = sd.xPct + '%';
   vEl.style.top  = sd.yPct + '%';
-  vEl.textContent = sd.v + ' ' + pct + '%';
+  vEl.textContent = pct + '%';
   vEl.style.display = 'block';
 }
 
@@ -3895,11 +3895,13 @@ function behaviorDegSelect(key) {
              lbl.style.transform='scale(1.2)'; setTimeout(function(){lbl.style.transform='';},250); }
   if (sub) { sub.textContent=sel.lbl; sub.style.color=sel.c; }
 
-  // رسم الشارت
+  // رسم الشارت + نسبة على الدائرة
+  bHoverHide();
   if (key === 'all') {
     _bDrawMulti();
   } else {
     _bDrawSolid(sel.c, sel.v);
+    _bPlaceLabel(key, true);
   }
 
   // تمييز السطر المختار
