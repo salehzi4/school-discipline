@@ -1024,7 +1024,7 @@ async function getAdvancedStats(dateFilter, sc) {
   const [studentsRes, teachersRes, violationsRes, messagesRes, posRes, reportsRes] = await Promise.all([
     sb('students', 'GET', `school_code=eq.${sc}&select=id`),
     sb('teachers', 'GET', `school_code=eq.${sc}&select=id`),
-    sb('violations_log', 'GET', `school_code=eq.${sc}&select=class_name,violation_type,category,behavior_status,sub_type,recorded_at`),
+    sb('violations_log', 'GET', `school_code=eq.${sc}&select=class_name,violation_type,category,behavior_status,sub_type,degree,recorded_at`),
     sb('messages_log', 'GET', `school_code=eq.${sc}&select=sent_at`),
     sb('violations_log', 'GET', `school_code=eq.${sc}&category=eq.إيجابية&select=sub_type,recorded_at`),
     sb('reports', 'GET', `school_code=eq.${sc}&select=student_name,violation_type,read_at,created_at`)
@@ -1061,10 +1061,23 @@ async function getAdvancedStats(dateFilter, sc) {
     totalClassViolations: fv.filter(v => v.category === 'صفية').length,
     totalMessages: fm.length, totalPositive, totalDistinct,
     totalReports: allReports.length, totalReportsResponded,
-    totalImproved: 0,
-    totalClassImproved: 0,
+    totalImproved: fv.filter(v => v.behavior_status === 'تحسن' && v.category === 'سلوكية').length,
+    totalClassImproved: fv.filter(v => v.behavior_status === 'تحسن' && v.category === 'صفية').length,
     totalAbsenceExcused: fv.filter(v => (v.category === 'غياب' || v.category === 'absence') && !(v.violation_type||'').includes('بدون عذر')).length,
     totalAbsenceNoExcuse: fv.filter(v => (v.category === 'غياب' || v.category === 'absence') && (v.violation_type||'').includes('بدون عذر')).length,
+    violationsByDegree: (() => {
+      const beh = {1:0, 2:0, 3:0, 4:0, 5:0};
+      const stf = {4:0, 5:0};
+      fv.filter(v => v.category === 'سلوكية').forEach(v => {
+        const d = parseInt(v.degree) || 1;
+        if (beh[d] !== undefined) beh[d]++;
+      });
+      fv.filter(v => v.category === 'تجاه الهيئة').forEach(v => {
+        const d = parseInt(v.degree) || 4;
+        if (stf[d] !== undefined) stf[d]++;
+      });
+      return { behavioral: beh, staff: stf };
+    })(),
     topReports,
     topClass: Object.keys(cc).length ? Object.entries(cc).sort((a,b) => b[1]-a[1])[0][0] : '-',
     classRanking: Object.entries(cc).sort((a,b) => b[1]-a[1]).map(e => ({ name: e[0], count: e[1] })),
@@ -1220,13 +1233,6 @@ async function saveReport(data, sc) {
     status: 'بانتظار الاستلام', violation_date: data.violationDate || new Date().toISOString(),
     notes: data.bodyText || data.notes || ''
   });
-  // تعليم الإحالة كـ "تمت المعالجة" في violations_log إذا كانت محالة
-  if (data.studentName && data.violationType) {
-    await sb('violations_log', 'PATCH',
-      `school_code=eq.${sc}&student_name=eq.${encodeURIComponent(data.studentName)}&violation_type=eq.${encodeURIComponent(data.violationType)}&referred_to_admin=eq.نعم&treatment_date=is.null`,
-      { treatment_date: new Date().toISOString(), follow_up: 'تم إصدار محضر رقم ' + reportNum }
-    );
-  }
   return { success: true, reportNum, message: 'تم حفظ المحضر ✅' };
 }
 
@@ -1311,7 +1317,7 @@ async function getFullReportData(dateFrom, dateTo, sc) {
     totalDistinct: fp.filter(p=>p.sub_type==='متميز').length,
     totalReports: allRpts.length,
     totalReportsResponded: allRpts.filter(r=>r.read_at).length,
-    totalImproved: 0,
+    totalImproved: fv.filter(v=>v.behavior_status==='تحسن').length,
     repeatCount: Object.values(stCount).filter(c=>c>1).length,
     classRanking: Object.entries(cc).sort((a,b)=>b[1]-a[1]).map(e=>({name:e[0],count:e[1]})),
     typeRanking: Object.entries(tc).sort((a,b)=>b[1]-a[1]).map(e=>({name:e[0],count:e[1]})),
