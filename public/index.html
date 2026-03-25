@@ -390,6 +390,7 @@ body { font-family: 'IBM Plex Sans Arabic', sans-serif; background: var(--bg); c
 .sidebar-sub-btn .material-icons-round { font-size: 15px; flex-shrink:0; }
 .sidebar-sub-btn[data-page="record"] .material-icons-round    { color: #f87171; }
 .sidebar-sub-btn[data-page="violationsLog"] .material-icons-round { color: #60a5fa; }
+.sidebar-sub-btn[data-page="positiveLog"] .material-icons-round   { color: #16a34a; }
 .sidebar-sub-btn[data-page="reports"] .material-icons-round   { color: #a78bfa; }
 .sidebar-sub-btn[data-page="whatsapp"] .material-icons-round  { color: #25D366; }
 .sidebar-sub-btn[data-page="messages"] .material-icons-round  { color: #34d399; }
@@ -1751,6 +1752,9 @@ tr:hover td{background:var(--em-ghost);}
   <div class="sb-section-lbl">السجلات</div>
   <button class="sidebar-sub-btn" data-page="violationsLog" onclick="showPage('violationsLog',this)">
     <span class="material-icons-round">format_list_bulleted</span> سجل المخالفات
+  </button>
+  <button class="sidebar-sub-btn" data-page="positiveLog" onclick="showPage('positiveLog',this)" style="">
+    <span class="material-icons-round" style="color:#16a34a;">emoji_events</span> سجل السلوكيات الإيجابية
   </button>
   <button class="sidebar-sub-btn" data-page="reports" onclick="showPage('reports',this)">
     <span class="material-icons-round">description</span> سجل المحاضر
@@ -3453,6 +3457,45 @@ tr:hover td{background:var(--em-ghost);}
     </div>
   </div>
 
+<!-- قسم: سجل السلوكيات الإيجابية والمتميزة -->
+  <div id="page-positiveLog" class="page-section">
+    <div class="page-toolbar">
+      <button class="pt-home" onclick="showPage('home',null)"><span class="material-icons-round">home</span></button>
+      <span class="pt-title"><span class="material-icons-round" style="color:#16a34a;vertical-align:middle;">emoji_events</span> سجل السلوكيات الإيجابية والمتميزة</span>
+      <button class="pt-print" onclick="printSection('positiveLog')"><span class="material-icons-round">print</span></button>
+    </div>
+    <div class="card" style="border-top:3px solid #16a34a;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+        <select id="posLogFilterClass" onchange="loadPositiveLogTable()" style="padding:7px 12px;border:1.5px solid var(--border);border-radius:var(--r2);font-family:inherit;font-size:12px;background:var(--surface);"><option value="الكل">كل الفصول</option></select>
+        <input type="date" id="posLogFilterDate2" onchange="loadPositiveLogTable()" style="padding:7px 12px;border:1.5px solid var(--border);border-radius:var(--r2);font-family:inherit;font-size:12px;background:var(--surface);">
+        <select id="posLogFilterType" onchange="loadPositiveLogTable()" style="padding:7px 12px;border:1.5px solid var(--border);border-radius:var(--r2);font-family:inherit;font-size:12px;background:var(--surface);">
+          <option value="الكل">إيجابي ومتميز</option>
+          <option value="إيجابي">⭐ إيجابي فقط</option>
+          <option value="متميز">🌟 متميز فقط</option>
+        </select>
+        <button class="btn btn-outline btn-sm" onclick="posLogClearFilters()"><span class="material-icons-round" style="font-size:14px;">filter_alt_off</span> الكل</button>
+        <span class="chip" id="posLogCountChip" style="background:rgba(22,163,74,0.12);color:#16a34a;font-weight:700;">0 سجل</span>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead><tr>
+            <th>#</th>
+            <th>التاريخ</th>
+            <th>الطالب</th>
+            <th>الفصل</th>
+            <th>نوع السلوك</th>
+            <th>التصنيف</th>
+            <th>المسجّل</th>
+            <th>ملاحظات</th>
+          </tr></thead>
+          <tbody id="positiveLogTableBody">
+            <tr><td colspan="8" class="empty-state">جاري التحميل...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
 </div><!-- end content -->
 </div><!-- end sidebar-content -->
 </div><!-- end app-layout -->
@@ -3645,7 +3688,7 @@ function updateSidebarActive(page) {
   document.querySelectorAll('.sidebar-group-btn').forEach(b => b.classList.add('open'));
 }
 
-function showPage(page,btn){document.querySelectorAll('.page-section').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+page).classList.add('active');document.querySelectorAll('.tab-btn').forEach(t=>t.classList.remove('active'));if(btn&&btn.classList&&btn.classList.contains('sidebar-sub-btn')){}else if(btn)btn.classList.add('active');sessionStorage.setItem('activeTab',page);if(page==='messages')loadMessagesLog();if(page==='whatsapp')populateWAClassDropdown();if(page==='violationsLog')loadViolationsLog();if(page==='attachments'){loadTeacherUrl();loadParentUrl();}if(page==='home')loadStats();if(page==='violations'){loadViolationTypesTable();loadClassViolationTypesTable();loadPositiveBehaviorTypesTable();}if(page==='teachers')loadTeachersTable();if(page==='alerts')loadAlerts();if(page==='charts')loadCharts();if(page==='weekly'){}if(page==='reports')loadReports();if(page==='referred')loadReferredViolations();if(page==='home')refreshAdminNotifBadge();if(page==='fullreport')loadFullReport();updateSidebarActive(page);}
+function showPage(page,btn){document.querySelectorAll('.page-section').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+page).classList.add('active');document.querySelectorAll('.tab-btn').forEach(t=>t.classList.remove('active'));if(btn&&btn.classList&&btn.classList.contains('sidebar-sub-btn')){}else if(btn)btn.classList.add('active');sessionStorage.setItem('activeTab',page);if(page==='messages')loadMessagesLog();if(page==='whatsapp')populateWAClassDropdown();if(page==='violationsLog')loadViolationsLog();if(page==='attachments'){loadTeacherUrl();loadParentUrl();}if(page==='home')loadStats();if(page==='violations'){loadViolationTypesTable();loadClassViolationTypesTable();loadPositiveBehaviorTypesTable();}if(page==='teachers')loadTeachersTable();if(page==='alerts')loadAlerts();if(page==='charts')loadCharts();if(page==='weekly'){}if(page==='reports')loadReports();if(page==='referred')loadReferredViolations();if(page==='positiveLog'){loadPositiveLogTable();populatePosLogClasses();}if(page==='home')refreshAdminNotifBadge();if(page==='fullreport')loadFullReport();updateSidebarActive(page);}
 function restoreTab(){
   const s=sessionStorage.getItem('activeTab');
   if(s) showPage(s, null); else showPage('home',null);
@@ -3665,7 +3708,7 @@ function toggleSheetLink(){document.getElementById('sheetLink').style.display=do
 function toggleSetup(){const c=document.getElementById('setupContent');c.classList.toggle('hidden');}
 function loadSheetLink(){google.script.run.withSuccessHandler(function(u){if(u){const hl=document.getElementById('headerSheetLink');if(hl)hl.href=u;}}).withFailureHandler(function(){}).getSpreadsheetUrl();}
 function initializeSystem(){if(!confirm('تهيئة النظام وإنشاء الشيت؟'))return;showLoading();google.script.run.withSuccessHandler(function(r){hideLoading();alert(r.message);const hl=document.getElementById('headerSheetLink');if(hl&&r.url)hl.href=r.url;}).withFailureHandler(function(e){hideLoading();alert('حدث خطأ');}).initializeSheets();}
-function populateClassDropdowns(){google.script.run.withSuccessHandler(function(classes){['recordClass','studentClass','viewStudentsClass','msgFilterClass','logFilterClass','profileClass'].forEach(id=>{const s=document.getElementById(id);if(!s)return;
+function populateClassDropdowns(){google.script.run.withSuccessHandler(function(classes){['recordClass','studentClass','viewStudentsClass','msgFilterClass','logFilterClass','profileClass','posLogFilterClass'].forEach(id=>{const s=document.getElementById(id);if(!s)return;
     const currentVal = s.value;
     s.innerHTML = (id.includes('Filter') || id === 'viewStudentsClass') ? '<option value="الكل">كل الفصول</option>' : '<option value="">-- اختر --</option>';
     classes.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;s.appendChild(o);});
@@ -3695,26 +3738,60 @@ function toggleStatDetail(id){
 
 // Stats
 function loadPositiveBehaviorsLogTable(){
-  const fc=document.getElementById('posLogFilterClass')?document.getElementById('posLogFilterClass').value:'الكل';
-  const fd=document.getElementById('posLogFilterDate')?document.getElementById('posLogFilterDate').value:'';
+  // legacy — يبقى فارغاً بعد انتقال القسم لـ positiveLog
+}
+
+function populatePosLogClasses() {
+  var sel = document.getElementById('posLogFilterClass');
+  if (!sel || sel.options.length > 1) return;
+  GAS.getClasses && GAS.getClasses().then && GAS.getClasses().then(function(classes){
+    (classes||[]).forEach(function(c){ var o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
+  });
+}
+
+function posLogClearFilters() {
+  var fc=document.getElementById('posLogFilterClass'); if(fc) fc.value='الكل';
+  var fd=document.getElementById('posLogFilterDate2'); if(fd) fd.value='';
+  var ft=document.getElementById('posLogFilterType'); if(ft) ft.value='الكل';
+  loadPositiveLogTable();
+}
+
+function loadPositiveLogTable() {
+  var fc = (document.getElementById('posLogFilterClass')||{value:'الكل'}).value || 'الكل';
+  var fd = (document.getElementById('posLogFilterDate2')||{value:''}).value || '';
+  var ft = (document.getElementById('posLogFilterType')||{value:'الكل'}).value || 'الكل';
   showLoading();
-  // قراءة من violations_log مع فئة إيجابية
-  GAS.getViolationsLog(fc, fd, 'الكل').then(function(allRecs){
+  var params = 'school_code=eq.'+encodeURIComponent(window.getSchoolCode ? window.getSchoolCode() : '');
+  if (fc !== 'الكل') params += '&class_name=eq.'+encodeURIComponent(fc);
+  if (fd) params += '&recorded_at=gte.'+fd+'T00:00:00&recorded_at=lte.'+fd+'T23:59:59';
+  GAS.getPositiveBehaviorsLog(fc, fd).then(function(recs) {
     hideLoading();
-    var recs = (allRecs||[]).filter(function(r){ return r.category==='إيجابية' || r.category==='positive'; });
-    var cntEl=document.getElementById('positiveCountChip');
-    var cntEl2=document.getElementById('positiveLogCount');
-    if(cntEl) cntEl.textContent=recs.length;
-    if(cntEl2) cntEl2.textContent=recs.length;
-    const tb=document.getElementById('positiveBehaviorsLogBody');
-    if(!tb) return;
-    if(!recs.length){tb.innerHTML='<tr><td colspan="8" class="empty-state">لا توجد سجلات</td></tr>';return;}
-    tb.innerHTML=recs.map(function(r,i){
-      var isD=(r.sub_type==='متميز'||r.subType==='متميز');
-      var badge=isD
-        ?'<span style="padding:2px 8px;border-radius:8px;background:rgba(34,211,238,0.12);color:#0891b2;font-size:10px;">🌟 متميز</span>'
-        :'<span style="padding:2px 8px;border-radius:8px;background:rgba(22,163,74,0.12);color:#16a34a;font-size:10px;">⭐ إيجابي</span>';
-      return '<tr><td>'+(i+1)+'</td><td>'+r.date+'</td><td><strong>'+r.studentName+'</strong></td><td>'+r.className+'</td><td>'+r.violationType+'</td><td>'+badge+'</td><td>'+(r.actionTaken||'—')+'</td></tr>';
+    recs = recs || [];
+    // تطبيق فلتر النوع
+    if (ft !== 'الكل') {
+      recs = recs.filter(function(r){ return (r.sub_type||'إيجابي') === ft; });
+    }
+    var cntEl = document.getElementById('posLogCountChip');
+    if(cntEl) cntEl.textContent = recs.length + ' سجل';
+    var tb = document.getElementById('positiveLogTableBody');
+    if (!tb) return;
+    if (!recs.length) { tb.innerHTML='<tr><td colspan="8" class="empty-state">لا توجد سجلات إيجابية 🎉</td></tr>'; return; }
+    tb.innerHTML = recs.map(function(r,i){
+      var isD = (r.sub_type==='متميز');
+      var badge = isD
+        ? '<span style="padding:2px 10px;border-radius:20px;background:rgba(34,211,238,0.15);color:#0891b2;font-size:10px;font-weight:700;border:1px solid rgba(34,211,238,0.3);">🌟 متميز</span>'
+        : '<span style="padding:2px 10px;border-radius:20px;background:rgba(22,163,74,0.12);color:#16a34a;font-size:10px;font-weight:700;border:1px solid rgba(22,163,74,0.25);">⭐ إيجابي</span>';
+      var date = r.recorded_at ? r.recorded_at.split('T')[0] : (r.date||'—');
+      return '<tr style="'+(isD?'background:rgba(34,211,238,0.03)':'')+'">'
+        +'<td>'+(i+1)+'</td>'
+        +'<td>'+date+'</td>'
+        +'<td><strong>'+esc(r.student_name||r.studentName||'')+'</strong></td>'
+        +'<td>'+esc(r.class_name||r.className||'')+'</td>'
+        +'<td style="font-weight:600;">'+esc(r.behavior_type||r.violationType||'')+'</td>'
+        +'<td>'+badge+'</td>'
+        +'<td><span class="chip">'+esc(r.recorder||'—')+'</span></td>'
+        +'<td style="font-size:11px;color:var(--text-light);">'+esc(r.notes||'—')+'</td>'
+        +'</tr>';
     }).join('');
   }).catch(function(e){ hideLoading(); console.error(e); });
 }
