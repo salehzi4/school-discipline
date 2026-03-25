@@ -3855,6 +3855,7 @@ function drawBehaviorDonut(degData, stage) {
   ];
   var offset = 0;
   var quarterCirc = circ / 4;
+  window._bSegOffsets = {};
     segs.forEach(function(s) {
     var el = document.getElementById(s.id);
     if (!el) return;
@@ -3968,8 +3969,8 @@ function drawHomeSummary(s) {
     const d2 = (v2 / total) * circ;
     const f1 = document.getElementById(f1Id);
     const f2 = document.getElementById(f2Id);
-    if (f1) f1.style.strokeDasharray = d1 + ' ' + (circ - d1);
-    if (f2) { f2.style.strokeDasharray = d2 + ' ' + (circ - d2); f2.style.strokeDashoffset = -d1; }
+    if (f1) f1.setAttribute('stroke-dasharray', d1 + ' ' + (circ - d1));
+    if (f2) { f2.setAttribute('stroke-dasharray', d2 + ' ' + (circ - d2)); f2.setAttribute('stroke-dashoffset', -d1); }
     const lbl = document.getElementById(lblId);
     const sub = document.getElementById(subId);
     const initColor = _colorMap[key] ? _colorMap[key][0] : 'var(--em)';
