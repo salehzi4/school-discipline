@@ -1935,17 +1935,21 @@ tr:hover td{background:var(--em-ghost);}
                 <circle class="css-donut-fill" id="bStf5" cx="55" cy="55" r="43" stroke="#3C3489" stroke-dasharray="0 270" stroke-linecap="butt"/>
                 <circle id="bSolidRing" cx="55" cy="55" r="43" fill="none" stroke="#FBBF24" stroke-width="10" stroke-dasharray="0 270" stroke-linecap="butt" transform="rotate(-90 55 55)"/>
                 <!-- labels خارج الدائرة -->
-                <text id="bV_d1" font-size="8" font-weight="600" fill="#FBBF24" text-anchor="middle" dominant-baseline="middle" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
-                <text id="bV_d2" font-size="8" font-weight="600" fill="#F97316" text-anchor="middle" dominant-baseline="middle" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
-                <text id="bV_d3" font-size="8" font-weight="600" fill="#E24B4A" text-anchor="middle" dominant-baseline="middle" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
-                <text id="bV_d4" font-size="8" font-weight="600" fill="#A32D2D" text-anchor="middle" dominant-baseline="middle" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
-                <text id="bV_d5" font-size="8" font-weight="600" fill="#501313" text-anchor="middle" dominant-baseline="middle" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
-                <text id="bV_s4" font-size="8" font-weight="600" fill="#7C3AED" text-anchor="middle" dominant-baseline="middle" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
-                <text id="bV_s5" font-size="8" font-weight="600" fill="#3C3489" text-anchor="middle" dominant-baseline="middle" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
+
               </svg>
               <div class="css-donut-label" style="cursor:default;">
                 <span class="css-donut-num" id="donutBehaviorLbl">0</span>
                 <span class="css-donut-sub" id="donutBehaviorSub">مخالفة</span>
+              </div>
+              <!-- labels خارج الدائرة — HTML بدل SVG text -->
+              <div id="bLabelsWrap" style="position:absolute;inset:0;pointer-events:none;direction:ltr;">
+                <div id="bV_d1" style="position:absolute;font-size:8px;font-weight:700;color:#FBBF24;white-space:nowrap;display:none;transform:translate(-50%,-50%);"></div>
+                <div id="bV_d2" style="position:absolute;font-size:8px;font-weight:700;color:#F97316;white-space:nowrap;display:none;transform:translate(-50%,-50%);"></div>
+                <div id="bV_d3" style="position:absolute;font-size:8px;font-weight:700;color:#E24B4A;white-space:nowrap;display:none;transform:translate(-50%,-50%);"></div>
+                <div id="bV_d4" style="position:absolute;font-size:8px;font-weight:700;color:#A32D2D;white-space:nowrap;display:none;transform:translate(-50%,-50%);"></div>
+                <div id="bV_d5" style="position:absolute;font-size:8px;font-weight:700;color:#501313;white-space:nowrap;display:none;transform:translate(-50%,-50%);"></div>
+                <div id="bV_s4" style="position:absolute;font-size:8px;font-weight:700;color:#7C3AED;white-space:nowrap;display:none;transform:translate(-50%,-50%);"></div>
+                <div id="bV_s5" style="position:absolute;font-size:8px;font-weight:700;color:#3C3489;white-space:nowrap;display:none;transform:translate(-50%,-50%);"></div>
               </div>
             </div>
           </div>
@@ -3743,13 +3747,14 @@ function _bCalcPos() {
   var showD5 = (_behaviorStage !== 'elementary');
   var vals = {d1:beh[1]||0,d2:beh[2]||0,d3:beh[3]||0,d4:beh[4]||0,
               d5:showD5?(beh[5]||0):0,s4:stf[4]||0,s5:stf[5]||0};
-  var circ = _behaviorCirc; var r = 68; var cx = 55; var cy = 55;
+  var circ = _behaviorCirc; var r = 78; var cx = 55; var cy = 55;
   var off = 0; _bSegPos = [];
   keys.forEach(function(k){
     var len = _behaviorTotal > 0 ? (vals[k]/_behaviorTotal)*circ : 0;
     var mid = -Math.PI/2 + (off + len/2)/circ * 2*Math.PI;
-    _bSegPos.push({k:k, v:vals[k], len:len,
-      x: cx + r*Math.cos(mid), y: cy + r*Math.sin(mid)});
+    var xPct = (cx + r*Math.cos(mid)) / 110 * 100;
+    var yPct = (cy + r*Math.sin(mid)) / 110 * 100;
+    _bSegPos.push({k:k, v:vals[k], len:len, xPct:xPct, yPct:yPct});
     off += len;
   });
 }
@@ -3759,13 +3764,13 @@ function _bPlaceLabel(k, show) {
   var vEl = document.getElementById('bV_'+k);
   if (!sd || !vEl) return;
   if (!show || sd.len < 3) {
-    vEl.setAttribute('opacity','0'); return;
+    vEl.style.display = 'none'; return;
   }
   var pct = _behaviorTotal > 0 ? Math.round((sd.v/_behaviorTotal)*100) : 0;
-  vEl.setAttribute('x', sd.x);
-  vEl.setAttribute('y', sd.y);
+  vEl.style.left = sd.xPct + '%';
+  vEl.style.top  = sd.yPct + '%';
   vEl.textContent = sd.v + ' ' + pct + '%';
-  vEl.setAttribute('opacity','1');
+  vEl.style.display = 'block';
 }
 
 function bHoverHide() {
