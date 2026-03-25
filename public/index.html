@@ -1933,6 +1933,22 @@ tr:hover td{background:var(--em-ghost);}
                 <circle class="css-donut-fill" id="bDeg5" cx="55" cy="55" r="43" stroke="#501313" stroke-dasharray="0 270" stroke-linecap="butt"/>
                 <circle class="css-donut-fill" id="bStf4" cx="55" cy="55" r="43" stroke="#7C3AED" stroke-dasharray="0 270" stroke-linecap="butt"/>
                 <circle class="css-donut-fill" id="bStf5" cx="55" cy="55" r="43" stroke="#3C3489" stroke-dasharray="0 270" stroke-linecap="butt"/>
+                <circle id="bSolidRing" cx="55" cy="55" r="43" fill="none" stroke="#FBBF24" stroke-width="10" stroke-dasharray="0 270" stroke-linecap="butt" transform="rotate(-90 55 55)"/>
+                <!-- labels خارج الدائرة -->
+                <text id="bV_d1" font-size="7" font-weight="600" fill="#FBBF24" text-anchor="middle" dominant-baseline="auto" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
+                <text id="bP_d1" font-size="6" fill="#FBBF24" text-anchor="middle" dominant-baseline="auto" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
+                <text id="bV_d2" font-size="7" font-weight="600" fill="#F97316" text-anchor="middle" dominant-baseline="auto" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
+                <text id="bP_d2" font-size="6" fill="#F97316" text-anchor="middle" dominant-baseline="auto" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
+                <text id="bV_d3" font-size="7" font-weight="600" fill="#E24B4A" text-anchor="middle" dominant-baseline="auto" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
+                <text id="bP_d3" font-size="6" fill="#E24B4A" text-anchor="middle" dominant-baseline="auto" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
+                <text id="bV_d4" font-size="7" font-weight="600" fill="#A32D2D" text-anchor="middle" dominant-baseline="auto" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
+                <text id="bP_d4" font-size="6" fill="#A32D2D" text-anchor="middle" dominant-baseline="auto" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
+                <text id="bV_d5" font-size="7" font-weight="600" fill="#501313" text-anchor="middle" dominant-baseline="auto" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
+                <text id="bP_d5" font-size="6" fill="#501313" text-anchor="middle" dominant-baseline="auto" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
+                <text id="bV_s4" font-size="7" font-weight="600" fill="#7C3AED" text-anchor="middle" dominant-baseline="auto" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
+                <text id="bP_s4" font-size="6" fill="#7C3AED" text-anchor="middle" dominant-baseline="auto" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
+                <text id="bV_s5" font-size="7" font-weight="600" fill="#3C3489" text-anchor="middle" dominant-baseline="auto" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
+                <text id="bP_s5" font-size="6" fill="#3C3489" text-anchor="middle" dominant-baseline="auto" opacity="0" style="transition:opacity .15s;pointer-events:none;"></text>
               </svg>
               <div class="css-donut-label" style="cursor:default;">
                 <span class="css-donut-num" id="donutBehaviorLbl">0</span>
@@ -1940,38 +1956,40 @@ tr:hover td{background:var(--em-ghost);}
               </div>
             </div>
           </div>
-          <div class="scc-legend" id="behaviorLegend" style="flex-direction:column;gap:3px;align-items:stretch;">
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:2px 4px;border-radius:4px;cursor:pointer;" onclick="behaviorDegSelect('all')" id="bLegAll">
-              <div style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,#FBBF24,#501313);display:inline-block;"></span><span style="font-size:10px;">الكل</span></div>
+          <div class="scc-legend" id="behaviorLegend" style="flex-direction:column;gap:2px;align-items:stretch;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:3px 5px;border-radius:4px;cursor:pointer;" onclick="behaviorDegSelect('all')" id="bLegAll" onmouseenter="bHoverShow('all')" onmouseleave="bHoverHide()">
+              <div style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,#FBBF24,#3C3489);display:inline-block;"></span><span style="font-size:10px;">الكل</span></div>
               <span style="font-size:11px;font-weight:700;" id="bLblAll">0</span>
             </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:2px 4px;border-radius:4px;cursor:pointer;" onclick="behaviorDegSelect('d1')" id="bLegD1">
-              <div style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:#FBBF24;display:inline-block;"></span><span style="font-size:10px;">درجة 1</span></div>
-              <span style="font-size:11px;font-weight:700;color:#FBBF24;" id="bLblD1">0</span>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:2px 4px;border-radius:4px;cursor:pointer;" onclick="behaviorDegSelect('d2')" id="bLegD2">
-              <div style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:#F97316;display:inline-block;"></span><span style="font-size:10px;">درجة 2</span></div>
-              <span style="font-size:11px;font-weight:700;color:#F97316;" id="bLblD2">0</span>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:2px 4px;border-radius:4px;cursor:pointer;" onclick="behaviorDegSelect('d3')" id="bLegD3">
-              <div style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:#E24B4A;display:inline-block;"></span><span style="font-size:10px;">درجة 3</span></div>
-              <span style="font-size:11px;font-weight:700;color:#E24B4A;" id="bLblD3">0</span>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:2px 4px;border-radius:4px;cursor:pointer;" onclick="behaviorDegSelect('d4')" id="bLegD4">
-              <div style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:#A32D2D;display:inline-block;"></span><span style="font-size:10px;">درجة 4 سلوكية</span></div>
-              <span style="font-size:11px;font-weight:700;color:#A32D2D;" id="bLblD4">0</span>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:2px 4px;border-radius:4px;cursor:pointer;" onclick="behaviorDegSelect('d5')" id="bLegD5">
-              <div style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:#501313;display:inline-block;"></span><span style="font-size:10px;">درجة 5 سلوكية</span></div>
-              <span style="font-size:11px;font-weight:700;color:#501313;" id="bLblD5">0</span>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:2px 4px;border-radius:4px;cursor:pointer;" onclick="behaviorDegSelect('s4')" id="bLegS4">
-              <div style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:#7C3AED;display:inline-block;"></span><span style="font-size:10px;">درجة 4 هيئة</span></div>
-              <span style="font-size:11px;font-weight:700;color:#7C3AED;" id="bLblS4">0</span>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:2px 4px;border-radius:4px;cursor:pointer;" onclick="behaviorDegSelect('s5')" id="bLegS5">
-              <div style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:#3C3489;display:inline-block;"></span><span style="font-size:10px;">درجة 5 هيئة</span></div>
-              <span style="font-size:11px;font-weight:700;color:#3C3489;" id="bLblS5">0</span>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px 4px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:3px 5px;border-radius:4px;cursor:pointer;" onclick="behaviorDegSelect('d1')" id="bLegD1" onmouseenter="bHoverShow('d1')" onmouseleave="bHoverHide()">
+                <div style="display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:#FBBF24;display:inline-block;"></span><span style="font-size:10px;">درجة 1</span></div>
+                <span style="font-size:10px;font-weight:700;color:#FBBF24;" id="bLblD1">0</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:3px 5px;border-radius:4px;cursor:pointer;" onclick="behaviorDegSelect('d2')" id="bLegD2" onmouseenter="bHoverShow('d2')" onmouseleave="bHoverHide()">
+                <div style="display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:#F97316;display:inline-block;"></span><span style="font-size:10px;">درجة 2</span></div>
+                <span style="font-size:10px;font-weight:700;color:#F97316;" id="bLblD2">0</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:3px 5px;border-radius:4px;cursor:pointer;" onclick="behaviorDegSelect('d3')" id="bLegD3" onmouseenter="bHoverShow('d3')" onmouseleave="bHoverHide()">
+                <div style="display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:#E24B4A;display:inline-block;"></span><span style="font-size:10px;">درجة 3</span></div>
+                <span style="font-size:10px;font-weight:700;color:#E24B4A;" id="bLblD3">0</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:3px 5px;border-radius:4px;cursor:pointer;" onclick="behaviorDegSelect('d4')" id="bLegD4" onmouseenter="bHoverShow('d4')" onmouseleave="bHoverHide()">
+                <div style="display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:#A32D2D;display:inline-block;"></span><span style="font-size:10px;">د4 سلوكية</span></div>
+                <span style="font-size:10px;font-weight:700;color:#A32D2D;" id="bLblD4">0</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:3px 5px;border-radius:4px;cursor:pointer;" onclick="behaviorDegSelect('d5')" id="bLegD5" onmouseenter="bHoverShow('d5')" onmouseleave="bHoverHide()">
+                <div style="display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:#501313;display:inline-block;"></span><span style="font-size:10px;">د5 سلوكية</span></div>
+                <span style="font-size:10px;font-weight:700;color:#501313;" id="bLblD5">0</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:3px 5px;border-radius:4px;cursor:pointer;" onclick="behaviorDegSelect('s4')" id="bLegS4" onmouseenter="bHoverShow('s4')" onmouseleave="bHoverHide()">
+                <div style="display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:#7C3AED;display:inline-block;"></span><span style="font-size:10px;">د4 هيئة</span></div>
+                <span style="font-size:10px;font-weight:700;color:#7C3AED;" id="bLblS4">0</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:3px 5px;border-radius:4px;cursor:pointer;" onclick="behaviorDegSelect('s5')" id="bLegS5" onmouseenter="bHoverShow('s5')" onmouseleave="bHoverHide()">
+                <div style="display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:#3C3489;display:inline-block;"></span><span style="font-size:10px;">د5 هيئة</span></div>
+                <span style="font-size:10px;font-weight:700;color:#3C3489;" id="bLblS5">0</span>
+              </div>
             </div>
           </div>
         </div>
@@ -3717,31 +3735,112 @@ function loadStats(){const df=document.getElementById('statDateFilter').value;sh
 let _summaryCharts = {};
 // ══ شارت السلوكيات بالدرجات ══
 var _behaviorDegData = {d1:0,d2:0,d3:0,d4:0,d5:0,s4:0,s5:0};
-var _behaviorStage = 'elementary';
+var _behaviorCurSel  = 'all';
+var _behaviorStage   = 'elementary';
+var _behaviorTotal   = 0;
+var _behaviorCirc    = 2 * Math.PI * 43;
+var _behaviorKeys    = ['bDeg1','bDeg2','bDeg3','bDeg4','bDeg5','bStf4','bStf5'];
+
+// حساب مواضع الـ labels خارج الدائرة
+var _bSegPos = [];
+function _bCalcPos() {
+  var keys = ['d1','d2','d3','d4','d5','s4','s5'];
+  var beh  = _behaviorDegData.behavioral || {1:0,2:0,3:0,4:0,5:0};
+  var stf  = _behaviorDegData.staff || {4:0,5:0};
+  var showD5 = (_behaviorStage !== 'elementary');
+  var vals = {d1:beh[1]||0,d2:beh[2]||0,d3:beh[3]||0,d4:beh[4]||0,
+              d5:showD5?(beh[5]||0):0,s4:stf[4]||0,s5:stf[5]||0};
+  var circ = _behaviorCirc; var r = 56; var cx = 55; var cy = 55;
+  var off = 0; _bSegPos = [];
+  keys.forEach(function(k){
+    var len = _behaviorTotal > 0 ? (vals[k]/_behaviorTotal)*circ : 0;
+    var mid = -Math.PI/2 + (off + len/2)/circ * 2*Math.PI;
+    _bSegPos.push({k:k, v:vals[k], len:len,
+      x: cx + r*Math.cos(mid), y: cy + r*Math.sin(mid)});
+    off += len;
+  });
+}
+
+function _bPlaceLabel(k, show) {
+  var sd = _bSegPos.find(function(s){return s.k===k;});
+  var vEl = document.getElementById('bV_'+k);
+  var pEl = document.getElementById('bP_'+k);
+  if (!sd || !vEl || !pEl) return;
+  if (!show || sd.len < 3) {
+    vEl.setAttribute('opacity','0'); pEl.setAttribute('opacity','0'); return;
+  }
+  var pct = _behaviorTotal > 0 ? Math.round((sd.v/_behaviorTotal)*100) : 0;
+  vEl.setAttribute('x', sd.x); vEl.setAttribute('y', sd.y - 3);
+  vEl.textContent = sd.v;
+  pEl.setAttribute('x', sd.x); pEl.setAttribute('y', sd.y + 7);
+  pEl.textContent = pct + '%';
+  vEl.setAttribute('opacity','1'); pEl.setAttribute('opacity','1');
+}
+
+function bHoverHide() {
+  ['d1','d2','d3','d4','d5','s4','s5'].forEach(function(k){
+    _bPlaceLabel(k, false);
+  });
+}
+
+function bHoverShow(key) {
+  if (_behaviorCurSel !== 'all') return;
+  bHoverHide();
+  if (key === 'all') {
+    ['d1','d2','d3','d4','d5','s4','s5'].forEach(function(k){ _bPlaceLabel(k, true); });
+  } else {
+    _bPlaceLabel(key, true);
+  }
+}
+
+function _bDrawMulti() {
+  var sr = document.getElementById('bSolidRing');
+  if (sr) { sr.setAttribute('stroke-dasharray','0 '+(_behaviorCirc+10)); }
+  _behaviorKeys.forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) { el.style.opacity='1'; el.style.transition='opacity .25s'; }
+  });
+}
+
+function _bDrawSolid(color, val) {
+  var circ = _behaviorCirc;
+  var total = _behaviorTotal;
+  var len = total > 0 ? (val / total) * circ : 0;
+  // إخفاء الأجزاء الملونة
+  _behaviorKeys.forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) { el.style.opacity='0'; el.style.transition='opacity .2s'; }
+  });
+  // رسم solidRing
+  var sr = document.getElementById('bSolidRing');
+  if (sr) {
+    sr.setAttribute('stroke', color);
+    sr.style.transition = 'stroke-dasharray .4s ease, stroke .2s';
+    sr.setAttribute('stroke-dasharray', len + ' ' + (circ - len));
+  }
+}
 
 function drawBehaviorDonut(degData, stage) {
   _behaviorDegData = degData;
   _behaviorStage   = stage || 'elementary';
-  var beh = degData.behavioral || {1:0,2:0,3:0,4:0,5:0};
-  var stf = degData.staff || {4:0,5:0};
-  var circ = 2 * Math.PI * 43;
-
-  // إخفاء درجة 5 سلوكية للابتدائي
+  var beh  = degData.behavioral || {1:0,2:0,3:0,4:0,5:0};
+  var stf  = degData.staff || {4:0,5:0};
+  var circ = _behaviorCirc;
   var showD5 = (stage !== 'elementary');
+
+  // إخفاء/إظهار درجة 5 سلوكية
   var d5row = document.getElementById('bLegD5');
   if (d5row) d5row.style.display = showD5 ? 'flex' : 'none';
 
-  // حساب الإجمالي
   var total = (beh[1]||0)+(beh[2]||0)+(beh[3]||0)+(beh[4]||0)
              +(showD5?(beh[5]||0):0)+(stf[4]||0)+(stf[5]||0);
+  _behaviorTotal = total;
+
   var segs = [
-    {id:'bDeg1', v:beh[1]||0},
-    {id:'bDeg2', v:beh[2]||0},
-    {id:'bDeg3', v:beh[3]||0},
-    {id:'bDeg4', v:beh[4]||0},
-    {id:'bDeg5', v:showD5?(beh[5]||0):0},
-    {id:'bStf4', v:stf[4]||0},
-    {id:'bStf5', v:stf[5]||0},
+    {id:'bDeg1',v:beh[1]||0},{id:'bDeg2',v:beh[2]||0},
+    {id:'bDeg3',v:beh[3]||0},{id:'bDeg4',v:beh[4]||0},
+    {id:'bDeg5',v:showD5?(beh[5]||0):0},
+    {id:'bStf4',v:stf[4]||0},{id:'bStf5',v:stf[5]||0},
   ];
   var offset = 0;
   segs.forEach(function(s) {
@@ -3750,31 +3849,38 @@ function drawBehaviorDonut(degData, stage) {
     var len = total > 0 ? (s.v / total) * circ : 0;
     el.setAttribute('stroke-dasharray', len + ' ' + (circ - len));
     el.setAttribute('stroke-dashoffset', -offset);
+    el.style.transition = 'stroke-dasharray .35s, stroke-dashoffset .35s, opacity .2s';
+    el.style.opacity = '1';
     offset += len;
   });
 
-  // تحديث labels
-  document.getElementById('bLblAll') && (document.getElementById('bLblAll').textContent = total);
-  document.getElementById('bLblD1')  && (document.getElementById('bLblD1').textContent  = beh[1]||0);
-  document.getElementById('bLblD2')  && (document.getElementById('bLblD2').textContent  = beh[2]||0);
-  document.getElementById('bLblD3')  && (document.getElementById('bLblD3').textContent  = beh[3]||0);
-  document.getElementById('bLblD4')  && (document.getElementById('bLblD4').textContent  = beh[4]||0);
-  document.getElementById('bLblD5')  && (document.getElementById('bLblD5').textContent  = beh[5]||0);
-  document.getElementById('bLblS4')  && (document.getElementById('bLblS4').textContent  = stf[4]||0);
-  document.getElementById('bLblS5')  && (document.getElementById('bLblS5').textContent  = stf[5]||0);
+  // labels
+  var el; var labels = {
+    bLblAll:total, bLblD1:beh[1]||0, bLblD2:beh[2]||0, bLblD3:beh[3]||0,
+    bLblD4:beh[4]||0, bLblD5:beh[5]||0, bLblS4:stf[4]||0, bLblS5:stf[5]||0
+  };
+  Object.keys(labels).forEach(function(id){
+    el = document.getElementById(id); if(el) el.textContent = labels[id];
+  });
 
+  // إخفاء solidRing
+  var sr = document.getElementById('bSolidRing');
+  if (sr) sr.setAttribute('stroke-dasharray','0 '+(_behaviorCirc+10));
+
+  _bCalcPos();
   behaviorDegSelect('all');
 }
 
 function behaviorDegSelect(key) {
-  var beh = _behaviorDegData.behavioral || {1:0,2:0,3:0,4:0,5:0};
-  var stf = _behaviorDegData.staff || {4:0,5:0};
-  var showD5 = (_behaviorStage !== 'elementary');
-  var total  = (beh[1]||0)+(beh[2]||0)+(beh[3]||0)+(beh[4]||0)
-              +(showD5?(beh[5]||0):0)+(stf[4]||0)+(stf[5]||0);
+  var beh   = _behaviorDegData.behavioral || {1:0,2:0,3:0,4:0,5:0};
+  var stf   = _behaviorDegData.staff || {4:0,5:0};
+  var showD5= (_behaviorStage !== 'elementary');
+  var total = _behaviorTotal;
 
+  _behaviorCurSel = key;
+  bHoverHide();
   var map = {
-    all:{v:total,   c:'#E24B4A', lbl:'مخالفة'},
+    all:{v:total,      c:'#E24B4A', lbl:'مخالفة'},
     d1: {v:beh[1]||0, c:'#FBBF24', lbl:'درجة 1'},
     d2: {v:beh[2]||0, c:'#F97316', lbl:'درجة 2'},
     d3: {v:beh[3]||0, c:'#E24B4A', lbl:'درجة 3'},
@@ -3784,15 +3890,26 @@ function behaviorDegSelect(key) {
     s5: {v:stf[5]||0, c:'#3C3489', lbl:'هيئة د5'},
   };
   var sel = map[key] || map['all'];
+
+  // تحديث وسط الدائرة
   var lbl = document.getElementById('donutBehaviorLbl');
   var sub = document.getElementById('donutBehaviorSub');
-  if (lbl) { lbl.textContent = sel.v; lbl.style.color = sel.c;
+  if (lbl) { lbl.textContent=sel.v; lbl.style.color=sel.c;
              lbl.style.transform='scale(1.2)'; setTimeout(function(){lbl.style.transform='';},250); }
-  if (sub) { sub.textContent = sel.lbl; sub.style.color = sel.c; }
+  if (sub) { sub.textContent=sel.lbl; sub.style.color=sel.c; }
+
+  // رسم الشارت
+  if (key === 'all') {
+    _bDrawMulti();
+  } else {
+    _bDrawSolid(sel.c, sel.v);
+  }
+
   // تمييز السطر المختار
   ['all','d1','d2','d3','d4','d5','s4','s5'].forEach(function(k){
-    var row = document.getElementById('bLeg'+k.charAt(0).toUpperCase()+k.slice(1));
-    if (row) row.style.background = (k===key) ? 'var(--color-background-secondary, rgba(0,0,0,0.05))' : '';
+    var rowId = 'bLeg' + k.charAt(0).toUpperCase() + k.slice(1);
+    var row = document.getElementById(rowId);
+    if (row) row.style.background = (k===key) ? 'var(--surface-2,rgba(0,0,0,0.06))' : '';
   });
 }
 
@@ -8203,4 +8320,4 @@ function refreshAdminNotifBadge() {
 </script>
 
 </body>
-</html>
+</html
