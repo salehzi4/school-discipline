@@ -874,7 +874,7 @@ tr:hover td{background:var(--em-ghost);}
               <svg viewBox="0 0 110 110" width="110" height="110">
                 <circle class="css-donut-track" cx="55" cy="55" r="43"/>
                 <circle class="css-donut-fill" id="tDonutFill1Referred" cx="55" cy="55" r="43" stroke="#dc3545" stroke-dasharray="0 270"/>
-                <circle class="css-donut-fill2" id="tDonutFill2Referred" cx="55" cy="55" r="43" stroke="#22c55e" stroke-dasharray="0 270"/>
+                <circle class="css-donut-fill2" id="tDonutFill2Referred" cx="55" cy="55" r="43" stroke="#22c55e" stroke-dasharray="0 270" opacity="0"/>
               </svg>
               <div class="css-donut-label" onclick="tDonutToggle('Referred')" style="cursor:pointer;">
                 <span class="css-donut-num" id="tDonutReferredLbl">0</span>
@@ -1582,15 +1582,14 @@ function loadTeacherStats(){
     // تحديث الإحالات
     GAS.getMyReferredViolations(T.name||'').then(function(refList){
       const rRef=(refList||[]).length;
-      const rImp=(refList||[]).filter(r=>r.behaviorStatus==='تحسن').length;
       if(window._tDonutVals){
         window._tDonutVals['Referred'][0].v=rRef;
-        window._tDonutVals['Referred'][1].v=rImp;
-        var circ=2*Math.PI*43,total=Math.max(rRef+rImp,0.1);
+        window._tDonutVals['Referred'][1].v=0;
+        var circ=2*Math.PI*43;
         var f1=document.getElementById('tDonutFill1Referred'),f2=document.getElementById('tDonutFill2Referred');
-        if(f1){var d1=(rRef/total)*circ;f1.style.strokeDasharray=d1+' '+(circ-d1);}
-        if(f2){var d2=(rImp/total)*circ;f2.style.strokeDasharray=d2+' '+(circ-d2);f2.style.strokeDashoffset=-((rRef/total)*circ);}
-        tDonutShow('Referred',window._tDonutCur['Referred']||0);
+        if(f1){f1.setAttribute('stroke-dasharray', circ+' 0');}
+        if(f2){f2.setAttribute('stroke-dasharray','0 '+circ); f2.style.opacity='0';}
+        tDonutShow('Referred',0);
       }
       const badge=document.getElementById('tRefBadge');
       const pending=(refList||[]).filter(r=>!r.adminDecision).length;
