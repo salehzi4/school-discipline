@@ -3749,9 +3749,15 @@ function _bCalcPos() {
               d5:showD5?(beh[5]||0):0,s4:stf[4]||0,s5:stf[5]||0};
   var circ = _behaviorCirc; var r = 78; var cx = 55; var cy = 55;
   var off = 0; _bSegPos = [];
+  var segIdMap = {d1:'bDeg1',d2:'bDeg2',d3:'bDeg3',d4:'bDeg4',d5:'bDeg5',s4:'bStf4',s5:'bStf5'};
+  var quarterCirc = circ / 4;
   keys.forEach(function(k){
     var len = _behaviorTotal > 0 ? (vals[k]/_behaviorTotal)*circ : 0;
-    var mid = -Math.PI/2 + (off + len/2)/circ * 2*Math.PI;
+    // نستخدم نفس offset المحفوظة من drawBehaviorDonut
+    var segOff = (window._bSegOffsets && window._bSegOffsets[segIdMap[k]])
+                 ? window._bSegOffsets[segIdMap[k]].start : off;
+    // الزاوية الفعلية: تبدأ من قمة الدائرة (-π/2) + موضع منتصف القطعة
+    var mid = -Math.PI/2 + (segOff + len/2) / circ * 2*Math.PI;
     var xPct = (cx + r*Math.cos(mid) + 15) / 140 * 100;
     var yPct = (cy + r*Math.sin(mid) + 15) / 140 * 100;
     _bSegPos.push({k:k, v:vals[k], len:len, xPct:xPct, yPct:yPct});
@@ -3839,7 +3845,8 @@ function drawBehaviorDonut(degData, stage) {
     {id:'bStf4',v:stf[4]||0},{id:'bStf5',v:stf[5]||0},
   ];
   var offset = 0;
-  var quarterCirc = circ / 4; // تعويض عدم وجود rotate(-90)
+  var quarterCirc = circ / 4;
+  window._bSegOffsets = {}; // نحفظ offsets لكل segment
   segs.forEach(function(s) {
     var el = document.getElementById(s.id);
     if (!el) return;
@@ -3848,6 +3855,7 @@ function drawBehaviorDonut(degData, stage) {
     el.setAttribute('stroke-dashoffset', quarterCirc - offset);
     el.style.transition = 'stroke-dasharray .35s, stroke-dashoffset .35s, opacity .2s';
     el.style.opacity = '1';
+    window._bSegOffsets[s.id] = {start: offset, len: len};
     offset += len;
   });
 
