@@ -431,7 +431,7 @@ tr:hover td{background:var(--em-ghost);}
 .sidebar::-webkit-scrollbar-track{background:transparent;}
 .sidebar-home-btn.active{background:rgba(255,255,255,.22);border-right:3px solid var(--gold);}
 .home-collapse-wrap{background:var(--surface);border-radius:14px;border:1.5px solid var(--border);margin-bottom:12px;overflow:visible;box-shadow:0 2px 8px rgba(0,0,0,.05);}
-.summary-charts-grid{display:grid;grid-template-columns:repeat(4,minmax(120px,1fr));gap:10px;width:100%;}
+.summary-charts-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:100%;overflow:hidden;}
 .summary-chart-card{background:var(--surface);border-radius:12px;border:1.5px solid var(--border);padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.05);display:flex;flex-direction:column;gap:8px;border-top:3px solid var(--sc);}
 .scc-title{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:800;color:var(--sc);}
 .scc-title .material-icons-round{font-size:14px;}
@@ -442,8 +442,8 @@ tr:hover td{background:var(--em-ghost);}
 .css-donut-wrap{position:relative;width:110px;height:110px;flex-shrink:0;}
 .css-donut-wrap svg{transform:rotate(-90deg);}
 .css-donut-track{fill:none;stroke:var(--border);stroke-width:12;}
-.css-donut-fill{fill:none;stroke-width:12;stroke-linecap:butt;transition:stroke-dasharray .7s ease;}
-.css-donut-fill2{fill:none;stroke-width:12;stroke-linecap:butt;transition:stroke-dasharray .7s ease;}
+.css-donut-fill{fill:none;stroke-width:12;stroke-linecap:round;transition:stroke-dasharray .7s ease;}
+.css-donut-fill2{fill:none;stroke-width:12;stroke-linecap:round;transition:stroke-dasharray .7s ease;}
 .css-donut-label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;}
 .css-donut-num{font-size:20px;font-weight:900;color:var(--sc);line-height:1;}
 .css-donut-sub{font-size:9px;color:var(--text-3);}
@@ -508,7 +508,7 @@ tr:hover td{background:var(--em-ghost);}
 .t-sc-wrap.sc-open .t-sc-body { display: block; }
 
 /* شبكة إحصاءات */
-.t-stats-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; }
+.t-stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
 
 /* بطاقة إحصاء */
 .t-stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; width: 100%; height: 101.25px; padding: 10px 8px 12px; cursor: pointer; transition: box-shadow .15s; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; text-align: center; overflow: visible; box-sizing: border-box; }
@@ -846,7 +846,7 @@ tr:hover td{background:var(--em-ghost);}
       <span class="material-icons-round hc-arrow">expand_more</span>
     </div>
     <div class="home-collapse-body">
-      <div class="summary-charts-grid" style="grid-template-columns:repeat(4,1fr);">
+      <div class="summary-charts-grid" style="grid-template-columns:repeat(3,1fr);">
 
         <!-- الغياب -->
         <div class="summary-chart-card" style="--sc:#0369a1;">
@@ -858,7 +858,7 @@ tr:hover td{background:var(--em-ghost);}
                 <circle class="css-donut-fill" id="tDonutFill1Abs" cx="55" cy="55" r="43" stroke="#0369a1" stroke-dasharray="0 270"/>
                 <circle class="css-donut-fill2" id="tDonutFill2Abs" cx="55" cy="55" r="43" stroke="#ef4444" stroke-dasharray="0 270"/>
               </svg>
-              <div class="css-donut-label" onclick="tToggleAbs()" style="cursor:pointer;">
+              <div class="css-donut-label" onclick="tDonutToggle('Abs')" style="cursor:pointer;">
                 <span class="css-donut-num" id="tDonutAbsLbl">0</span>
                 <span class="css-donut-sub" id="tDonutAbsSub">بعذر</span>
               </div>
@@ -878,101 +878,61 @@ tr:hover td{background:var(--em-ghost);}
               <svg viewBox="0 0 110 110" width="110" height="110">
                 <circle class="css-donut-track" cx="55" cy="55" r="43"/>
                 <circle class="css-donut-fill" id="tDonutFill1Referred" cx="55" cy="55" r="43" stroke="#dc3545" stroke-dasharray="0 270"/>
+                <circle class="css-donut-fill2" id="tDonutFill2Referred" cx="55" cy="55" r="43" stroke="#22c55e" stroke-dasharray="0 270"/>
               </svg>
-              <div class="css-donut-label" style="cursor:default;">
-                <span class="css-donut-num" id="tDonutReferredLbl" style="color:#dc3545;">0</span>
+              <div class="css-donut-label" onclick="tDonutToggle('Referred')" style="cursor:pointer;">
+                <span class="css-donut-num" id="tDonutReferredLbl">0</span>
                 <span class="css-donut-sub" id="tDonutReferredSub">محال</span>
               </div>
             </div>
           </div>
           <div class="scc-legend">
-            <span class="scc-dot" style="background:#dc3545;"></span><span>محالون</span>
+            <span class="scc-dot" style="background:#dc3545;cursor:pointer;" onclick="tDonutShow('Referred',0)"></span><span>محالون</span>
+            <span class="scc-dot" style="background:#22c55e;margin-right:8px;cursor:pointer;" onclick="tDonutShow('Referred',1)"></span><span>تحسن</span>
           </div>
         </div>
 
         <!-- أكثر المخالفات تسجيلاً -->
-        <div class="summary-chart-card" style="--sc:#E24B4A;">
+        <div class="summary-chart-card" style="--sc:#f97316;">
           <div class="scc-title"><span class="material-icons-round">bar_chart</span> أكثر المخالفات تسجيلاً</div>
           <div class="scc-chart-wrap">
             <div class="css-donut-wrap">
               <svg viewBox="0 0 110 110" width="110" height="110">
                 <circle class="css-donut-track" cx="55" cy="55" r="43"/>
-                <!-- سلوكية: درجات 1-5 -->
-                <circle fill="none" stroke-width="10" id="tvBeh1" cx="55" cy="55" r="43" stroke="#FBBF24" stroke-dasharray="0 270" stroke-linecap="butt" style="transition:stroke-dasharray .35s,stroke-dashoffset .35s,opacity .2s;"/>
-                <circle fill="none" stroke-width="10" id="tvBeh2" cx="55" cy="55" r="43" stroke="#F97316" stroke-dasharray="0 270" stroke-linecap="butt" style="transition:stroke-dasharray .35s,stroke-dashoffset .35s,opacity .2s;"/>
-                <circle fill="none" stroke-width="10" id="tvBeh3" cx="55" cy="55" r="43" stroke="#E24B4A" stroke-dasharray="0 270" stroke-linecap="butt" style="transition:stroke-dasharray .35s,stroke-dashoffset .35s,opacity .2s;"/>
-                <circle fill="none" stroke-width="10" id="tvBeh4" cx="55" cy="55" r="43" stroke="#A32D2D" stroke-dasharray="0 270" stroke-linecap="butt" style="transition:stroke-dasharray .35s,stroke-dashoffset .35s,opacity .2s;"/>
-                <!-- هيئة: درجات 4-5 -->
-                <circle fill="none" stroke-width="10" id="tvStf4" cx="55" cy="55" r="43" stroke="#7C3AED" stroke-dasharray="0 270" stroke-linecap="butt" style="transition:stroke-dasharray .35s,stroke-dashoffset .35s,opacity .2s;"/>
-                <circle fill="none" stroke-width="10" id="tvStf5" cx="55" cy="55" r="43" stroke="#3C3489" stroke-dasharray="0 270" stroke-linecap="butt" style="transition:stroke-dasharray .35s,stroke-dashoffset .35s,opacity .2s;"/>
-                <!-- صفية -->
-                <circle fill="none" stroke-width="10" id="tvCls"  cx="55" cy="55" r="43" stroke="#0DA9A6" stroke-dasharray="0 270" stroke-linecap="butt" style="transition:stroke-dasharray .35s,stroke-dashoffset .35s,opacity .2s;"/>
-                <!-- solidRing للتحديد -->
-                <circle id="tvSolidRing" cx="55" cy="55" r="43" fill="none" stroke="#E24B4A" stroke-width="10" stroke-dasharray="0 270" stroke-linecap="butt"/>
+                <circle class="css-donut-fill" id="tDonutFill1TopViol" cx="55" cy="55" r="43" stroke="#dc3545" stroke-dasharray="0 270"/>
+                <circle class="css-donut-fill2" id="tDonutFill2TopViol" cx="55" cy="55" r="43" stroke="#f97316" stroke-dasharray="0 270"/>
               </svg>
-              <div class="css-donut-label" style="cursor:default;">
-                <span class="css-donut-num" id="tDonutTopViolLbl" style="color:#E24B4A;">0</span>
-                <span class="css-donut-sub" id="tDonutTopViolSub">مخالفة</span>
+              <div class="css-donut-label" onclick="tDonutToggle('TopViol')" style="cursor:pointer;">
+                <span class="css-donut-num" id="tDonutTopViolLbl">0</span>
+                <span class="css-donut-sub" id="tDonutTopViolSub">سلوكية</span>
               </div>
             </div>
           </div>
-          <!-- legend تفاعلي -->
-          <div class="scc-legend" style="flex-direction:column;gap:2px;align-items:stretch;">
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:2px 5px;border-radius:4px;cursor:pointer;" onclick="tViolDegSelect('all')" id="tvLegAll">
-              <div style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,#FBBF24,#E24B4A,#7C3AED,#0DA9A6);display:inline-block;"></span><span style="font-size:10px;">الكل</span></div>
-              <span style="font-size:11px;font-weight:700;" id="tvLblAll">0</span>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:2px 5px;border-radius:4px;cursor:pointer;" onclick="tViolDegSelect('beh')" id="tvLegBeh">
-              <div style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:#E24B4A;display:inline-block;"></span><span style="font-size:10px;">سلوكية</span></div>
-              <span style="font-size:11px;font-weight:700;color:#E24B4A;" id="tvLblBeh">0</span>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:2px 5px;border-radius:4px;cursor:pointer;" onclick="tViolDegSelect('stf')" id="tvLegStf">
-              <div style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:#7C3AED;display:inline-block;"></span><span style="font-size:10px;">تجاه الهيئة</span></div>
-              <span style="font-size:11px;font-weight:700;color:#7C3AED;" id="tvLblStf">0</span>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:2px 5px;border-radius:4px;cursor:pointer;" onclick="tViolDegSelect('cls')" id="tvLegCls">
-              <div style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:#0DA9A6;display:inline-block;"></span><span style="font-size:10px;">صفية</span></div>
-              <span style="font-size:11px;font-weight:700;color:#0DA9A6;" id="tvLblCls">0</span>
-            </div>
+          <div class="scc-legend">
+            <span class="scc-dot" style="background:#dc3545;cursor:pointer;" onclick="tDonutShow('TopViol',0)"></span><span>سلوكية</span>
+            <span class="scc-dot" style="background:#f97316;margin-right:8px;cursor:pointer;" onclick="tDonutShow('TopViol',1)"></span><span>صفية</span>
           </div>
         </div>
 
-        <!-- السلوك الإيجابي والمتميز -->
+        <!-- أكثر السلوكيات المتميزة -->
         <div class="summary-chart-card" style="--sc:#16a34a;">
-          <div class="scc-title"><span class="material-icons-round">emoji_events</span> السلوك الإيجابي والمتميز</div>
+          <div class="scc-title"><span class="material-icons-round">emoji_events</span> السلوكيات المتميزة</div>
           <div class="scc-chart-wrap">
             <div class="css-donut-wrap">
               <svg viewBox="0 0 110 110" width="110" height="110">
                 <circle class="css-donut-track" cx="55" cy="55" r="43"/>
-                <circle fill="none" stroke-width="10" id="tpPos" cx="55" cy="55" r="43" stroke="#16a34a" stroke-dasharray="0 270" stroke-linecap="butt" style="transition:stroke-dasharray .35s,stroke-dashoffset .35s,opacity .2s;"/>
-                <circle fill="none" stroke-width="10" id="tpDis" cx="55" cy="55" r="43" stroke="#22d3ee" stroke-dasharray="0 270" stroke-linecap="butt" style="transition:stroke-dasharray .35s,stroke-dashoffset .35s,opacity .2s;"/>
-                <circle id="tpSolidRing" cx="55" cy="55" r="43" fill="none" stroke="#16a34a" stroke-width="10" stroke-dasharray="0 270" stroke-linecap="butt"/>
-                <defs>
-                  <path id="tpArc_pos" fill="none"/>
-                  <path id="tpArc_dis" fill="none"/>
-                </defs>
-                <text font-size="7" fill="white" font-weight="600" id="tpTxt_pos" opacity="0" style="transition:opacity .2s;"><textPath href="#tpArc_pos" startOffset="50%" text-anchor="middle"></textPath></text>
-                <text font-size="7" fill="white" font-weight="600" id="tpTxt_dis" opacity="0" style="transition:opacity .2s;"><textPath href="#tpArc_dis" startOffset="50%" text-anchor="middle"></textPath></text>
+                <circle class="css-donut-fill" id="tDonutFill1TopPos" cx="55" cy="55" r="43" stroke="#16a34a" stroke-dasharray="0 270"/>
+                <circle class="css-donut-fill2" id="tDonutFill2TopPos" cx="55" cy="55" r="43" stroke="#22d3ee" stroke-dasharray="0 270"/>
               </svg>
-              <div class="css-donut-label" style="cursor:default;">
-                <span class="css-donut-num" id="tDonutTopPosLbl" style="color:#16a34a;">0</span>
+              <div class="css-donut-label" onclick="tDonutToggle('TopPos')" style="cursor:pointer;">
+                <span class="css-donut-num" id="tDonutTopPosLbl">0</span>
                 <span class="css-donut-sub" id="tDonutTopPosSub">إيجابي</span>
               </div>
             </div>
           </div>
-          <div class="scc-legend" style="flex-direction:column;gap:2px;align-items:stretch;">
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:3px 5px;border-radius:4px;cursor:pointer;" onclick="tPositiveDegSelect('all')" id="tpLegAll" onmouseenter="tpHoverShow('all')" onmouseleave="tpHoverHide()">
-              <div style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,#16a34a,#22d3ee);display:inline-block;"></span><span style="font-size:10px;">الكل</span></div>
-              <span style="font-size:11px;font-weight:700;" id="tpLblAll">0</span>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:3px 5px;border-radius:4px;cursor:pointer;" onclick="tPositiveDegSelect('pos')" id="tpLegPos" onmouseenter="tpHoverShow('pos')" onmouseleave="tpHoverHide()">
-              <div style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:#16a34a;display:inline-block;"></span><span style="font-size:10px;">إيجابي</span></div>
-              <span style="font-size:11px;font-weight:700;color:#16a34a;" id="tpLblPos">0</span>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:3px 5px;border-radius:4px;cursor:pointer;" onclick="tPositiveDegSelect('dis')" id="tpLegDis" onmouseenter="tpHoverShow('dis')" onmouseleave="tpHoverHide()">
-              <div style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:#22d3ee;display:inline-block;"></span><span style="font-size:10px;">متميز</span></div>
-              <span style="font-size:11px;font-weight:700;color:#22d3ee;" id="tpLblDis">0</span>
-            </div>
+          <div class="scc-legend">
+            <span class="scc-dot" style="background:#16a34a;cursor:pointer;" onclick="tDonutShow('TopPos',0)"></span><span>إيجابي</span>
+            <span class="scc-dot" style="background:#22d3ee;margin-right:8px;cursor:pointer;" onclick="tDonutShow('TopPos',1)"></span><span>متميز</span>
           </div>
         </div>
 
@@ -1263,7 +1223,7 @@ tr:hover td{background:var(--em-ghost);}
       </table>
     </div>
   </div>
-</div><!-- page-positive-log -->
+</div>
 
 </div><!-- content -->
 </div><!-- sidebar-content -->
@@ -1546,7 +1506,7 @@ function updateSidebarActive(page) {
   document.querySelectorAll('.sidebar-group-btn').forEach(b => b.classList.add('open'));
 }
 
-function showPage(p,b){document.querySelectorAll('.page-section').forEach(s=>s.classList.remove('active'));const el=document.getElementById('page-'+p);if(el)el.classList.add('active');document.querySelectorAll('.tab-btn').forEach(t=>t.classList.remove('active'));if(b&&b.classList&&b.classList.contains('sidebar-sub-btn')){}else if(b)b.classList.add('active');sessionStorage.setItem('tTab',p);if(p==='mylog')loadMyLog();if(p==='mymessages')loadMyMsgs();if(p==='alerts')loadAlerts();if(p==='home')loadTeacherStats();if(p==='referred-log')loadReferredLog();if(p==='positive-log'){loadTPosLog();tPopulatePosLogClasses();}updateSidebarActive(p);}
+function showPage(p,b){document.querySelectorAll('.page-section').forEach(s=>s.classList.remove('active'));const el=document.getElementById('page-'+p);if(el)el.classList.add('active');document.querySelectorAll('.tab-btn').forEach(t=>t.classList.remove('active'));if(b&&b.classList&&b.classList.contains('sidebar-sub-btn')){}else if(b)b.classList.add('active');sessionStorage.setItem('tTab',p);if(p==='mylog')loadMyLog();if(p==='mymessages')loadMyMsgs();if(p==='alerts')loadAlerts();if(p==='home')loadTeacherStats();if(p==='referred-log')loadReferredLog();updateSidebarActive(p);}
 // ══ رسوم ملخص المعلم (CSS دوائر بدون مكتبة) ══
 function drawTeacherSummary(s) {
   const referred = s.referredCount || 0;
@@ -1557,7 +1517,8 @@ function drawTeacherSummary(s) {
   const topDist  = s.myDistinct    || 0;
 
   window._tDonutVals = {
-    Referred: [{v:referred, sub:'محال'}],
+    'Abs': [{v: d.absenceExcused||0, lbl:'بعذر', sub:'بعذر'}, {v: d.absenceNoExcuse||0, lbl:'بدون عذر', sub:'بدون عذر'}],
+    Referred: [{v:referred, sub:'محال'}, {v:improved, sub:'تحسّن'}],
     TopViol:  [{v:topViol,  sub:'سلوكية'},{v:topClass, sub:'صفية'}],
     TopPos:   [{v:topPos,   sub:'إيجابي'},{v:topDist,  sub:'متميز'}],
   };
@@ -1569,7 +1530,6 @@ function drawTeacherSummary(s) {
     TopPos:   ['#16a34a','#22d3ee']
   };
 
-  // رسم donut بسيط
   function drawDonut(key, fillId1, fillId2, lblId, subId, val1, val2) {
     const circ = 2 * Math.PI * 43;
     const total = Math.max(val1 + val2, 0.1);
@@ -1580,134 +1540,15 @@ function drawTeacherSummary(s) {
     const lbl = document.getElementById(lblId);
     const sub = document.getElementById(subId);
     const initColor = _tColorMap[key] ? _tColorMap[key][0] : 'var(--em)';
-    if (f1) { f1.setAttribute('stroke-dasharray', d1+' '+(circ-d1)); f1.setAttribute('stroke-dashoffset', circ/4); }
-    if (f2) { f2.setAttribute('stroke-dasharray', d2+' '+(circ-d2)); f2.setAttribute('stroke-dashoffset', circ/4 - d1); }
+    if (f1) f1.style.strokeDasharray = d1 + ' ' + (circ - d1);
+    if (f2) { f2.style.strokeDasharray = d2 + ' ' + (circ - d2); f2.style.strokeDashoffset = -(d1); }
     if (lbl) { lbl.textContent = val1; lbl.style.color = initColor; }
     if (sub) { sub.textContent = window._tDonutVals[key][0].sub; sub.style.color = initColor; }
   }
 
-  // شارت المحالون — قيمة واحدة فقط
-  var f1Ref = document.getElementById('tDonutFill1Referred');
-  var lblRef = document.getElementById('tDonutReferredLbl');
-  var subRef = document.getElementById('tDonutReferredSub');
-  var refCirc = 2 * Math.PI * 43;
-  if (f1Ref) { f1Ref.setAttribute('stroke-dasharray', refCirc + ' 0'); f1Ref.setAttribute('stroke-dashoffset', refCirc/4); }
-  if (lblRef) { lblRef.textContent = referred; lblRef.style.color = '#dc3545'; }
-  if (subRef) { subRef.textContent = 'محال'; subRef.style.color = '#dc3545'; }
+  drawDonut('Referred','tDonutFill1Referred','tDonutFill2Referred','tDonutReferredLbl','tDonutReferredSub',referred,improved);
   drawDonut('TopViol', 'tDonutFill1TopViol', 'tDonutFill2TopViol', 'tDonutTopViolLbl', 'tDonutTopViolSub', topViol, topClass);
-
-  // شارت الغياب
-  var absEx = s.absenceExcused || 0;
-  var absNo = s.absenceNoExcuse || 0;
-  var absCirc = 2 * Math.PI * 43;
-  var absTotal = Math.max(absEx + absNo, 0.1);
-  var absD1 = (absEx / absTotal) * absCirc;
-  var absD2 = (absNo / absTotal) * absCirc;
-  var absF1 = document.getElementById('tDonutFill1Abs');
-  var absF2 = document.getElementById('tDonutFill2Abs');
-  var absLbl = document.getElementById('tDonutAbsLbl');
-  var absSub = document.getElementById('tDonutAbsSub');
-  if (absF1) { absF1.setAttribute('stroke-dasharray', absD1+' '+(absCirc-absD1)); absF1.setAttribute('stroke-dashoffset', absCirc/4); }
-  if (absF2) { absF2.setAttribute('stroke-dasharray', absD2+' '+(absCirc-absD2)); absF2.setAttribute('stroke-dashoffset', absCirc/4 - absD1); }
-  if (absLbl) { absLbl.textContent = absEx; absLbl.style.color = '#0369a1'; }
-  if (absSub) { absSub.textContent = 'بعذر'; absSub.style.color = '#0369a1'; }
-
-  // شارت الإيجابي التفاعلي
-  drawTPositiveDonut(topPos, topDist);
-}
-
-// ══ شارت الإيجابي التفاعلي (نفس منطق index) ══
-var _tPositiveData = {pos:0, dis:0};
-var _tPositiveTotal = 0;
-var _tPositiveCirc = 2 * Math.PI * 43;
-var _tPositiveCurSel = 'all';
-
-function _tpArcPath(sa, ea, r) {
-  var cx=55, cy=55;
-  var x1=cx+r*Math.cos(sa), y1=cy+r*Math.sin(sa);
-  var x2=cx+r*Math.cos(ea), y2=cy+r*Math.sin(ea);
-  var large=(ea-sa)>Math.PI?1:0;
-  return 'M'+x1.toFixed(3)+','+y1.toFixed(3)+' A'+r+','+r+' 0 '+large+',1 '+x2.toFixed(3)+','+y2.toFixed(3);
-}
-
-function _tpBuildArcs() {
-  var circ=_tPositiveCirc; var off=0;
-  [{k:'pos',aid:'tpArc_pos',tid:'tpTxt_pos'},{k:'dis',aid:'tpArc_dis',tid:'tpTxt_dis'}].forEach(function(s){
-    var len=_tPositiveTotal>0?(_tPositiveData[s.k]/_tPositiveTotal)*circ:0;
-    var sa=-Math.PI/2+(off/circ)*2*Math.PI;
-    var ea=-Math.PI/2+((off+len)/circ)*2*Math.PI;
-    var pct=_tPositiveTotal>0?Math.round((_tPositiveData[s.k]/_tPositiveTotal)*100):0;
-    var arcEl=document.getElementById(s.aid);
-    if(arcEl&&len>5) arcEl.setAttribute('d',_tpArcPath(sa,ea,43)); else if(arcEl) arcEl.setAttribute('d','');
-    var tp=document.querySelector('#'+s.tid+' textPath');
-    if(tp) tp.textContent=(pct>5&&_tPositiveData[s.k]>0)?pct+'%':'';
-    off+=len;
-  });
-}
-
-function drawTPositiveDonut(pos, dis) {
-  _tPositiveData={pos:pos||0,dis:dis||0};
-  _tPositiveTotal=(pos||0)+(dis||0);
-  var circ=_tPositiveCirc; var qc=circ/4;
-  [{id:'tpPos',k:'pos'},{id:'tpDis',k:'dis'}].forEach(function(s){
-    var el=document.getElementById(s.id); if(!el)return;
-    var len=_tPositiveTotal>0?(_tPositiveData[s.k]/_tPositiveTotal)*circ:0;
-    el.setAttribute('stroke-dasharray',len+' '+(circ-len));
-    el.setAttribute('stroke-dashoffset',qc-(s.k==='pos'?0:(_tPositiveData.pos/_tPositiveTotal||0)*circ));
-    el.style.opacity='1';
-  });
-  var sr=document.getElementById('tpSolidRing');
-  if(sr) sr.setAttribute('stroke-dasharray','0 '+(circ+10));
-  var la=document.getElementById('tpLblAll'),lp=document.getElementById('tpLblPos'),ld=document.getElementById('tpLblDis');
-  if(la) la.textContent=_tPositiveTotal;
-  if(lp) lp.textContent=pos||0;
-  if(ld) ld.textContent=dis||0;
-  _tpBuildArcs();
-  tPositiveDegSelect('all');
-}
-
-function tpHoverHide() {
-  ['pos','dis'].forEach(function(k){ var t=document.getElementById('tpTxt_'+k); if(t) t.setAttribute('opacity','0'); });
-}
-function tpHoverShow(key) {
-  if(_tPositiveCurSel!=='all') return;
-  tpHoverHide();
-  if(key==='all'){
-    ['pos','dis'].forEach(function(k){ var tp=document.querySelector('#tpTxt_'+k+' textPath'); if(tp&&tp.textContent) document.getElementById('tpTxt_'+k).setAttribute('opacity','1'); });
-  } else {
-    var tp=document.querySelector('#tpTxt_'+key+' textPath');
-    if(tp&&tp.textContent) document.getElementById('tpTxt_'+key).setAttribute('opacity','1');
-  }
-}
-function tPositiveDegSelect(key) {
-  _tPositiveCurSel=key; tpHoverHide();
-  var circ=_tPositiveCirc;
-  var map={all:{v:_tPositiveTotal,c:'#16a34a',lbl:'الكل'},pos:{v:_tPositiveData.pos,c:'#16a34a',lbl:'إيجابي'},dis:{v:_tPositiveData.dis,c:'#22d3ee',lbl:'متميز'}};
-  var sel=map[key]||map['all'];
-  var lbl=document.getElementById('tDonutTopPosLbl'),sub=document.getElementById('tDonutTopPosSub');
-  if(lbl){lbl.textContent=sel.v;lbl.style.color=sel.c;lbl.style.transform='scale(1.2)';setTimeout(function(){lbl.style.transform='';},250);}
-  if(sub){sub.textContent=sel.lbl;sub.style.color=sel.c;}
-  if(key==='all'){
-    var qc=circ/4;
-    [{id:'tpPos',k:'pos'},{id:'tpDis',k:'dis'}].forEach(function(s){
-      var el=document.getElementById(s.id); if(!el)return;
-      var len=_tPositiveTotal>0?(_tPositiveData[s.k]/_tPositiveTotal)*circ:0;
-      el.setAttribute('stroke-dasharray',len+' '+(circ-len));
-      el.setAttribute('stroke-dashoffset',qc-(s.k==='pos'?0:(_tPositiveData.pos/_tPositiveTotal||0)*circ));
-      el.style.opacity='1';
-    });
-    var sr=document.getElementById('tpSolidRing'); if(sr) sr.setAttribute('stroke-dasharray','0 '+(circ+10));
-  } else {
-    ['tpPos','tpDis'].forEach(function(id){ var el=document.getElementById(id); if(el) el.style.opacity='0'; });
-    var sr=document.getElementById('tpSolidRing');
-    if(sr){sr.setAttribute('stroke',sel.c);var len=_tPositiveTotal>0?(sel.v/_tPositiveTotal)*circ:0;sr.setAttribute('stroke-dasharray',len+' '+circ);sr.setAttribute('stroke-dashoffset',circ/4);}
-    var tp=document.querySelector('#tpTxt_'+key+' textPath');
-    if(tp&&tp.textContent) document.getElementById('tpTxt_'+key).setAttribute('opacity','1');
-  }
-  ['all','pos','dis'].forEach(function(k){
-    var row=document.getElementById('tpLeg'+k.charAt(0).toUpperCase()+k.slice(1));
-    if(row) row.style.background=(k===key)?'var(--surface-2,rgba(0,0,0,0.06))':'';
-  });
+  drawDonut('TopPos',  'tDonutFill1TopPos',  'tDonutFill2TopPos',  'tDonutTopPosLbl',  'tDonutTopPosSub',  topPos,  topDist);
 }
 
 function tDonutShow(key, idx) {
@@ -1748,18 +1589,15 @@ function loadTeacherStats(){
     const elAbs=document.getElementById('tStatAbs'); if(elAbs) elAbs.textContent=absEx+absNo;
     const elAbsEx=document.getElementById('tStatAbsEx'); if(elAbsEx) elAbsEx.textContent=absEx;
     const elAbsNo=document.getElementById('tStatAbsNo'); if(elAbsNo) elAbsNo.textContent=absNo;
-    window._tAbsEx = absEx; window._tAbsNo = absNo; window._tAbsCur = 0;
 
     drawTeacherSummary({
       referredCount: refCount, improvedCount: impCount,
       myViolations:  vList.filter(v=>v.category==='سلوكية').length,
       myClassViol:   vList.filter(v=>v.category==='صفية').length,
-      myPositive:    vList.filter(v=>v.category==='إيجابية' && (v.sub_type||'إيجابي')==='إيجابي').length,
-      myDistinct:    vList.filter(v=>v.category==='إيجابية' && (v.sub_type||'إيجابي')==='متميز').length,
+      myPositive:    vList.filter(v=>v.category==='إيجابية').length,
+      myDistinct:    vList.filter(v=>v.category==='إيجابية'&&v.violationType&&v.violationType.indexOf('متميز')>-1).length,
       absenceExcused: absEx, absenceNoExcuse: absNo,
     });
-    // شارت TopViol التفاعلي
-    if (typeof drawTViolDonut === 'function') drawTViolDonut(vList);
 
     const byType=function(arr){const m={};arr.forEach(v=>{m[v.violationType]=(m[v.violationType]||0)+1;});return Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,5);};
     const mkRows=function(entries){return entries.length?entries.map(e=>'<div class="stat-detail-row"><span>'+e[0]+'</span><span class="count">'+e[1]+'</span></div>').join(''):'<div class="empty-state">لا توجد</div>';};
@@ -1770,11 +1608,10 @@ function loadTeacherStats(){
     const scv=vList.filter(v=>v.category==='صفية');
     const elC=document.getElementById('tStatClsViol');if(elC)elC.textContent=scv.length;
     const dc=document.getElementById('tDetailCls');if(dc)dc.innerHTML=mkRows(byType(scv));
-    // إيجابي ومتميز من sub_type (الأصح) أو من الاسم (للتوافق)
-    const spos  = vList.filter(v=>v.category==='إيجابية' && (v.sub_type||'إيجابي')==='إيجابي');
-    const sdist = vList.filter(v=>v.category==='إيجابية' && (v.sub_type||'إيجابي')==='متميز');
+    const spos=vList.filter(v=>v.category==='إيجابية'&&(!v.violationType||v.violationType.indexOf('متميز')===-1));
     const elP=document.getElementById('tStatPos');if(elP)elP.textContent=spos.length;
     const dp=document.getElementById('tDetailPos');if(dp)dp.innerHTML=mkRows(byType(spos));
+    const sdist=vList.filter(v=>v.category==='إيجابية'&&v.violationType&&v.violationType.indexOf('متميز')>-1);
     const elD=document.getElementById('tStatDistinct');if(elD)elD.textContent=sdist.length;
     const dd=document.getElementById('tDetailDist');if(dd)dd.innerHTML=mkRows(byType(sdist));
 
@@ -2093,9 +1930,8 @@ function loadMyLog(){
     // تعبئة فلاتر الفصول والطلاب والمخالفات
     _populateMyLogFilters(allRecs, fcl, fst, fvt);
 
-    // تطبيق الفلاتر — الإيجابية تذهب لسجلها الخاص
+    // تطبيق الفلاتر
     var recs = allRecs.filter(function(r){
-      if(r.category === 'إيجابية') return false;
       if(fcl && r.className !== fcl) return false;
       if(fst && r.studentName !== fst) return false;
       if(fvt && r.violationType !== fvt) return false;
@@ -3039,7 +2875,7 @@ function handleViolationClick(id) {
   if (existing !== -1) {
     _selectedViolations.splice(existing, 1);
   } else {
-    _selectedViolations.push({ id: id, name: viol.name, subViolation: null, degree: viol.degree, category: viol.category, sub_type: viol.sub_type || null, rowAction: '' });
+    _selectedViolations.push({ id: id, name: viol.name, subViolation: null, degree: viol.degree, category: viol.category, rowAction: '' });
   }
   refreshSelectedDisplay();
   // إعادة رسم الجدول لتحديث الصف
@@ -3166,7 +3002,7 @@ function submitFixedViolation() {
       if(alertDiv) alertDiv.style.display='none';
       refreshSelectedDisplay();
       renderAllViolationGrids();
-      showA('recordAlert','success','✅ تم التسجيل بنجاح');
+      showA('recordAlert','success','✅ تم تسجيل المخالفة بنجاح');
     } else {
       showA('recordAlert','error','حدث خطأ: ' + (result && result.error ? result.error : 'غير معروف'));
     }
@@ -3219,7 +3055,7 @@ function selectChildViolation(parentId, childName, btn) {
   } else {
     // أزل أي إدخال سابق لنفس الأب بدون تابع
     _selectedViolations = _selectedViolations.filter(function(s) { return !(s.id === parentId && !s.subViolation); });
-    _selectedViolations.push({ id: parentId, name: viol.name, subViolation: childName, degree: viol.degree, category: viol.category, sub_type: viol.sub_type || null, rowAction: '' });
+    _selectedViolations.push({ id: parentId, name: viol.name, subViolation: childName, degree: viol.degree, category: viol.category, rowAction: '' });
   }
   refreshSelectedDisplay();
   // إعادة رسم البطاقة لتحديث التمييز البصري
@@ -3383,191 +3219,6 @@ function loadTeacherNotif() {
   });
 }
 
-// ══ سجل السلوك الإيجابي والمتميز ══
-function tToggleAbs() {
-  var cur = (window._tAbsCur||0);
-  tShowAbs((cur+1)%2);
-}
-function tShowAbs(idx) {
-  window._tAbsCur = idx;
-  var vals = [
-    {v: (window._tAbsEx||0), c:'#0369a1', lbl:'بعذر'},
-    {v: (window._tAbsNo||0), c:'#ef4444', lbl:'بدون عذر'}
-  ];
-  var sel = vals[idx];
-  var lbl = document.getElementById('tDonutAbsLbl');
-  var sub = document.getElementById('tDonutAbsSub');
-  if(lbl){ lbl.textContent=sel.v; lbl.style.color=sel.c; lbl.style.transform='scale(1.2)'; setTimeout(function(){lbl.style.transform='';},250); }
-  if(sub){ sub.textContent=sel.lbl; sub.style.color=sel.c; }
-}
-
-function tPopulatePosLogClasses() {
-  var sel = document.getElementById('tPosLogFilterClass');
-  if (!sel || sel.options.length > 1) return;
-  if (T && T.classes) {
-    T.classes.forEach(function(c) {
-      var o = document.createElement('option');
-      o.value = c.trim(); o.textContent = c.trim();
-      sel.appendChild(o);
-    });
-  }
-}
-
-function tPosLogClear() {
-  var d=document.getElementById('tPosLogDate'); if(d) d.value='';
-  var c=document.getElementById('tPosLogFilterClass'); if(c) c.value='';
-  var ty=document.getElementById('tPosLogFilterType'); if(ty) ty.value='';
-  loadTPosLog();
-}
-
-function loadTPosLog() {
-  if (!T) return;
-  var fd  = (document.getElementById('tPosLogDate')||{value:''}).value;
-  var fc  = (document.getElementById('tPosLogFilterClass')||{value:''}).value;
-  var ft  = (document.getElementById('tPosLogFilterType')||{value:''}).value;
-  showL();
-  GAS.getPositiveBehaviorsLog(fc||'الكل', fd).then(function(recs) {
-    hideL();
-    recs = (recs||[]).filter(function(r) {
-      if (!T) return true;
-      // فلتر المعلم
-      if (r.recorder && T.name && r.recorder !== T.name) return false;
-      // فلتر النوع
-      if (ft && (r.subType||r.sub_type||'إيجابي') !== ft) return false;
-      return true;
-    });
-    var cnt = document.getElementById('tPosLogCount');
-    if(cnt) cnt.textContent = recs.length + ' سجل';
-    var tb = document.getElementById('tPosLogBody');
-    if (!tb) return;
-    if (!recs.length) { tb.innerHTML='<tr><td colspan="7" class="empty-state">لا توجد سجلات 🎉</td></tr>'; return; }
-    tb.innerHTML = recs.map(function(r, i) {
-      var subType = r.subType || r.sub_type || 'إيجابي';
-      var isD = subType === 'متميز';
-      var badge = isD
-        ? '<span style="padding:2px 10px;border-radius:20px;background:rgba(34,211,238,0.15);color:#0891b2;font-size:10px;font-weight:700;border:1px solid rgba(34,211,238,0.3);">🌟 متميز</span>'
-        : '<span style="padding:2px 10px;border-radius:20px;background:rgba(22,163,74,0.12);color:#16a34a;font-size:10px;font-weight:700;border:1px solid rgba(22,163,74,0.25);">⭐ إيجابي</span>';
-      var rawDate = r.recorded_at || r.date || '';
-      var dispDate = rawDate.includes('T') ? rawDate.split('T')[0] : rawDate;
-      var sn  = (r.student_name||r.studentName||'');
-      var bt  = (r.behavior_type||r.behaviorType||r.violationType||'');
-      var delBtn = '<button class="btn btn-danger btn-sm" onclick="tDelPosEntry(this)" '
-        + 'data-sn="'+sn.replace(/"/g,'&quot;')+'" '
-        + 'data-bt="'+bt.replace(/"/g,'&quot;')+'" '
-        + 'data-date="'+rawDate+'" '
-        + 'style="padding:3px 7px;" title="حذف"><span class="material-icons-round" style="font-size:13px;">delete</span></button>';
-      return '<tr style="'+(isD?'background:rgba(34,211,238,0.03)':'') + '">'
-        + '<td>'+(i+1)+'</td>'
-        + '<td>'+dispDate+'</td>'
-        + '<td><strong>'+sn+'</strong></td>'
-        + '<td>'+(r.class_name||r.className||'')+'</td>'
-        + '<td style="font-weight:600;color:'+(isD?'#0891b2':'#16a34a')+';">'+bt+'</td>'
-        + '<td>'+badge+'</td>'
-        + '<td>'+delBtn+'</td>'
-        + '</tr>';
-    }).join('');
-  }).catch(function(e){ hideL(); console.error(e); });
-}
-
-function tDelPosEntry(btn) {
-  var sn   = btn.getAttribute('data-sn');
-  var bt   = btn.getAttribute('data-bt');
-  var date = btn.getAttribute('data-date');
-  if (!confirm('حذف سجل "' + bt + '"؟')) return;
-  showL();
-  GAS.deletePositiveBehaviorLog(date, sn, bt).then(function(r) {
-    hideL();
-    if (r && r.success) { loadTPosLog(); loadTeacherStats(); }
-    else showA('recordAlert','error','فشل الحذف: ' + (r&&r.error||''));
-  }).catch(function(e){ hideL(); console.error(e); });
-}
-
-// ══ شارت TopViol التفاعلي ══
-var _tvData = {beh1:0,beh2:0,beh3:0,beh4:0,stf4:0,stf5:0,cls:0};
-var _tvTotal = 0;
-var _tvCirc  = 2 * Math.PI * 43;
-var _tvCurSel = 'all';
-
-function drawTViolDonut(vList) {
-  _tvData = {beh1:0,beh2:0,beh3:0,beh4:0,stf4:0,stf5:0,cls:0};
-  (vList||[]).forEach(function(v) {
-    var d = parseInt(v.degree)||1;
-    if (v.category==='سلوكية'||v.category==='behavioral') {
-      if(d===1) _tvData.beh1++; else if(d===2) _tvData.beh2++;
-      else if(d===3) _tvData.beh3++; else _tvData.beh4++;
-    } else if (v.category==='تجاه الهيئة'||v.category==='staff') {
-      if(d<=4) _tvData.stf4++; else _tvData.stf5++;
-    } else if (v.category==='صفية'||v.category==='class') {
-      _tvData.cls++;
-    }
-  });
-  var total = _tvData.beh1+_tvData.beh2+_tvData.beh3+_tvData.beh4+_tvData.stf4+_tvData.stf5+_tvData.cls;
-  _tvTotal = total;
-  var circ=_tvCirc; var qc=circ/4; var off=0;
-  var segs=[
-    {id:'tvBeh1',v:_tvData.beh1},{id:'tvBeh2',v:_tvData.beh2},
-    {id:'tvBeh3',v:_tvData.beh3},{id:'tvBeh4',v:_tvData.beh4},
-    {id:'tvStf4',v:_tvData.stf4},{id:'tvStf5',v:_tvData.stf5},
-    {id:'tvCls', v:_tvData.cls}
-  ];
-  segs.forEach(function(s){
-    var el=document.getElementById(s.id); if(!el) return;
-    var len=total>0?(s.v/total)*circ:0;
-    el.setAttribute('stroke-dasharray',len+' '+(circ-len));
-    el.setAttribute('stroke-dashoffset',qc-off);
-    el.style.opacity='1';
-    off+=len;
-  });
-  var sr=document.getElementById('tvSolidRing'); if(sr) sr.setAttribute('stroke-dasharray','0 '+(circ+10));
-  // labels
-  var la=document.getElementById('tvLblAll'),lb=document.getElementById('tvLblBeh');
-  var ls=document.getElementById('tvLblStf'),lc=document.getElementById('tvLblCls');
-  if(la) la.textContent=total;
-  if(lb) lb.textContent=_tvData.beh1+_tvData.beh2+_tvData.beh3+_tvData.beh4;
-  if(ls) ls.textContent=_tvData.stf4+_tvData.stf5;
-  if(lc) lc.textContent=_tvData.cls;
-  tViolDegSelect('all');
-}
-
-function tViolDegSelect(key) {
-  _tvCurSel = key;
-  var circ=_tvCirc;
-  var totBeh=_tvData.beh1+_tvData.beh2+_tvData.beh3+_tvData.beh4;
-  var totStf=_tvData.stf4+_tvData.stf5;
-  var map={
-    all:{v:_tvTotal,c:'#E24B4A',lbl:'مخالفة'},
-    beh:{v:totBeh,c:'#E24B4A',lbl:'سلوكية'},
-    stf:{v:totStf,c:'#7C3AED',lbl:'هيئة'},
-    cls:{v:_tvData.cls,c:'#0DA9A6',lbl:'صفية'}
-  };
-  var sel=map[key]||map['all'];
-  var lbl=document.getElementById('tDonutTopViolLbl'),sub=document.getElementById('tDonutTopViolSub');
-  if(lbl){lbl.textContent=sel.v;lbl.style.color=sel.c;lbl.style.transform='scale(1.2)';setTimeout(function(){lbl.style.transform='';},250);}
-  if(sub){sub.textContent=sel.lbl;sub.style.color=sel.c;}
-  if(key==='all'){
-    var qc=circ/4; var off=0;
-    [{id:'tvBeh1',v:_tvData.beh1},{id:'tvBeh2',v:_tvData.beh2},{id:'tvBeh3',v:_tvData.beh3},{id:'tvBeh4',v:_tvData.beh4},
-     {id:'tvStf4',v:_tvData.stf4},{id:'tvStf5',v:_tvData.stf5},{id:'tvCls',v:_tvData.cls}].forEach(function(s){
-      var el=document.getElementById(s.id); if(!el)return;
-      var len=_tvTotal>0?(s.v/_tvTotal)*circ:0;
-      el.setAttribute('stroke-dasharray',len+' '+(circ-len));
-      el.setAttribute('stroke-dashoffset',qc-off);
-      el.style.opacity='1'; off+=len;
-    });
-    var sr=document.getElementById('tvSolidRing'); if(sr) sr.setAttribute('stroke-dasharray','0 '+(circ+10));
-  } else {
-    ['tvBeh1','tvBeh2','tvBeh3','tvBeh4','tvStf4','tvStf5','tvCls'].forEach(function(id){
-      var el=document.getElementById(id); if(el) el.style.opacity='0';
-    });
-    var sr=document.getElementById('tvSolidRing');
-    if(sr){sr.setAttribute('stroke',sel.c);var len=_tvTotal>0?(sel.v/_tvTotal)*circ:0;sr.setAttribute('stroke-dasharray',len+' '+circ);sr.setAttribute('stroke-dashoffset',circ/4);}
-  }
-  ['all','beh','stf','cls'].forEach(function(k){
-    var row=document.getElementById('tvLeg'+k.charAt(0).toUpperCase()+k.slice(1));
-    if(row) row.style.background=(k===key)?'var(--em-ghost,rgba(0,0,0,0.04))':'';
-  });
-}
-
 function refreshTeacherNotifBadge() {
   if (!T) return;
   GAS.getMyReferredViolations(T.name||'').then(function(data){
@@ -3597,17 +3248,7 @@ function refreshTeacherNotifBadge() {
         <select id="myLogFilterVtype" onchange="loadMyLog()" style="font-family:inherit;padding:5px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px;"><option value="">كل المخالفات</option></select>
         <button class="btn btn-outline btn-sm" onclick="clearMyLogFilters()">مسح</button>
         <span class="chip" id="myLogCount">0</span>
-      </div><div class="table-wrapper">
-    <table>
-      <thead><tr>
-        <th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th>
-        <th>المخالفة</th><th>تاريخ الإحالة</th><th>قرار الإدارة</th><th>حالة المعالجة</th>
-      </tr></thead>
-      <tbody id="refLogBody"><tr><td colspan="8" class="empty-state">لا توجد إحالات</td></tr></tbody>
-    </table>
-  </div>
-</div>
-</div><!-- page-referred-log -->
+      </div></div></div>
 
 </div><!-- content -->
 </div><!-- sidebar-content -->
@@ -3615,506 +3256,6 @@ function refreshTeacherNotifBadge() {
 
 <div class="app-footer" id="tAppFooter" dir="ltr"><span class="ft-label">&copy; 2026 - </span><a href="#" class="ft-link" id="tFooterAuthor">M E H</a><span class="ft-label"> - جميع الحقوق محفوظة لـ</span></div>
 </div>
-
-
-
-
-
-<div id="sidebarOverlay" onclick="closeSidebar()"></div>
-<button id="sidebarToggleBtn" onclick="toggleSidebar()">
-  <span class="material-icons-round" style="font-size:18px;">menu</span>
-  <span id="sbBtnLabel">القائمة</span>
-</button>
-</body>
-</html<div class="filters-bar" style="flex-wrap:wrap;gap:6px;">
-        <input type="date" id="myLogDate" onchange="loadMyLog()" style="padding:5px 8px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:12px;">
-        <select id="myLogFilterClass" onchange="loadMyLog();populateMyLogStudents()" style="font-family:inherit;padding:5px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px;"><option value="">كل الفصول</option></select>
-        <select id="myLogFilterStudent" onchange="loadMyLog()" style="font-family:inherit;padding:5px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px;"><option value="">كل الطلاب</option></select>
-        <select id="myLogFilterVtype" onchange="loadMyLog()" style="font-family:inherit;padding:5px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px;"><option value="">كل المخالفات</option></select>
-        <button class="btn btn-outline btn-sm" onclick="clearMyLogFilters()">مسح</button>
-        <span class="chip" id="myLogCount">0</span>
-      </div>
-<div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
-
-<div class="login-pg" id="loginScreen" style="opacity:0;transition:opacity .35s ease;">
-  <div class="l-blob1"></div>
-  <div class="l-blob2"></div>
-  <div class="lp-center-wrap">
-    <div class="lp-icon-box">
-      <span class="material-icons-round" id="loginIconEl">school</span>
-    </div>
-    <h1 class="lp-title" id="loginTitleEl">بوابة المعلم</h1>
-    <p class="lp-sub" id="loginSubEl">أدخل رمز الدخول الخاص بك</p>
-    <div class="lp-card">
-      <label class="lfc-lbl">رمز الدخول</label>
-      <div class="lfc-field">
-        <span class="material-icons-round lfc-ico">lock</span>
-        <input type="password" class="lfc-inp" id="loginCode" placeholder="••••••" maxlength="20" onkeypress="if(event.key==='Enter')doLogin()">
-      </div>
-      <button class="lfc-btn" onclick="doLogin()">
-        <span class="material-icons-round" style="font-size:17px;">login</span> دخول
-      </button>
-      <div class="lfc-err" id="loginError">رمز غير صحيح</div>
-    </div>
-  </div>
-</div>
-
-<div id="mainApp" style="display:none;">
-<div class="app-header" id="tAppHeader">
-  <div class="header-top-bar-t">
-    <!-- اليسار: أزرار -->
-    <div style="display:flex;gap:6px;align-items:center;flex-shrink:0;">
-      <button onclick="doLogout()" style="color:rgba(255,255,255,.8);font-size:11px;display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.12);padding:6px 10px;border-radius:7px;border:1px solid rgba(255,255,255,.12);font-family:inherit;cursor:pointer;">
-        <span class="material-icons-round" style="font-size:14px;">logout</span> خروج
-      </button>
-      <button class="bell-btn" onclick="showPage('alerts',document.querySelector('[data-page=alerts]'))" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.15);color:#fff;width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;">
-        <span class="material-icons-round" style="font-size:18px;">notifications</span>
-        <span class="bell-badge" id="bellBadge" style="display:none;">0</span>
-      </button>
-    </div>
-    <!-- الوسط: شعار + نص -->
-    <div style="flex:1;display:flex;align-items:center;justify-content:center;gap:12px;">
-      <img src="https://e.top4top.io/p_3719brsoy1.png" alt="وزارة التعليم" style="width:42px;height:42px;object-fit:contain;filter:brightness(0) invert(1);flex-shrink:0;">
-      <div style="width:1.5px;height:34px;background:rgba(255,255,255,.35);flex-shrink:0;"></div>
-      <div style="text-align:right;">
-        <div id="tHeaderTitleEl" style="color:#fff;font-size:14px;font-weight:900;">الإدارة العامة للتعليم بمنطقة نجران</div>
-        <div id="tHeaderSubEl" style="color:rgba(255,255,255,.65);font-size:11px;">مدرسة محمد بن القاسم الابتدائية</div>
-      </div>
-    </div>
-    <!-- اليمين: اسم المعلم + موادّه -->
-    <div style="width:auto;flex-shrink:0;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);padding:6px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.15);">
-      <span class="material-icons-round" style="font-size:18px;color:rgba(255,255,255,.7);">account_circle</span>
-      <div style="text-align:right;">
-        <div id="teacherWelcome" style="font-size:12px;font-weight:800;color:#fff;"></div>
-        <div id="teacherInfo" style="font-size:10px;color:rgba(255,255,255,.65);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div>
-      </div>
-    </div>
-  </div>
-  <div class="header-title-bar-t">
-    <span id="tPageTitle">نظام متابعة السلوك الانضباط المدرسي — بوابة المعلم</span>
-  </div>
-</div>
-<!-- ══ SIDEBAR + CONTENT ══ -->
-<div class="app-layout">
-
-<aside class="sidebar" id="tSidebar" dir="rtl">
-
-  <!-- الرئيسية -->
-  <button class="sidebar-home-btn" onclick="showPage('home',this)" data-page="home">
-    <span class="material-icons-round" style="font-size:16px;">home</span>
-    الرئيسية
-  </button>
-
-  <!-- ── الرصد ── -->
-  <div class="sb-section-lbl">الرصد</div>
-  <button class="sidebar-sub-btn" data-page="record" onclick="showPage('record',this)">
-    <span class="material-icons-round">edit_note</span> رصد المخالفات والسلوك
-  </button>
-
-  <!-- ── المتابعة ── -->
-  <div class="sb-section-lbl">المتابعة</div>
-  <button class="sidebar-sub-btn" data-page="mylog" onclick="showPage('mylog',this)">
-    <span class="material-icons-round">list_alt</span> سجلاتي
-  </button>
-  <button class="sidebar-sub-btn" data-page="mymessages" onclick="showPage('mymessages',this)">
-    <span class="material-icons-round">chat</span> رسائلي
-  </button>
-  <button class="sidebar-sub-btn" data-page="alerts" onclick="showPage('alerts',this)">
-    <span class="material-icons-round">notifications_active</span> التنبيهات
-    <span id="bellBadge2" style="display:none;background:#DC2626;color:#fff;font-size:9px;padding:1px 6px;border-radius:8px;margin-right:auto;font-weight:800;">0</span>
-  </button>
-  <button class="sidebar-sub-btn" data-page="referred-log" onclick="showPage('referred-log',this)">
-    <span class="material-icons-round" style="color:#f87171;">escalator_warning</span> سجل الإحالات
-    <span id="tRefBadge" style="display:none;background:#DC2626;color:#fff;font-size:9px;padding:1px 6px;border-radius:8px;margin-right:auto;font-weight:800;">0</span>
-  </button>
-
-</aside>
-
-<div class="sidebar-content">
-<div class="content">
-<div class="page-section active" id="page-home">
-<div class="page-toolbar">
-    <span class="pt-sep"></span>
-    <button class="pt-print" onclick="printSection('home')"><span class="material-icons-round">print</span> طباعة</button>
-    <button class="pt-pdf" onclick="exportPDF('home')"><span class="material-icons-round">picture_as_pdf</span> PDF</button>
-  </div>
-<div class="t-home-wrap">
-
-  <!-- ══ الإحصاءات ══ -->
-  <div class="home-collapse-wrap hc-open" id="tStatsWrap">
-    <div class="home-collapse-hd" onclick="this.parentElement.classList.toggle('hc-open')">
-      <span class="material-icons-round" style="font-size:16px;color:var(--em);">analytics</span>
-      <span style="font-size:13px;font-weight:800;color:var(--em);flex:1;">الإحصاءات</span>
-      <span class="material-icons-round hc-arrow">expand_more</span>
-    </div>
-    <div class="home-collapse-body">
-      <div class="t-stats-grid">
-        <div class="t-stat-card" style="--tsc-accent:#B03A2E;" onclick="toggleTStatDetail('tDetailViol')">
-          <span class="material-icons-round tsc-ico">warning_amber</span>
-          <div class="tsc-val" id="tStatViol">0</div>
-          <div class="tsc-lbl">مخالفات سلوكية</div>
-          <div class="t-stat-detail" id="tDetailViol"></div>
-        </div>
-        <div class="t-stat-card" style="--tsc-accent:#9A5200;" onclick="toggleTStatDetail('tDetailCls')">
-          <span class="material-icons-round tsc-ico">menu_book</span>
-          <div class="tsc-val" id="tStatClsViol">0</div>
-          <div class="tsc-lbl">مخالفات صفية</div>
-          <div class="t-stat-detail" id="tDetailCls"></div>
-        </div>
-        <div class="t-stat-card" style="--tsc-accent:#1A7A4A;" onclick="toggleTStatDetail('tDetailPos')">
-          <span class="material-icons-round tsc-ico">thumb_up</span>
-          <div class="tsc-val" id="tStatPos">0</div>
-          <div class="tsc-lbl">سلوكيات إيجابية</div>
-          <div class="t-stat-detail" id="tDetailPos"></div>
-        </div>
-        <div class="t-stat-card" style="--tsc-accent:#0A5C44;" onclick="toggleTStatDetail('tDetailDist')">
-          <span class="material-icons-round tsc-ico">emoji_events</span>
-          <div class="tsc-val" id="tStatDistinct">0</div>
-          <div class="tsc-lbl">سلوكيات متميزة</div>
-          <div class="t-stat-detail" id="tDetailDist"></div>
-        </div>
-      </div>
-    </div>
-  </div><!-- end tStatsWrap -->
-
-  <!-- ══ الملخص — قابل للطي ══ -->
-  <div class="home-collapse-wrap hc-open" id="tSummaryWrap">
-    <div class="home-collapse-hd" onclick="this.parentElement.classList.toggle('hc-open')">
-      <span class="material-icons-round" style="font-size:16px;color:var(--em);">summarize</span>
-      <span style="font-size:13px;font-weight:800;color:var(--em);flex:1;">الملخص</span>
-      <span class="material-icons-round hc-arrow">expand_more</span>
-    </div>
-    <div class="home-collapse-body">
-      <div class="summary-charts-grid" style="grid-template-columns:repeat(3,1fr);">
-
-        <!-- الطلاب المحالون -->
-        <div class="summary-chart-card" style="--sc:#dc3545;">
-          <div class="scc-title"><span class="material-icons-round">escalator_warning</span> الطلاب المحالون</div>
-          <div class="scc-chart-wrap">
-            <div class="css-donut-wrap">
-              <svg viewBox="0 0 110 110" width="110" height="110">
-                <circle class="css-donut-track" cx="55" cy="55" r="43"/>
-                <circle class="css-donut-fill" id="tDonutFill1Referred" cx="55" cy="55" r="43" stroke="#dc3545" stroke-dasharray="0 270"/>
-                <circle class="css-donut-fill2" id="tDonutFill2Referred" cx="55" cy="55" r="43" stroke="#22c55e" stroke-dasharray="0 270"/>
-              </svg>
-              <div class="css-donut-label" onclick="tDonutToggle('Referred')" style="cursor:pointer;">
-                <span class="css-donut-num" id="tDonutReferredLbl">0</span>
-                <span class="css-donut-sub" id="tDonutReferredSub">محال</span>
-              </div>
-            </div>
-          </div>
-          <div class="scc-legend">
-            <span class="scc-dot" style="background:#dc3545;cursor:pointer;" onclick="tDonutShow('Referred',0)"></span><span>محالون</span>
-            <span class="scc-dot" style="background:#22c55e;margin-right:8px;cursor:pointer;" onclick="tDonutShow('Referred',1)"></span><span>تحسن</span>
-          </div>
-        </div>
-
-        <!-- أكثر المخالفات تسجيلاً -->
-        <div class="summary-chart-card" style="--sc:#f97316;">
-          <div class="scc-title"><span class="material-icons-round">bar_chart</span> أكثر المخالفات تسجيلاً</div>
-          <div class="scc-chart-wrap">
-            <div class="css-donut-wrap">
-              <svg viewBox="0 0 110 110" width="110" height="110">
-                <circle class="css-donut-track" cx="55" cy="55" r="43"/>
-                <circle class="css-donut-fill" id="tDonutFill1TopViol" cx="55" cy="55" r="43" stroke="#dc3545" stroke-dasharray="0 270"/>
-                <circle class="css-donut-fill2" id="tDonutFill2TopViol" cx="55" cy="55" r="43" stroke="#f97316" stroke-dasharray="0 270"/>
-              </svg>
-              <div class="css-donut-label" onclick="tDonutToggle('TopViol')" style="cursor:pointer;">
-                <span class="css-donut-num" id="tDonutTopViolLbl">0</span>
-                <span class="css-donut-sub" id="tDonutTopViolSub">سلوكية</span>
-              </div>
-            </div>
-          </div>
-          <div class="scc-legend">
-            <span class="scc-dot" style="background:#dc3545;cursor:pointer;" onclick="tDonutShow('TopViol',0)"></span><span>سلوكية</span>
-            <span class="scc-dot" style="background:#f97316;margin-right:8px;cursor:pointer;" onclick="tDonutShow('TopViol',1)"></span><span>صفية</span>
-          </div>
-        </div>
-
-        <!-- أكثر السلوكيات المتميزة -->
-        <div class="summary-chart-card" style="--sc:#16a34a;">
-          <div class="scc-title"><span class="material-icons-round">emoji_events</span> السلوكيات المتميزة</div>
-          <div class="scc-chart-wrap">
-            <div class="css-donut-wrap">
-              <svg viewBox="0 0 110 110" width="110" height="110">
-                <circle class="css-donut-track" cx="55" cy="55" r="43"/>
-                <circle class="css-donut-fill" id="tDonutFill1TopPos" cx="55" cy="55" r="43" stroke="#16a34a" stroke-dasharray="0 270"/>
-                <circle class="css-donut-fill2" id="tDonutFill2TopPos" cx="55" cy="55" r="43" stroke="#22d3ee" stroke-dasharray="0 270"/>
-              </svg>
-              <div class="css-donut-label" onclick="tDonutToggle('TopPos')" style="cursor:pointer;">
-                <span class="css-donut-num" id="tDonutTopPosLbl">0</span>
-                <span class="css-donut-sub" id="tDonutTopPosSub">إيجابي</span>
-              </div>
-            </div>
-          </div>
-          <div class="scc-legend">
-            <span class="scc-dot" style="background:#16a34a;cursor:pointer;" onclick="tDonutShow('TopPos',0)"></span><span>إيجابي</span>
-            <span class="scc-dot" style="background:#22d3ee;margin-right:8px;cursor:pointer;" onclick="tDonutShow('TopPos',1)"></span><span>متميز</span>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-</div>
-</div>
-
-<div class="page-section" id="page-record">
-  <div class="page-toolbar">
-    <button class="pt-home" onclick="showPage('home',null)"><span class="material-icons-round">home</span> الرئيسية</button>
-    <span class="pt-sep"></span>
-    <button class="pt-print" onclick="printSection('record')"><span class="material-icons-round">print</span> طباعة</button>
-    <button class="pt-pdf" onclick="exportPDF('record')"><span class="material-icons-round">picture_as_pdf</span> PDF</button>
-  </div>
-
-  <!-- القسم 1: اختيار الفصل والطلاب -->
-  <div class="card" style="padding:16px;margin-bottom:14px;">
-    <div style="font-size:13px;font-weight:700;color:#15445A;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
-      <span class="material-icons-round" style="font-size:18px;color:#C1B48A;">group</span>
-      اختيار الفصل والطلاب
-    </div>
-
-    <!-- اختيار المرحلة لمدارس كلاهما -->
-    <div id="tStageSelectArea" style="display:none;margin-bottom:10px;">
-      <label style="font-size:11px;font-weight:700;color:#555;display:block;margin-bottom:5px;">المرحلة الدراسية</label>
-      <div style="display:flex;gap:8px;">
-        <button class="fv-degree-btn fv-degree-active" id="tStageBtn_elementary" onclick="tSelectStage('elementary',this)" style="flex:1;">ابتدائي</button>
-        <button class="fv-degree-btn" id="tStageBtn_secondary" onclick="tSelectStage('secondary',this)" style="flex:1;">متوسط / ثانوي</button>
-      </div>
-    </div>
-
-    <div class="form-group" style="margin-bottom:10px;">
-      <label style="font-size:11px;font-weight:700;color:#555;display:block;margin-bottom:5px;">الفصل</label>
-      <select id="recordClass" onchange="loadStudents()"><option value="">-- اختر الفصل --</option></select>
-    </div>
-
-    <div id="studentsListContainer" style="display:none;">
-    <div id="tStudentsListContainer">
-      <label style="font-size:11px;font-weight:700;color:#555;margin-bottom:5px;display:block;">اختر الطلاب <span class="chip" id="selectedCount">0</span></label>
-      <div class="select-all-bar"><label style="cursor:pointer;display:flex;align-items:center;gap:6px;"><input type="checkbox" id="selectAllStudents" onchange="toggleSelectAll()" style="width:16px;height:16px;accent-color:#07A869;"> تحديد الكل</label></div>
-      <div class="students-checkbox-list" id="studentsCheckboxList"></div>
-    </div>
-    </div>
-  </div>
-
-  <!-- القسم 2: المخالفات -->
-  <div id="fixedViolationsArea" style="display:none;">
-
-    <!-- هيدر -->
-    <div style="background:#15445A;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-radius:12px 12px 0 0;">
-      <span style="font-size:13px;font-weight:700;color:#fff;">رصد المخالفة</span>
-      <span id="fvStudentBadge" style="font-size:11px;background:rgba(255,255,255,0.15);color:#C1B48A;padding:3px 12px;border-radius:20px;font-weight:600;"></span>
-    </div>
-
-    <!-- تبويبات الفئات -->
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:12px;background:#f5f9fc;border:0.5px solid #C2C1C1;border-top:none;margin-bottom:10px;">
-
-      <button id="fvSideBtn_absence" onclick="switchFVTab('absence',this)"
-        style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 6px;border:2px solid #07A869;border-radius:16px;background:#e8f5ee;cursor:pointer;font-family:inherit;transition:all .18s;">
-        <span class="material-icons-round" style="font-size:28px;color:#07A869;">event_busy</span>
-        <span style="font-size:10px;font-weight:700;color:#055c38;text-align:center;">غياب</span>
-      </button>
-
-      <button id="fvSideBtn_behavioral" onclick="switchFVTab('behavioral',this)"
-        style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 6px;border:2px solid #C2C1C1;border-radius:16px;background:#fff;cursor:pointer;font-family:inherit;transition:all .18s;">
-        <span class="material-icons-round" style="font-size:28px;color:#C1B48A;">warning_amber</span>
-        <span style="font-size:10px;font-weight:700;color:#6b5a2e;text-align:center;">سلوكية</span>
-      </button>
-
-      <button id="fvSideBtn_staff" onclick="switchFVTab('staff',this)"
-        style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 6px;border:2px solid #C2C1C1;border-radius:16px;background:#fff;cursor:pointer;font-family:inherit;transition:all .18s;">
-        <span class="material-icons-round" style="font-size:28px;color:#3D7EB9;">supervisor_account</span>
-        <span style="font-size:10px;font-weight:700;color:#0C3B6E;text-align:center;">تجاه الهيئة</span>
-      </button>
-
-      <button id="fvSideBtn_class" onclick="switchFVTab('class',this)"
-        style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 6px;border:2px solid #C2C1C1;border-radius:16px;background:#fff;cursor:pointer;font-family:inherit;transition:all .18s;">
-        <span class="material-icons-round" style="font-size:28px;color:#0DA9A6;">menu_book</span>
-        <span style="font-size:10px;font-weight:700;color:#085856;text-align:center;">صفية وتعليمية</span>
-      </button>
-
-      <button id="fvSideBtn_positive" onclick="switchFVTab('positive',this)"
-        style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 6px;border:2px solid #C2C1C1;border-radius:16px;background:#fff;cursor:pointer;font-family:inherit;transition:all .18s;">
-        <span class="material-icons-round" style="font-size:28px;color:#07A869;">star</span>
-        <span style="font-size:10px;font-weight:700;color:#055c38;text-align:center;">سلوكيات إيجابية</span>
-      </button>
-
-    </div>
-
-    <!-- درجات سلوكية -->
-    <div id="fvDegreeBar_behavioral" style="display:none;flex-wrap:wrap;padding:0 0 10px;gap:6px;">
-      <button class="fv-degree-btn fv-degree-active" onclick="switchDegree('1',this)" id="degBtn_1">الدرجة 1</button>
-      <button class="fv-degree-btn" onclick="switchDegree('2',this)" id="degBtn_2">الدرجة 2</button>
-      <button class="fv-degree-btn" onclick="switchDegree('3',this)" id="degBtn_3">الدرجة 3</button>
-      <button class="fv-degree-btn" onclick="switchDegree('4',this)" id="degBtn_4">الدرجة 4</button>
-      <button class="fv-degree-btn" id="degBtn_5" style="display:none;" onclick="switchDegree('5',this)">الدرجة 5</button>
-    </div>
-
-    <!-- درجات هيئة -->
-    <div id="fvDegreeBar_staff" style="display:none;flex-wrap:wrap;padding:0 0 10px;gap:6px;">
-      <button class="fv-degree-btn fv-degree-active" onclick="switchStaffDegree('4',this)">الدرجة 4</button>
-      <button class="fv-degree-btn" onclick="switchStaffDegree('5',this)">الدرجة 5</button>
-    </div>
-
-    <!-- شبكات المخالفات -->
-    <div class="fv-tab-content active" id="fvContent_absence"><div id="fvGrid_absence"></div></div>
-    <div class="fv-tab-content" id="fvContent_behavioral">
-      <div id="fvGrid_behavioral_1"></div>
-      <div id="fvGrid_behavioral_2" style="display:none;"></div>
-      <div id="fvGrid_behavioral_3" style="display:none;"></div>
-      <div id="fvGrid_behavioral_4" style="display:none;"></div>
-      <div id="fvGrid_behavioral_5" style="display:none;"></div>
-    </div>
-    <div class="fv-tab-content" id="fvContent_staff">
-      <div id="fvGrid_staff_4"></div>
-      <div id="fvGrid_staff_5" style="display:none;"></div>
-    </div>
-    <div class="fv-tab-content" id="fvContent_class"><div id="fvGrid_class"></div></div>
-    <div class="fv-tab-content" id="fvContent_positive"><div id="fvGrid_positive"></div></div>
-
-    <!-- القسم 3: المختارة والتسجيل -->
-    <div class="card" style="padding:16px;margin-top:14px;">
-
-      <div id="selectedViolationsArea" style="display:none;margin-bottom:14px;">
-        <div style="font-size:11px;font-weight:700;color:#555;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
-          المخالفات المختارة <span class="chip" id="selectedViolCount" style="background:#07A869;color:#fff;">0</span>
-          <button onclick="clearAllSelectedViol()" style="margin-right:auto;background:none;border:1px solid #C2C1C1;border-radius:6px;padding:2px 8px;font-family:inherit;font-size:10px;cursor:pointer;color:#666;">مسح الكل</button>
-        </div>
-        <div id="selectedViolList" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
-      </div>
-
-      <div id="fvPreviewArea" style="display:none;margin-bottom:12px;">
-        <label style="font-size:11px;font-weight:700;color:#555;display:block;margin-bottom:5px;">معاينة النص</label>
-        <textarea id="fvPreviewText" rows="2" style="width:100%;padding:10px;border:1.5px solid #07A869;border-radius:10px;font-family:inherit;font-size:13px;resize:vertical;background:#e8f5ee;box-sizing:border-box;"></textarea>
-      </div>
-
-      <textarea id="fvActionText" style="display:none;"></textarea>
-
-      <!-- ملاحظات المعلم -->
-      <div style="margin-bottom:10px;">
-        <label style="font-size:11px;font-weight:700;color:#555;display:block;margin-bottom:5px;">
-          <span class="material-icons-round" style="font-size:13px;vertical-align:middle;color:#3D7EB9;">notes</span>
-          ملاحظات المعلم
-        </label>
-        <textarea id="teacherNotes" rows="2" placeholder="اكتب ملاحظاتك هنا..." style="width:100%;padding:10px;border:1px solid #C2C1C1;border-radius:10px;font-family:inherit;font-size:13px;resize:none;box-sizing:border-box;"></textarea>
-      </div>
-
-      <!-- اسم المادة -->
-      <div style="margin-bottom:12px;">
-        <label style="font-size:11px;font-weight:700;color:#555;display:block;margin-bottom:5px;">
-          <span class="material-icons-round" style="font-size:13px;vertical-align:middle;color:#3D7EB9;">menu_book</span>
-          المادة <span style="font-size:10px;color:#999;">(اختياري)</span>
-        </label>
-        <input type="text" id="teacherSubject" placeholder="مثل: رياضيات، لغة عربية..." style="width:100%;padding:8px 12px;border:1px solid #C2C1C1;border-radius:10px;font-family:inherit;font-size:13px;box-sizing:border-box;">
-      </div>
-
-      <!-- إحالة تلقائية -->
-      <div id="autoReferralAlert" style="display:none;margin-bottom:10px;padding:10px 14px;background:#fef2f2;border:1.5px solid #E24B4A;border-radius:10px;">
-        <div style="font-size:12px;font-weight:700;color:#E24B4A;display:flex;align-items:center;gap:6px;">
-          <span class="material-icons-round" style="font-size:16px;">escalator_warning</span>
-          <span id="autoReferralText"></span>
-        </div>
-        <div style="font-size:11px;color:#555;margin-top:4px;">سيتم إحالة الطالب تلقائياً للإدارة عند التسجيل</div>
-      </div>
-
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button onclick="submitFixedViolation()" style="flex:1;background:#15445A;color:#fff;border:none;padding:12px;border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">
-          <span class="material-icons-round" style="font-size:15px;vertical-align:middle;">save</span> تسجيل المخالفة
-        </button>
-      </div>
-    </div>
-
-    <div id="recordAlert"></div>
-  </div>
-
-</div>
-
-<div class="page-section" id="page-mylog">
-<div class="page-toolbar">
-    <button class="pt-home" onclick="showPage('home',null)"><span class="material-icons-round">home</span> الرئيسية</button>
-    <span class="pt-sep"></span>
-    <span class="pt-sort"><span class="material-icons-round">sort</span> فرز: <select onchange="sortTable('myLogBody',this.value)"><option value="">الافتراضي</option><option value="1-desc">الأحدث</option><option value="1-asc">الأقدم</option><option value="2-asc">الطالب</option></select></span>
-    <button class="pt-print" onclick="printSection('mylog')"><span class="material-icons-round">print</span> طباعة</button>
-    <button class="pt-pdf" onclick="exportPDF('mylog')"><span class="material-icons-round">picture_as_pdf</span> PDF</button>
-  </div>
-<div class="card"><div class="card-title"><span class="material-icons-round">history</span> سجلاتي</div><div class="filters-bar" style="flex-wrap:wrap;gap:6px;">
-        <input type="date" id="myLogDate" onchange="loadMyLog()" style="padding:5px 8px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:12px;">
-        <select id="myLogFilterClass" onchange="loadMyLog()" style="font-family:inherit;padding:5px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px;"><option value="">كل الفصول</option></select>
-        <select id="myLogFilterStudent" onchange="loadMyLog()" style="font-family:inherit;padding:5px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px;"><option value="">كل الطلاب</option></select>
-        <select id="myLogFilterVtype" onchange="loadMyLog()" style="font-family:inherit;padding:5px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px;"><option value="">كل المخالفات</option></select>
-        <button class="btn btn-outline btn-sm" onclick="clearMyLogFilters()">مسح</button>
-        <span class="chip" id="myLogCount">0</span>
-      </div><div class="table-wrapper"><table><thead><tr><th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>المخالفة</th><th>الإجراء المتخذ</th><th>التكرار</th><th title="تحكم بظهور المخالفة في ملف الطالب لدى ولي الأمر">ولي الأمر 👁</th></tr></thead><tbody id="myLogBody"><tr><td colspan="7" class="empty-state">لا توجد</td></tr></tbody></table></div></div></div>
-
-<div class="page-section" id="page-mymessages">
-<div class="page-toolbar">
-    <button class="pt-home" onclick="showPage('home',null)"><span class="material-icons-round">home</span> الرئيسية</button>
-    <span class="pt-sep"></span>
-    <span class="pt-sort"><span class="material-icons-round">sort</span> فرز: <select onchange="sortTable('myMsgBody',this.value)"><option value="">الافتراضي</option><option value="1-desc">الأحدث</option><option value="1-asc">الأقدم</option><option value="2-asc">الطالب</option></select></span>
-    <button class="pt-print" onclick="printSection('mymessages')"><span class="material-icons-round">print</span> طباعة</button>
-    <button class="pt-pdf" onclick="exportPDF('mymessages')"><span class="material-icons-round">picture_as_pdf</span> PDF</button>
-  </div>
-<div class="card"><div class="card-title"><span class="material-icons-round">chat</span> رسائلي</div><div class="filters-bar"><input type="date" id="myMsgDate" onchange="loadMyMsgs()"><button class="btn btn-outline btn-sm" onclick="document.getElementById('myMsgDate').value='';loadMyMsgs();">الكل</button><span class="chip" id="myMsgCount">0</span></div><div class="table-wrapper"><table><thead><tr><th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>المخالفة</th><th>الحالة</th></tr></thead><tbody id="myMsgBody"><tr><td colspan="6" class="empty-state">لا توجد</td></tr></tbody></table></div></div></div>
-
-<div class="page-section" id="page-alerts">
-<div class="page-toolbar">
-    <button class="pt-home" onclick="showPage('home',null)"><span class="material-icons-round">home</span> الرئيسية</button>
-    <span class="pt-sep"></span>
-    <span class="pt-sort"><span class="material-icons-round">sort</span> فرز: <select onchange="sortAlerts(this.value)"><option value="">الأكثر تكراراً</option><option value="name-asc">الاسم أ-ي</option></select></span>
-    <button class="pt-print" onclick="printSection('alerts')"><span class="material-icons-round">print</span> طباعة</button>
-    <button class="pt-pdf" onclick="exportPDF('alerts')"><span class="material-icons-round">picture_as_pdf</span> PDF</button>
-  </div>
-<div class="card"><div class="card-title"><span class="material-icons-round">notification_important</span> تنبيهات (3+ مرات)</div><div id="alertsBox"><div class="empty-state">جاري التحميل...</div></div></div></div>
-
-<!-- ══ سجل إحالاتي ══ -->
-<div class="page-section" id="page-referred-log">
-<div class="page-toolbar">
-    <button class="pt-home" onclick="showPage('home',null)"><span class="material-icons-round">home</span> الرئيسية</button>
-    <span class="pt-sep"></span>
-    <button class="pt-print" onclick="printSection('referred-log')"><span class="material-icons-round">print</span> طباعة</button>
-    <button class="pt-pdf" onclick="exportPDF('referred-log')"><span class="material-icons-round">picture_as_pdf</span> PDF</button>
-</div>
-<div class="card">
-  <div class="card-title" style="color:#f87171;">
-    <span class="material-icons-round" style="color:#f87171;">escalator_warning</span> سجل إحالاتي للإدارة
-  </div>
-  <p style="font-size:12px;color:var(--text-3);margin-bottom:14px;">المخالفات التي أُحيلت للإدارة من خلالك — يظهر قرار الإدارة والمعالجة هنا</p>
-  <div class="filters-bar" style="margin-bottom:12px;flex-wrap:wrap;gap:6px;">
-    <input type="date" id="refLogDate" onchange="loadReferredLog()" style="padding:5px 8px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:12px;">
-    <select id="refLogFilterClass" onchange="loadReferredLog()" style="font-family:inherit;padding:5px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px;"><option value="">كل الفصول</option></select>
-    <select id="refLogFilterStudent" onchange="loadReferredLog()" style="font-family:inherit;padding:5px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px;"><option value="">كل الطلاب</option></select>
-    <select id="refLogFilterVtype" onchange="loadReferredLog()" style="font-family:inherit;padding:5px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px;"><option value="">كل المخالفات</option></select>
-    <select id="refLogFilterStatus" onchange="loadReferredLog()" style="font-family:inherit;padding:5px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px;">
-      <option value="">كل الحالات</option>
-      <option value="pending">بانتظار المعالجة</option>
-      <option value="done">تمت المعالجة</option>
-    </select>
-    <button class="btn btn-outline btn-sm" onclick="clearRefLogFilters()">مسح</button>
-    <span class="chip" id="refLogCount">0</span>
-  </div>
-  <div class="table-wrapper">
-    <table>
-      <thead><tr>
-        <th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th>
-        <th>المخالفة</th><th>تاريخ الإحالة</th><th>قرار الإدارة</th><th>حالة المعالجة</th>
-      </tr></thead>
-      <tbody id="refLogBody"><tr><td colspan="8" class="empty-state">لا توجد إحالات</td></tr></tbody>
-    </table>
-  </div>
-</div>
-</div><!-- page-referred-log -->
-
-</div><!-- content -->
-</div><!-- sidebar-content -->
-</div><!-- app-layout -->
-
-<div class="app-footer" id="tAppFooter" dir="ltr"><span class="ft-label">&copy; 2026 - </span><a href="#" class="ft-link" id="tFooterAuthor">M E H</a><span class="ft-label"> - جميع الحقوق محفوظة لـ</span></div>
-</div>
-
-
-
-
 
 <div id="sidebarOverlay" onclick="closeSidebar()"></div>
 <button id="sidebarToggleBtn" onclick="toggleSidebar()">
