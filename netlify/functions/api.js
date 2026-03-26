@@ -779,8 +779,12 @@ async function getPositiveBehaviorsLog(filterClass, filterDate, sc) {
   if (!Array.isArray(rows)) return [];
   const activeRows = rows.filter(r => !r.deleted_by_admin);
   return activeRows.map(r => ({
-    date: fmtDate(r.recorded_at), studentName: r.student_name, className: r.class_name,
-    behaviorType: r.behavior_type, notes: r.notes || '', recorder: r.recorder || '', subType: r.sub_type || 'إيجابي'
+    date: fmtDate(r.recorded_at), recorded_at: r.recorded_at,
+    studentName: r.student_name, student_name: r.student_name,
+    className: r.class_name, class_name: r.class_name,
+    behaviorType: r.behavior_type, behavior_type: r.behavior_type,
+    notes: r.notes || '', recorder: r.recorder || '',
+    subType: r.sub_type || 'إيجابي', sub_type: r.sub_type || 'إيجابي'
   }));
 }
 
