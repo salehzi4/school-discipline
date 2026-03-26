@@ -131,6 +131,7 @@ async function dispatch(action, body, schoolCode) {
     case 'getViolationsLog':      return getViolationsLog(body.filterClass, body.filterDate, body.filterType, schoolCode);
     case 'getMessagesLog':        return getMessagesLog(body.filterClass, body.filterDate, schoolCode);
     case 'getPositiveBehaviorsLog':return getPositiveBehaviorsLog(body.filterClass, body.filterDate, schoolCode);
+    case 'deletePositiveBehaviorLog': return deletePositiveBehaviorLog(body.date, body.studentName, body.behaviorType, schoolCode);
 
     // ── تعديل السجلات ──
     case 'updateViolationLog':    return updateViolationLog(body.date, body.studentName, body.oldType, body.newType, body.newNotes, schoolCode);
@@ -681,6 +682,7 @@ async function recordFixedViolation(body, sc) {
         severity: deg,
         degree: deg,
         category: cat === 'behavioral' ? 'سلوكية' : cat === 'staff' ? 'تجاه الهيئة' : cat === 'class' ? 'صفية' : cat === 'positive' ? 'إيجابية' : cat,
+        sub_type: cat === 'positive' ? (viol.sub_type || 'إيجابي') : null,
         action_taken: viol.actionText || actionText || '',
         visible_to_parent: visibleToParent,
         referred_to_admin: referredToAdmin,
@@ -799,6 +801,20 @@ async function getPositiveBehaviorsLog(filterClass, filterDate, sc) {
     behaviorType: r.behavior_type, notes: r.notes || '', recorder: r.recorder || '', subType: r.sub_type || 'إيجابي'
   }));
 }
+
+async function deletePositiveBehaviorLog(date, studentName, behaviorType, sc) {
+  // نبحث بالتاريخ واسم الطالب ونوع السلوك
+  const dateStr = date ? date.split('T')[0] : '';
+  let params = `school_code=eq.${sc}&student_name=eq.${encodeURIComponent(studentName)}&behavior_type=eq.${encodeURIComponent(behaviorType)}`;
+  if (dateStr) params += `&recorded_at=gte.${dateStr}T00:00:00&recorded_at=lte.${dateStr}T23:59:59`;
+  params += `&select=id&order=recorded_at.desc&limit=1`;
+  const rows = await sb('positive_behaviors_log', 'GET', params);
+  if (!Array.isArray(rows) || !rows.length) return { success: false, error: 'لم يُعثر على السجل' };
+  const id = rows[0].id;
+  await sb('positive_behaviors_log', 'DELETE', `id=eq.${id}`, null);
+  return { success: true };
+}
+
 
 // ═══════════════════════════════════════════════════════════
 //  تعديل السجلات
