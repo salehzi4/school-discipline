@@ -3161,12 +3161,6 @@ function submitFixedViolation() {
       if(alertDiv) alertDiv.style.display='none';
       refreshSelectedDisplay();
       renderAllViolationGrids();
-      // هل كانت كلها إيجابية؟
-      var hadPositive = violationsWithActions.some(function(v){ return v.category === 'positive'; });
-      if (hadPositive && typeof loadTPosLog === 'function') {
-        showPage('positive-log', document.querySelector('[data-page="positive-log"]'));
-        loadTPosLog();
-      }
       showA('recordAlert','success','✅ تم التسجيل بنجاح');
     } else {
       showA('recordAlert','error','حدث خطأ: ' + (result && result.error ? result.error : 'غير معروف'));
