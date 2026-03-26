@@ -102,6 +102,7 @@
     getViolationsLog:      (filterClass, filterDate, filterType) => callAPI('getViolationsLog', { filterClass, filterDate, filterType }),
     getMessagesLog:        (filterClass, filterDate) => callAPI('getMessagesLog', { filterClass, filterDate }),
     getPositiveBehaviorsLog:(filterClass, filterDate)=> callAPI('getPositiveBehaviorsLog', { filterClass, filterDate }),
+    deletePositiveBehaviorLog: (date, studentName, behaviorType) => callAPI('deletePositiveBehaviorLog', { date, studentName, behaviorType }),
 
     // تعديل سجلات
     updateViolationLog:    (date, studentName, oldType, newType, newNotes) => callAPI('updateViolationLog', { date, studentName, oldType, newType, newNotes }),
