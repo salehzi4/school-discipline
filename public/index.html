@@ -3483,10 +3483,10 @@ tr:hover td{background:var(--em-ghost);}
             <th>التاريخ</th>
             <th>الطالب</th>
             <th>الفصل</th>
+            <th>اسم السلوك</th>
             <th>نوع السلوك</th>
-            <th>التصنيف</th>
-            <th>المسجّل</th>
-            <th>ملاحظات</th>
+            <th>الراصد</th>
+            <th>الإجراءات</th>
           </tr></thead>
           <tbody id="positiveLogTableBody">
             <tr><td colspan="8" class="empty-state">جاري التحميل...</td></tr>
@@ -3769,7 +3769,7 @@ function loadPositiveLogTable() {
     recs = recs || [];
     // تطبيق فلتر النوع
     if (ft !== 'الكل') {
-      recs = recs.filter(function(r){ return (r.sub_type||'إيجابي') === ft; });
+      recs = recs.filter(function(r){ return (r.subType||r.sub_type||'إيجابي') === ft; });
     }
     var cntEl = document.getElementById('posLogCountChip');
     if(cntEl) cntEl.textContent = recs.length + ' سجل';
@@ -3777,20 +3777,23 @@ function loadPositiveLogTable() {
     if (!tb) return;
     if (!recs.length) { tb.innerHTML='<tr><td colspan="8" class="empty-state">لا توجد سجلات إيجابية 🎉</td></tr>'; return; }
     tb.innerHTML = recs.map(function(r,i){
-      var isD = (r.sub_type==='متميز');
+      var isD = (r.subType==='متميز'||r.sub_type==='متميز');
       var badge = isD
         ? '<span style="padding:2px 10px;border-radius:20px;background:rgba(34,211,238,0.15);color:#0891b2;font-size:10px;font-weight:700;border:1px solid rgba(34,211,238,0.3);">🌟 متميز</span>'
         : '<span style="padding:2px 10px;border-radius:20px;background:rgba(22,163,74,0.12);color:#16a34a;font-size:10px;font-weight:700;border:1px solid rgba(22,163,74,0.25);">⭐ إيجابي</span>';
       var date = r.recorded_at ? r.recorded_at.split('T')[0] : (r.date||'—');
+      var actionHtml = r.notes && r.notes !== '—'
+        ? '<span style="font-size:11px;color:var(--text-2);">'+esc(r.notes)+'</span>'
+        : '<span style="color:var(--text-3);font-size:11px;">—</span>';
       return '<tr style="'+(isD?'background:rgba(34,211,238,0.03)':'')+'">'
         +'<td>'+(i+1)+'</td>'
         +'<td>'+date+'</td>'
         +'<td><strong>'+esc(r.student_name||r.studentName||'')+'</strong></td>'
         +'<td>'+esc(r.class_name||r.className||'')+'</td>'
-        +'<td style="font-weight:600;">'+esc(r.behavior_type||r.violationType||'')+'</td>'
+        +'<td style="font-weight:600;color:'+(isD?'#0891b2':'#16a34a')+';">'+esc(r.behavior_type||r.behaviorType||r.violationType||'')+'</td>'
         +'<td>'+badge+'</td>'
         +'<td><span class="chip">'+esc(r.recorder||'—')+'</span></td>'
-        +'<td style="font-size:11px;color:var(--text-light);">'+esc(r.notes||'—')+'</td>'
+        +'<td>'+actionHtml+'</td>'
         +'</tr>';
     }).join('');
   }).catch(function(e){ hideLoading(); console.error(e); });
