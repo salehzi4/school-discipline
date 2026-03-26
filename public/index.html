@@ -3749,6 +3749,19 @@ function populatePosLogClasses() {
   });
 }
 
+function deletePosEntry(btn) {
+  var sn   = btn.getAttribute('data-sn');
+  var bt   = btn.getAttribute('data-bt');
+  var date = btn.getAttribute('data-date');
+  if (!confirm('حذف سجل "' + bt + '"؟')) return;
+  showLoading();
+  GAS.deletePositiveBehaviorLog(date, sn, bt).then(function(r) {
+    hideLoading();
+    if (r && r.success) { loadPositiveLogTable(); loadStats(); }
+    else showAlert('recordAlert','error','فشل الحذف');
+  }).catch(function(e){ hideLoading(); console.error(e); });
+}
+
 function posLogClearFilters() {
   var fc=document.getElementById('posLogFilterClass'); if(fc) fc.value='الكل';
   var fd=document.getElementById('posLogFilterDate2'); if(fd) fd.value='';
@@ -3782,9 +3795,15 @@ function loadPositiveLogTable() {
         ? '<span style="padding:2px 10px;border-radius:20px;background:rgba(34,211,238,0.15);color:#0891b2;font-size:10px;font-weight:700;border:1px solid rgba(34,211,238,0.3);">🌟 متميز</span>'
         : '<span style="padding:2px 10px;border-radius:20px;background:rgba(22,163,74,0.12);color:#16a34a;font-size:10px;font-weight:700;border:1px solid rgba(22,163,74,0.25);">⭐ إيجابي</span>';
       var date = r.recorded_at ? r.recorded_at.split('T')[0] : (r.date||'—');
-      var actionHtml = r.notes && r.notes !== '—'
-        ? '<span style="font-size:11px;color:var(--text-2);">'+esc(r.notes)+'</span>'
-        : '<span style="color:var(--text-3);font-size:11px;">—</span>';
+      var sn  = (r.student_name||r.studentName||'').replace(/'/g,"\'");
+      var bt  = (r.behavior_type||r.behaviorType||'').replace(/'/g,"\'");
+      var delBtn = (r.recorder==='الإدارة'||r.recorder==='admin')
+        ? '<button class="btn btn-danger btn-sm" onclick="deletePosEntry(this)" '+
+          'data-sn="'+esc(r.student_name||r.studentName||'')+'" '+
+          'data-bt="'+esc(r.behavior_type||r.behaviorType||'')+'" '+
+          'data-date="'+esc(date)+'" '+
+          'style="padding:3px 7px;" title="حذف"><span class="material-icons-round" style="font-size:13px;">delete</span></button>'
+        : '';
       return '<tr style="'+(isD?'background:rgba(34,211,238,0.03)':'')+'">'
         +'<td>'+(i+1)+'</td>'
         +'<td>'+date+'</td>'
@@ -3793,7 +3812,7 @@ function loadPositiveLogTable() {
         +'<td style="font-weight:600;color:'+(isD?'#0891b2':'#16a34a')+';">'+esc(r.behavior_type||r.behaviorType||r.violationType||'')+'</td>'
         +'<td>'+badge+'</td>'
         +'<td><span class="chip">'+esc(r.recorder||'—')+'</span></td>'
-        +'<td>'+actionHtml+'</td>'
+        +'<td>'+delBtn+'</td>'
         +'</tr>';
     }).join('');
   }).catch(function(e){ hideLoading(); console.error(e); });
