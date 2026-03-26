@@ -442,8 +442,8 @@ tr:hover td{background:var(--em-ghost);}
 .css-donut-wrap{position:relative;width:110px;height:110px;flex-shrink:0;}
 .css-donut-wrap svg{transform:rotate(-90deg);}
 .css-donut-track{fill:none;stroke:var(--border);stroke-width:12;}
-.css-donut-fill{fill:none;stroke-width:12;stroke-linecap:round;transition:stroke-dasharray .7s ease;}
-.css-donut-fill2{fill:none;stroke-width:12;stroke-linecap:round;transition:stroke-dasharray .7s ease;}
+.css-donut-fill{fill:none;stroke-width:12;stroke-linecap:butt;transition:stroke-dasharray .7s ease;}
+.css-donut-fill2{fill:none;stroke-width:12;stroke-linecap:butt;transition:stroke-dasharray .7s ease;}
 .css-donut-label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;}
 .css-donut-num{font-size:20px;font-weight:900;color:var(--sc);line-height:1;}
 .css-donut-sub{font-size:9px;color:var(--text-3);}
@@ -878,17 +878,15 @@ tr:hover td{background:var(--em-ghost);}
               <svg viewBox="0 0 110 110" width="110" height="110">
                 <circle class="css-donut-track" cx="55" cy="55" r="43"/>
                 <circle class="css-donut-fill" id="tDonutFill1Referred" cx="55" cy="55" r="43" stroke="#dc3545" stroke-dasharray="0 270"/>
-                <circle class="css-donut-fill2" id="tDonutFill2Referred" cx="55" cy="55" r="43" stroke="#22c55e" stroke-dasharray="0 270"/>
               </svg>
-              <div class="css-donut-label" onclick="tDonutToggle('Referred')" style="cursor:pointer;">
-                <span class="css-donut-num" id="tDonutReferredLbl">0</span>
+              <div class="css-donut-label" style="cursor:default;">
+                <span class="css-donut-num" id="tDonutReferredLbl" style="color:#dc3545;">0</span>
                 <span class="css-donut-sub" id="tDonutReferredSub">محال</span>
               </div>
             </div>
           </div>
           <div class="scc-legend">
-            <span class="scc-dot" style="background:#dc3545;cursor:pointer;" onclick="tDonutShow('Referred',0)"></span><span>محالون</span>
-            <span class="scc-dot" style="background:#22c55e;margin-right:8px;cursor:pointer;" onclick="tDonutShow('Referred',1)"></span><span>تحسن</span>
+            <span class="scc-dot" style="background:#dc3545;"></span><span>محالون</span>
           </div>
         </div>
 
@@ -1559,7 +1557,7 @@ function drawTeacherSummary(s) {
   const topDist  = s.myDistinct    || 0;
 
   window._tDonutVals = {
-    Referred: [{v:referred, sub:'محال'}, {v:improved, sub:'تحسّن'}],
+    Referred: [{v:referred, sub:'محال'}],
     TopViol:  [{v:topViol,  sub:'سلوكية'},{v:topClass, sub:'صفية'}],
     TopPos:   [{v:topPos,   sub:'إيجابي'},{v:topDist,  sub:'متميز'}],
   };
@@ -1588,7 +1586,14 @@ function drawTeacherSummary(s) {
     if (sub) { sub.textContent = window._tDonutVals[key][0].sub; sub.style.color = initColor; }
   }
 
-  drawDonut('Referred','tDonutFill1Referred','tDonutFill2Referred','tDonutReferredLbl','tDonutReferredSub',referred,improved);
+  // شارت المحالون — قيمة واحدة فقط
+  var f1Ref = document.getElementById('tDonutFill1Referred');
+  var lblRef = document.getElementById('tDonutReferredLbl');
+  var subRef = document.getElementById('tDonutReferredSub');
+  var refCirc = 2 * Math.PI * 43;
+  if (f1Ref) { f1Ref.setAttribute('stroke-dasharray', refCirc + ' 0'); f1Ref.setAttribute('stroke-dashoffset', refCirc/4); }
+  if (lblRef) { lblRef.textContent = referred; lblRef.style.color = '#dc3545'; }
+  if (subRef) { subRef.textContent = 'محال'; subRef.style.color = '#dc3545'; }
   drawDonut('TopViol', 'tDonutFill1TopViol', 'tDonutFill2TopViol', 'tDonutTopViolLbl', 'tDonutTopViolSub', topViol, topClass);
 
   // شارت الغياب
