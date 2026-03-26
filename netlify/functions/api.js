@@ -1042,7 +1042,7 @@ async function getAdvancedStats(dateFilter, sc) {
   const [studentsRes, teachersRes, violationsRes, messagesRes, posRes, reportsRes] = await Promise.all([
     sb('students', 'GET', `school_code=eq.${sc}&select=id`),
     sb('teachers', 'GET', `school_code=eq.${sc}&select=id`),
-    sb('violations_log', 'GET', `school_code=eq.${sc}&select=class_name,violation_type,category,behavior_status,sub_type,recorded_at`),
+    sb('violations_log', 'GET', `school_code=eq.${sc}&select=class_name,violation_type,category,behavior_status,sub_type,degree,recorded_at`),
     sb('messages_log', 'GET', `school_code=eq.${sc}&select=sent_at`),
     sb('positive_behaviors_log', 'GET', `school_code=eq.${sc}&select=sub_type,recorded_at`),
     sb('reports', 'GET', `school_code=eq.${sc}&select=student_name,violation_type,read_at,created_at`)
@@ -1070,6 +1070,19 @@ async function getAdvancedStats(dateFilter, sc) {
 
   const rc = {};
   allReports.forEach(r => { if (r.student_name) rc[r.student_name] = (rc[r.student_name]||0)+1; });
+
+  // بناء violationsByDegree للشارت
+  const beh = {1:0,2:0,3:0,4:0,5:0};
+  const stf = {4:0,5:0};
+  fv.filter(v => v.category === 'سلوكية' || v.category === 'behavioral').forEach(v => {
+    const d = parseInt(v.degree) || 1;
+    if (d >= 1 && d <= 5) beh[d] = (beh[d]||0) + 1;
+  });
+  fv.filter(v => v.category === 'تجاه الهيئة' || v.category === 'staff').forEach(v => {
+    const d = parseInt(v.degree) || 4;
+    if (d === 4 || d === 5) stf[d] = (stf[d]||0) + 1;
+  });
+  const violationsByDegree = { behavioral: beh, staff: stf };
   const topReports = Object.entries(rc).sort((a,b) => b[1]-a[1]).slice(0,5).map(e => ({ name: e[0], count: e[1] }));
 
   return {
@@ -1090,7 +1103,8 @@ async function getAdvancedStats(dateFilter, sc) {
     classTypeRanking: Object.entries(tcCls).sort((a,b) => b[1]-a[1]).map(e => ({ name: e[0], count: e[1] })),
     positiveRanking: Object.entries(
       fp.reduce((acc, v) => { acc[v.behavior_type || v.violation_type || v.name || 'إيجابي'] = (acc[v.behavior_type || v.violation_type || v.name || 'إيجابي'] || 0) + 1; return acc; }, {})
-    ).sort((a,b) => b[1]-a[1]).slice(0,5).map(e => ({ name: e[0], count: e[1] }))
+    ).sort((a,b) => b[1]-a[1]).slice(0,5).map(e => ({ name: e[0], count: e[1] })),
+    violationsByDegree
   };
 }
 
