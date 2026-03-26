@@ -797,23 +797,34 @@ async function getPositiveBehaviorsLog(filterClass, filterDate, sc) {
   if (!Array.isArray(rows)) return [];
   const activeRows = rows.filter(r => !r.deleted_by_admin);
   return activeRows.map(r => ({
-    date: fmtDate(r.recorded_at), studentName: r.student_name, className: r.class_name,
-    behaviorType: r.behavior_type, notes: r.notes || '', recorder: r.recorder || '', subType: r.sub_type || 'إيجابي'
+    date: fmtDate(r.recorded_at), recorded_at: r.recorded_at,
+    studentName: r.student_name, student_name: r.student_name, className: r.class_name, class_name: r.class_name,
+    behaviorType: r.behavior_type, behavior_type: r.behavior_type,
+    notes: r.notes || '', recorder: r.recorder || '', subType: r.sub_type || 'إيجابي', sub_type: r.sub_type || 'إيجابي'
   }));
 }
 
 async function deletePositiveBehaviorLog(date, studentName, behaviorType, sc) {
-  // نبحث بالتاريخ واسم الطالب ونوع السلوك
-  const dateStr = date ? date.split('T')[0] : '';
-  let params = `school_code=eq.${sc}&student_name=eq.${encodeURIComponent(studentName)}&behavior_type=eq.${encodeURIComponent(behaviorType)}`;
+  // نحوّل التاريخ من dd/mm/yyyy لـ yyyy-mm-dd إن لزم
+  let dateStr = '';
+  if (date) {
+    // التاريخ قد يكون 12/05/2025 أو 2025-05-12
+    if (date.includes('/')) {
+      const parts = date.split('/');
+      if (parts.length === 3) dateStr = `${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`;
+    } else {
+      dateStr = date.split('T')[0];
+    }
+  }
+  let params = `school_code=eq.${sc}&student_name=eq.${encodeURIComponent(studentName)}&behavior_type=eq.${encodeURIComponent(behaviorType)}&select=id,recorded_at&order=recorded_at.desc`;
   if (dateStr) params += `&recorded_at=gte.${dateStr}T00:00:00&recorded_at=lte.${dateStr}T23:59:59`;
-  params += `&select=id&order=recorded_at.desc&limit=1`;
   const rows = await sb('positive_behaviors_log', 'GET', params);
   if (!Array.isArray(rows) || !rows.length) return { success: false, error: 'لم يُعثر على السجل' };
-  const id = rows[0].id;
-  await sb('positive_behaviors_log', 'DELETE', `id=eq.${id}`, null);
+  // حذف أحدث سجل فقط
+  await sb('positive_behaviors_log', 'DELETE', `id=eq.${rows[0].id}`);
   return { success: true };
 }
+
 
 
 // ═══════════════════════════════════════════════════════════
