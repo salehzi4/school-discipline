@@ -697,8 +697,27 @@ async function recordFixedViolation(body, sc) {
     }
   }
 
-  await sb('violations_log', 'POST', '', results);
-  return { success: true, message: `تم تسجيل ${results.length} مخالفة ✅` };
+  // فصل الإيجابية عن المخالفات
+  const positiveRows = results.filter(r => r.category === 'إيجابية');
+  const violationRows = results.filter(r => r.category !== 'إيجابية');
+
+  if (violationRows.length) {
+    await sb('violations_log', 'POST', '', violationRows);
+  }
+  if (positiveRows.length) {
+    const posRows = positiveRows.map(r => ({
+      school_code: r.school_code,
+      student_name: r.student_name,
+      class_name: r.class_name,
+      behavior_type: r.violation_type,
+      notes: r.notes || '',
+      recorder: r.recorder,
+      sub_type: r.sub_type || 'إيجابي'
+    }));
+    await sb('positive_behaviors_log', 'POST', '', posRows);
+  }
+
+  return { success: true, message: `تم التسجيل ✅` };
 }
 
 async function recordPositiveBehavior(body, sc) {
