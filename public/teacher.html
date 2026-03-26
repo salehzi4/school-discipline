@@ -2088,8 +2088,9 @@ function loadMyLog(){
     // تعبئة فلاتر الفصول والطلاب والمخالفات
     _populateMyLogFilters(allRecs, fcl, fst, fvt);
 
-    // تطبيق الفلاتر
+    // تطبيق الفلاتر — الإيجابية تذهب لسجلها الخاص
     var recs = allRecs.filter(function(r){
+      if(r.category === 'إيجابية') return false;
       if(fcl && r.className !== fcl) return false;
       if(fst && r.studentName !== fst) return false;
       if(fvt && r.violationType !== fvt) return false;
@@ -3160,7 +3161,13 @@ function submitFixedViolation() {
       if(alertDiv) alertDiv.style.display='none';
       refreshSelectedDisplay();
       renderAllViolationGrids();
-      showA('recordAlert','success','✅ تم تسجيل المخالفة بنجاح');
+      // هل كانت كلها إيجابية؟
+      var hadPositive = violationsWithActions.some(function(v){ return v.category === 'positive'; });
+      if (hadPositive && typeof loadTPosLog === 'function') {
+        showPage('positive-log', document.querySelector('[data-page="positive-log"]'));
+        loadTPosLog();
+      }
+      showA('recordAlert','success','✅ تم التسجيل بنجاح');
     } else {
       showA('recordAlert','error','حدث خطأ: ' + (result && result.error ? result.error : 'غير معروف'));
     }
