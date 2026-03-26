@@ -431,7 +431,7 @@ tr:hover td{background:var(--em-ghost);}
 .sidebar::-webkit-scrollbar-track{background:transparent;}
 .sidebar-home-btn.active{background:rgba(255,255,255,.22);border-right:3px solid var(--gold);}
 .home-collapse-wrap{background:var(--surface);border-radius:14px;border:1.5px solid var(--border);margin-bottom:12px;overflow:visible;box-shadow:0 2px 8px rgba(0,0,0,.05);}
-.summary-charts-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:100%;overflow:hidden;}
+.summary-charts-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;width:100%;overflow-x:auto;}
 .summary-chart-card{background:var(--surface);border-radius:12px;border:1.5px solid var(--border);padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.05);display:flex;flex-direction:column;gap:8px;border-top:3px solid var(--sc);}
 .scc-title{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:800;color:var(--sc);}
 .scc-title .material-icons-round{font-size:14px;}
@@ -508,7 +508,7 @@ tr:hover td{background:var(--em-ghost);}
 .t-sc-wrap.sc-open .t-sc-body { display: block; }
 
 /* شبكة إحصاءات */
-.t-stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.t-stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; overflow-x: auto; }
 
 /* بطاقة إحصاء */
 .t-stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; width: 100%; height: 101.25px; padding: 10px 8px 12px; cursor: pointer; transition: box-shadow .15s; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; text-align: center; overflow: visible; box-sizing: border-box; }
@@ -846,7 +846,7 @@ tr:hover td{background:var(--em-ghost);}
       <span class="material-icons-round hc-arrow">expand_more</span>
     </div>
     <div class="home-collapse-body">
-      <div class="summary-charts-grid" style="grid-template-columns:repeat(3,1fr);">
+      <div class="summary-charts-grid" style="grid-template-columns:repeat(4,1fr);">
 
         <!-- الغياب -->
         <div class="summary-chart-card" style="--sc:#0369a1;">
@@ -1591,6 +1591,22 @@ function drawTeacherSummary(s) {
   drawDonut('Referred','tDonutFill1Referred','tDonutFill2Referred','tDonutReferredLbl','tDonutReferredSub',referred,improved);
   drawDonut('TopViol', 'tDonutFill1TopViol', 'tDonutFill2TopViol', 'tDonutTopViolLbl', 'tDonutTopViolSub', topViol, topClass);
 
+  // شارت الغياب
+  var absEx = s.absenceExcused || 0;
+  var absNo = s.absenceNoExcuse || 0;
+  var absCirc = 2 * Math.PI * 43;
+  var absTotal = Math.max(absEx + absNo, 0.1);
+  var absD1 = (absEx / absTotal) * absCirc;
+  var absD2 = (absNo / absTotal) * absCirc;
+  var absF1 = document.getElementById('tDonutFill1Abs');
+  var absF2 = document.getElementById('tDonutFill2Abs');
+  var absLbl = document.getElementById('tDonutAbsLbl');
+  var absSub = document.getElementById('tDonutAbsSub');
+  if (absF1) { absF1.setAttribute('stroke-dasharray', absD1+' '+(absCirc-absD1)); absF1.setAttribute('stroke-dashoffset', absCirc/4); }
+  if (absF2) { absF2.setAttribute('stroke-dasharray', absD2+' '+(absCirc-absD2)); absF2.setAttribute('stroke-dashoffset', absCirc/4 - absD1); }
+  if (absLbl) { absLbl.textContent = absEx; absLbl.style.color = '#0369a1'; }
+  if (absSub) { absSub.textContent = 'بعذر'; absSub.style.color = '#0369a1'; }
+
   // شارت الإيجابي التفاعلي
   drawTPositiveDonut(topPos, topDist);
 }
@@ -1727,6 +1743,7 @@ function loadTeacherStats(){
     const elAbs=document.getElementById('tStatAbs'); if(elAbs) elAbs.textContent=absEx+absNo;
     const elAbsEx=document.getElementById('tStatAbsEx'); if(elAbsEx) elAbsEx.textContent=absEx;
     const elAbsNo=document.getElementById('tStatAbsNo'); if(elAbsNo) elAbsNo.textContent=absNo;
+    window._tAbsEx = absEx; window._tAbsNo = absNo; window._tAbsCur = 0;
 
     drawTeacherSummary({
       referredCount: refCount, improvedCount: impCount,
@@ -3361,6 +3378,23 @@ function loadTeacherNotif() {
 }
 
 // ══ سجل السلوك الإيجابي والمتميز ══
+function tToggleAbs() {
+  var cur = (window._tAbsCur||0);
+  tShowAbs((cur+1)%2);
+}
+function tShowAbs(idx) {
+  window._tAbsCur = idx;
+  var vals = [
+    {v: (window._tAbsEx||0), c:'#0369a1', lbl:'بعذر'},
+    {v: (window._tAbsNo||0), c:'#ef4444', lbl:'بدون عذر'}
+  ];
+  var sel = vals[idx];
+  var lbl = document.getElementById('tDonutAbsLbl');
+  var sub = document.getElementById('tDonutAbsSub');
+  if(lbl){ lbl.textContent=sel.v; lbl.style.color=sel.c; lbl.style.transform='scale(1.2)'; setTimeout(function(){lbl.style.transform='';},250); }
+  if(sub){ sub.textContent=sel.lbl; sub.style.color=sel.c; }
+}
+
 function tPopulatePosLogClasses() {
   var sel = document.getElementById('tPosLogFilterClass');
   if (!sel || sel.options.length > 1) return;
