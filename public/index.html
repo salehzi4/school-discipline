@@ -5209,12 +5209,42 @@ function submitViolation(sendWA){
 }
 
 // Messages Log
-function loadMessagesLog(){const fc=document.getElementById('msgFilterClass').value,fd=document.getElementById('msgFilterDate').value;showLoading();GAS.getMessagesLog(fc,fd).then(function(msgs){hideLoading();document.getElementById('msgCountChip').textContent=msgs.length+' رسالة';const tb=document.getElementById('messagesTableBody');if(!msgs.length){tb.innerHTML='<tr><td colspan="7" class="empty-state">لا توجد</td></tr>';return;}tb.innerHTML=msgs.map(function(m,i){
-    var safeSn=(m.studentName||'').replace(/"/g,'&quot;');
-    var safeVt=(m.violationType||'').replace(/"/g,'&quot;');
-    var delMsgBtn='<button onclick="delMessage(this)" data-date="'+m.date+'" data-sn="'+safeSn+'" data-vtype="'+safeVt+'" class="btn btn-danger btn-sm" style="padding:4px 6px;"><span class="material-icons-round" style="font-size:14px;">delete</span></button>';
-    return '<tr><td>'+(i+1)+'</td><td>'+m.date+'</td><td><strong>'+m.studentName+'</strong></td><td>'+m.className+'</td><td style="font-size:11px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+(m.messageText||m.violationType||'—')+'</td><td><span class="chip">'+m.sender+'</span></td><td><span class="status-sent">'+m.status+'</span></td><td>'+delMsgBtn+'</td></tr>';
-  }).join('');});}
+function loadMessagesLog() {
+  var fc = document.getElementById('msgFilterClass').value;
+  var fd = document.getElementById('msgFilterDate').value;
+  showLoading();
+  GAS.getMessagesLog(fc, fd).then(function(msgs) {
+    hideLoading();
+    document.getElementById('msgCountChip').textContent = msgs.length + ' رسالة';
+    var tb = document.getElementById('messagesTableBody');
+    if (!msgs.length) { tb.innerHTML = '<tr><td colspan="8" class="empty-state">لا توجد</td></tr>'; return; }
+    tb.innerHTML = '';
+    msgs.forEach(function(m, i) {
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+          '<td>' + (i+1) + '</td>'
+        + '<td>' + (m.date||'') + '</td>'
+        + '<td><strong>' + (m.studentName||'') + '</strong></td>'
+        + '<td>' + (m.className||'') + '</td>'
+        + '<td style="font-size:11px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + (m.messageText||m.violationType||'—') + '</td>'
+        + '<td><span class="chip">' + (m.sender||'') + '</span></td>'
+        + '<td><span class="status-sent">' + (m.status||'') + '</span></td>'
+        + '<td></td>';
+
+      var delBtn = document.createElement('button');
+      delBtn.className = 'btn btn-danger btn-sm';
+      delBtn.style.cssText = 'padding:4px 6px;';
+      delBtn.innerHTML = '<span class="material-icons-round" style="font-size:14px;">delete</span>';
+      delBtn.dataset.date  = m.date || '';
+      delBtn.dataset.sn    = m.studentName || '';
+      delBtn.dataset.vtype = m.violationType || '';
+      delBtn.onclick = function(){ delMessage(this); };
+      tr.cells[7].appendChild(delBtn);
+      tb.appendChild(tr);
+    });
+  }).catch(function(e){ hideLoading(); console.error(e); });
+}
+
 function clearMsgFilters(){document.getElementById('msgFilterClass').value='الكل';document.getElementById('msgFilterDate').value='';loadMessagesLog();}
 
 // Violations Log
@@ -6978,45 +7008,54 @@ function sendReportToParent() {
 function loadReports() {
   var tbody = document.getElementById('reportsTableBody');
   if (!tbody) return;
-  tbody.innerHTML = '<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--text-3);">جاري التحميل...</td></tr>';
-  google.script.run
-    .withSuccessHandler(function(reports) {
-      document.getElementById('reportsCount').textContent = reports.length + ' محضر';
-      if (!reports.length) {
-        tbody.innerHTML = '<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--text-3);">لا توجد محاضر بعد</td></tr>';
-        return;
-      }
-      var html = '';
-      reports.forEach(function(r) {
-        var stBadge = '';
-        if (r.status === 'بانتظار الاستلام') stBadge = '<span style="background:#FEF3DC;color:#C9860A;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;">⏳ بانتظار الاستلام</span>';
-        else if (r.status === 'تم الاستلام')  stBadge = '<span style="background:#dbeafe;color:#1d4ed8;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;">📬 تم الاستلام</span>';
-        else if (r.status === 'تم الاطلاع')   stBadge = '<span style="background:var(--em-pale);color:var(--em);padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;">✅ تم الاطلاع</span>';
-        else stBadge = '<span style="background:var(--em-pale);color:var(--em);padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;">' + r.status + '</span>';
+  tbody.innerHTML = '<tr><td colspan="9" style="padding:24px;text-align:center;color:var(--text-3);">جاري التحميل...</td></tr>';
+  GAS.getReports().then(function(reports) {
+    document.getElementById('reportsCount').textContent = reports.length + ' محضر';
+    if (!reports.length) {
+      tbody.innerHTML = '<tr><td colspan="9" style="padding:24px;text-align:center;color:var(--text-3);">لا توجد محاضر بعد</td></tr>';
+      return;
+    }
+    var rows = '';
+    reports.forEach(function(r) {
+      var stBadge = '';
+      if (r.status === 'بانتظار الاستلام') stBadge = '<span style="background:#FEF3DC;color:#C9860A;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;">⏳ بانتظار الاستلام</span>';
+      else if (r.status === 'تم الاستلام')  stBadge = '<span style="background:#dbeafe;color:#1d4ed8;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;">📬 تم الاستلام</span>';
+      else if (r.status === 'تم الاطلاع')   stBadge = '<span style="background:var(--em-pale);color:var(--em);padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;">✅ تم الاطلاع</span>';
+      else stBadge = '<span style="background:var(--em-pale);color:var(--em);padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;">' + (r.status||'') + '</span>';
 
-        var encData = encodeURIComponent(JSON.stringify(r));
-        var viewBtn = '<button onclick="viewReportEncoded(decodeURIComponent(this.dataset.r))" data-r="' + encData + '" style="padding:4px 8px;font-size:11px;background:var(--em-pale);color:var(--em);border:none;border-radius:6px;cursor:pointer;font-family:inherit;">'
-          + '<span class="material-icons-round" style="font-size:13px;vertical-align:middle;">visibility</span></button>';
+      var encData = encodeURIComponent(JSON.stringify(r));
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+          '<td style="padding:10px 14px;border-top:1px solid var(--border);color:var(--text-2);font-weight:700;">' + (r.reportNum||'') + '</td>'
+        + '<td style="padding:10px 14px;border-top:1px solid var(--border);color:var(--text);font-weight:700;">' + (r.studentName||'') + '</td>'
+        + '<td style="padding:10px 14px;border-top:1px solid var(--border);color:var(--text-2);">' + (r.violationType||'') + '</td>'
+        + '<td style="padding:10px 14px;border-top:1px solid var(--border);color:var(--text-2);">' + (r.createdAt||'').split(' ')[0] + '</td>'
+        + '<td style="padding:10px 14px;border-top:1px solid var(--border);color:var(--text-2);">' + (r.reporterName||'') + '</td>'
+        + '<td style="padding:10px 14px;border-top:1px solid var(--border);">' + stBadge + '</td>'
+        + '<td style="padding:10px 14px;border-top:1px solid var(--border);"></td>';
 
-        var safeNum = (r.reportNum||'').replace(/"/g,'&quot;');
-        var delRptBtn = '<button onclick="delReport(this)" data-num="'+safeNum+'" class="btn btn-danger btn-sm" style="padding:4px 6px;"><span class="material-icons-round" style="font-size:14px;">delete</span></button>';
-        html += '<tr>'
-          + '<td style="padding:10px 14px;border-top:1px solid var(--border);color:var(--text-2);font-weight:700;">' + r.reportNum + '</td>'
-          + '<td style="padding:10px 14px;border-top:1px solid var(--border);color:var(--text);font-weight:700;">' + r.studentName + '</td>'
-          + '<td style="padding:10px 14px;border-top:1px solid var(--border);color:var(--text-2);">' + r.violationType + '</td>'
-          + '<td style="padding:10px 14px;border-top:1px solid var(--border);color:var(--text-2);">' + (r.createdAt||'').split(' ')[0] + '</td>'
-          + '<td style="padding:10px 14px;border-top:1px solid var(--border);color:var(--text-2);">' + r.reporterName + '</td>'
-          + '<td style="padding:10px 14px;border-top:1px solid var(--border);">' + stBadge + '</td>'
-          + '<td style="padding:10px 14px;border-top:1px solid var(--border);">' + viewBtn + '</td>'
-          + '<td style="padding:10px 14px;border-top:1px solid var(--border);">' + delRptBtn + '</td>'
-          + '</tr>';
-      });
-      tbody.innerHTML = html;
-    })
-    .withFailureHandler(function() {
-      tbody.innerHTML = '<tr><td colspan="7" style="padding:24px;text-align:center;color:#dc2626;">فشل تحميل المحاضر</td></tr>';
-    })
-    .getReports();
+      var viewBtn = document.createElement('button');
+      viewBtn.style.cssText = 'padding:4px 8px;font-size:11px;background:var(--em-pale);color:var(--em);border:none;border-radius:6px;cursor:pointer;font-family:inherit;';
+      viewBtn.innerHTML = '<span class="material-icons-round" style="font-size:13px;vertical-align:middle;">visibility</span>';
+      viewBtn.dataset.r = encData;
+      viewBtn.onclick = function(){ viewReportEncoded(decodeURIComponent(this.dataset.r)); };
+      tr.cells[6].appendChild(viewBtn);
+
+      var delBtn = document.createElement('button');
+      delBtn.className = 'btn btn-danger btn-sm';
+      delBtn.style.cssText = 'padding:4px 6px;';
+      delBtn.innerHTML = '<span class="material-icons-round" style="font-size:14px;">delete</span>';
+      delBtn.dataset.num = r.reportNum || '';
+      delBtn.onclick = function(){ delReport(this); };
+
+      var td = document.createElement('td');
+      td.style.cssText = 'padding:10px 14px;border-top:1px solid var(--border);';
+      td.appendChild(delBtn);
+      tr.appendChild(td);
+
+      tbody.appendChild(tr);
+    });
+  }).catch(function(e){ console.error(e); tbody.innerHTML = '<tr><td colspan="9" class="empty-state">حدث خطأ</td></tr>'; });
 }
 
 function viewReport(r) {
