@@ -2835,7 +2835,7 @@ tr:hover td{background:var(--em-ghost);}
   <!-- جدول المعلمين -->
   <div class="card">
     <div class="card-title"><span class="material-icons-round">groups</span> المعلمين المسجلين</div>
-    <div class="table-wrapper"><table><thead><tr><th>#</th><th>المعلم</th><th>المواد</th><th>الفصول</th><th>الرمز</th><th>فعّال</th><th>إجراءات</th></tr></thead><tbody id="teachersTableBody"><tr><td colspan="7" class="empty-state">لا يوجد</td></tr></tbody></table></div>
+    <div class="table-wrapper"><table><thead><tr><th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>الرسالة</th><th>المرسل</th><th>الحالة</th><th>الإجراءات</th></tr></thead><tbody id="teachersTableBody"><tr><td colspan="7" class="empty-state">لا يوجد</td></tr></tbody></table></div>
   </div>
 </div>
 
@@ -3008,7 +3008,7 @@ tr:hover td{background:var(--em-ghost);}
       <p style="font-size:12px;color:var(--text-light);margin-bottom:14px;">المخالفات التي تمت معالجتها وإضافة ملاحظة متابعة لها</p>
       <div class="table-wrapper"><table><thead><tr>
         <th>#</th><th>تاريخ المخالفة</th><th>الطالب</th><th>الفصل</th>
-        <th>المخالفة</th><th>تاريخ المعالجة</th><th>ملاحظة المعالجة</th><th>حالة السلوك</th>
+        <th>المخالفة</th><th>تاريخ المعالجة</th><th>ملاحظة المعالجة</th><th>حالة السلوك</th><th>الإجراءات</th>
       </tr></thead><tbody id="treatedLogTableBody"><tr><td colspan="8" class="empty-state">لا توجد حالات معالجة</td></tr></tbody></table></div>
     </div>
   </div>
@@ -5209,7 +5209,12 @@ function submitViolation(sendWA){
 }
 
 // Messages Log
-function loadMessagesLog(){const fc=document.getElementById('msgFilterClass').value,fd=document.getElementById('msgFilterDate').value;showLoading();GAS.getMessagesLog(fc,fd).then(function(msgs){hideLoading();document.getElementById('msgCountChip').textContent=msgs.length+' رسالة';const tb=document.getElementById('messagesTableBody');if(!msgs.length){tb.innerHTML='<tr><td colspan="7" class="empty-state">لا توجد</td></tr>';return;}tb.innerHTML=msgs.map((m,i)=>'<tr><td>'+(i+1)+'</td><td>'+m.date+'</td><td><strong>'+m.studentName+'</strong></td><td>'+m.className+'</td><td style="font-size:11px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+(m.messageText||m.violationType||'—')+'</td><td><span class="chip">'+m.sender+'</span></td><td><span class="status-sent">'+m.status+'</span></td></tr>').join('');});}
+function loadMessagesLog(){const fc=document.getElementById('msgFilterClass').value,fd=document.getElementById('msgFilterDate').value;showLoading();GAS.getMessagesLog(fc,fd).then(function(msgs){hideLoading();document.getElementById('msgCountChip').textContent=msgs.length+' رسالة';const tb=document.getElementById('messagesTableBody');if(!msgs.length){tb.innerHTML='<tr><td colspan="7" class="empty-state">لا توجد</td></tr>';return;}tb.innerHTML=msgs.map(function(m,i){
+    var safeSn=(m.studentName||'').replace(/"/g,'&quot;');
+    var safeVt=(m.violationType||'').replace(/"/g,'&quot;');
+    var delMsgBtn='<button onclick="delMessage(this)" data-date="'+m.date+'" data-sn="'+safeSn+'" data-vtype="'+safeVt+'" class="btn btn-danger btn-sm" style="padding:4px 6px;"><span class="material-icons-round" style="font-size:14px;">delete</span></button>';
+    return '<tr><td>'+(i+1)+'</td><td>'+m.date+'</td><td><strong>'+m.studentName+'</strong></td><td>'+m.className+'</td><td style="font-size:11px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+(m.messageText||m.violationType||'—')+'</td><td><span class="chip">'+m.sender+'</span></td><td><span class="status-sent">'+m.status+'</span></td><td>'+delMsgBtn+'</td></tr>';
+  }).join('');});}
 function clearMsgFilters(){document.getElementById('msgFilterClass').value='الكل';document.getElementById('msgFilterDate').value='';loadMessagesLog();}
 
 // Violations Log
@@ -6928,6 +6933,30 @@ function closeReportView() {
   loadReports();
 }
 
+function delReport(btn) {
+  var num = btn.getAttribute('data-num');
+  if (!confirm('حذف المحضر رقم ' + num + '؟ لا يمكن التراجع.')) return;
+  showLoading();
+  GAS.deleteReport(num).then(function(r) {
+    hideLoading();
+    if (r && r.success) { loadReports(); loadStats(); }
+    else showAlert('recordAlert','error','فشل الحذف');
+  }).catch(function(e){ hideLoading(); console.error(e); });
+}
+
+function delMessage(btn) {
+  var date  = btn.getAttribute('data-date');
+  var sn    = btn.getAttribute('data-sn');
+  var vtype = btn.getAttribute('data-vtype');
+  if (!confirm('حذف هذه الرسالة؟')) return;
+  showLoading();
+  GAS.deleteMessageLog(date, sn, vtype).then(function(r) {
+    hideLoading();
+    if (r && r.success) loadMessagesLog();
+    else showAlert('recordAlert','error','فشل الحذف');
+  }).catch(function(e){ hideLoading(); console.error(e); });
+}
+
 // ── إرسال المحضر لولي الأمر (تغيير الحالة) ──
 function sendReportToParent() {
   if (!currentReportData || !currentReportData.reportNum) return;
@@ -6969,6 +6998,8 @@ function loadReports() {
         var viewBtn = '<button onclick="viewReportEncoded(decodeURIComponent(this.dataset.r))" data-r="' + encData + '" style="padding:4px 8px;font-size:11px;background:var(--em-pale);color:var(--em);border:none;border-radius:6px;cursor:pointer;font-family:inherit;">'
           + '<span class="material-icons-round" style="font-size:13px;vertical-align:middle;">visibility</span></button>';
 
+        var safeNum = (r.reportNum||'').replace(/"/g,'&quot;');
+        var delRptBtn = '<button onclick="delReport(this)" data-num="'+safeNum+'" class="btn btn-danger btn-sm" style="padding:4px 6px;"><span class="material-icons-round" style="font-size:14px;">delete</span></button>';
         html += '<tr>'
           + '<td style="padding:10px 14px;border-top:1px solid var(--border);color:var(--text-2);font-weight:700;">' + r.reportNum + '</td>'
           + '<td style="padding:10px 14px;border-top:1px solid var(--border);color:var(--text);font-weight:700;">' + r.studentName + '</td>'
@@ -6977,6 +7008,7 @@ function loadReports() {
           + '<td style="padding:10px 14px;border-top:1px solid var(--border);color:var(--text-2);">' + r.reporterName + '</td>'
           + '<td style="padding:10px 14px;border-top:1px solid var(--border);">' + stBadge + '</td>'
           + '<td style="padding:10px 14px;border-top:1px solid var(--border);">' + viewBtn + '</td>'
+          + '<td style="padding:10px 14px;border-top:1px solid var(--border);">' + delRptBtn + '</td>'
           + '</tr>';
       });
       tbody.innerHTML = html;
