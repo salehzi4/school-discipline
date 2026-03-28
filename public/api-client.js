@@ -137,6 +137,8 @@
     // محاضر
     saveReport:         (data)                       => callAPI('saveReport', { data }),
     getReports:         ()                           => callAPI('getReports'),
+    deleteReport:           (reportNum)               => callAPI('deleteReport', { reportNum }),
+    deleteMessageLog:       (date, studentName, violationType) => callAPI('deleteMessageLog', { date, studentName, violationType }),,
     getReportByNum:     (reportNum)                  => callAPI('getReportByNum', { reportNum }),
     updateReportStatus: (reportNum, status)          => callAPI('updateReportStatus', { reportNum, status }),
     getParentSettings:     ()                            => callAPI('getParentSettings', {}),
