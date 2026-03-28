@@ -1315,6 +1315,7 @@ document.addEventListener('DOMContentLoaded', function() {
           window._tWarning     = r.warning     || false;
           window._tDaysLeft    = r.daysLeft    || 0;
           window._tWhatsapp    = r.whatsapp    || '';
+          window._tContactUrl  = r.contactUrl  || '';
           enter();
         }
       })
@@ -1344,13 +1345,13 @@ function doLogin(){
     .withFailureHandler(e=>{hideL();console.error(e);})
     .doTeacherLogin(c);
 }
-function showReadOnlyBanner(msg, whatsapp){
-  showExpiredBanner(msg, whatsapp);
+function showReadOnlyBanner(msg, contactUrl){
+  showExpiredBanner(msg, contactUrl);
   document.querySelectorAll('button:not(.app-hd-logout)').forEach(function(el){el.disabled=true;el.style.opacity='.4';el.style.cursor='not-allowed';});
   document.querySelectorAll('input,select,textarea').forEach(function(el){el.disabled=true;});
 }
 
-function showExpiredBanner(msg, whatsapp){
+function showExpiredBanner(msg, contactUrl){
   var old = document.getElementById('_expiredModal');
   if(old) old.remove();
 
@@ -1371,9 +1372,9 @@ function showExpiredBanner(msg, whatsapp){
   body.style.cssText = 'padding:20px 24px 24px;';
   body.innerHTML = '<p style="font-size:13px;color:#555;margin:0 0 6px;">' + (msg || 'انتهت صلاحية الاشتراك') + '</p>'
     + '<p style="font-size:12px;color:#999;margin:0 0 20px;">النظام في وضع القراءة فقط — لا يمكن إجراء أي تعديلات</p>'
-    + (whatsapp
-      ? '<a href="https://wa.me/' + whatsapp + '" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:#25D366;color:#fff;padding:10px 24px;border-radius:10px;text-decoration:none;font-size:13px;font-weight:700;">'
-        + '<span class="material-icons-round" style="font-size:16px;">chat</span> تجديد الاشتراك</a>'
+    + (contactUrl
+      ? '<a href="' + contactUrl + '" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:#25D366;color:#fff;padding:10px 24px;border-radius:10px;text-decoration:none;font-size:13px;font-weight:700;">'
+        + '<span class="material-icons-round" style="font-size:16px;">chat</span> تواصل لتجديد الاشتراك</a>'
       : '<p style="font-size:12px;color:#aaa;">تواصل مع مزود النظام للتجديد</p>');
 
   box.appendChild(header);
@@ -1410,7 +1411,7 @@ function enter(){
   loadSettingsFromSupabase();
   // إظهار بانر الاشتراك بعد إظهار الـ mainApp
   setTimeout(function(){
-    if (window._tReadOnly)        showReadOnlyBanner(window._tExpiredMsg, window._tWhatsapp||'');
+    if (window._tReadOnly)        showReadOnlyBanner(window._tExpiredMsg, window._tContactUrl || window._tWhatsapp || '');
     else if (window._tWarning)    showWarningBar(window._tDaysLeft);
   }, 450);
   document.getElementById('teacherInfo').textContent=T.subjects;
