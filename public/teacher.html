@@ -1509,7 +1509,7 @@ async function loadSettingsFromSupabase() {
     if (!s) return;
     var sToCache2 = Object.assign({}, s); delete sToCache2.gender; sessionStorage.setItem(_SB_TCH_KEY, JSON.stringify(sToCache2));
     applyCustomStyles(s);
-    if (s && s.gender === 'female') setTimeout(function(){ applyGender('female'); }, 500);
+    if (s && s.gender === 'female') { window._schoolGender = 'female'; setTimeout(function(){ applyGender('female'); }, 500); } else { window._schoolGender = 'male'; }
     _showLoginScreen();
   } catch(e) {
     console.warn('Teacher settings load failed:', e);
@@ -2868,6 +2868,24 @@ var _tabColors = {
   positive:   { bg:'#e8f5ee', border:'#07A869' }
 };
 
+
+// ── تحويل نصوص المخالفات للمؤنث (بنات) ──
+function feminizeViolName(name, category) {
+  if (window._schoolGender !== 'female') return name;
+  if (category !== 'behavioral' && category !== 'staff') return name;
+  var map = [
+    ['الإداريين', 'الإداريات'],
+    ['المعلمين',  'المعلمات'],
+    ['للطلبة',   'للطالبات'],
+    ['الطلبة',   'الطالبات'],
+    ['منسوبي',   'منسوبات'],
+    ['المعلم',   'المعلمة']
+  ];
+  var result = name;
+  map.forEach(function(pair){ result = result.split(pair[0]).join(pair[1]); });
+  return result;
+}
+
 function renderGrid(category, degree, gridId) {
   var grid = document.getElementById(gridId);
   if (!grid) return;
@@ -2945,7 +2963,7 @@ function renderGrid(category, degree, gridId) {
     // كل بطاقة = عنصر grid مستقل
     html += '<div id="fvRow_' + v.id + '" onclick="handleViolationClick(' + v.id + ')" '
       + 'style="background:' + bg + ';border:2px solid ' + brd + ';border-radius:12px;padding:12px;cursor:pointer;transition:all .18s;display:flex;flex-direction:column;gap:6px;">'
-      + '<div style="font-size:12px;font-weight:700;color:' + clr + ';">' + (isSel ? '✓ ' : '') + v.name + '</div>'
+      + '<div style="font-size:12px;font-weight:700;color:' + clr + ';">' + (isSel ? '✓ ' : '') + feminizeViolName(v.name, category) + '</div>'
       + '<div onclick="event.stopPropagation()">' + details + '</div>'
       + '<input type="text" placeholder="الإجراء..." onchange="updateRowAction(' + v.id + ',this.value)" onclick="event.stopPropagation()" '
       + 'style="width:100%;padding:5px 8px;border:1.5px solid ' + (isSel ? 'rgba(255,255,255,0.4)' : brd) + ';border-radius:8px;font-size:11px;font-family:inherit;background:rgba(255,255,255,' + (isSel ? '0.2' : '0.8') + ');color:' + clr + ';box-sizing:border-box;" '
