@@ -3705,10 +3705,8 @@ function showExpiredBanner(msg, whatsapp){
   body.style.cssText = 'padding:20px 24px 24px;';
   body.innerHTML = '<p style="font-size:13px;color:#555;margin:0 0 6px;">' + (msg || 'انتهت صلاحية الاشتراك') + '</p>'
     + '<p style="font-size:12px;color:#999;margin:0 0 20px;">النظام في وضع القراءة فقط — لا يمكن إجراء أي تعديلات</p>'
-    + (contactUrl
-      ? '<a href="' + contactUrl + '" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:#25D366;color:#fff;padding:10px 24px;border-radius:10px;text-decoration:none;font-size:13px;font-weight:700;">'
-        + '<span class="material-icons-round" style="font-size:16px;">chat</span> تواصل لتجديد الاشتراك</a>'
-      : '<p style="font-size:12px;color:#aaa;">تواصل مع مزود النظام للتجديد</p>');
+    + '<a href="' + (contactUrl || '#') + '" ' + (contactUrl ? 'target="_blank"' : 'onclick="return false;"') + ' style="display:inline-flex;align-items:center;gap:8px;background:' + (contactUrl ? '#25D366' : '#aaa') + ';color:#fff;padding:10px 24px;border-radius:10px;text-decoration:none;font-size:13px;font-weight:700;">'
+    + '<span class="material-icons-round" style="font-size:16px;">chat</span> تواصل لتجديد الاشتراك</a>';
 
   box.appendChild(header);
   box.appendChild(body);
