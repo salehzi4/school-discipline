@@ -7016,7 +7016,7 @@ function loadReports() {
       tbody.innerHTML = '<tr><td colspan="9" style="padding:24px;text-align:center;color:var(--text-3);">لا توجد محاضر بعد</td></tr>';
       return;
     }
-    var rows = '';
+    tbody.innerHTML = '';
     reports.forEach(function(r) {
       var stBadge = '';
       if (r.status === 'بانتظار الاستلام') stBadge = '<span style="background:#FEF3DC;color:#C9860A;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;">⏳ بانتظار الاستلام</span>';
