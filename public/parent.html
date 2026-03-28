@@ -111,6 +111,18 @@
   #calFloatPanel { width:100%; max-width:320px; }
 }
 @media print { #calFloatBtn,#calFloatPanel,#calOverlay{display:none!important;} }
+
+/* ══ DETAILS MODAL ══ */
+.dp-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;padding:16px;}
+.dp-overlay.open{display:flex;}
+.dp-modal{background:var(--surface,#fff);border-radius:14px;width:100%;max-width:420px;max-height:78vh;overflow:hidden;display:flex;flex-direction:column;}
+.dp-mhd{padding:13px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.dp-mtitle{font-size:14px;font-weight:800;color:#fff;}
+.dp-msub{font-size:10px;color:rgba(255,255,255,0.7);margin-top:1px;}
+.dp-mclose{background:rgba(255,255,255,0.2);border:none;color:#fff;width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:13px;line-height:26px;}
+.dp-mbody{overflow-y:auto;padding:12px;flex:1;}
+.dp-mfoot{padding:9px 14px;border-top:1px solid var(--border,#e5e7eb);flex-shrink:0;text-align:left;}
+.dp-mfoot button{padding:6px 18px;border-radius:7px;border:1px solid var(--border,#e5e7eb);background:transparent;font-family:inherit;font-size:12px;cursor:pointer;color:var(--text-3,#888);}
 </style>
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -239,19 +251,9 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
 .ind-btn.open .material-icons-round{transform:rotate(180deg);}
 
 /* ══ DETAILS PANEL ══ */
-.details-panel{display:none;}
-/* Modal overlay */
-.dp-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9000;align-items:center;justify-content:center;padding:16px;}
-.dp-overlay.open{display:flex;animation:fadeIn .2s ease;}
-@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
-.dp-modal{background:var(--surface,#fff);border-radius:16px;width:100%;max-width:440px;max-height:80vh;overflow:hidden;display:flex;flex-direction:column;animation:slideUp .25s ease;}
-@keyframes slideUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
-.dp-modal-header{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-.dp-modal-title{font-size:15px;font-weight:700;color:#fff;}
-.dp-modal-sub{font-size:11px;color:rgba(255,255,255,0.75);margin-top:2px;}
-.dp-modal-close{background:rgba(255,255,255,0.2);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
-.dp-modal-body{overflow-y:auto;padding:12px;flex:1;}
-.dp-modal-footer{padding:10px 16px;border-top:1px solid var(--border,#e5e7eb);flex-shrink:0;display:flex;justify-content:flex-end;}
+.details-panel{display:none;border-top:1px solid var(--c-border,var(--border));background:var(--bg);}
+.details-panel.open{display:block;animation:slideDown .25s ease;}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
 .dp-inner{padding:12px;}
 .dp-close-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
 .dp-title{font-size:11px;font-weight:800;color:var(--text-2);}
@@ -1035,52 +1037,33 @@ function buildDetailList(key, items, clr, fields){
 }
 
 /* ══ TOGGLE / CLOSE DETAILS ══ */
-// ألوان كل مؤشر
-var _dpColors = {
-  behavior: '#A32D2D',
-  class:    '#B45309',
-  positive: '#0F6E56',
-  absence_detail: '#D97706',
-  behavior_detail: '#A32D2D',
-  class_detail:    '#B45309',
-  positive_detail: '#0F6E56'
-};
-var _dpTitles = {
-  behavior: 'تفاصيل المخالفات السلوكية',
-  class:    'تفاصيل المخالفات الصفية',
-  positive: 'تفاصيل السلوك الإيجابي والمتميز',
-  absence_detail: 'تفاصيل الغياب',
-  behavior_detail: 'تفاصيل المخالفات السلوكية',
-  class_detail:    'تفاصيل المخالفات الصفية',
-  positive_detail: 'تفاصيل السلوك الإيجابي والمتميز'
-};
-
+var _dpColors = {behavior:'#A32D2D',class:'#B45309',positive:'#0F6E56',absence_detail:'#D97706',behavior_detail:'#A32D2D',class_detail:'#B45309',positive_detail:'#0F6E56'};
+var _dpTitles = {behavior:'المخالفات السلوكية',class:'المخالفات الصفية',positive:'السلوك الإيجابي',absence_detail:'الغياب',behavior_detail:'المخالفات السلوكية',class_detail:'المخالفات الصفية',positive_detail:'السلوك الإيجابي'};
 function toggleDetails(key, btn){
   var panel = $('dp_'+key);
-  var color = _dpColors[key] || 'var(--em,#1A5276)';
+  var color = _dpColors[key] || 'var(--em)';
   var title = _dpTitles[key] || 'التفاصيل';
-  // اجمع المحتوى من panel
-  var bodyContent = panel ? panel.innerHTML : '<div style="padding:20px;text-align:center;color:var(--text-3);">لا توجد بيانات</div>';
-  // تعيين header
-  var hdr = document.getElementById('dpModalHeader');
-  if(hdr) hdr.style.background = color;
-  document.getElementById('dpModalTitle').textContent = title;
-  // حساب عدد البطاقات في المحتوى
-  var tempDiv = document.createElement('div');
-  tempDiv.innerHTML = bodyContent;
-  var count = tempDiv.querySelectorAll('.rec-item').length;
-  document.getElementById('dpModalSub').textContent = count ? count + ' سجل' : '';
-  document.getElementById('dpModalBody').innerHTML = bodyContent;
-  // فتح overlay
-  var ov = document.getElementById('dpOverlay');
-  if(ov) ov.classList.add('open');
+  var hd = document.getElementById('dpMHd');
+  if(hd) hd.style.background = color;
+  document.getElementById('dpMTitle').textContent = title;
+  var bodyContent = panel ? panel.innerHTML : '';
+  var tmp = document.createElement('div'); tmp.innerHTML = bodyContent;
+  var cnt = tmp.querySelectorAll('.rec-item').length;
+  document.getElementById('dpMSub').textContent = cnt ? cnt + ' سجل' : '';
+  document.getElementById('dpMBody').innerHTML = bodyContent || '<div class="dp-empty">لا توجد سجلات 🎉</div>';
+  document.getElementById('dpOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
-function closeDetails(key){}
-function closeDpModal(){
-  var ov = document.getElementById('dpOverlay');
-  if(ov) ov.classList.remove('open');
+function dpClose(){
+  document.getElementById('dpOverlay').classList.remove('open');
   document.body.style.overflow = '';
+}
+function closeDetails(key){
+  var panel = $('dp_'+key);
+  if(panel) panel.classList.remove('open');
+  var btn = document.querySelector('[onclick="toggleDetails(\''+key+'\',this)"]');
+  if(btn) btn.classList.remove('open');
+  delete _openDetails[key];
 }
 
 /* ══ ACTIONS PANEL ══ */
@@ -2142,19 +2125,14 @@ function indShow(key, idx) {
 
 
 <!-- ══ Details Modal ══ -->
-<div class="dp-overlay" id="dpOverlay" onclick="if(event.target===this)closeDpModal()">
+<div class="dp-overlay" id="dpOverlay" onclick="if(event.target===this)dpClose()">
   <div class="dp-modal">
-    <div class="dp-modal-header" id="dpModalHeader">
-      <div>
-        <div class="dp-modal-title" id="dpModalTitle"></div>
-        <div class="dp-modal-sub" id="dpModalSub"></div>
-      </div>
-      <button class="dp-modal-close" onclick="closeDpModal()">✕</button>
+    <div class="dp-mhd" id="dpMHd">
+      <div><div class="dp-mtitle" id="dpMTitle"></div><div class="dp-msub" id="dpMSub"></div></div>
+      <button class="dp-mclose" onclick="dpClose()">✕</button>
     </div>
-    <div class="dp-modal-body" id="dpModalBody"></div>
-    <div class="dp-modal-footer">
-      <button onclick="closeDpModal()" style="padding:7px 20px;border-radius:8px;border:1px solid var(--border,#e5e7eb);background:transparent;font-family:inherit;font-size:12px;cursor:pointer;color:var(--text-2,#555);">إغلاق</button>
-    </div>
+    <div class="dp-mbody" id="dpMBody"></div>
+    <div class="dp-mfoot"><button onclick="dpClose()">إغلاق</button></div>
   </div>
 </div>
 </body>
