@@ -1018,12 +1018,21 @@ async function getStudentProfile(studentName, className, viewerRole, sc) {
     referralDate: fmtDate(r.referral_date)
   })) : [];
 
-  const violations      = allRecs.filter(r => r.category === 'سلوكية' || r.category === 'تجاه الهيئة');
+  const violations      = allRecs.filter(r => r.category === 'سلوكية' || r.category === 'تجاه الهيئة' || r.category === 'غياب' || r.category === 'absence');
   const classViolations = allRecs.filter(r => r.category === 'صفية');
   const absenceViolations = allRecs.filter(r => r.category === 'غياب' || r.category === 'absence');
 
-  // السلوك الإيجابي (من violations_log)
-  const positiveBehaviors = allRecs.filter(r => r.category === 'إيجابية');
+  // السلوك الإيجابي: من positive_behaviors_log (المصدر الصحيح)
+  const positiveBehaviors = positiveBehaviorsFromLog;
+
+  // السلوك الإيجابي من positive_behaviors_log
+  const posRows = await sb('positive_behaviors_log', 'GET',
+    `school_code=eq.${sc}&student_name=eq.${encodeURIComponent(studentName)}&order=recorded_at.desc`);
+  const positiveBehaviorsFromLog = Array.isArray(posRows) ? posRows.map(r => ({
+    date: fmtDate(r.recorded_at), type: r.behavior_type || '', notes: r.notes || '',
+    recorder: r.recorder || '', category: 'إيجابية',
+    subType: r.sub_type || 'إيجابي', score: '0', severity: 'إيجابية'
+  })) : [];
 
   // الرسائل
   const mRows = await sb('messages_log', 'GET',
