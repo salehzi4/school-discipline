@@ -1457,6 +1457,45 @@ function applyGender(gender) {
     item.node.textContent = text;
   });
 }
+
+
+function indDrawAbsence(excused, unexcused) {
+  var total = excused + unexcused;
+  var circ = 2 * Math.PI * 38;
+  var d1 = total ? (excused/total)*circ : 0;
+  var d2 = total ? (unexcused/total)*circ : 0;
+  var el1 = document.getElementById('dAbsence');
+  var el2 = document.getElementById('dAbsence2');
+  var num = document.getElementById('iAbsenceNum');
+  var sub = document.getElementById('iAbsenceSub');
+  var meta = document.getElementById('im_absence');
+  if(el1) el1.setAttribute('stroke-dasharray', d1 + ' ' + (circ - d1));
+  if(el2) { el2.setAttribute('stroke-dasharray', d2 + ' ' + (circ - d2)); el2.setAttribute('stroke-dashoffset', -d1); }
+  if(num) { num.textContent = excused; num.style.color = '#0369a1'; }
+  if(sub) sub.textContent = 'بعذر';
+  if(meta) meta.textContent = excused + ' بعذر — ' + unexcused + ' بدون عذر';
+  window._absVals = [{v:excused,lbl:'بعذر'},{v:unexcused,lbl:'بدون عذر'}];
+  window._absCur  = 0;
+}
+
+function indToggle(key) {
+  if(key!=='absence') return;
+  var cur = window._absCur || 0;
+  var next = cur === 0 ? 1 : 0;
+  indShow(key, next);
+}
+
+function indShow(key, idx) {
+  if(key!=='absence') return;
+  window._absCur = idx;
+  var vals = window._absVals || [{v:0},{v:0}];
+  var colors = ['#D97706','#EF4444'];
+  var num = document.getElementById('iAbsenceNum');
+  var sub = document.getElementById('iAbsenceSub');
+  if(num) { num.textContent = vals[idx].v; num.style.color = colors[idx]; }
+  if(sub) { sub.textContent = vals[idx].lbl; sub.style.color = colors[idx]; }
+}
+
 </script>
 
 
