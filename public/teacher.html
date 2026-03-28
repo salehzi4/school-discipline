@@ -2941,7 +2941,7 @@ function renderGrid(category, degree, gridId) {
     var effectiveStage = (_schoolStage === 'both') ? _activeStage : _schoolStage;
     if (effectiveStage === 'elementary' && v.stage === 'secondary') return false;
     if (effectiveStage === 'secondary' && v.stage === 'elementary') return false;
-    if (effectiveStage === 'elementary' && degree === '5') return false;
+    if (effectiveStage === 'elementary' && degree === '5' && category !== 'staff') return false;
     return true;
   });
 
