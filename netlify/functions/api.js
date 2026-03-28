@@ -278,7 +278,8 @@ async function doUnifiedLogin(credential, schoolCode) {
     const daysLeft = Math.ceil((new Date(s.end_date) - today) / 86400000);
     if (daysLeft < 0) {
       return { success: true, role: 'admin', readOnly: true, schoolCode: s.school_code,
-        schoolName: s.name, expiredMsg: `انتهى الاشتراك بتاريخ ${s.end_date}` };
+        schoolName: s.name, expiredMsg: `انتهى الاشتراك بتاريخ ${s.end_date}`,
+        whatsapp: s.whatsapp || '' };
     }
     return { success: true, role: 'admin', readOnly: false, schoolCode: s.school_code,
       schoolName: s.name, daysLeft, warning: daysLeft <= 5 };
