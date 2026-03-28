@@ -1310,8 +1310,11 @@ document.addEventListener('DOMContentLoaded', function() {
         hideL();
         if (r && r.success) {
           T = r.teacher;
-          if (r.readOnly) showReadOnlyBanner(r.expiredMsg);
-          else if (r.warning) showWarningBar(r.daysLeft);
+          window._tReadOnly    = r.readOnly    || false;
+          window._tExpiredMsg  = r.expiredMsg  || '';
+          window._tWarning     = r.warning     || false;
+          window._tDaysLeft    = r.daysLeft    || 0;
+          window._tWhatsapp    = r.whatsapp    || '';
           enter();
         }
       })
@@ -1341,10 +1344,10 @@ function doLogin(){
     .withFailureHandler(e=>{hideL();console.error(e);})
     .doTeacherLogin(c);
 }
-function showReadOnlyBanner(msg){
+function showReadOnlyBanner(msg, whatsapp){
   const b=document.createElement('div');
   b.style.cssText='background:linear-gradient(135deg,#DC2626,#991B1B);color:#fff;padding:12px 20px;text-align:center;font-size:13px;font-weight:700;position:sticky;top:58px;z-index:99;display:flex;align-items:center;justify-content:center;gap:8px;';
-  b.innerHTML='<span class="material-icons-round" style="font-size:16px">lock</span>'+(msg||'انتهى الاشتراك — وضع القراءة فقط');
+  b.innerHTML='<span class="material-icons-round" style="font-size:16px">lock</span>'+(msg||'انتهى الاشتراك — وضع القراءة فقط')+(whatsapp?'&nbsp;&nbsp;<a href="https://wa.me/'+whatsapp+'" target="_blank" style="color:#fff;text-decoration:underline">تجديد الاشتراك ←</a>':'');
   document.getElementById('mainApp').prepend(b);
   document.querySelectorAll('button:not(.app-hd-logout)').forEach(el=>{el.disabled=true;el.style.opacity='.4';el.style.cursor='not-allowed';});
   document.querySelectorAll('input,select,textarea').forEach(el=>{el.disabled=true;});
@@ -1375,6 +1378,11 @@ function enter(){
   setTimeout(()=>{ls.classList.remove('active');ls.style.display='none';document.getElementById('mainApp').style.display='block'; document.body.classList.add('app-ready'); setTimeout(applySidebarBounds, 150);},400);
   document.getElementById('teacherWelcome').textContent=T.name||'معلم';
   loadSettingsFromSupabase();
+  // إظهار بانر الاشتراك بعد إظهار الـ mainApp
+  setTimeout(function(){
+    if (window._tReadOnly)        showReadOnlyBanner(window._tExpiredMsg, window._tWhatsapp||'');
+    else if (window._tWarning)    showWarningBar(window._tDaysLeft);
+  }, 450);
   document.getElementById('teacherInfo').textContent=T.subjects;
   const s=document.getElementById('recordClass');
   s.innerHTML='<option value="">-- اختر --</option>';
