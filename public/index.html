@@ -3466,10 +3466,11 @@ tr:hover td{background:var(--em-ghost);}
       <button class="pt-print" onclick="printSection('positiveLog')"><span class="material-icons-round">print</span></button>
     </div>
     <div class="card" style="border-top:3px solid #16a34a;">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
-        <select id="posLogFilterClass" onchange="loadPositiveLogTable()" style="padding:7px 12px;border:1.5px solid var(--border);border-radius:var(--r2);font-family:inherit;font-size:12px;background:var(--surface);"><option value="الكل">كل الفصول</option></select>
-        <input type="date" id="posLogFilterDate2" onchange="loadPositiveLogTable()" style="padding:7px 12px;border:1.5px solid var(--border);border-radius:var(--r2);font-family:inherit;font-size:12px;background:var(--surface);">
-        <select id="posLogFilterType" onchange="loadPositiveLogTable()" style="padding:7px 12px;border:1.5px solid var(--border);border-radius:var(--r2);font-family:inherit;font-size:12px;background:var(--surface);">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+        <select id="posLogFilterClass" onchange="loadPositiveLogTable()" style="padding:6px 10px;border:1.5px solid var(--border);border-radius:var(--r2);font-family:inherit;font-size:12px;background:var(--surface);min-width:110px;"><option value="الكل">كل الفصول</option></select>
+        <input type="text" id="posLogFilterStudent" oninput="loadPositiveLogTable()" placeholder="اسم الطالب..." style="padding:6px 10px;border:1.5px solid var(--border);border-radius:var(--r2);font-family:inherit;font-size:12px;background:var(--surface);min-width:130px;">
+        <input type="date" id="posLogFilterDate2" onchange="loadPositiveLogTable()" style="padding:6px 10px;border:1.5px solid var(--border);border-radius:var(--r2);font-family:inherit;font-size:12px;background:var(--surface);">
+        <select id="posLogFilterType" onchange="loadPositiveLogTable()" style="padding:6px 10px;border:1.5px solid var(--border);border-radius:var(--r2);font-family:inherit;font-size:12px;background:var(--surface);min-width:120px;">
           <option value="الكل">إيجابي ومتميز</option>
           <option value="إيجابي">⭐ إيجابي فقط</option>
           <option value="متميز">🌟 متميز فقط</option>
@@ -3764,6 +3765,7 @@ function deletePosEntry(btn) {
 }
 
 function posLogClearFilters() {
+  var fs = document.getElementById('posLogFilterStudent'); if(fs) fs.value = '';
   var fc=document.getElementById('posLogFilterClass'); if(fc) fc.value='الكل';
   var fd=document.getElementById('posLogFilterDate2'); if(fd) fd.value='';
   var ft=document.getElementById('posLogFilterType'); if(ft) ft.value='الكل';
@@ -3772,6 +3774,7 @@ function posLogClearFilters() {
 
 function loadPositiveLogTable() {
   var fc = (document.getElementById('posLogFilterClass')||{value:'الكل'}).value || 'الكل';
+  var fs = ((document.getElementById('posLogFilterStudent')||{value:''}).value || '').trim().toLowerCase();
   var fd = (document.getElementById('posLogFilterDate2')||{value:''}).value || '';
   var ft = (document.getElementById('posLogFilterType')||{value:'الكل'}).value || 'الكل';
   showLoading();
@@ -3784,6 +3787,9 @@ function loadPositiveLogTable() {
     // تطبيق فلتر النوع
     if (ft !== 'الكل') {
       recs = recs.filter(function(r){ return (r.subType||r.sub_type||'إيجابي') === ft; });
+    }
+    if (fs) {
+      recs = recs.filter(function(r){ return (r.studentName||r.student_name||'').toLowerCase().includes(fs); });
     }
     var cntEl = document.getElementById('posLogCountChip');
     if(cntEl) cntEl.textContent = recs.length + ' سجل';
