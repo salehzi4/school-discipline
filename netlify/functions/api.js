@@ -130,6 +130,7 @@ async function dispatch(action, body, schoolCode) {
     // ── قراءة السجلات ──
     case 'getViolationsLog':      return getViolationsLog(body.filterClass, body.filterDate, body.filterType, schoolCode);
     case 'getMessagesLog':        return getMessagesLog(body.filterClass, body.filterDate, schoolCode);
+    case 'deleteMessageLog':      return deleteMessageLog(body.date, body.studentName, body.violationType, schoolCode);
     case 'getPositiveBehaviorsLog':return getPositiveBehaviorsLog(body.filterClass, body.filterDate, schoolCode);
     case 'deletePositiveBehaviorLog': return deletePositiveBehaviorLog(body.date, body.studentName, body.behaviorType, schoolCode);
 
@@ -167,6 +168,7 @@ async function dispatch(action, body, schoolCode) {
     // ── المحاضر ──
     case 'saveReport':        return saveReport(body.data, schoolCode);
     case 'getReports':        return getReports(schoolCode);
+    case 'deleteReport':      return deleteReport(body.reportNum, schoolCode);
     case 'getReportByNum':    return getReportByNum(body.reportNum, schoolCode);
     case 'updateReportStatus':return updateReportStatus(body.reportNum, body.status, schoolCode);
     case 'getReportsByStudent':return getReportsByStudent(body.studentName, body.className, schoolCode);
@@ -775,6 +777,20 @@ async function getViolationsLog(filterClass, filterDate, filterType, sc) {
   }));
 }
 
+async function deleteMessageLog(date, studentName, violationType, sc) {
+  let params = `school_code=eq.${sc}&student_name=eq.${encodeURIComponent(studentName)}&select=id,sent_at&order=sent_at.desc`;
+  if (violationType) params += `&violation_type=eq.${encodeURIComponent(violationType)}`;
+  // فلتر التاريخ: نحول صيغة العرض (2025/05/01 14:30) لـ ISO
+  if (date) {
+    const clean = date.trim().split(' ')[0].replace(/\//g, '-');
+    if (clean.length >= 8) params += `&sent_at=gte.${clean}T00:00:00&sent_at=lte.${clean}T23:59:59`;
+  }
+  const rows = await sb('messages_log', 'GET', params);
+  if (!Array.isArray(rows) || !rows.length) return { success: false, error: 'لم يُعثر على السجل' };
+  const res = await sb('messages_log', 'DELETE', `id=eq.${rows[0].id}`);
+  return { success: res && res.ok !== false };
+}
+
 async function getMessagesLog(filterClass, filterDate, sc) {
   let params = `school_code=eq.${sc}&order=sent_at.desc`;
   if (filterClass && filterClass !== 'الكل') params += `&class_name=eq.${encodeURIComponent(filterClass)}`;
@@ -1300,6 +1316,11 @@ async function saveReport(data, sc) {
     notes: data.bodyText || data.notes || ''
   });
   return { success: true, reportNum, message: 'تم حفظ المحضر ✅' };
+}
+
+async function deleteReport(reportNum, sc) {
+  const res = await sb('reports', 'DELETE', `school_code=eq.${sc}&report_num=eq.${encodeURIComponent(reportNum)}`);
+  return { success: res && res.ok !== false };
 }
 
 async function getReports(sc) {
