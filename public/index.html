@@ -3585,6 +3585,22 @@ document.addEventListener('DOMContentLoaded',()=>{
     if(role==='teacher') hideAdminTabs();
     initApp();
     restoreTab();
+    // التحقق من انتهاء الاشتراك عند استعادة الجلسة
+    var sc = sessionStorage.getItem('schoolCode')||'';
+    if(sc){
+      GAS.doUnifiedLogin(sessionStorage.getItem('adminPass')||'__session__check__').catch(function(){});
+      // نتحقق مباشرة من حالة الاشتراك
+      setTimeout(function(){
+        var storedPass = sessionStorage.getItem('adminPass');
+        if(!storedPass) return;
+        GAS.doUnifiedLogin(storedPass).then(function(r){
+          if(r && r.success && r.readOnly){
+            showExpiredBanner(r.expiredMsg, r.whatsapp);
+            lockAllInputs();
+          }
+        }).catch(function(){});
+      }, 800);
+    }
   }
 });
 function initParticles() {
@@ -3622,6 +3638,7 @@ function doLogin(){
     sessionStorage.setItem('loggedIn','true');
     sessionStorage.setItem('userRole', res.role||'teacher');
     sessionStorage.setItem('schoolCode', res.schoolCode||'');
+    if(res.role==='admin') sessionStorage.setItem('adminPass', p);
     window.setSchoolCode && window.setSchoolCode(res.schoolCode||'');
 
     // ── توجيه حسب الدور ──
@@ -3652,14 +3669,16 @@ function doLogin(){
       document.getElementById('appFooter').style.display='block';
       document.body.classList.add('app-ready');
       setTimeout(applySidebarBounds, 150);
+      initApp();restoreTab();
+      loadSettingsFromSupabase();
       if(res.readOnly){
-        showExpiredBanner(res.expiredMsg, res.whatsapp);
-        lockAllInputs();
+        setTimeout(function(){
+          showExpiredBanner(res.expiredMsg, res.whatsapp);
+          lockAllInputs();
+        }, 600);
       } else if(res.warning){
         showExpiryWarning(res.daysLeft);
       }
-      initApp();restoreTab();
-      loadSettingsFromSupabase();
     },400);
   }).catch(function(e){ hideLoading(); console.error(e); });
 }
