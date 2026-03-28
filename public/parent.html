@@ -216,7 +216,7 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
 .sec-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
 
 /* ══ OVERVIEW CARDS ══ */
-.overview-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
+.overview-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px;}
 .ov-card{background:var(--surface);border:1.5px solid var(--c-border,var(--border));border-radius:var(--r);padding:14px 12px;text-align:center;position:relative;overflow:hidden;transition:transform .18s,box-shadow .18s;cursor:default;}
 .ov-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--c,var(--em));}
 .ov-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.08);}
@@ -226,7 +226,7 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
 .ov-lbl{font-size:10px;font-weight:700;color:var(--text-3);margin-top:4px;}
 
 /* ══ INDICATORS GRID ══ */
-.ind-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.ind-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
 .ind-card{background:var(--surface);border:1.5px solid var(--c-border,var(--border));border-radius:var(--r);overflow:hidden;transition:box-shadow .18s;}
 .ind-card:hover{box-shadow:0 4px 18px rgba(0,0,0,.08);}
 .ind-body{padding:14px 12px 10px;text-align:center;}
@@ -285,14 +285,14 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
 
 /* ══ RESPONSIVE ══ */
 @media(max-width:640px){
-  .overview-grid{grid-template-columns:1fr 1fr;}
-  .ind-grid{grid-template-columns:1fr 1fr;}
+  .overview-grid{grid-template-columns:repeat(5,1fr);}
+  .ind-grid{grid-template-columns:repeat(5,1fr);}
   .sb-name{font-size:20px;}
   .sb-class{font-size:16px;}
 }
 @media(max-width:400px){
-  .overview-grid{grid-template-columns:1fr 1fr;}
-  .ind-grid{grid-template-columns:1fr 1fr;}
+  .overview-grid{grid-template-columns:repeat(3,1fr);}
+  .ind-grid{grid-template-columns:repeat(5,1fr);}
 }
 
 /* ══ GLOBAL ALERT ══ */
@@ -378,7 +378,12 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
 
     <div class="sec-lbl" style="--c:#0A5C44;">نظرة عامة</div>
     <div class="overview-grid">
-      <div class="ov-card" style="--c:var(--red);--c-pale:var(--red-pale);--c-border:#fca5a5;">
+      <div class="ov-card" style="--c:#0369a1;--c-pale:#dbeafe;--c-border:#93c5fd;">
+        <div class="ov-icon"><span class="material-icons-round">event_busy</span></div>
+        <div class="ov-num" id="ovAbsence">0</div>
+        <div class="ov-lbl">الغياب</div>
+      </div>
+            <div class="ov-card" style="--c:var(--red);--c-pale:var(--red-pale);--c-border:#fca5a5;">
         <div class="ov-icon"><span class="material-icons-round">warning_amber</span></div>
         <div class="ov-num" id="ovBehavior">0</div>
         <div class="ov-lbl">المخالفات السلوكية</div>
@@ -404,48 +409,38 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
     <div class="ind-grid">
 
       <!-- بطاقة الغياب -->
-            <div class="ind-card" style="--c:#D97706;--c-border:#fcd34d;">
-        <div class="ind-body">
-          <div class="ind-title"><span class="material-icons-round" style="font-size:14px;">event_busy</span> الغياب</div>
-          <div class="ind-donut-wrap">
-            <svg viewBox="0 0 80 80" width="80" height="80">
-              <circle class="ind-track" cx="40" cy="40" r="30"/>
-              <circle class="ind-fill" id="dAbsence" cx="40" cy="40" r="30" stroke="#D97706" stroke-dasharray="0 188"/>
-              <circle class="ind-fill2" id="dAbsence2" cx="40" cy="40" r="30" stroke="#EF4444" stroke-dasharray="0 188"/>
-            </svg>
-            <div class="ind-lbl-wrap" onclick="indToggle('absence')">
-              <span class="ind-num" id="iAbsenceNum">0</span>
-              <span class="ind-sub" id="iAbsenceSub">بعذر</span>
-            </div>
-          </div>
-          <div class="ind-legend">
-            <span class="ind-dot" style="background:#D97706;" onclick="indShow('absence',0)"></span><span>بعذر</span>
-            <span class="ind-dot" style="background:#EF4444;margin-right:6px;" onclick="indShow('absence',1)"></span><span>بدون عذر</span>
-          </div>
-          <div class="ind-sub-txt" id="im_absence">0 بعذر — 0 بدون عذر</div>
-        </div>
-      </div>
-<div class="ind-card" style="--c:#D97706;--c-border:#fcd34d;">
+            <!-- بطاقة مؤشر الغياب -->
+      <div class="ind-card" style="--c:#0369a1;--c-border:#93c5fd;">
         <div class="ind-body">
           <div class="donut-wrap">
             <svg viewBox="0 0 90 90">
               <circle class="d-track" cx="45" cy="45" r="38"/>
-              <circle class="d-fill" id="df1_absence" cx="45" cy="45" r="38" stroke="#D97706"/>
-              <circle class="d-fill2" id="df2_absence" cx="45" cy="45" r="38" stroke="#ef4444"/>
+              <circle class="d-fill2" id="dAbsence2" cx="45" cy="45" r="38" stroke="#EF4444" stroke-dasharray="0 239"/>
+              <circle class="d-fill1" id="dAbsence" cx="45" cy="45" r="38" stroke="#0369a1" stroke-dasharray="0 239"/>
             </svg>
-            <div class="donut-center" onclick="donutToggle('absence')" style="cursor:pointer;">
-              <span class="ds-num" id="dn_absence">0</span>
-              <span class="ds-lbl" id="ds_absence">بعذر</span>
+            <div class="donut-center" onclick="indToggle('absence')" style="cursor:pointer;">
+              <div class="donut-num" id="iAbsenceNum" style="color:#0369a1;">0</div>
+              <div class="donut-sub" id="iAbsenceSub">بعذر</div>
             </div>
           </div>
+          <div class="ind-title">مؤشر الغياب</div>
+          <div class="ind-meta" id="im_absence">0 بعذر — 0 بدون عذر</div>
         </div>
-        <div class="ind-title">مؤشر الغياب</div>
-        <div class="ind-meta" id="im_absence">بعذر vs بدون عذر</div>
-        <button class="ind-btn" style="background:#D97706;" onclick="toggleDetails('absence_detail')">
-          <span class="material-icons-round" style="font-size:14px;">expand_more</span> التفاصيل
+        <button class="ind-btn" style="background:#0369a1;" onclick="toggleDetails('absence',this)">
+          <span class="material-icons-round">expand_more</span> عرض التفاصيل
         </button>
-        <div class="detail-panel" id="absence_detail" style="display:none;"></div>
+        <div class="details-panel" id="dp_absence">
+          <div class="dp-inner">
+            <div class="dp-close-row">
+              <div class="dp-title">سجل الغياب</div>
+              <button class="dp-close" onclick="closeDetails('absence')"><span class="material-icons-round" style="font-size:12px;">close</span> إغلاق</button>
+            </div>
+            <div id="dpl_absence"></div>
+          </div>
+        </div>
       </div>
+
+
 
       <div class="ind-card" style="--c:var(--red);--c-border:#fca5a5;">
         <div class="ind-body">
@@ -461,7 +456,7 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
             </div>
           </div>
           <div class="ind-title">مؤشر السلوكيات</div>
-          <div class="ind-meta" id="im_behavior">المخالفات vs التحسّن</div>
+          <div class="ind-meta" id="im_behavior">المخالفات السلوكية</div>
         </div>
         <button class="ind-btn" style="background:var(--red);" onclick="toggleDetails('behavior',this)">
           <span class="material-icons-round">expand_more</span> عرض التفاصيل
@@ -491,7 +486,7 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
             </div>
           </div>
           <div class="ind-title">مؤشر السلوكيات</div>
-          <div class="ind-meta" id="im_class">المخالفات الصفية vs التحسّن</div>
+          <div class="ind-meta" id="im_class">المخالفات الصفية</div>
         </div>
         <button class="ind-btn" style="background:var(--orange);" onclick="toggleDetails('class',this)">
           <span class="material-icons-round">expand_more</span> عرض التفاصيل
@@ -815,8 +810,10 @@ function renderAll(p){
                    + (p.classViolations||[]).filter(function(v){ return (v.category==='غياب'||v.category==='absence') && !v.type.includes('بدون عذر'); }).length;
   var absUnexcused = (p.violations||[]).filter(function(v){ return (v.category==='غياب'||v.category==='absence') && v.type.includes('بدون عذر'); }).length
                    + (p.classViolations||[]).filter(function(v){ return (v.category==='غياب'||v.category==='absence') && v.type.includes('بدون عذر'); }).length;
-  // استخدام جميع السجلات للغياب
-  var allAbsence = (p.violations||[]).concat(p.classViolations||[]).filter(function(v){ return v.category==='غياب'||v.category==='absence'; });
+  // استخدام absenceViolations المنفصلة من API
+  var allAbsence = (p.absenceViolations && p.absenceViolations.length)
+    ? p.absenceViolations
+    : (p.violations||[]).concat(p.classViolations||[]).filter(function(v){ return v.category==='غياب'||v.category==='absence'; });
   absExcused   = allAbsence.filter(function(v){ return !v.type.includes('بدون عذر'); }).length;
   absUnexcused = allAbsence.filter(function(v){ return v.type.includes('بدون عذر'); }).length;
   if($('ovAbsence')) $('ovAbsence').textContent = absExcused + absUnexcused;
@@ -827,8 +824,8 @@ function renderAll(p){
   var vList = p.violations||[];
   var cList = p.classViolations||[];
   var pList = p.positiveBehaviors||[];
-  var vImp  = vList.filter(function(v){ return v.followUp && v.followUp.trim(); }).length;
-  var cImp  = cList.filter(function(v){ return v.followUp && v.followUp.trim(); }).length;
+  var vImp  = 0;
+  var cImp  = 0;
   var pDist = pList.filter(function(v){ return (v.subType==='متميز')||(v.type&&v.type.indexOf('متميز')>-1); }).length;
   drawDonut('behavior', vList.filter(function(v){return v.category!=='غياب'&&v.category!=='absence';}).length, vImp);
   drawDonut('class',    cList.filter(function(v){return v.category!=='غياب'&&v.category!=='absence';}).length, cImp);
@@ -997,8 +994,8 @@ function drawDonut(key, v1, v2){
   var subMap = {behavior:'مخالفة', class:'مخالفة', positive:'إيجابي', reports:'محضر', absence:'بعذر'};
   if(sub) sub.textContent = subMap[key]||'';
   var metaMap = {
-    behavior: v1+' مخالفة — '+v2+' تحسّن',
-    class:    v1+' مخالفة — '+v2+' تحسّن',
+    behavior: v1+' مخالفة',
+    class:    v1+' مخالفة',
     positive: (v1)+' إيجابي — '+v2+' متميز',
     absence:  v1+' بعذر — '+v2+' بدون عذر'
   };
@@ -1037,15 +1034,13 @@ function buildDetailList(key, items, clr, fields){
 }
 
 /* ══ TOGGLE / CLOSE DETAILS ══ */
-var _dpColors = {behavior:'#A32D2D',class:'#B45309',positive:'#0F6E56',absence_detail:'#D97706',behavior_detail:'#A32D2D',class_detail:'#B45309',positive_detail:'#0F6E56'};
-var _dpTitles = {behavior:'المخالفات السلوكية',class:'المخالفات الصفية',positive:'السلوك الإيجابي',absence_detail:'الغياب',behavior_detail:'المخالفات السلوكية',class_detail:'المخالفات الصفية',positive_detail:'السلوك الإيجابي'};
 function toggleDetails(key, btn){
   var panel = $('dp_'+key);
-  var color = _dpColors[key] || 'var(--em)';
-  var title = _dpTitles[key] || 'التفاصيل';
+  var colors = {behavior:'#A32D2D',class:'#B45309',positive:'#0F6E56',absence_detail:'#D97706',behavior_detail:'#A32D2D',class_detail:'#B45309',positive_detail:'#0F6E56'};
+  var titles = {behavior:'المخالفات السلوكية',class:'المخالفات الصفية',positive:'السلوك الإيجابي',absence_detail:'الغياب',behavior_detail:'المخالفات السلوكية',class_detail:'المخالفات الصفية',positive_detail:'السلوك الإيجابي'};
   var hd = document.getElementById('dpMHd');
-  if(hd) hd.style.background = color;
-  document.getElementById('dpMTitle').textContent = title;
+  if(hd) hd.style.background = colors[key] || 'var(--em)';
+  document.getElementById('dpMTitle').textContent = titles[key] || 'التفاصيل';
   var bodyContent = panel ? panel.innerHTML : '';
   var tmp = document.createElement('div'); tmp.innerHTML = bodyContent;
   var cnt = tmp.querySelectorAll('.rec-item').length;
@@ -1667,7 +1662,7 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
 .sec-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
 
 /* ══ OVERVIEW CARDS ══ */
-.overview-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
+.overview-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px;}
 .ov-card{background:var(--surface);border:1.5px solid var(--c-border,var(--border));border-radius:var(--r);padding:14px 12px;text-align:center;position:relative;overflow:hidden;transition:transform .18s,box-shadow .18s;cursor:default;}
 .ov-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--c,var(--em));}
 .ov-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.08);}
@@ -1677,7 +1672,7 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
 .ov-lbl{font-size:10px;font-weight:700;color:var(--text-3);margin-top:4px;}
 
 /* ══ INDICATORS GRID ══ */
-.ind-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.ind-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
 .ind-card{background:var(--surface);border:1.5px solid var(--c-border,var(--border));border-radius:var(--r);overflow:hidden;transition:box-shadow .18s;}
 .ind-card:hover{box-shadow:0 4px 18px rgba(0,0,0,.08);}
 .ind-body{padding:14px 12px 10px;text-align:center;}
@@ -1736,14 +1731,14 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
 
 /* ══ RESPONSIVE ══ */
 @media(max-width:640px){
-  .overview-grid{grid-template-columns:1fr 1fr;}
-  .ind-grid{grid-template-columns:1fr 1fr;}
+  .overview-grid{grid-template-columns:repeat(5,1fr);}
+  .ind-grid{grid-template-columns:repeat(5,1fr);}
   .sb-name{font-size:20px;}
   .sb-class{font-size:16px;}
 }
 @media(max-width:400px){
-  .overview-grid{grid-template-columns:1fr 1fr;}
-  .ind-grid{grid-template-columns:1fr 1fr;}
+  .overview-grid{grid-template-columns:repeat(3,1fr);}
+  .ind-grid{grid-template-columns:repeat(5,1fr);}
 }
 
 </script>
@@ -1752,20 +1747,24 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
 .global-alert.show{display:flex;}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.75;transform:scale(1.1);}}
 </style>
-<script src="/api-client.js">
+<script src="/api-client.js"></script>
+<script>
+
 function indDrawAbsence(excused, unexcused) {
   var total = excused + unexcused;
-  var circ = 188;
-  var d1 = total ? Math.round((excused/total)*circ) : 0;
-  var d2 = total ? Math.round((unexcused/total)*circ) : 0;
+  var circ = 2 * Math.PI * 38;
+  var d1 = total ? (excused/total)*circ : 0;
+  var d2 = total ? (unexcused/total)*circ : 0;
   var el1 = document.getElementById('dAbsence');
   var el2 = document.getElementById('dAbsence2');
   var num = document.getElementById('iAbsenceNum');
   var sub = document.getElementById('iAbsenceSub');
-  if(el1) el1.setAttribute('stroke-dasharray', d1+' '+(circ-d1));
-  if(el2) el2.setAttribute('stroke-dasharray', d2+' '+(circ-d2));
-  if(num) num.textContent = excused;
+  var meta = document.getElementById('im_absence');
+  if(el1) el1.setAttribute('stroke-dasharray', d1 + ' ' + (circ - d1));
+  if(el2) { el2.setAttribute('stroke-dasharray', d2 + ' ' + (circ - d2)); el2.setAttribute('stroke-dashoffset', -d1); }
+  if(num) { num.textContent = excused; num.style.color = '#0369a1'; }
   if(sub) sub.textContent = 'بعذر';
+  if(meta) meta.textContent = excused + ' بعذر — ' + unexcused + ' بدون عذر';
   window._absVals = [{v:excused,lbl:'بعذر'},{v:unexcused,lbl:'بدون عذر'}];
   window._absCur  = 0;
 }
@@ -1787,6 +1786,7 @@ function indShow(key, idx) {
   if(num) { num.textContent = vals[idx].v; num.style.color = colors[idx]; }
   if(sub) { sub.textContent = vals[idx].lbl; sub.style.color = colors[idx]; }
 }
+
 </script>
 
 </head>
@@ -1865,7 +1865,12 @@ function indShow(key, idx) {
 
     <div class="sec-lbl" style="--c:#0A5C44;">نظرة عامة</div>
     <div class="overview-grid">
-      <div class="ov-card" style="--c:var(--red);--c-pale:var(--red-pale);--c-border:#fca5a5;">
+      <div class="ov-card" style="--c:#0369a1;--c-pale:#dbeafe;--c-border:#93c5fd;">
+        <div class="ov-icon"><span class="material-icons-round">event_busy</span></div>
+        <div class="ov-num" id="ovAbsence">0</div>
+        <div class="ov-lbl">الغياب</div>
+      </div>
+            <div class="ov-card" style="--c:var(--red);--c-pale:var(--red-pale);--c-border:#fca5a5;">
         <div class="ov-icon"><span class="material-icons-round">warning_amber</span></div>
         <div class="ov-num" id="ovBehavior">0</div>
         <div class="ov-lbl">المخالفات السلوكية</div>
@@ -1890,6 +1895,37 @@ function indShow(key, idx) {
     <div class="sec-lbl" style="--c:#0A5C44;">المؤشرات</div>
     <div class="ind-grid">
 
+      <!-- بطاقة مؤشر الغياب -->
+      <div class="ind-card" style="--c:#0369a1;--c-border:#93c5fd;">
+        <div class="ind-body">
+          <div class="donut-wrap">
+            <svg viewBox="0 0 90 90">
+              <circle class="d-track" cx="45" cy="45" r="38"/>
+              <circle class="d-fill2" id="dAbsence2" cx="45" cy="45" r="38" stroke="#EF4444" stroke-dasharray="0 239"/>
+              <circle class="d-fill1" id="dAbsence" cx="45" cy="45" r="38" stroke="#0369a1" stroke-dasharray="0 239"/>
+            </svg>
+            <div class="donut-center" onclick="indToggle('absence')" style="cursor:pointer;">
+              <div class="donut-num" id="iAbsenceNum" style="color:#0369a1;">0</div>
+              <div class="donut-sub" id="iAbsenceSub">بعذر</div>
+            </div>
+          </div>
+          <div class="ind-title">مؤشر الغياب</div>
+          <div class="ind-meta" id="im_absence">0 بعذر — 0 بدون عذر</div>
+        </div>
+        <button class="ind-btn" style="background:#0369a1;" onclick="toggleDetails('absence',this)">
+          <span class="material-icons-round">expand_more</span> عرض التفاصيل
+        </button>
+        <div class="details-panel" id="dp_absence">
+          <div class="dp-inner">
+            <div class="dp-close-row">
+              <div class="dp-title">سجل الغياب</div>
+              <button class="dp-close" onclick="closeDetails('absence')"><span class="material-icons-round" style="font-size:12px;">close</span> إغلاق</button>
+            </div>
+            <div id="dpl_absence"></div>
+          </div>
+        </div>
+      </div>
+
       <div class="ind-card" style="--c:var(--red);--c-border:#fca5a5;">
         <div class="ind-body">
           <div class="donut-wrap">
@@ -1904,7 +1940,7 @@ function indShow(key, idx) {
             </div>
           </div>
           <div class="ind-title">مؤشر السلوكيات</div>
-          <div class="ind-meta" id="im_behavior">المخالفات vs التحسّن</div>
+          <div class="ind-meta" id="im_behavior">المخالفات السلوكية</div>
         </div>
         <button class="ind-btn" style="background:var(--red);" onclick="toggleDetails('behavior',this)">
           <span class="material-icons-round">expand_more</span> عرض التفاصيل
@@ -1934,7 +1970,7 @@ function indShow(key, idx) {
             </div>
           </div>
           <div class="ind-title">مؤشر السلوكيات</div>
-          <div class="ind-meta" id="im_class">المخالفات الصفية vs التحسّن</div>
+          <div class="ind-meta" id="im_class">المخالفات الصفية</div>
         </div>
         <button class="ind-btn" style="background:var(--orange);" onclick="toggleDetails('class',this)">
           <span class="material-icons-round">expand_more</span> عرض التفاصيل
