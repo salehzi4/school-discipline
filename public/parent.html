@@ -1013,7 +1013,7 @@ function buildDetailList(key, items, clr, fields){
   }
   var fieldLabels = {
     recorder:'المعلم / الإدارة', subject:'المادة', treatmentDate:'التاريخ',
-    notes:'ملاحظات المعلم', actionTaken:'ملاحظات الإدارة', followUp:'المعالجة'
+    notes: (window._parentGender === 'female' ? 'ملاحظات المعلمة' : 'ملاحظات المعلم'), actionTaken:'ملاحظات الإدارة', followUp:'المعالجة'
   };
   var html = items.map(function(v){
     var rows = '';
@@ -1246,7 +1246,7 @@ async function loadParentSettings(){
     const s = settingsResult;
     sessionStorage.setItem(_PAR_KEY, JSON.stringify(s));
     applyParentSettings(s);
-    if (s && s.gender === 'female') setTimeout(function(){ applyGender('female'); }, 500);
+    if (s && s.gender === 'female') { window._parentGender = 'female'; setTimeout(function(){ applyGender('female'); }, 500); } else { window._parentGender = 'male'; }
     if(!cached) _showParentLogin();
 
   } catch(e){
