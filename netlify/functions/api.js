@@ -606,6 +606,13 @@ async function getFixedViolations(stage) {
   const violations = await sb('fixed_violations', 'GET', `${stageFilter}&order=degree.asc,sort_order.asc`);
   if (!Array.isArray(violations)) return [];
 
+  // جلب درجة 5 تجاه الهيئة بشكل منفصل (تظهر لجميع المراحل)
+  let staffDeg5 = [];
+  if (stage === 'elementary') {
+    const extra = await sb('fixed_violations', 'GET', `category=eq.staff&degree=eq.5&stage=in.(secondary,both)&order=sort_order.asc`);
+    if (Array.isArray(extra)) staffDeg5 = extra;
+  }
+
   // جلب التوابع
   const children = await sb('fixed_violations_children', 'GET', 'order=parent_id.asc,sort_order.asc');
   const childMap = {};
@@ -616,7 +623,9 @@ async function getFixedViolations(stage) {
     });
   }
 
-  return violations.map(v => ({
+  const allViolations = [...violations, ...staffDeg5.filter(e => !violations.find(v => v.id === e.id))];
+
+  return allViolations.map(v => ({
     id: v.id,
     name: v.name,
     degree: v.degree,
