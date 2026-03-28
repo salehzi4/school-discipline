@@ -2216,6 +2216,14 @@ tr:hover td{background:var(--em-ghost);}
         <textarea id="fvPreviewText" rows="2" style="width:100%;padding:10px;border:1.5px solid #07A869;border-radius:10px;font-family:inherit;font-size:13px;resize:vertical;background:#e8f5ee;box-sizing:border-box;"></textarea>
       </div>
       <textarea id="fvActionText" style="display:none;"></textarea>
+      <!-- ملاحظات الإدارة -->
+      <div id="fvAdminNotesArea" style="margin-bottom:12px;">
+        <label style="font-size:11px;font-weight:700;color:#555;display:block;margin-bottom:5px;">
+          <span class="material-icons-round" style="font-size:13px;vertical-align:middle;color:#3D7EB9;">notes</span>
+          ملاحظات <span style="font-size:10px;color:#999;">(اختياري — تظهر لولي الأمر)</span>
+        </label>
+        <textarea id="fvAdminNotes" rows="2" placeholder="اكتب ملاحظاتك هنا..." style="width:100%;padding:10px;border:1px solid #C2C1C1;border-radius:10px;font-family:inherit;font-size:13px;resize:none;box-sizing:border-box;"></textarea>
+      </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
         <button onclick="submitFixedViolation()" style="flex:1;background:#15445A;color:#fff;border:none;padding:12px;border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">
           <span class="material-icons-round" style="font-size:15px;vertical-align:middle;">save</span> تسجيل المخالفة
@@ -5099,17 +5107,19 @@ async function submitFixedViolation() {
     var violationsWithActions = _selectedViolations.map(function(v) {
       return Object.assign({}, v, { actionText: v.rowAction || actionText });
     });
+    var adminNotes = (document.getElementById('fvAdminNotes')||{value:''}).value.trim();
     const result = await GAS.recordFixedViolation({
       studentsData: selStudents,
       violations: violationsWithActions,
       actionText: actionText,
-      previewText: previewText,
+      notes: adminNotes,
       recorder: 'الإدارة'
     });
     console.log('[FV Submit] result:', result);
     hideLoading();
     if (result && result.success) {
       showAlert('recordAlert','success', result.message || 'تم التسجيل ✅');
+      var na = document.getElementById('fvAdminNotes'); if(na) na.value = '';
       clearAllSelectedViol();
       if(document.getElementById('fvActionText')) document.getElementById('fvActionText').value = '';
       if(typeof loadViolationsLog === 'function') loadViolationsLog();
