@@ -74,6 +74,15 @@ exports.handler = async (event) => {
   }
 };
 
+// ── جلب رابط التواصل العام ──
+async function getContactUrl() {
+  const rows = await sb('custom_settings', 'GET', 'school_code=eq.GLOBAL&select=settings');
+  if (Array.isArray(rows) && rows.length && rows[0].settings) {
+    return rows[0].settings.contactUrl || '';
+  }
+  return '';
+}
+
 // ═══════════════════════════════════════════════════════════
 //  الموزع الرئيسي
 // ═══════════════════════════════════════════════════════════
@@ -261,8 +270,9 @@ async function doUnifiedLogin(credential, schoolCode) {
       if (s.status === 'suspended') return { success: false, error: 'تم إيقاف اشتراك المدرسة' };
       const daysLeft = Math.ceil((new Date(s.end_date) - new Date()) / 86400000);
       const readOnly = daysLeft < 0;
+      const contactUrl = readOnly ? await getContactUrl() : '';
       return { success: true, role: 'teacher', schoolCode: t.school_code,
-        schoolName: s.name, readOnly,
+        schoolName: s.name, readOnly, contactUrl,
         teacher: { name: t.name, subjects: t.subjects, classes: t.classes.split(',').map(c => c.trim()) },
         daysLeft: readOnly ? 0 : daysLeft, warning: daysLeft <= 5 && daysLeft >= 0 };
     }
@@ -277,9 +287,10 @@ async function doUnifiedLogin(credential, schoolCode) {
     const today = new Date();
     const daysLeft = Math.ceil((new Date(s.end_date) - today) / 86400000);
     if (daysLeft < 0) {
+      const contactUrl = await getContactUrl();
       return { success: true, role: 'admin', readOnly: true, schoolCode: s.school_code,
         schoolName: s.name, expiredMsg: `انتهى الاشتراك بتاريخ ${s.end_date}`,
-        whatsapp: s.whatsapp || '' };
+        whatsapp: s.whatsapp || '', contactUrl };
     }
     return { success: true, role: 'admin', readOnly: false, schoolCode: s.school_code,
       schoolName: s.name, daysLeft, warning: daysLeft <= 5 };
