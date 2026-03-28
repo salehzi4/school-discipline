@@ -631,7 +631,7 @@ async function getRepeatCount(studentName, violationName, sc) {
 }
 
 async function recordFixedViolation(body, sc) {
-  const { studentsData, violations, actionText, recorder, degree, category, subViolation, notes, subject, stage } = body;
+  const { studentsData, violations, actionText, recorder, degree, category, subViolation, notes, subject, stage, previewText } = body;
   // violations = array of { name, subViolation, degree, category }
   const now = new Date().toISOString();
   const results = [];
@@ -679,7 +679,7 @@ async function recordFixedViolation(body, sc) {
         student_name: student.name,
         class_name: student.className,
         violation_type: fullViolName,
-        notes: notes || sub || '',
+        notes: (recorder === 'الإدارة') ? '' : (notes || ''),
         recorder: recorder || 'الإدارة',
         severity: deg,
         degree: deg,
