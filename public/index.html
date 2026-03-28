@@ -3438,11 +3438,17 @@ tr:hover td{background:var(--em-ghost);}
       <div class="card-title" style="color:#16a34a;">
         <span class="material-icons-round" style="color:#16a34a;">emoji_events</span> سجل السلوك الإيجابي والمتميز
       </div>
-      <div class="filters-bar" style="margin-bottom:12px;">
-        <select id="posLogFilterClass" onchange="loadPositiveBehaviorsLogTable()"><option value="الكل">كل الفصول</option></select>
-        <input type="date" id="posLogFilterDate" onchange="loadPositiveBehaviorsLogTable()">
-        <button class="btn btn-outline btn-sm" onclick="document.getElementById('posLogFilterDate').value='';document.getElementById('posLogFilterClass').value='الكل';loadPositiveBehaviorsLogTable();">الكل</button>
-        <span class="chip" id="positiveLogCount" style="background:rgba(22,163,74,0.12);color:#16a34a;">0</span>
+      <div style="display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:12px;">
+        <select id="posLogFilterClass" onchange="loadPositiveBehaviorsLogTable()" style="padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:12px;background:var(--surface);"><option value="الكل">كل الفصول</option></select>
+        <input type="text" id="posLogFilterStudent" oninput="loadPositiveBehaviorsLogTable()" placeholder="اسم الطالب..." style="padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:12px;background:var(--surface);min-width:130px;">
+        <input type="date" id="posLogFilterDate" onchange="loadPositiveBehaviorsLogTable()" style="padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:12px;background:var(--surface);">
+        <select id="posLogFilterType2" onchange="loadPositiveBehaviorsLogTable()" style="padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:12px;background:var(--surface);">
+          <option value="الكل">إيجابي ومتميز</option>
+          <option value="إيجابي">⭐ إيجابي فقط</option>
+          <option value="متميز">🌟 متميز فقط</option>
+        </select>
+        <button class="btn btn-outline btn-sm" onclick="posLogClearAll()"><span class="material-icons-round" style="font-size:13px;vertical-align:middle;">filter_alt_off</span> الكل</button>
+        <span class="chip" id="positiveLogCount" style="background:rgba(22,163,74,0.12);color:#16a34a;font-weight:700;">0 سجل</span>
       </div>
       <div class="table-wrapper">
         <table>
@@ -3740,7 +3746,44 @@ function toggleStatDetail(id){
 
 // Stats
 function loadPositiveBehaviorsLogTable(){
-  // legacy — يبقى فارغاً بعد انتقال القسم لـ positiveLog
+  var fc  = (document.getElementById('posLogFilterClass')||{value:'الكل'}).value || 'الكل';
+  var fs  = ((document.getElementById('posLogFilterStudent')||{value:''}).value||'').trim().toLowerCase();
+  var fd  = (document.getElementById('posLogFilterDate')||{value:''}).value || '';
+  var ft  = (document.getElementById('posLogFilterType2')||{value:'الكل'}).value || 'الكل';
+  showLoading();
+  GAS.getPositiveBehaviorsLog(fc, fd).then(function(recs){
+    hideLoading();
+    recs = recs || [];
+    if (ft !== 'الكل') recs = recs.filter(function(r){ return (r.subType||r.sub_type||'إيجابي') === ft; });
+    if (fs) recs = recs.filter(function(r){ return (r.studentName||r.student_name||'').toLowerCase().includes(fs); });
+    var cnt = document.getElementById('positiveLogCount');
+    if(cnt) cnt.textContent = recs.length + ' سجل';
+    var tb = document.getElementById('positiveLogTableBody');
+    if(!tb) return;
+    if(!recs.length){ tb.innerHTML='<tr><td colspan="8" class="empty-state">🎉 لا توجد سجلات إيجابية</td></tr>'; return; }
+    tb.innerHTML = recs.map(function(r,i){
+      var subType = r.subType||r.sub_type||'إيجابي';
+      var badge = subType==='متميز'
+        ? '<span style="padding:2px 9px;border-radius:20px;background:rgba(34,211,238,0.12);color:#0891b2;font-size:10px;font-weight:700;">🌟 متميز</span>'
+        : '<span style="padding:2px 9px;border-radius:20px;background:rgba(22,163,74,0.12);color:#16a34a;font-size:10px;font-weight:700;">⭐ إيجابي</span>';
+      return '<tr>'
+        +'<td>'+(i+1)+'</td>'
+        +'<td>'+(r.date||r.recorded_at||'')+'</td>'
+        +'<td><strong>'+(r.studentName||r.student_name||'')+'</strong></td>'
+        +'<td>'+(r.className||r.class_name||'')+'</td>'
+        +'<td>'+(r.behaviorType||r.behavior_type||r.violationType||'')+'</td>'
+        +'<td>'+badge+'</td>'
+        +'<td>'+(r.recorder||'')+'</td>'
+        +'<td>'+(r.notes||'—')+'</td>'
+        +'</tr>';
+    }).join('');
+  }).catch(function(e){ hideLoading(); console.error(e); });
+}
+
+function posLogClearAll(){
+  var els = ['posLogFilterClass','posLogFilterStudent','posLogFilterDate','posLogFilterType2'];
+  els.forEach(function(id){ var el=document.getElementById(id); if(el){ el.value=(id==='posLogFilterClass'?'الكل':''); }});
+  loadPositiveBehaviorsLogTable();
 }
 
 function populatePosLogClasses() {
