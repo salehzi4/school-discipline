@@ -2865,7 +2865,7 @@ tr:hover td{background:var(--em-ghost);}
   <!-- جدول المعلمين -->
   <div class="card">
     <div class="card-title"><span class="material-icons-round">groups</span> المعلمين المسجلين</div>
-    <div class="table-wrapper"><table><thead><tr><th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>الرسالة</th><th>المرسل</th><th>الحالة</th><th>الإجراءات</th></tr></thead><tbody id="teachersTableBody"><tr><td colspan="7" class="empty-state">لا يوجد</td></tr></tbody></table></div>
+    <div class="table-wrapper"><table><thead><tr><th>#</th><th>اسم المعلم</th><th>المواد</th><th>الفصول</th><th>رمز الدخول</th><th>الحالة</th><th>الإجراءات</th></tr></thead><tbody id="teachersTableBody"><tr><td colspan="7" class="empty-state">لا يوجد</td></tr></tbody></table></div>
   </div>
 </div>
 
@@ -7455,14 +7455,26 @@ function getPageData(pageId) {
     if (!rows.length || (rows.length === 1 && rows[0].querySelector('.empty-state'))) {
       return '<p class="empty">لا توجد بيانات</p>';
     }
-    let html = '<table><thead><tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr></thead><tbody>';
-    rows.forEach(row => {
+    function cleanCell(cell) {
+      // نسخ العقدة لتنظيفها بدون تأثير على الـ DOM
+      var clone = cell.cloneNode(true);
+      // إزالة الأزرار والـ icons
+      clone.querySelectorAll('button,a.btn,i.material-icons-round,.material-icons-round').forEach(function(e){ e.remove(); });
+      // span.tag → نص مفصول بفاصلة
+      var tags = clone.querySelectorAll('span.tag');
+      if (tags.length) {
+        var txt = Array.from(tags).map(function(t){ return t.textContent.trim(); }).join('، ');
+        return txt;
+      }
+      return clone.textContent.replace(/\s+/g,' ').trim();
+    }
+    let html = '<table><thead><tr>' + headers.map(h => '<th>' + h + '</th>').join('') + '</tr></thead><tbody>';
+    rows.forEach(function(row) {
       const cells = row.querySelectorAll('td');
       if (!cells.length || row.querySelector('.empty-state')) return;
       html += '<tr>';
-      // نأخذ فقط عدد الأعمدة المطلوبة
       for (var i = 0; i < headers.length && i < cells.length; i++) {
-        html += '<td>' + cells[i].textContent.trim() + '</td>';
+        html += '<td>' + cleanCell(cells[i]) + '</td>';
       }
       html += '</tr>';
     });
@@ -7541,7 +7553,7 @@ function getPageData(pageId) {
     case 'teachers':
       return {
         title: 'قائمة المعلمين',
-        body: extractTable('teachersTableBody', ['#','الاسم','الكود','المواد'])
+        body: extractTable('teachersTableBody', ['#','اسم المعلم','المواد','الفصول','رمز الدخول','الحالة'])
       };
 
     case 'violations':
