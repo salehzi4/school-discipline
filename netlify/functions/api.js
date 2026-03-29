@@ -30,14 +30,11 @@ function fmtDate(val) {
   if (!val) return '';
   const d = new Date(val);
   if (isNaN(d.getTime())) return String(val);
-  // تحويل لتوقيت السعودية UTC+3
   const sa = new Date(d.getTime() + 3 * 60 * 60 * 1000);
   const y = sa.getUTCFullYear();
   const m = String(sa.getUTCMonth()+1).padStart(2,'0');
   const day = String(sa.getUTCDate()).padStart(2,'0');
-  const h = String(sa.getUTCHours()).padStart(2,'0');
-  const min = String(sa.getUTCMinutes()).padStart(2,'0');
-  return `${y}/${m}/${day} ${h}:${min}`;
+  return `${y}/${m}/${day}`;
 }
 
 // ═══════════════════════════════════════════════════════════
