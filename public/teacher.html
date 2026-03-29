@@ -786,6 +786,7 @@ tr:hover td{background:var(--em-ghost);}
 <div class="page-section active" id="page-home">
 <div class="page-toolbar">
     <span class="pt-sep"></span>
+    <button class="pt-print" onclick="loadTeacherStats();" style="background:var(--primary);color:#fff;"><span class="material-icons-round" style="font-size:16px;">refresh</span> تحديث</button>
     <button class="pt-print" onclick="printSection('home')"><span class="material-icons-round">print</span> طباعة</button>
     <button class="pt-pdf" onclick="exportPDF('home')"><span class="material-icons-round">picture_as_pdf</span> PDF</button>
   </div>
@@ -1180,6 +1181,7 @@ tr:hover td{background:var(--em-ghost);}
     <button class="pt-home" onclick="showPage('home',null)"><span class="material-icons-round">home</span> الرئيسية</button>
     <span class="pt-sep"></span>
     <span class="pt-sort"><span class="material-icons-round">sort</span> فرز: <select onchange="sortTable('myLogBody',this.value)"><option value="">الافتراضي</option><option value="1-desc">الأحدث</option><option value="1-asc">الأقدم</option><option value="2-asc">الطالب</option></select></span>
+    <button class="pt-print" onclick="loadMyLog();" style="background:var(--primary);color:#fff;"><span class="material-icons-round" style="font-size:16px;">refresh</span> تحديث</button>
     <button class="pt-print" onclick="printSection('mylog')"><span class="material-icons-round">print</span> طباعة</button>
     <button class="pt-pdf" onclick="exportPDF('mylog')"><span class="material-icons-round">picture_as_pdf</span> PDF</button>
   </div>
@@ -1197,6 +1199,7 @@ tr:hover td{background:var(--em-ghost);}
     <button class="pt-home" onclick="showPage('home',null)"><span class="material-icons-round">home</span> الرئيسية</button>
     <span class="pt-sep"></span>
     <span class="pt-sort"><span class="material-icons-round">sort</span> فرز: <select onchange="sortTable('myMsgBody',this.value)"><option value="">الافتراضي</option><option value="1-desc">الأحدث</option><option value="1-asc">الأقدم</option><option value="2-asc">الطالب</option></select></span>
+    <button class="pt-print" onclick="loadMyMsgs();" style="background:var(--primary);color:#fff;"><span class="material-icons-round" style="font-size:16px;">refresh</span> تحديث</button>
     <button class="pt-print" onclick="printSection('mymessages')"><span class="material-icons-round">print</span> طباعة</button>
     <button class="pt-pdf" onclick="exportPDF('mymessages')"><span class="material-icons-round">picture_as_pdf</span> PDF</button>
   </div>
@@ -1207,6 +1210,7 @@ tr:hover td{background:var(--em-ghost);}
     <button class="pt-home" onclick="showPage('home',null)"><span class="material-icons-round">home</span> الرئيسية</button>
     <span class="pt-sep"></span>
     <span class="pt-sort"><span class="material-icons-round">sort</span> فرز: <select onchange="sortAlerts(this.value)"><option value="">الأكثر تكراراً</option><option value="name-asc">الاسم أ-ي</option></select></span>
+    <button class="pt-print" onclick="loadAlerts();" style="background:var(--primary);color:#fff;"><span class="material-icons-round" style="font-size:16px;">refresh</span> تحديث</button>
     <button class="pt-print" onclick="printSection('alerts')"><span class="material-icons-round">print</span> طباعة</button>
     <button class="pt-pdf" onclick="exportPDF('alerts')"><span class="material-icons-round">picture_as_pdf</span> PDF</button>
   </div>
@@ -1217,6 +1221,7 @@ tr:hover td{background:var(--em-ghost);}
 <div class="page-toolbar">
     <button class="pt-home" onclick="showPage('home',null)"><span class="material-icons-round">home</span> الرئيسية</button>
     <span class="pt-sep"></span>
+    <button class="pt-print" onclick="loadReferredLog();" style="background:var(--primary);color:#fff;"><span class="material-icons-round" style="font-size:16px;">refresh</span> تحديث</button>
     <button class="pt-print" onclick="printSection('referred-log')"><span class="material-icons-round">print</span> طباعة</button>
     <button class="pt-pdf" onclick="exportPDF('referred-log')"><span class="material-icons-round">picture_as_pdf</span> PDF</button>
 </div>
@@ -1255,6 +1260,7 @@ tr:hover td{background:var(--em-ghost);}
   <div class="page-toolbar">
     <button class="pt-home" onclick="showPage('home',null)"><span class="material-icons-round">home</span> الرئيسية</button>
     <span class="pt-sep"></span>
+    <button class="pt-print" onclick="loadTPosLog();" style="background:var(--primary);color:#fff;"><span class="material-icons-round" style="font-size:16px;">refresh</span> تحديث</button>
     <button class="pt-print" onclick="printSection('positive-log')"><span class="material-icons-round">print</span> طباعة</button>
   </div>
   <div class="card" style="border-top:3px solid #16a34a;">
