@@ -7204,6 +7204,11 @@ function showReportView(r, isParentView) {
   document.getElementById('rv_num').textContent         = r.reportNum || '—';
   document.getElementById('rv_region').textContent      = 'الإدارة العامة للتعليم بمنطقة ' + (r.regionName || '—');
   document.getElementById('rv_school').textContent      = r.schoolName || '—';
+  // تحديث الشعار ديناميكياً
+  getPrintLogo(function(b64) {
+    var logoEl = document.getElementById('rv_logo');
+    if (logoEl && b64) { logoEl.src = b64; logoEl.style.display = ''; }
+  });
   document.getElementById('rv_date').textContent        = datePart;
   document.getElementById('rv_time').textContent        = timePart;
   document.getElementById('rv_class').textContent       = r.className || '—';
@@ -7422,14 +7427,36 @@ function viewReportEncoded(jsonStr) {
 
 // ── طباعة المحضر ──
 function printReport() {
-  var el = document.getElementById('reportViewModal').querySelector('div');
-  if (!el) return;
-  var w = window.open('', '_blank');
-  w.document.write('<html dir="rtl"><head><meta charset="UTF-8"><style>body{font-family:IBM Plex Sans Arabic,Arial,sans-serif;margin:0;padding:16px;}</style></head><body>');
-  w.document.write(el.outerHTML);
-  w.document.write('</body></html>');
-  w.document.close();
-  w.print();
+  getPrintLogo(function(b64) {
+    var el = document.getElementById('reportViewModal').querySelector('div');
+    if (!el) return;
+    // تحديث الشعار بالـ base64 قبل الطباعة
+    var clone = el.cloneNode(true);
+    var logoEl = clone.querySelector('#rv_logo');
+    if (logoEl && b64) {
+      logoEl.src = b64;
+      logoEl.style.display = '';
+    }
+    var css = [
+      'body{font-family:"IBM Plex Sans Arabic",sans-serif;margin:0;padding:0;direction:rtl;}',
+      '#rv_header{background:linear-gradient(135deg,#0D2E44,#1A5276)!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}',
+      'table{width:100%;border-collapse:collapse;font-size:12px;}',
+      'thead tr{background:linear-gradient(135deg,#0D2E44,#1A5276)!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}',
+      'th{padding:8px 12px;color:#fff;text-align:right;font-weight:700;}',
+      'td{padding:7px 12px;border-bottom:1px solid #e5e7eb;}',
+      'tr:nth-child(even) td{background:#f9fafb!important;-webkit-print-color-adjust:exact!important;}',
+      '@page{margin:0.8cm 1.2cm;size:A4;}',
+      '@media print{body{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}}'
+    ].join('');
+    var w = window.open('', '_blank', 'width=900,height=750');
+    w.document.write('<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8">');
+    w.document.write('<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700;900&display=swap" rel="stylesheet">');
+    w.document.write('<style>' + css + '</style></head><body>');
+    w.document.write(clone.outerHTML);
+    w.document.write('</body></html>');
+    w.document.close();
+    setTimeout(function(){ w.print(); }, 800);
+  });
 }
 
 
@@ -8438,13 +8465,12 @@ window.addEventListener('resize', applySidebarBounds);
     <!-- خط علوي ملون -->
     <div style="height:4px;background:linear-gradient(90deg,#3C86B7,#57AC9D,#C9860A);"></div>
     <!-- هيدر المحضر -->
-    <div id="rv_header" style="padding:22px 28px 18px;display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,#3C86B7,#3E8AAD 30%,#57AC9D 70%,#4BAF78 100%);">
-      <img src="https://a.top4top.io/p_3709djdl41.png" alt="شعار وزارة التعليم" style="width:75px;height:75px;object-fit:contain;flex-shrink:0;filter:brightness(0) invert(1) drop-shadow(0 1px 4px rgba(0,0,0,0.5));">
-      <div style="flex:1;text-align:center;">
-        <div style="font-size:11px;color:rgba(255,255,255,.82);margin-bottom:2px;">المملكة العربية السعودية</div>
-        <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:3px;">وزارة التعليم</div>
-        <div id="rv_region" style="font-size:12px;font-weight:700;color:#fff9cc;margin-bottom:3px;">—</div>
-        <div id="rv_school" style="font-size:16px;font-weight:900;color:#fff;">—</div>
+    <div id="rv_header" style="background:linear-gradient(135deg,#0D2E44 0%,#1A5276 100%);padding:16px 24px;display:flex;align-items:center;gap:14px;-webkit-print-color-adjust:exact;print-color-adjust:exact;">
+      <img id="rv_logo" src="https://e.top4top.io/p_3719brsoy1.png" alt="شعار" style="width:52px;height:52px;object-fit:contain;flex-shrink:0;filter:brightness(0) invert(1);" onerror="this.style.display='none'">
+      <div style="width:1.5px;height:40px;background:rgba(255,255,255,.35);flex-shrink:0;"></div>
+      <div style="flex:1;">
+        <div id="rv_region" style="font-size:11px;color:rgba(255,255,255,.75);margin-bottom:2px;">—</div>
+        <div id="rv_school" style="font-size:15px;font-weight:900;color:#fff;line-height:1.3;">—</div>
       </div>
       <div style="text-align:center;flex-shrink:0;">
         <div style="width:58px;height:58px;border-radius:50%;border:2px dashed rgba(255,255,255,.75);background:rgba(255,255,255,.1);display:flex;flex-direction:column;align-items:center;justify-content:center;">
