@@ -7450,7 +7450,7 @@ function getPageData(pageId) {
   // ── استخراج جدول عام ──
   function extractTable(tbodyId, headers) {
     const tbody = document.getElementById(tbodyId);
-    if (!tbody) return '';
+    if (!tbody) return '<p class="empty">لا توجد بيانات</p>';
     const rows = tbody.querySelectorAll('tr');
     if (!rows.length || (rows.length === 1 && rows[0].querySelector('.empty-state'))) {
       return '<p class="empty">لا توجد بيانات</p>';
@@ -7460,14 +7460,10 @@ function getPageData(pageId) {
       const cells = row.querySelectorAll('td');
       if (!cells.length || row.querySelector('.empty-state')) return;
       html += '<tr>';
-      // تجاهل آخر خلية إذا كانت تحتوي أزرار
-      cells.forEach((cell, i) => {
-        const txt = cell.textContent.trim();
-        const isBtn = cell.querySelector('button,a.btn');
-        if (!isBtn || i < cells.length - 1) {
-          html += `<td>${txt}</td>`;
-        }
-      });
+      // نأخذ فقط عدد الأعمدة المطلوبة
+      for (var i = 0; i < headers.length && i < cells.length; i++) {
+        html += '<td>' + cells[i].textContent.trim() + '</td>';
+      }
       html += '</tr>';
     });
     html += '</tbody></table>';
@@ -7506,14 +7502,21 @@ function getPageData(pageId) {
       return {
         title: 'سجل المخالفات والسلوكيات',
         body: extractTable('violationsLogTableBody',
-          ['#','التاريخ','الطالب','الفصل','المخالفة','الحالة','الخطورة','المسجّل'])
+          ['#','التاريخ','الطالب','الفصل','نوع المخالفة','المخالفة','الإجراء المتخذ','التكرار'])
+      };
+
+    case 'positiveLog':
+      return {
+        title: 'سجل السلوك الإيجابي والمتميز',
+        body: extractTable('positiveLogTableBody',
+          ['#','التاريخ','الطالب','الفصل','اسم السلوك','نوع السلوك','الراصد'])
       };
 
     case 'messages':
       return {
         title: 'سجل الرسائل المرسلة',
         body: extractTable('messagesTableBody',
-          ['#','التاريخ','الطالب','الفصل','المخالفة','المرسل','الحالة'])
+          ['#','التاريخ','الطالب','الفصل','نص الرسالة'])
       };
 
     case 'reports':
