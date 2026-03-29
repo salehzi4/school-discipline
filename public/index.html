@@ -1821,7 +1821,8 @@ tr:hover td{background:var(--em-ghost);}
     </button>
     <button class="pt-print" onclick="printSection('home')"><span class="material-icons-round">print</span> طباعة</button>
     <button class="pt-pdf" onclick="exportPDF('home')"><span class="material-icons-round">picture_as_pdf</span> PDF</button>
-  </div>
+  
+    <button class="pt-print" onclick="loadStats();loadAlerts();" style="background:var(--primary);color:#fff;"><span class="material-icons-round" style="font-size:16px;">refresh</span> تحديث</button></div>
   <div class="date-filter-bar">
     <label style="font-size:12px;font-weight:600;">فلتر:</label>
     <input type="date" id="statDateFilter" onchange="loadStats()">
@@ -3048,7 +3049,8 @@ tr:hover td{background:var(--em-ghost);}
 <div class="page-section" id="page-whatsapp">
   <div class="page-toolbar">
     <button class="pt-home" onclick="showPage('home',null)"><span class="material-icons-round">home</span> الرئيسية</button>
-  </div>
+  
+    <button class="pt-print" onclick="loadWAStudents();" style="background:var(--primary);color:#fff;"><span class="material-icons-round" style="font-size:16px;">refresh</span> تحديث</button></div>
   <div class="card" style="padding:0;overflow:hidden;border:0.5px solid #C2C1C1;">
 
     <div style="background:#15445A;padding:12px 16px;display:flex;align-items:center;gap:10px;">
@@ -3259,7 +3261,8 @@ tr:hover td{background:var(--em-ghost);}
     <span class="pt-sep"></span>
     <button class="pt-print" onclick="printSection('charts')"><span class="material-icons-round">print</span> طباعة</button>
     <button class="pt-pdf" onclick="exportPDF('charts')"><span class="material-icons-round">picture_as_pdf</span> PDF</button>
-  </div>
+  
+    <button class="pt-print" onclick="loadCharts();" style="background:var(--primary);color:#fff;"><span class="material-icons-round" style="font-size:16px;">refresh</span> تحديث</button></div>
   <div class="card">
     <div class="card-title"><span class="material-icons-round">bar_chart</span> المقارنة الشهرية</div>
     <div id="monthlyChart" style="display:flex;align-items:flex-end;gap:6px;height:200px;padding:12px;border:1px solid var(--border);border-radius:var(--radius-sm);overflow-x:auto;"></div>
@@ -3499,6 +3502,7 @@ tr:hover td{background:var(--em-ghost);}
     <div class="page-toolbar">
       <button class="pt-home" onclick="showPage('home',null)"><span class="material-icons-round">home</span></button>
       <span class="pt-title"><span class="material-icons-round" style="color:#16a34a;vertical-align:middle;">emoji_events</span> سجل السلوكيات الإيجابية والمتميزة</span>
+      <button class="pt-print" onclick="loadPositiveBehaviorsLogTable ? loadPositiveBehaviorsLogTable() : (loadPositiveLogTable && loadPositiveLogTable())" style="background:var(--primary);color:#fff;"><span class="material-icons-round" style="font-size:16px;">refresh</span> تحديث</button>
       <button class="pt-print" onclick="printSection('positiveLog')"><span class="material-icons-round">print</span></button>
     </div>
     <div class="card" style="border-top:3px solid #16a34a;">
