@@ -7524,21 +7524,52 @@ function getPageData(pageId) {
 
   switch(pageId) {
 
-    case 'home':
+    case 'home': {
+      function extractDetailRows(detailId) {
+        var el = document.getElementById(detailId);
+        if (!el) return '';
+        var rows = el.querySelectorAll('.stat-detail-row');
+        if (!rows.length) return '';
+        var tbl = '<table style="width:100%;border-collapse:collapse;font-size:11px;margin-top:6px;">'
+          + '<thead><tr><th style="text-align:right;padding:5px 8px;background:#f1f5f9;color:#555;font-weight:700;border-bottom:2px solid #e2e8f0;">التصنيف</th>'
+          + '<th style="text-align:center;padding:5px 8px;background:#f1f5f9;color:#555;font-weight:700;border-bottom:2px solid #e2e8f0;width:60px;">العدد</th></tr></thead><tbody>';
+        rows.forEach(function(row, i) {
+          var spans = row.querySelectorAll('span');
+          var name  = spans[0] ? spans[0].textContent.trim() : '';
+          var count = spans[1] ? spans[1].textContent.trim() : '';
+          tbl += '<tr style="background:' + (i%2===0?'#fff':'#f8fafc') + ';">'
+            + '<td style="padding:5px 8px;border-bottom:1px solid #f0f0f0;">' + name + '</td>'
+            + '<td style="padding:5px 8px;border-bottom:1px solid #f0f0f0;text-align:center;font-weight:700;">' + count + '</td>'
+            + '</tr>';
+        });
+        return tbl + '</tbody></table>';
+      }
+      function statCard(label, valId, detailId, bg, border, textClr) {
+        return '<div style="background:' + bg + ';border:1px solid ' + border + ';border-radius:10px;padding:10px 14px;margin-bottom:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
+          + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">'
+          + '<span style="font-size:12px;font-weight:700;color:' + textClr + ';">' + label + '</span>'
+          + '<span style="font-size:24px;font-weight:900;color:' + textClr + ';">' + g(valId) + '</span>'
+          + '</div>'
+          + extractDetailRows(detailId)
+          + '</div>';
+      }
       return {
         title: 'ملخص الإحصاءات',
-        body: `
-          ${extractStats([
-            ['statViolations','المخالفات السلوكية','#B03A2E'],
-            ['statClassViolations','المخالفات الصفية','#9A5200'],
-            ['statPositive','السلوك الإيجابي','#1A7A4A'],
-            ['statReports','عدد المحاضر','#1B4F8A']
-          ])}
-          <div class="section-hd">توزيع المخالفات حسب النوع</div>
-          ${gHTML('violationsDetail') || '<p class="empty">لا توجد بيانات</p>'}
-        `
+        body:
+          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">'
+          + '<div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:10px;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
+          + '<div style="font-size:10px;color:#B03A2E;font-weight:700;margin-bottom:2px;">الطلاب</div>'
+          + '<div style="font-size:22px;font-weight:900;color:#B03A2E;">' + g('statStudents') + '</div></div>'
+          + '<div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;padding:10px;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
+          + '<div style="font-size:10px;color:#1B4F8A;font-weight:700;margin-bottom:2px;">المعلمون</div>'
+          + '<div style="font-size:22px;font-weight:900;color:#1B4F8A;">' + g('statTeachers') + '</div></div>'
+          + '</div>'
+          + statCard('المخالفات السلوكية', 'statViolations',     'violationsDetail',      '#FFF5F5','#FECACA','#B03A2E')
+          + statCard('المخالفات الصفية',   'statClassViolations','classViolationsDetail', '#FFFBEB','#FDE68A','#9A5200')
+          + statCard('السلوك الإيجابي',    'statPositive',       'positiveDetail',        '#F0FFF4','#BBF7D0','#1A7A4A')
+          + statCard('المحاضر',            'statReports',        'reportsDetail',         '#EFF6FF','#BFDBFE','#1B4F8A')
       };
-
+    }
     case 'violationsLog':
       return {
         title: 'سجل المخالفات والسلوكيات',
