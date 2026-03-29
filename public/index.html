@@ -7696,13 +7696,13 @@ function getPageData(pageId) {
 
           <div style="margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:40px;border-top:1.5px solid #e5e7eb;padding-top:20px;">
             <div style="text-align:center;">
-              <div style="font-size:11px;color:#6b7280;margin-bottom:30px;">توقيع مدير المدرسة</div>
+              <div style="font-size:11px;color:#6b7280;margin-bottom:30px;">توقيع ${window._schoolGender==='female'?'مديرة المدرسة':'مدير المدرسة'}</div>
               <div style="border-bottom:1.5px solid #374151;width:80%;margin:0 auto;"></div>
             </div>
             <div style="text-align:center;">
-              <div style="font-size:11px;color:#6b7280;margin-bottom:30px;">توقيع الموجه الطلابي</div>
+              <div style="font-size:11px;color:#6b7280;margin-bottom:30px;">توقيع ${window._schoolGender==='female'?'الموجهة الطلابية':'الموجه الطلابي'}</div>
               <div style="border-bottom:1.5px solid #374151;width:80%;margin:0 auto;"></div>
-              <div style="font-size:11px;color:#374151;margin-top:6px;">الموجه الطلابي</div>
+              <div style="font-size:11px;color:#374151;margin-top:6px;">${window._schoolGender==='female'?'الموجهة الطلابية':'الموجه الطلابي'}</div>
             </div>
           </div>
         `
