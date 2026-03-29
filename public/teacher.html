@@ -1093,8 +1093,30 @@ tr:hover td{background:var(--em-ghost);}
       <div id="fvGrid_staff_4"></div>
       <div id="fvGrid_staff_5" style="display:none;"></div>
     </div>
-    <div class="fv-tab-content" id="fvContent_class"><div id="fvGrid_class"></div></div>
-    <div class="fv-tab-content" id="fvContent_positive"><div id="fvGrid_positive"></div></div>
+    <div class="fv-tab-content" id="fvContent_class">
+      <div id="fvGrid_class"></div>
+      <div id="fvGrid_class_custom"></div>
+      <button onclick="addCustomClassViol()" style="margin-top:8px;display:flex;align-items:center;gap:6px;padding:8px 16px;border:1.5px dashed #3D7EB9;border-radius:10px;background:rgba(61,126,185,.06);color:#0C3B6E;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;width:100%;justify-content:center;">
+        <span class="material-icons-round" style="font-size:15px;">add</span> إضافة مخالفة
+      </button>
+    </div>
+    <div class="fv-tab-content" id="fvContent_positive">
+      <div id="fvGrid_positive"></div>
+      <div id="fvGrid_positive_custom"></div>
+      <div style="position:relative;">
+        <button onclick="toggleAddPosMenu()" id="addPosBtnMain" style="margin-top:8px;display:flex;align-items:center;gap:6px;padding:8px 16px;border:1.5px dashed #07A869;border-radius:10px;background:rgba(7,168,105,.06);color:#055c38;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;width:100%;justify-content:center;">
+          <span class="material-icons-round" style="font-size:15px;">add</span> إضافة سلوك
+        </button>
+        <div id="addPosMenu" style="display:none;position:absolute;top:100%;right:0;left:0;background:#fff;border:1px solid #e5e7eb;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.12);z-index:99;overflow:hidden;margin-top:4px;">
+          <button onclick="addCustomPos('إيجابي')" style="width:100%;padding:11px 16px;border:none;background:#fff;text-align:right;font-family:inherit;font-size:12px;font-weight:700;color:#07A869;cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:1px solid #f3f4f6;">
+            <span style="font-size:16px;">⭐</span> سلوك إيجابي
+          </button>
+          <button onclick="addCustomPos('متميز')" style="width:100%;padding:11px 16px;border:none;background:#fff;text-align:right;font-family:inherit;font-size:12px;font-weight:700;color:#0891b2;cursor:pointer;display:flex;align-items:center;gap:8px;">
+            <span style="font-size:16px;">🌟</span> سلوك متميز
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- القسم 3: المختارة والتسجيل -->
     <div class="card" style="padding:16px;margin-top:14px;">
@@ -1142,8 +1164,8 @@ tr:hover td{background:var(--em-ghost);}
       </div>
 
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button onclick="submitFixedViolation()" style="flex:1;background:#15445A;color:#fff;border:none;padding:12px;border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">
-          <span class="material-icons-round" style="font-size:15px;vertical-align:middle;">save</span> تسجيل المخالفة
+        <button onclick="submitFixedViolation()" id="submitFVBtn" style="flex:1;background:#15445A;color:#fff;border:none;padding:12px;border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">
+          <span class="material-icons-round" style="font-size:15px;vertical-align:middle;">save</span> <span id="submitFVLabel">تسجيل المخالفة</span>
         </button>
       </div>
     </div>
@@ -3181,10 +3203,156 @@ function tSelectStage(stage, btn) {
   renderAllViolationGrids();
 }
 
+
+// ── مخالفات وسلوكيات مخصصة ──
+var _customClassViols = [];
+var _customPosViols   = [];
+
+function addCustomClassViol() {
+  _customClassViols.push({ id: 'cc_' + Date.now(), name: '', rowAction: '' });
+  renderCustomClassGrid();
+}
+
+function renderCustomClassGrid() {
+  var grid = document.getElementById('fvGrid_class_custom');
+  if (!grid) return;
+  grid.innerHTML = '';
+  _customClassViols.forEach(function(v) {
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'background:#f0f8ff;border:1.5px solid #3D7EB9;border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;';
+
+    var hdr = document.createElement('div');
+    hdr.style.cssText = 'display:flex;align-items:center;justify-content:space-between;';
+
+    var lbl = document.createElement('span');
+    lbl.style.cssText = 'font-size:10px;font-weight:700;color:#0C3B6E;';
+    lbl.textContent = 'مخالفة صفية مخصصة';
+
+    var del = document.createElement('button');
+    del.style.cssText = 'background:none;border:none;cursor:pointer;color:#E24B4A;font-size:14px;line-height:1;';
+    del.textContent = '✕';
+    del.dataset.id = v.id;
+    del.onclick = function() { removeCustomClass(this.dataset.id); };
+
+    hdr.appendChild(lbl); hdr.appendChild(del);
+
+    var nameInp = document.createElement('input');
+    nameInp.type = 'text';
+    nameInp.placeholder = 'اكتب اسم المخالفة...';
+    nameInp.value = v.name || '';
+    nameInp.style.cssText = 'width:100%;padding:6px 8px;border:1.5px solid #3D7EB9;border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;color:#0C3B6E;box-sizing:border-box;';
+    nameInp.dataset.id = v.id;
+    nameInp.oninput = function() { updateCustomClass(this.dataset.id, 'name', this.value); };
+
+    var actInp = document.createElement('input');
+    actInp.type = 'text';
+    actInp.placeholder = 'الإجراء...';
+    actInp.value = v.rowAction || '';
+    actInp.style.cssText = 'width:100%;padding:5px 8px;border:1.5px solid #3D7EB9;border-radius:8px;font-size:11px;font-family:inherit;color:#0C3B6E;box-sizing:border-box;';
+    actInp.dataset.id = v.id;
+    actInp.oninput = function() { updateCustomClass(this.dataset.id, 'action', this.value); };
+
+    wrap.appendChild(hdr); wrap.appendChild(nameInp); wrap.appendChild(actInp);
+    grid.appendChild(wrap);
+  });
+}
+
+function removeCustomClass(id) {
+  _customClassViols = _customClassViols.filter(function(v) { return v.id !== id; });
+  renderCustomClassGrid();
+}
+
+function updateCustomClass(id, field, val) {
+  var v = _customClassViols.find(function(x) { return x.id === id; });
+  if (v) { if (field === 'name') v.name = val; else v.rowAction = val; }
+}
+
+function toggleAddPosMenu() {
+  var menu = document.getElementById('addPosMenu');
+  if (menu) menu.style.display = (menu.style.display === 'none') ? 'block' : 'none';
+}
+
+document.addEventListener('click', function(e) {
+  var btn  = document.getElementById('addPosBtnMain');
+  var menu = document.getElementById('addPosMenu');
+  if (menu && btn && !btn.contains(e.target) && !menu.contains(e.target)) {
+    menu.style.display = 'none';
+  }
+});
+
+function addCustomPos(subType) {
+  var menu = document.getElementById('addPosMenu');
+  if (menu) menu.style.display = 'none';
+  _customPosViols.push({ id: 'cp_' + Date.now(), name: '', subType: subType, rowAction: '' });
+  renderCustomPosGrid();
+}
+
+function renderCustomPosGrid() {
+  var grid = document.getElementById('fvGrid_positive_custom');
+  if (!grid) return;
+  grid.innerHTML = '';
+  _customPosViols.forEach(function(v) {
+    var isPos = (v.subType === 'إيجابي');
+    var bg  = isPos ? '#e8f5ee' : '#e0f9fd';
+    var brd = isPos ? '#07A869' : '#0891b2';
+    var clr = isPos ? '#055c38' : '#0e7490';
+    var lbl = isPos ? '⭐ إيجابي' : '🌟 متميز';
+
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'background:'+bg+';border:1.5px solid '+brd+';border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;';
+
+    var hdr = document.createElement('div');
+    hdr.style.cssText = 'display:flex;align-items:center;justify-content:space-between;';
+
+    var lblEl = document.createElement('span');
+    lblEl.style.cssText = 'font-size:10px;font-weight:700;color:'+clr+';';
+    lblEl.textContent = lbl;
+
+    var del = document.createElement('button');
+    del.style.cssText = 'background:none;border:none;cursor:pointer;color:#E24B4A;font-size:14px;line-height:1;';
+    del.textContent = '✕';
+    del.dataset.id = v.id;
+    del.onclick = function() { removeCustomPos(this.dataset.id); };
+
+    hdr.appendChild(lblEl); hdr.appendChild(del);
+
+    var nameInp = document.createElement('input');
+    nameInp.type = 'text';
+    nameInp.placeholder = 'اكتب اسم السلوك...';
+    nameInp.value = v.name || '';
+    nameInp.style.cssText = 'width:100%;padding:6px 8px;border:1.5px solid '+brd+';border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;color:'+clr+';box-sizing:border-box;';
+    nameInp.dataset.id = v.id;
+    nameInp.oninput = function() { updateCustomPos(this.dataset.id, 'name', this.value); };
+
+    var actInp = document.createElement('input');
+    actInp.type = 'text';
+    actInp.placeholder = 'الإجراء...';
+    actInp.value = v.rowAction || '';
+    actInp.style.cssText = 'width:100%;padding:5px 8px;border:1.5px solid '+brd+';border-radius:8px;font-size:11px;font-family:inherit;color:'+clr+';box-sizing:border-box;';
+    actInp.dataset.id = v.id;
+    actInp.oninput = function() { updateCustomPos(this.dataset.id, 'action', this.value); };
+
+    wrap.appendChild(hdr); wrap.appendChild(nameInp); wrap.appendChild(actInp);
+    grid.appendChild(wrap);
+  });
+}
+
+function removeCustomPos(id) {
+  _customPosViols = _customPosViols.filter(function(v) { return v.id !== id; });
+  renderCustomPosGrid();
+}
+
+function updateCustomPos(id, field, val) {
+  var v = _customPosViols.find(function(x) { return x.id === id; });
+  if (v) { if (field === 'name') v.name = val; else v.rowAction = val; }
+}
+
 function submitFixedViolation() {
   var selStudents = getSelectedStudents ? getSelectedStudents() : [];
   if (!selStudents.length) { showA('recordAlert','error','اختر طالباً أولاً'); return; }
-  if (!_selectedViolations.length) { showA('recordAlert','error','اختر مخالفة أولاً'); return; }
+  var hasCustom = ((_customClassViols||[]).some(function(v){return v.name&&v.name.trim();})) ||
+                 ((_customPosViols||[]).some(function(v){return v.name&&v.name.trim();}));
+  if (!_selectedViolations.length && !hasCustom) { showA('recordAlert','error','اختر مخالفة أولاً'); return; }
 
   var teacherNotes   = (document.getElementById('teacherNotes')||{}).value || '';
   var teacherSubject = (document.getElementById('teacherSubject')||{}).value || '';
@@ -3201,6 +3369,15 @@ function submitFixedViolation() {
       subject: teacherSubject,
       referred_to_admin: shouldRefer ? 'نعم' : undefined
     });
+  // المخصصة صفية
+  var customClassItems = (_customClassViols||[]).filter(function(v){return v.name&&v.name.trim();}).map(function(v){
+    return {id:v.id,name:v.name.trim(),subViolation:null,degree:null,category:'class',sub_type:null,rowAction:v.rowAction||'',actionText:v.rowAction||''};
+  });
+  // المخصصة إيجابية
+  var customPosItems = (_customPosViols||[]).filter(function(v){return v.name&&v.name.trim();}).map(function(v){
+    return {id:v.id,name:v.name.trim(),subViolation:null,degree:null,category:'positive',sub_type:v.subType||'إيجابي',rowAction:v.rowAction||'',actionText:''};
+  });
+  violationsWithActions = violationsWithActions.concat(customClassItems).concat(customPosItems);
   });
 
   GAS.recordFixedViolation({
@@ -3216,6 +3393,8 @@ function submitFixedViolation() {
     if (result && result.success) {
       // إعادة تعيين
       _selectedViolations = [];
+      _customClassViols = []; if(typeof renderCustomClassGrid==='function') renderCustomClassGrid();
+      _customPosViols = [];   if(typeof renderCustomPosGrid==='function')   renderCustomPosGrid();
       var notesEl = document.getElementById('teacherNotes');
       var subEl   = document.getElementById('teacherSubject');
       if(notesEl) notesEl.value='';
