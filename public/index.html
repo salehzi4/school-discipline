@@ -4964,11 +4964,13 @@ function clearAllSelectedViol() {
 }
 
 function checkReportBtn() {
-  // زر المحضر يظهر إذا كان هناك مخالفة درجة 2+ أو تكرار درجة 1 >=3
   var btn = document.getElementById('fvCreateReportBtn');
   if (!btn) return;
-  var hasHighDegree = _selectedViolations.some(function(v) { return parseInt(v.degree) >= 2; });
-  btn.style.display = hasHighDegree ? 'inline-flex' : 'none';
+  // يظهر إذا كان هناك أي مخالفة سلوكية أو تجاه الهيئة
+  var hasBehavioral = _selectedViolations.some(function(v) {
+    return v.category === 'behavioral' || v.category === 'staff';
+  });
+  btn.style.display = hasBehavioral ? 'inline-flex' : 'none';
 }
 
 var _tabColors = {
@@ -6961,11 +6963,11 @@ function openCreateReport() {
 
   // استخدام _selectedViolations بدل العنصر القديم
   var behavioralViols = _selectedViolations.filter(function(v) {
-    return v.category === 'behavioral' || !v.category;
+    return v.category === 'behavioral' || v.category === 'staff' || !v.category;
   });
 
   if (!behavioralViols.length) {
-    showAlert('recordAlert','error','اختر مخالفة سلوكية أولاً لإنشاء المحضر');
+    showAlert('recordAlert','error','اختر مخالفة سلوكية أو تجاه الهيئة أولاً لإنشاء المحضر');
     return;
   }
 
