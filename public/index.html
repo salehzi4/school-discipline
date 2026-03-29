@@ -7648,11 +7648,11 @@ function getPageData(pageId) {
         period: period,
         body: `
           <div style="background:linear-gradient(135deg,#0A2240,#0A5C44);border-radius:12px;padding:20px 24px;margin-bottom:20px;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;text-align:center;">
-            <div style="font-size:17px;font-weight:900;margin-bottom:6px;">📊 التقرير الدوري للسلوك الالتزامي المدرسي</div>
+            <div style="font-size:17px;font-weight:900;margin-bottom:6px;">التقرير الدوري للسلوك الالتزامي المدرسي</div>
             <div style="font-size:12px;opacity:.8;">${period}</div>
           </div>
 
-          <div class="section-hd">📈 الملخص التنفيذي</div>
+          <div class="section-hd">الملخص التنفيذي</div>
           ${extractStats([
             ['frTotalViol','مخالفة سلوكية','#e74c3c'],
             ['frTotalCls','مخالفة صفية','#e67e22'],
@@ -7663,36 +7663,36 @@ function getPageData(pageId) {
 
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
             <div>
-              <div class="section-hd">🏫 أعلى الفصول مخالفات</div>
+              <div class="section-hd">أعلى الفصول مخالفات</div>
               ${extractRankList('frTopClasses')}
             </div>
             <div>
-              <div class="section-hd">📋 أكثر أنواع المخالفات</div>
+              <div class="section-hd">أكثر أنواع المخالفات</div>
               ${extractRankList('frTopTypes')}
             </div>
           </div>
 
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
             <div>
-              <div class="section-hd">🏆 أبرز الطلاب إيجابياً</div>
+              <div class="section-hd">أبرز الطلاب إيجابياً</div>
               ${extractRankList('frTopPosStudents')}
             </div>
             <div>
-              <div class="section-hd">⭐ الفصول المتميزة</div>
+              <div class="section-hd">الفصول المتميزة</div>
               ${extractRankList('frTopPosClasses')}
             </div>
           </div>
 
           
 
-          <div class="section-hd">👨‍👩‍👦 إحصاءات التواصل مع أولياء الأمور</div>
+          <div class="section-hd">إحصاءات التواصل مع أولياء الأمور</div>
           ${extractStats([
             ['frMsgSent','رسالة أُرسلت','#3498db'],
             ['frMsgRead','محضر وُقّع عليه','#27ae60'],
             ['frMsgRate','نسبة الاستجابة','#f39c12']
           ])}
 
-          ${recs ? '<div class="section-hd">📝 توصيات الإدارة</div><div class="note">' + recs + '</div>' : ''}
+          ${recs ? '<div class="section-hd">توصيات الإدارة</div><div class="note">' + recs + '</div>' : ''}
 
           <div style="margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:40px;border-top:1.5px solid #e5e7eb;padding-top:20px;">
             <div style="text-align:center;">
