@@ -3369,20 +3369,20 @@ function submitFixedViolation() {
       subject: teacherSubject,
       referred_to_admin: shouldRefer ? 'نعم' : undefined
     });
+  });
   // المخصصة صفية
   var customClassItems = (_customClassViols||[]).filter(function(v){return v.name&&v.name.trim();}).map(function(v){
-    return {id:v.id,name:v.name.trim(),subViolation:null,degree:null,category:'class',sub_type:null,rowAction:v.rowAction||'',actionText:v.rowAction||''};
+    return {id:v.id,name:v.name.trim(),subViolation:null,degree:null,category:'class',sub_type:null,rowAction:v.rowAction||'',actionText:v.rowAction||'',notes:teacherNotes,subject:teacherSubject};
   });
   // المخصصة إيجابية
   var customPosItems = (_customPosViols||[]).filter(function(v){return v.name&&v.name.trim();}).map(function(v){
-    return {id:v.id,name:v.name.trim(),subViolation:null,degree:null,category:'positive',sub_type:v.subType||'إيجابي',rowAction:v.rowAction||'',actionText:''};
+    return {id:v.id,name:v.name.trim(),subViolation:null,degree:null,category:'positive',sub_type:v.subType||'إيجابي',rowAction:v.rowAction||'',actionText:'',notes:teacherNotes};
   });
-  violationsWithActions = violationsWithActions.concat(customClassItems).concat(customPosItems);
-  });
+  var allViolations = violationsWithActions.concat(customClassItems).concat(customPosItems);
 
   GAS.recordFixedViolation({
     studentsData: selStudents,
-    violations: violationsWithActions,
+    violations: allViolations,
     actionText: '',
     recorder: (T && T.name) || sessionStorage.getItem('tName') || 'معلم',
     notes: teacherNotes,
