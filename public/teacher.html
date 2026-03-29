@@ -2425,10 +2425,9 @@ function buildPrintHTML_T(pageId, mode) {
       const cells = row.querySelectorAll('td');
       if (!cells.length || row.querySelector('.empty-state')) return;
       html += '<tr>';
-      cells.forEach((cell,i) => {
-        if (!cell.querySelector('button') || i < cells.length-1)
-          html += `<td>${cell.textContent.trim()}</td>`;
-      });
+      for (var i = 0; i < headers.length && i < cells.length; i++) {
+        html += '<td>' + cells[i].textContent.trim() + '</td>';
+      }
       html += '</tr>';
     });
     return html + '</tbody></table>';
@@ -2451,7 +2450,11 @@ function buildPrintHTML_T(pageId, mode) {
       ['tStatViol','مخالفات سلوكية','#B03A2E']
     ]);
   } else if (pageId === 'mylog') {
-    body = extractTable('myLogBody', ['#','التاريخ','الطالب','الفصل','المخالفة']);
+    body = extractTable('myLogBody', ['#','التاريخ','الطالب','الفصل','المخالفة','الإجراء المتخذ','التكرار']);
+  } else if (pageId === 'referred-log') {
+    body = extractTable('refLogBody', ['#','التاريخ','الطالب','الفصل','المخالفة','تاريخ الإحالة','قرار الإدارة','حالة المعالجة']);
+  } else if (pageId === 'positive-log') {
+    body = extractTable('tPosLogBody', ['#','التاريخ','الطالب','الفصل','اسم السلوك','نوع السلوك','الراصد']);
   } else if (pageId === 'mymessages') {
     body = extractTable('myMsgBody', ['#','التاريخ','الطالب','الفصل','المخالفة','الحالة']);
   } else if (pageId === 'alerts') {
