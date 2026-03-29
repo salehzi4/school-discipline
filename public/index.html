@@ -7918,87 +7918,169 @@ function _printHomePage() {
     var school = (document.getElementById('headerTitleEl')||{textContent:''}).textContent.trim() || 'المدرسة';
     var sub    = (document.getElementById('headerSubEl') ||{textContent:''}).textContent.trim() || '';
     var date   = new Date().toLocaleDateString('ar-SA-u-nu-latn',{year:'numeric',month:'long',day:'numeric'});
-    var logoHtml = b64
-      ? '<img src="'+b64+'" style="width:48px;height:48px;object-fit:contain;filter:brightness(0) invert(1);flex-shrink:0;">'
-      : '';
+    var logoHtml = b64 ? '<img src="'+b64+'" style="width:44px;height:44px;object-fit:contain;filter:brightness(0) invert(1);flex-shrink:0;">' : '';
 
-    var statsEl   = document.getElementById('homeStatsWrap');
-    var summaryEl = document.getElementById('homeSummaryWrap');
-    var statsHTML   = statsEl   ? statsEl.outerHTML   : '';
-    var summaryHTML = summaryEl ? summaryEl.outerHTML  : '';
+    // قراءة البيانات من DOM
+    function g(id){ var e=document.getElementById(id); return e?e.textContent.trim():'0'; }
+    function getRows(id){
+      var el=document.getElementById(id);
+      if(!el) return [];
+      return Array.from(el.querySelectorAll('.stat-detail-row')).map(function(r){
+        var spans=r.querySelectorAll('span');
+        return {name:spans[0]?spans[0].textContent.trim():'', count:spans[1]?spans[1].textContent.trim():''};
+      }).filter(function(r){ return r.name && r.name!=='-'; });
+    }
+    function detailTable(rows){
+      if(!rows.length) return '<p style="color:#aaa;font-size:10px;margin:4px 0;">لا توجد بيانات</p>';
+      return '<table style="width:100%;border-collapse:collapse;margin-top:6px;">'
+        +rows.map(function(r,i){
+          return '<tr style="background:'+(i%2?'#f8fafc':'#fff')+'">'
+            +'<td style="padding:3px 6px;font-size:10px;border-bottom:1px solid #f0f0f0;">'+r.name+'</td>'
+            +'<td style="padding:3px 6px;font-size:10px;font-weight:700;text-align:center;border-bottom:1px solid #f0f0f0;width:40px;">'+r.count+'</td>'
+            +'</tr>';
+        }).join('')
+        +'</table>';
+    }
+    function statBlock(label, val, rows, accent){
+      return '<div style="border:1px solid '+accent+'33;border-radius:10px;overflow:hidden;background:#fff;">'
+        +'<div style="background:'+accent+';color:#fff;padding:7px 12px;display:flex;justify-content:space-between;align-items:center;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
+        +'<span style="font-size:12px;font-weight:700;">'+label+'</span>'
+        +'<span style="font-size:22px;font-weight:900;">'+val+'</span>'
+        +'</div>'
+        +'<div style="padding:6px 10px;">'+detailTable(rows)+'</div>'
+        +'</div>';
+    }
+    // قراءة بيانات الشارتات من DOM
+    function getDonutRows(legendId){
+      var el=document.getElementById(legendId);
+      if(!el) return [];
+      return Array.from(el.querySelectorAll('.scc-legend-row, .legend-row, div')).slice(0,8).map(function(r){
+        var dot=r.querySelector('.scc-dot');
+        var lbl=r.querySelector('.scc-lbl, span:last-child');
+        var cnt=r.querySelector('.scc-count, .count');
+        if(!lbl) return null;
+        return {
+          color: dot?(dot.style.background||dot.style.backgroundColor||'#888'):'#888',
+          label: lbl.textContent.trim(),
+          count: cnt?cnt.textContent.trim():''
+        };
+      }).filter(function(r){ return r && r.label && r.label.length>0; });
+    }
 
-    var allStyles = Array.from(document.styleSheets).map(function(ss){
-      try { return Array.from(ss.cssRules).map(function(r){ return r.cssText; }).join('\n'); }
-      catch(e){ return ''; }
-    }).join('\n');
-
-    var extraCSS = [
-      '*{box-sizing:border-box;}',
-      'body{font-family:"IBM Plex Sans Arabic",sans-serif;direction:rtl;background:#fff;margin:0;padding:0;font-size:11px;}',
-      /* هيدر */
-      '.ph{background:linear-gradient(135deg,#0D2E44,#1A5276);color:#fff;padding:10px 20px;',
-      'display:flex;align-items:center;justify-content:center;gap:10px;',
+    var css = [
+      '*{box-sizing:border-box;margin:0;padding:0;}',
+      'body{font-family:"IBM Plex Sans Arabic",sans-serif;direction:rtl;background:#fff;color:#1a1a2e;}',
+      '.ph{background:linear-gradient(135deg,#0D2E44,#1A5276);padding:12px 20px;display:flex;align-items:center;',
+      'justify-content:center;gap:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}',
+      '.ph-div{width:1px;height:30px;background:rgba(255,255,255,.35);}',
+      '.ph-school{font-size:14px;font-weight:900;color:#fff;}',
+      '.ph-sub{font-size:10px;color:rgba(255,255,255,.7);}',
+      '.ph-date{font-size:10px;color:rgba(255,255,255,.65);margin-right:auto;}',
+      '.wrap{padding:12px 16px;}',
+      '.sec-title{font-size:12px;font-weight:800;color:#0D2E44;border-right:3px solid #0D2E44;',
+      'padding-right:8px;margin:12px 0 8px;background:#f0f4f8;padding:6px 10px;border-radius:0 6px 6px 0;',
       '-webkit-print-color-adjust:exact;print-color-adjust:exact;}',
-      '.ph-div{width:1px;height:32px;background:rgba(255,255,255,.35);}',
-      '.ph-txt .ph-name{font-size:14px;font-weight:900;color:#fff;}',
-      '.ph-txt .ph-sub{font-size:10px;color:rgba(255,255,255,.75);}',
-      '.ph-date{font-size:10px;color:rgba(255,255,255,.7);margin-right:16px;}',
-      /* محتوى */
-      '.page-body{padding:10px 16px;}',
-      '.home-collapse-wrap{border:1px solid #e5e7eb;border-radius:10px;margin-bottom:8px;overflow:hidden;}',
-      '.home-collapse-hd{background:#f8fafc;padding:7px 12px;display:flex;align-items:center;gap:6px;',
+      '.top-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:10px;}',
+      '.top-card{border-radius:8px;padding:8px;text-align:center;border:1px solid;',
       '-webkit-print-color-adjust:exact;print-color-adjust:exact;}',
-      '.home-collapse-body{display:block !important;padding:8px 10px;}',
-      '.hc-arrow{display:none;}',
-      /* بطاقات الإحصاء - تصغير */
-      '.stats-grid-new{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;}',
-      '.stat-card-new{padding:6px 4px !important;min-height:70px !important;height:auto !important;border-radius:10px;}',
-      '.sc-val{font-size:20px !important;font-weight:900;}',
-      '.sc-lbl{font-size:9px !important;}',
-      '.sc-ico{font-size:18px !important;}',
-      '.stat-details,.stat-detail{display:block !important;font-size:9px;}',
-      '.stat-detail-row{display:flex;justify-content:space-between;padding:1px 4px;font-size:9px;}',
-      /* شارتات - تصغير */
-      '.summary-charts-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}',
-      '.summary-chart-card{padding:8px 6px;border-radius:8px;}',
-      '.scc-title{font-size:9px !important;font-weight:700;}',
-      '.css-donut-wrap svg{width:70px !important;height:70px !important;}',
-      '.css-donut-num{font-size:11px !important;}',
-      '.css-donut-sub{font-size:8px !important;}',
-      '.scc-legend{font-size:8px !important;}',
-      '.scc-dot{width:7px !important;height:7px !important;}',
-      /* إخفاء */
-      '.page-toolbar,.date-filter-bar,.btn-outline,.pt-print,.pt-pdf,.no-print,',
-      'button:not(.home-collapse-hd button){display:none !important;}',
-      /* طباعة */
-      '@page{margin:0.5cm 0.8cm;size:A4 landscape;}',
-      '@media print{',
-      'body,html,*{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}',
-      '.stat-card-new::after,.summary-chart-card,.home-collapse-hd{-webkit-print-color-adjust:exact !important;}',
-      '.stats-grid-new,.summary-charts-grid{page-break-inside:avoid;}',
-      '}'
+      '.tc-val{font-size:22px;font-weight:900;}',
+      '.tc-lbl{font-size:9px;margin-top:2px;font-weight:600;}',
+      '.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}',
+      '.donut-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}',
+      '.donut-card{border:1px solid #e5e7eb;border-radius:10px;padding:10px 8px;border-top:3px solid;',
+      '-webkit-print-color-adjust:exact;print-color-adjust:exact;}',
+      '.dc-title{font-size:10px;font-weight:700;margin-bottom:6px;}',
+      '.dc-num{font-size:20px;font-weight:900;text-align:center;margin:4px 0;}',
+      '.dc-row{display:flex;justify-content:space-between;font-size:9px;padding:2px 0;border-bottom:1px solid #f5f5f5;}',
+      '.dc-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-left:4px;',
+      'vertical-align:middle;-webkit-print-color-adjust:exact;print-color-adjust:exact;}',
+      '@page{margin:0.6cm 0.8cm;size:A4 landscape;}',
+      '@media print{*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}}'
     ].join('');
 
-    var w = window.open('', '_blank', 'width=1200,height=900');
+    // بيانات الشارتات
+    function buildDonutCard(title, mainVal, mainLbl, rows, accent){
+      var rowsHTML = rows.map(function(r){
+        return '<div class="dc-row">'
+          +'<span><span class="dc-dot" style="background:'+r.color+';"></span>'+r.label+'</span>'
+          +(r.count?'<span style="font-weight:700;">'+r.count+'</span>':'')
+          +'</div>';
+      }).join('');
+      return '<div class="donut-card" style="border-top-color:'+accent+';">'
+        +'<div class="dc-title" style="color:'+accent+';">'+title+'</div>'
+        +'<div class="dc-num" style="color:'+accent+';">'+mainVal+'</div>'
+        +'<div style="font-size:9px;text-align:center;color:#888;margin-bottom:6px;">'+mainLbl+'</div>'
+        +rowsHTML
+        +'</div>';
+    }
+
+    // جمع بيانات legend
+    var bLegRows=[], pLegRows=[];
+    ['bLegAll','bLegD1','bLegD2','bLegD3','bLegD4','bLegD5','bLegS4','bLegS5'].forEach(function(id){
+      var dot=document.getElementById(id);
+      var lbl=document.getElementById(id.replace('bLeg','bLbl'));
+      if(dot&&lbl){bLegRows.push({color:dot.style.background||'#888',label:lbl.textContent.trim(),count:''});}
+    });
+    ['pLegAll','pLegPos','pLegDis'].forEach(function(id){
+      var dot=document.getElementById(id);
+      var lbl=document.getElementById(id.replace('pLeg','pLbl'));
+      if(dot&&lbl){pLegRows.push({color:dot.style.background||'#888',label:lbl.textContent.trim(),count:''});}
+    });
+
+    var w = window.open('','_blank','width=1200,height=900');
     w.document.write('<!DOCTYPE html><html dir="rtl" lang="ar"><head><meta charset="UTF-8">');
     w.document.write('<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700;900&display=swap" rel="stylesheet">');
-    w.document.write('<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">');
-    w.document.write('<style>' + allStyles + extraCSS + '</style>');
-    w.document.write('</head><body>');
-    /* هيدر */
+    w.document.write('<style>'+css+'</style></head><body>');
+
+    // هيدر
     w.document.write('<div class="ph">');
     w.document.write(logoHtml);
     w.document.write('<div class="ph-div"></div>');
-    w.document.write('<div class="ph-txt"><div class="ph-name">'+school+'</div><div class="ph-sub">'+sub+'</div></div>');
+    w.document.write('<div><div class="ph-school">'+school+'</div><div class="ph-sub">'+sub+'</div></div>');
     w.document.write('<div class="ph-date">'+date+'</div>');
     w.document.write('</div>');
-    /* محتوى */
-    w.document.write('<div class="page-body">');
-    w.document.write(statsHTML);
-    w.document.write(summaryHTML);
+
+    w.document.write('<div class="wrap">');
+
+    // البطاقات العلوية
+    w.document.write('<div class="top-grid">');
+    var cards=[
+      {lbl:'الطلاب',    id:'statStudents',        bg:'#EFF6FF',border:'#BFDBFE',clr:'#1B4F8A'},
+      {lbl:'المعلمون',  id:'statTeachers',         bg:'#F5F3FF',border:'#DDD6FE',clr:'#5B21B6'},
+      {lbl:'الغياب',    id:'statAbsence',          bg:'#FEF2F2',border:'#FECACA',clr:'#B03A2E'},
+      {lbl:'سلوكية',    id:'statViolations',       bg:'#FFF5F5',border:'#FECACA',clr:'#B03A2E'},
+      {lbl:'صفية',      id:'statClassViolations',  bg:'#FFFBEB',border:'#FDE68A',clr:'#9A5200'},
+      {lbl:'إيجابي',    id:'statPositive',         bg:'#F0FFF4',border:'#BBF7D0',clr:'#1A7A4A'},
+    ];
+    cards.forEach(function(c){
+      w.document.write('<div class="top-card" style="background:'+c.bg+';border-color:'+c.border+';">');
+      w.document.write('<div class="tc-val" style="color:'+c.clr+';">'+g(c.id)+'</div>');
+      w.document.write('<div class="tc-lbl" style="color:'+c.clr+';">'+c.lbl+'</div>');
+      w.document.write('</div>');
+    });
+    w.document.write('</div>');
+
+    // تفاصيل الإحصاء
+    w.document.write('<div class="stat-grid">');
+    w.document.write(statBlock('المخالفات السلوكية', g('statViolations'),    getRows('violationsDetail'),     '#B03A2E'));
+    w.document.write(statBlock('المخالفات الصفية',   g('statClassViolations'),getRows('classViolationsDetail'),'#9A5200'));
+    w.document.write(statBlock('السلوك الإيجابي',    g('statPositive'),      getRows('positiveDetail'),       '#1A7A4A'));
+    w.document.write(statBlock('عدد المحاضر',        g('statReports'),       getRows('reportsDetail'),        '#1B4F8A'));
+    w.document.write('</div>');
+
+    // الشارتات
+    w.document.write('<div class="sec-title">الملخص البياني</div>');
+    w.document.write('<div class="donut-grid">');
+    w.document.write(buildDonutCard('الغياب',         g('donutAbsenceLbl'),  g('donutAbsenceSub'),  [], '#0369a1'));
+    w.document.write(buildDonutCard('المخالفات السلوكية', g('donutBehaviorLbl'), g('donutBehaviorSub'), bLegRows, '#B03A2E'));
+    w.document.write(buildDonutCard('المخالفات الصفية',  g('donutClassLbl'),   g('donutClassSub'),   [], '#9A5200'));
+    w.document.write(buildDonutCard('السلوك الإيجابي',   g('donutPositiveLbl'),g('donutPositiveSub'),pLegRows, '#1A7A4A'));
+    w.document.write(buildDonutCard('المحاضر',          g('donutReportsLbl'), g('donutReportsSub'), [], '#0A5C44'));
+    w.document.write('</div>');
+
     w.document.write('</div></body></html>');
     w.document.close();
-    setTimeout(function(){ w.print(); }, 1200);
+    setTimeout(function(){ w.print(); }, 800);
   });
 }
 
