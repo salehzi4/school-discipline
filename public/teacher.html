@@ -2420,13 +2420,20 @@ function buildPrintHTML_T(pageId, mode) {
     const rows = tbody.querySelectorAll('tr');
     if (!rows.length || (rows.length===1 && rows[0].querySelector('.empty-state')))
       return '<p class="empty">لا توجد بيانات</p>';
-    let html = '<table><thead><tr>' + headers.map(h=>`<th>${h}</th>`).join('') + '</tr></thead><tbody>';
-    rows.forEach(row => {
+    function cleanCell(cell) {
+      var clone = cell.cloneNode(true);
+      clone.querySelectorAll('button,a.btn,i.material-icons-round,.material-icons-round').forEach(function(e){ e.remove(); });
+      var tags = clone.querySelectorAll('span.tag');
+      if (tags.length) return Array.from(tags).map(function(t){ return t.textContent.trim(); }).join('، ');
+      return clone.textContent.replace(/\s+/g,' ').trim();
+    }
+    let html = '<table><thead><tr>' + headers.map(h=>'<th>'+h+'</th>').join('') + '</tr></thead><tbody>';
+    rows.forEach(function(row) {
       const cells = row.querySelectorAll('td');
       if (!cells.length || row.querySelector('.empty-state')) return;
       html += '<tr>';
       for (var i = 0; i < headers.length && i < cells.length; i++) {
-        html += '<td>' + cells[i].textContent.trim() + '</td>';
+        html += '<td>' + cleanCell(cells[i]) + '</td>';
       }
       html += '</tr>';
     });
