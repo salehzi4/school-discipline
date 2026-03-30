@@ -187,7 +187,8 @@ async function dispatch(action, body, schoolCode) {
     case 'getCustomSettings':        return getCustomSettings(schoolCode);
     case 'getTeacherSettings':       return getPageSettings(schoolCode, 'teacher');
     case 'getParentSettings':        return getPageSettings(schoolCode, 'parent');
-    case 'saveCustomSettings':return saveCustomSettings(body.settings, schoolCode);
+    case 'saveCustomSettings':       return saveCustomSettings(body.settings, schoolCode);
+    case 'changeAdminPassword':      return changeAdminPassword(body.oldPassword, body.newPassword, schoolCode);
     case 'getSchoolCode':     return { code: schoolCode };
 
     // ── روابط (محاكاة) ──
@@ -1507,4 +1508,28 @@ async function getLastRegionName(sc) {
   const rows = await sb('custom_settings', 'GET', `school_code=eq.${sc}&select=settings`);
   if (Array.isArray(rows) && rows.length) return rows[0].settings?.lastRegionName || '';
   return '';
+}
+
+// ═══════════════════════════════════════════════════════════
+//  تغيير كلمة مرور الإدارة
+// ═══════════════════════════════════════════════════════════
+async function changeAdminPassword(oldPassword, newPassword, sc) {
+  if (!oldPassword || !newPassword) {
+    return { success: false, error: 'البيانات ناقصة' };
+  }
+  if (newPassword.length < 4) {
+    return { success: false, error: 'كلمة المرور الجديدة قصيرة جداً' };
+  }
+  // التحقق من كلمة المرور الحالية
+  const rows = await sb('schools', 'GET', `school_code=eq.${sc}&select=admin_password,status`);
+  if (!Array.isArray(rows) || !rows.length) {
+    return { success: false, error: 'المدرسة غير موجودة' };
+  }
+  const school = rows[0];
+  if (school.admin_password !== oldPassword) {
+    return { success: false, error: 'كلمة المرور الحالية غير صحيحة' };
+  }
+  // تحديث كلمة المرور
+  await sb('schools', 'PATCH', `school_code=eq.${sc}`, { admin_password: newPassword });
+  return { success: true, message: 'تم تغيير كلمة المرور بنجاح ✅' };
 }
