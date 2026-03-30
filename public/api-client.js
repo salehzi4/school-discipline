@@ -151,6 +151,7 @@
     // إعدادات
     getCustomSettings:  ()                           => callAPI('getCustomSettings'),
     saveCustomSettings: (settings)                   => callAPI('saveCustomSettings', { settings }),
+    changeAdminPassword:(oldPassword, newPassword)   => callAPI('changeAdminPassword', { oldPassword, newPassword }),
     getSchoolCode:      ()                           => Promise.resolve({ code: getSchoolCode() }),
 
     // روابط
