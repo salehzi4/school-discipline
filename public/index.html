@@ -3825,21 +3825,14 @@ async function doChangePassword() {
     errEl.style.display = 'block'; return;
   }
 
-  // التحقق من كلمة المرور الحالية عبر تسجيل دخول
   try {
-    var checkRes = await GAS.doUnifiedLogin(oldPass);
-    if (!checkRes || !checkRes.success || checkRes.role !== 'admin') {
-      errEl.textContent = 'كلمة المرور الحالية غير صحيحة';
-      errEl.style.display = 'block'; return;
-    }
-    // حفظ كلمة المرور الجديدة
-    var saveRes = await GAS.saveCustomSettings({ adminPassword: newPass });
-    if (saveRes && saveRes.success) {
+    var res = await GAS.changeAdminPassword(oldPass, newPass);
+    if (res && res.success) {
       sucEl.textContent = 'تم تغيير كلمة المرور بنجاح ✅';
       sucEl.style.display = 'block';
       setTimeout(function(){ closeChangePassModal(); }, 2000);
     } else {
-      errEl.textContent = 'فشل حفظ كلمة المرور — حاول مرة أخرى';
+      errEl.textContent = (res && res.error) ? res.error : 'فشل تغيير كلمة المرور';
       errEl.style.display = 'block';
     }
   } catch(e) {
