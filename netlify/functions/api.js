@@ -1096,6 +1096,7 @@ async function getStudentProfile(studentName, className, viewerRole, sc) {
     typeBreakdown: Object.entries(typeCounts).sort((a,b) => b[1]-a[1]).map(e => ({ type: e[0], count: e[1] })),
     posBreakdown: Object.entries(posTypeCounts).sort((a,b) => b[1]-a[1]).map(e => ({ type: e[0], count: e[1] })),
     violations: violations.reverse(), classViolations: classViolations.reverse(),
+    absenceViolations: absenceViolations,
     positiveBehaviors: positiveBehaviors.reverse(), messages: messages.reverse()
   };
 }
