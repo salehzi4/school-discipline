@@ -1488,12 +1488,24 @@ function indToggle(key) {
 function indShow(key, idx) {
   if(key!=='absence') return;
   window._absCur = idx;
-  var vals = window._absVals || [{v:0},{v:0}];
+  var vals = window._absVals || [{v:0,lbl:'بعذر'},{v:0,lbl:'بدون عذر'}];
   var colors = ['#D97706','#EF4444'];
+  var color = colors[idx];
   var num = document.getElementById('iAbsenceNum');
   var sub = document.getElementById('iAbsenceSub');
-  if(num) { num.textContent = vals[idx].v; num.style.color = colors[idx]; }
-  if(sub) { sub.textContent = vals[idx].lbl; sub.style.color = colors[idx]; }
+  // تحديث النص واللون
+  if(num) { num.textContent = vals[idx].v; num.style.color = color; }
+  if(sub) { sub.textContent = vals[idx].lbl; sub.style.color = color; }
+  // تحديث لون الدائرة الظاهرة
+  var arc1 = document.getElementById('dAbsence');
+  var arc2 = document.getElementById('dAbsence2');
+  if(idx === 0) {
+    if(arc1) arc1.style.opacity = '1';
+    if(arc2) arc2.style.opacity = '0.3';
+  } else {
+    if(arc1) arc1.style.opacity = '0.3';
+    if(arc2) arc2.style.opacity = '1';
+  }
 }
 
 </script>
