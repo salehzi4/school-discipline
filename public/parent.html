@@ -398,7 +398,7 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
         <div class="ov-num" id="ovPositive">0</div>
         <div class="ov-lbl">السلوك الإيجابي والمتميز</div>
       </div>
-      <div class="ov-card" style="--c:var(--purple);--c-pale:var(--purple-pale);--c-border:#c4b5fd;">
+      <div class="ov-card" style="--c:var(--purple);--c-pale:var(--purple-pale);--c-border:#c4b5fd;cursor:pointer;" onclick="toggleDetails('reports',this)">
         <div class="ov-icon"><span class="material-icons-round">description</span></div>
         <div class="ov-num" id="ovReports">0</div>
         <div class="ov-lbl">المحاضر</div>
@@ -521,6 +521,10 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
         <button class="ind-btn" style="background:#059669;" onclick="toggleDetails('positive',this)">
           <span class="material-icons-round">expand_more</span> عرض التفاصيل
         </button>
+        <div class="details-panel" id="dp_reports">
+          <div id="dpl_reports"></div>
+        </div>
+
         <div class="details-panel" id="dp_positive">
           <div class="dp-inner">
             <div class="dp-close-row">
@@ -821,7 +825,31 @@ function renderAll(p){
   $('ovBehavior').textContent = (p.violations||[]).filter(function(v){ return v.category!=='غياب'&&v.category!=='absence'; }).length;
   $('ovClass').textContent    = (p.classViolations||[]).filter(function(v){ return v.category!=='غياب'&&v.category!=='absence'; }).length;
   $('ovPositive').textContent = (p.positiveBehaviors||[]).length;
-  loadReportCount(p.name, p.className);
+  // المحاضر من API مباشرة إذا موجودة، وإلا جلبها
+  if(p.reports && p.reports.length !== undefined){
+    var cnt = p.reports.length;
+    $('ovReports').textContent = cnt;
+    var rImp = p.reports.filter(function(r){ return r.status==='تم الاطلاع'; }).length;
+    drawDonut('reports', cnt, rImp);
+    $('im_reports').textContent = cnt + ' محضر — ' + rImp + ' تم الاطلاع';
+    // بناء محتوى القائمة
+    var dplR = document.getElementById('dpl_reports');
+    if(dplR){
+      if(!p.reports.length){ dplR.innerHTML='<div class="dp-empty">لا توجد محاضر 🎉</div>'; }
+      else { dplR.innerHTML = p.reports.map(function(r){
+        return '<div class="rec-item" style="border-right:3px solid #7C3AED;">'
+          +'<div class="ri-row"><span class="ri-label">رقم المحضر</span><span class="ri-val">'+(r.reportNum||'—')+'</span></div>'
+          +'<div class="ri-row"><span class="ri-label">المخالفة</span><span class="ri-val">'+(r.violationType||'—')+'</span></div>'
+          +'<div class="ri-row"><span class="ri-label">التاريخ</span><span class="ri-val">'+(r.date||'—')+'</span></div>'
+          +'<div class="ri-row"><span class="ri-label">الحالة</span><span class="ri-val" style="color:'+(r.status==='تم الاطلاع'?'#10B981':r.status==='تم الاستلام'?'#F59E0B':'#EF4444')+';font-weight:800;">'+(r.status||'—')+'</span></div>'
+          +(r.notes?'<div class="ri-row"><span class="ri-label">ملاحظات</span><span class="ri-val">'+r.notes+'</span></div>':'')
+          +'</div>';
+      }).join(''); }
+    }
+    if(P){ P.reports = p.reports; buildCalEvents(P); renderCal(); }
+  } else {
+    loadReportCount(p.name, p.className);
+  }
   var vList = p.violations||[];
   var cList = p.classViolations||[];
   var pList = p.positiveBehaviors||[];
@@ -1037,8 +1065,8 @@ function buildDetailList(key, items, clr, fields){
 /* ══ TOGGLE / CLOSE DETAILS ══ */
 function toggleDetails(key, btn){
   var panel = $('dp_'+key);
-  var colors = {absence:'#1AB1D4',behavior:'#A32D2D',class:'#B45309',positive:'#0F6E56'};
-  var titles = {absence:'تفاصيل الغياب',behavior:'تفاصيل المخالفات السلوكية',class:'تفاصيل المخالفات الصفية',positive:'تفاصيل السلوك الإيجابي'};
+  var colors = {absence:'#1AB1D4',behavior:'#A32D2D',class:'#B45309',positive:'#0F6E56',reports:'#7C3AED'};
+  var titles = {absence:'تفاصيل الغياب',behavior:'تفاصيل المخالفات السلوكية',class:'تفاصيل المخالفات الصفية',positive:'تفاصيل السلوك الإيجابي',reports:'سجل المحاضر'};
   var hd = document.getElementById('dpMHd');
   if(hd) hd.style.background = colors[key] || 'var(--em)';
   document.getElementById('dpMTitle').textContent = titles[key] || 'التفاصيل';
