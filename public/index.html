@@ -119,36 +119,6 @@ body { font-family: 'IBM Plex Sans Arabic', sans-serif; background: var(--bg); c
 .lfc-btn:hover { background: #fff; transform: translateY(-1px); box-shadow: 0 10px 28px rgba(0,0,0,.2); }
 .lfc-err { margin-top: 12px; padding: 10px 14px; background: rgba(220,38,38,.14); border: 1px solid rgba(220,38,38,.28); border-radius: 7px; color: #fca5a5; font-size: 12px; text-align: center; display: none; }
 
-/* ══ أزرار اختيار نوع المستخدم ══ */
-.role-btn {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 6px; padding: 14px 8px;
-  background: rgba(255,255,255,.08);
-  border: 1.5px solid rgba(255,255,255,.18);
-  border-radius: 12px;
-  color: rgba(255,255,255,.75);
-  font-family: inherit; font-size: 11px; font-weight: 700;
-  cursor: pointer; transition: all .22s;
-  text-align: center; line-height: 1.3;
-}
-.role-btn:hover {
-  background: rgba(255,255,255,.15);
-  border-color: rgba(255,255,255,.45);
-  color: #fff;
-  transform: translateY(-2px);
-}
-.role-btn.selected {
-  background: rgba(255,255,255,.22);
-  border-color: rgba(255,255,255,.85);
-  color: #fff;
-  box-shadow: 0 4px 18px rgba(0,0,0,.2);
-}
-#loginInputWrap { animation: fadeSlideIn .28s ease; }
-@keyframes fadeSlideIn {
-  from { opacity:0; transform:translateY(10px); }
-  to   { opacity:1; transform:translateY(0); }
-}
-
 /* ══ APP SHELL ══ */
 #app { display: none; min-height: 100vh; }
 
@@ -1691,84 +1661,15 @@ tr:hover td{background:var(--em-ghost);}
     <h1 class="lp-title" id="loginTitle">سجل المخالفات السلوكية</h1>
     <p class="lp-sub" id="loginSubtitle">منصة متكاملة لإدارة السلوك المدرسي</p>
     <div class="lp-card">
-
-      <!-- ── اختيار نوع المستخدم ── -->
-      <label class="lfc-lbl" style="margin-bottom:12px;">ادخل بوصفك</label>
-      <div id="roleSelector" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px;">
-        <button class="role-btn" id="roleBtn-admin"   onclick="selectRole('admin')"   type="button">
-          <span class="material-icons-round" style="font-size:24px;">admin_panel_settings</span>
-          <span>إدارة المدرسة</span>
-        </button>
-        <button class="role-btn" id="roleBtn-teacher" onclick="selectRole('teacher')" type="button">
-          <span class="material-icons-round" style="font-size:24px;">school</span>
-          <span>الكادر التعليمي</span>
-        </button>
-        <button class="role-btn" id="roleBtn-parent"  onclick="selectRole('parent')"  type="button">
-          <span class="material-icons-round" style="font-size:24px;">family_restroom</span>
-          <span>الأسرة</span>
-        </button>
+      <label class="lfc-lbl">كلمة المرور أو رقم الهوية</label>
+      <div class="lfc-field">
+        <span class="material-icons-round lfc-ico">lock</span>
+        <input type="password" class="lfc-inp" id="loginPassword" placeholder="••••••" maxlength="30" onkeypress="if(event.key==='Enter')doLogin()" autocomplete="off">
       </div>
-
-      <!-- ── حقل الإدخال (مخفي حتى يُختار النوع) ── -->
-      <div id="loginInputWrap" style="display:none;">
-        <label class="lfc-lbl" id="loginInputLabel">كلمة المرور</label>
-        <div class="lfc-field">
-          <span class="material-icons-round lfc-ico" id="loginInputIcon">lock</span>
-          <input type="password" class="lfc-inp" id="loginPassword" placeholder="••••••" maxlength="30"
-                 onkeypress="if(event.key==='Enter')doLogin()" autocomplete="off">
-        </div>
-
-        <!-- زر تغيير كلمة المرور — إدارة فقط -->
-        <div id="changePassWrap" style="display:none;margin-bottom:14px;">
-          <button type="button" onclick="showChangePassModal()"
-            style="width:100%;padding:9px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.18);border-radius:7px;color:rgba(255,255,255,0.7);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s;">
-            <span class="material-icons-round" style="font-size:15px;">key</span>
-            تغيير كلمة المرور
-          </button>
-        </div>
-
-        <button class="lfc-btn" onclick="doLogin()">
-          <span class="material-icons-round" style="font-size:17px;">login</span> دخول
-        </button>
-        <div class="lfc-err" id="loginError">رمز غير صحيح</div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<!-- ── مودال تغيير كلمة المرور ── -->
-<div id="changePassModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#fff;border-radius:16px;width:100%;max-width:380px;overflow:hidden;font-family:inherit;">
-    <div style="background:linear-gradient(135deg,#0A5C44,#0D7A5C);padding:20px 22px;display:flex;align-items:center;gap:10px;">
-      <span class="material-icons-round" style="color:#fff;font-size:22px;">key</span>
-      <span style="font-size:15px;font-weight:800;color:#fff;">تغيير كلمة المرور</span>
-      <button onclick="closeChangePassModal()" style="margin-right:auto;background:rgba(255,255,255,0.15);border:none;border-radius:7px;color:#fff;width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;">
-        <span class="material-icons-round" style="font-size:16px;">close</span>
+      <button class="lfc-btn" onclick="doLogin()">
+        <span class="material-icons-round" style="font-size:17px;">login</span> دخول
       </button>
-    </div>
-    <div style="padding:22px;">
-      <div style="margin-bottom:12px;">
-        <label style="display:block;font-size:11px;font-weight:700;color:#555;margin-bottom:5px;">كلمة المرور الحالية</label>
-        <input type="password" id="cpOldPass" placeholder="أدخل كلمة المرور الحالية"
-          style="width:100%;padding:10px 12px;border:1.5px solid #D5E0EC;border-radius:8px;font-family:inherit;font-size:14px;direction:ltr;text-align:center;letter-spacing:3px;">
-      </div>
-      <div style="margin-bottom:12px;">
-        <label style="display:block;font-size:11px;font-weight:700;color:#555;margin-bottom:5px;">كلمة المرور الجديدة</label>
-        <input type="password" id="cpNewPass" placeholder="أدخل كلمة المرور الجديدة"
-          style="width:100%;padding:10px 12px;border:1.5px solid #D5E0EC;border-radius:8px;font-family:inherit;font-size:14px;direction:ltr;text-align:center;letter-spacing:3px;">
-      </div>
-      <div style="margin-bottom:18px;">
-        <label style="display:block;font-size:11px;font-weight:700;color:#555;margin-bottom:5px;">تأكيد كلمة المرور الجديدة</label>
-        <input type="password" id="cpConfirmPass" placeholder="أعد إدخال كلمة المرور الجديدة"
-          style="width:100%;padding:10px 12px;border:1.5px solid #D5E0EC;border-radius:8px;font-family:inherit;font-size:14px;direction:ltr;text-align:center;letter-spacing:3px;">
-      </div>
-      <div id="cpError" style="display:none;background:#FEF2F2;border:1px solid #FECACA;border-radius:7px;padding:8px 12px;font-size:12px;color:#DC2626;margin-bottom:12px;text-align:center;"></div>
-      <div id="cpSuccess" style="display:none;background:#F0FDF4;border:1px solid #A7F3D0;border-radius:7px;padding:8px 12px;font-size:12px;color:#059669;margin-bottom:12px;text-align:center;"></div>
-      <button onclick="doChangePassword()"
-        style="width:100%;padding:12px;background:#0A5C44;color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
-        <span class="material-icons-round" style="font-size:16px;">save</span> حفظ كلمة المرور
-      </button>
+      <div class="lfc-err" id="loginError">رمز غير صحيح</div>
     </div>
   </div>
 </div>
@@ -3737,114 +3638,9 @@ function hideLoading(){document.getElementById('loadingOverlay').classList.remov
 function showAlert(id,type,msg){const c=document.getElementById(id);if(!c)return;c.innerHTML='<div class="alert alert-'+type+'">'+msg+'</div>';setTimeout(()=>{c.innerHTML='';},5000);}
 
 // Login
-// ══ اختيار نوع المستخدم ══
-var _selectedRole = null;
-
-function selectRole(role) {
-  _selectedRole = role;
-
-  // تمييز الزر المحدد
-  ['admin','teacher','parent'].forEach(function(r) {
-    var btn = document.getElementById('roleBtn-' + r);
-    if (btn) btn.classList.toggle('selected', r === role);
-  });
-
-  // إعداد حقل الإدخال حسب النوع
-  var wrap  = document.getElementById('loginInputWrap');
-  var lbl   = document.getElementById('loginInputLabel');
-  var ico   = document.getElementById('loginInputIcon');
-  var inp   = document.getElementById('loginPassword');
-  var cpWrap= document.getElementById('changePassWrap');
-
-  if (role === 'admin') {
-    lbl.textContent  = 'كلمة مرور الإدارة';
-    ico.textContent  = 'admin_panel_settings';
-    inp.type         = 'password';
-    inp.placeholder  = '••••••••';
-    inp.maxLength    = 30;
-    cpWrap.style.display = 'block';
-  } else if (role === 'teacher') {
-    lbl.textContent  = 'رمز المعلم';
-    ico.textContent  = 'badge';
-    inp.type         = 'text';
-    inp.placeholder  = 'أدخل رمزك';
-    inp.maxLength    = 20;
-    cpWrap.style.display = 'none';
-  } else if (role === 'parent') {
-    lbl.textContent  = 'رقم الهوية الوطنية';
-    ico.textContent  = 'person';
-    inp.type         = 'text';
-    inp.placeholder  = 'أدخل رقم هويتك';
-    inp.maxLength    = 10;
-    cpWrap.style.display = 'none';
-  }
-
-  // إظهار الحقل مع انيميشن
-  inp.value = '';
-  document.getElementById('loginError').style.display = 'none';
-  wrap.style.display = 'none'; // إعادة تشغيل الانيميشن
-  void wrap.offsetWidth;
-  wrap.style.display = 'block';
-  setTimeout(function(){ inp.focus(); }, 50);
-}
-
-// ══ تغيير كلمة المرور ══
-function showChangePassModal() {
-  var modal = document.getElementById('changePassModal');
-  if (!modal) return;
-  document.getElementById('cpOldPass').value    = '';
-  document.getElementById('cpNewPass').value    = '';
-  document.getElementById('cpConfirmPass').value= '';
-  document.getElementById('cpError').style.display   = 'none';
-  document.getElementById('cpSuccess').style.display = 'none';
-  modal.style.display = 'flex';
-}
-function closeChangePassModal() {
-  var modal = document.getElementById('changePassModal');
-  if (modal) modal.style.display = 'none';
-}
-async function doChangePassword() {
-  var oldPass  = document.getElementById('cpOldPass').value.trim();
-  var newPass  = document.getElementById('cpNewPass').value.trim();
-  var confPass = document.getElementById('cpConfirmPass').value.trim();
-  var errEl    = document.getElementById('cpError');
-  var sucEl    = document.getElementById('cpSuccess');
-  errEl.style.display = 'none';
-  sucEl.style.display = 'none';
-
-  if (!oldPass || !newPass || !confPass) {
-    errEl.textContent = 'يرجى تعبئة جميع الحقول';
-    errEl.style.display = 'block'; return;
-  }
-  if (newPass !== confPass) {
-    errEl.textContent = 'كلمة المرور الجديدة وتأكيدها غير متطابقتين';
-    errEl.style.display = 'block'; return;
-  }
-  if (newPass.length < 4) {
-    errEl.textContent = 'كلمة المرور يجب أن تكون 4 أحرف على الأقل';
-    errEl.style.display = 'block'; return;
-  }
-
-  try {
-    var res = await GAS.changeAdminPassword(oldPass, newPass);
-    if (res && res.success) {
-      sucEl.textContent = 'تم تغيير كلمة المرور بنجاح ✅';
-      sucEl.style.display = 'block';
-      setTimeout(function(){ closeChangePassModal(); }, 2000);
-    } else {
-      errEl.textContent = (res && res.error) ? res.error : 'فشل تغيير كلمة المرور';
-      errEl.style.display = 'block';
-    }
-  } catch(e) {
-    errEl.textContent = 'حدث خطأ: ' + (e.message || e);
-    errEl.style.display = 'block';
-  }
-}
-
 function doLogin(){
   const p=document.getElementById('loginPassword').value;
   if(!p){document.getElementById('loginError').style.display='block';return;}
-  if(!_selectedRole){document.getElementById('loginError').textContent='اختر نوع المستخدم أولاً';document.getElementById('loginError').style.display='block';return;}
   showLoading();
 
   // ── الدخول الموحد: يبحث في كل المدارس تلقائياً ──
@@ -3955,20 +3751,7 @@ function hideAdminTabs(){
     if(btn) btn.style.display='none';
   });
 }
-function doLogout(){
-  sessionStorage.removeItem('loggedIn');sessionStorage.removeItem('activeTab');
-  document.getElementById('mainApp').style.display='none';
-  document.getElementById('appFooter').style.display='none';
-  // إعادة تعيين شاشة الدخول
-  _selectedRole = null;
-  ['admin','teacher','parent'].forEach(function(r){var b=document.getElementById('roleBtn-'+r);if(b)b.classList.remove('selected');});
-  document.getElementById('loginInputWrap').style.display='none';
-  document.getElementById('loginPassword').value='';
-  document.getElementById('loginError').style.display='none';
-  const ls=document.getElementById('loginScreen');
-  ls.style.display='flex';ls.classList.add('active');ls.style.opacity='0';
-  setTimeout(function(){ls.style.opacity='1';},50);
-}
+function doLogout(){sessionStorage.removeItem('loggedIn');sessionStorage.removeItem('activeTab');document.getElementById('mainApp').style.display='none';document.getElementById('appFooter').style.display='none';const ls=document.getElementById('loginScreen');ls.style.display='flex';ls.classList.add('active');ls.style.opacity='0';setTimeout(()=>ls.style.opacity='1',50);document.getElementById('loginPassword').value='';document.getElementById('loginError').style.display='none';}
 
 
 function initApp(){populateClassDropdowns();loadStats();loadViolationTypesDropdown();loadViolationTypesTable();loadClassViolationTypesTable();loadPositiveBehaviorTypesTable();loadSheetLink();loadViolationTypesForFilter();loadTeachersTable();loadAlerts();buildTeacherClassCheckboxes();loadClassesTable();}
@@ -9337,7 +9120,8 @@ function createReportFromLogBtn(btn) {
 }
 
 function createReportFromLog(date, studentName, violationType, category) {
-  if (category !== 'سلوكية' && category !== 'تجاه الهيئة') {
+  var isBehavioral = category === 'سلوكية' || category === 'behavioral' || category === 'تجاه الهيئة' || category === 'staff';
+  if (!isBehavioral) {
     showAlert('vlAlert','error','المحضر يُنشأ للمخالفات السلوكية وتجاه الهيئة فقط');
     return;
   }
