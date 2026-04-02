@@ -124,7 +124,7 @@
   --em-pale:#E6F4F0; --em-ghost:#F2FAF7;
   --gold:#C9860A; --gold-pale:#FEF3DC;
   --red:#DC2626; --red-pale:#FEF2F2;
-  --orange:#1AB1D4; --orange-pale:#FFFBEB;
+  --orange:#D97706; --orange-pale:#FFFBEB;
   --purple:#7C3AED; --purple-pale:#F5F3FF;
   --green:#059669; --green-pale:#F0FDF4;
   --bg:#F0F4F8; --surface:#FFFFFF;
@@ -817,7 +817,7 @@ function renderAll(p){
   absExcused   = allAbsence.filter(function(v){ return !v.type.includes('بدون عذر'); }).length;
   absUnexcused = allAbsence.filter(function(v){ return v.type.includes('بدون عذر'); }).length;
   if($('ovAbsence')) $('ovAbsence').textContent = absExcused + absUnexcused;
-  buildDetailList('absence', allAbsence, 'var(--orange,#1AB1D4)', ['recorder','notes']);
+  buildDetailList('absence', allAbsence, '#1AB1D4', ['recorder','notes']);
   $('ovBehavior').textContent = (p.violations||[]).filter(function(v){ return v.category!=='غياب'&&v.category!=='absence'; }).length;
   $('ovClass').textContent    = (p.classViolations||[]).filter(function(v){ return v.category!=='غياب'&&v.category!=='absence'; }).length;
   $('ovPositive').textContent = (p.positiveBehaviors||[]).length;
