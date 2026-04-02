@@ -124,7 +124,7 @@
   --em-pale:#E6F4F0; --em-ghost:#F2FAF7;
   --gold:#C9860A; --gold-pale:#FEF3DC;
   --red:#DC2626; --red-pale:#FEF2F2;
-  --orange:#D97706; --orange-pale:#FFFBEB;
+  --orange:#1AB1D4; --orange-pale:#FFFBEB;
   --purple:#7C3AED; --purple-pale:#F5F3FF;
   --green:#059669; --green-pale:#F0FDF4;
   --bg:#F0F4F8; --surface:#FFFFFF;
@@ -817,7 +817,7 @@ function renderAll(p){
   absExcused   = allAbsence.filter(function(v){ return !v.type.includes('بدون عذر'); }).length;
   absUnexcused = allAbsence.filter(function(v){ return v.type.includes('بدون عذر'); }).length;
   if($('ovAbsence')) $('ovAbsence').textContent = absExcused + absUnexcused;
-  buildDetailList('absence', allAbsence, 'var(--orange,#D97706)', ['recorder','notes']);
+  buildDetailList('absence', allAbsence, 'var(--orange,#1AB1D4)', ['recorder','notes']);
   $('ovBehavior').textContent = (p.violations||[]).filter(function(v){ return v.category!=='غياب'&&v.category!=='absence'; }).length;
   $('ovClass').textContent    = (p.classViolations||[]).filter(function(v){ return v.category!=='غياب'&&v.category!=='absence'; }).length;
   $('ovPositive').textContent = (p.positiveBehaviors||[]).length;
@@ -1037,7 +1037,7 @@ function buildDetailList(key, items, clr, fields){
 /* ══ TOGGLE / CLOSE DETAILS ══ */
 function toggleDetails(key, btn){
   var panel = $('dp_'+key);
-  var colors = {absence:'#D97706',behavior:'#A32D2D',class:'#B45309',positive:'#0F6E56'};
+  var colors = {absence:'#1AB1D4',behavior:'#A32D2D',class:'#B45309',positive:'#0F6E56'};
   var titles = {absence:'تفاصيل الغياب',behavior:'تفاصيل المخالفات السلوكية',class:'تفاصيل المخالفات الصفية',positive:'تفاصيل السلوك الإيجابي'};
   var hd = document.getElementById('dpMHd');
   if(hd) hd.style.background = colors[key] || 'var(--em)';
@@ -1488,8 +1488,8 @@ function indToggle(key) {
 function indShow(key, idx) {
   if(key!=='absence') return;
   window._absCur = idx;
-  var vals = window._absVals || [{v:0,lbl:'بعذر',color:'#D97706'},{v:1,lbl:'بدون عذر',color:'#EF4444'}];
-  var colors = ['#D97706','#EF4444'];
+  var vals = window._absVals || [{v:0,lbl:'بعذر',color:'#1AB1D4'},{v:1,lbl:'بدون عذر',color:'#EF4444'}];
+  var colors = ['#1AB1D4','#EF4444'];
   var color = colors[idx];
   var num = document.getElementById('iAbsenceNum');
   var sub = document.getElementById('iAbsenceSub');
@@ -1504,7 +1504,7 @@ function indShow(key, idx) {
   if(idx === 0) {
     // عرض بعذر فقط
     var d1 = total ? (vals[0].v / total) * circ : 0;
-    if(arc1) { arc1.setAttribute('stroke-dasharray', d1 + ' ' + (circ - d1)); arc1.setAttribute('stroke', '#D97706'); }
+    if(arc1) { arc1.setAttribute('stroke-dasharray', d1 + ' ' + (circ - d1)); arc1.setAttribute('stroke', '#1AB1D4'); }
     if(arc2) { arc2.setAttribute('stroke-dasharray', '0 ' + circ); }
   } else {
     // عرض بدون عذر فقط
