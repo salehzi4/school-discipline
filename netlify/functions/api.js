@@ -1056,6 +1056,15 @@ async function getStudentProfile(studentName, className, viewerRole, sc) {
     `school_code=eq.${sc}&student_name=eq.${encodeURIComponent(studentName)}&class_name=eq.${encodeURIComponent(className)}&select=sent_at,violation_type,sender`);
   const messages = Array.isArray(mRows) ? mRows.map(r => ({ date: fmtDate(r.sent_at), type: r.violation_type, sender: r.sender || '' })) : [];
 
+  // المحاضر
+  const rptRows = await sb('reports', 'GET',
+    `school_code=eq.${sc}&student_name=eq.${encodeURIComponent(studentName)}&order=created_at.desc`);
+  const reports = Array.isArray(rptRows) ? rptRows.map(r => ({
+    reportNum: r.report_num, date: fmtDate(r.created_at),
+    violationType: r.violation_type, status: r.status || 'بانتظار الاستلام',
+    notes: r.notes || '', violationDate: fmtDate(r.violation_date)
+  })) : [];
+
   // حساب الدرجات
   let score = 100;
   const negWithScore = violations.filter(r => r.score && r.score !== '0' && !isNaN(parseFloat(r.score)));
@@ -1097,7 +1106,8 @@ async function getStudentProfile(studentName, className, viewerRole, sc) {
     posBreakdown: Object.entries(posTypeCounts).sort((a,b) => b[1]-a[1]).map(e => ({ type: e[0], count: e[1] })),
     violations: violations.reverse(), classViolations: classViolations.reverse(),
     absenceViolations: absenceViolations,
-    positiveBehaviors: positiveBehaviors.reverse(), messages: messages.reverse()
+    positiveBehaviors: positiveBehaviors.reverse(), messages: messages.reverse(),
+    reports: reports
   };
 }
 
