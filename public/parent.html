@@ -1488,23 +1488,29 @@ function indToggle(key) {
 function indShow(key, idx) {
   if(key!=='absence') return;
   window._absCur = idx;
-  var vals = window._absVals || [{v:0,lbl:'بعذر'},{v:0,lbl:'بدون عذر'}];
+  var vals = window._absVals || [{v:0,lbl:'بعذر',color:'#D97706'},{v:1,lbl:'بدون عذر',color:'#EF4444'}];
   var colors = ['#D97706','#EF4444'];
   var color = colors[idx];
   var num = document.getElementById('iAbsenceNum');
   var sub = document.getElementById('iAbsenceSub');
-  // تحديث النص واللون
+  // تحديث الرقم والنص واللون
   if(num) { num.textContent = vals[idx].v; num.style.color = color; }
   if(sub) { sub.textContent = vals[idx].lbl; sub.style.color = color; }
-  // تحديث لون الدائرة الظاهرة
-  var arc1 = document.getElementById('dAbsence');
-  var arc2 = document.getElementById('dAbsence2');
+  // إعادة رسم الدائرة بالقيم الصحيحة للـ idx المحدد
+  var total = vals[0].v + vals[1].v;
+  var circ  = 2 * Math.PI * 38;
+  var arc1  = document.getElementById('dAbsence');
+  var arc2  = document.getElementById('dAbsence2');
   if(idx === 0) {
-    if(arc1) arc1.style.opacity = '1';
-    if(arc2) arc2.style.opacity = '0.3';
+    // عرض بعذر فقط
+    var d1 = total ? (vals[0].v / total) * circ : 0;
+    if(arc1) { arc1.setAttribute('stroke-dasharray', d1 + ' ' + (circ - d1)); arc1.setAttribute('stroke', '#D97706'); }
+    if(arc2) { arc2.setAttribute('stroke-dasharray', '0 ' + circ); }
   } else {
-    if(arc1) arc1.style.opacity = '0.3';
-    if(arc2) arc2.style.opacity = '1';
+    // عرض بدون عذر فقط
+    var d2 = total ? (vals[1].v / total) * circ : 0;
+    if(arc1) { arc1.setAttribute('stroke-dasharray', '0 ' + circ); }
+    if(arc2) { arc2.setAttribute('stroke-dasharray', d2 + ' ' + (circ - d2)); arc2.setAttribute('stroke-dashoffset', '0'); }
   }
 }
 
