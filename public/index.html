@@ -5625,7 +5625,7 @@ function loadViolationsLog(){
   else{// تجميع نفس المخالفة للطالب في صف واحد
     var grouped = {};
     records.forEach(function(r) {
-      var key = r.studentName + '||' + r.violationType;
+      var key = r.studentName + '||' + r.violationType + '||' + (r.category||'');
       if (!grouped[key]) grouped[key] = { r: r, entries: [] };
       grouped[key].entries.push({ date: r.date, action: r.actionTaken || r.actionType || '' });
     });
