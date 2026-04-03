@@ -1396,8 +1396,9 @@ async function updateReportStatus(reportNum, status, sc) {
 }
 
 async function getReportsByStudent(studentName, className, sc) {
-  const rows = await sb('reports', 'GET',
-    `school_code=eq.${sc}&student_name=eq.${encodeURIComponent(studentName)}&class_name=eq.${encodeURIComponent(className)}&order=created_at.desc`);
+  let params = `school_code=eq.${sc}&student_name=eq.${encodeURIComponent(studentName)}&order=created_at.desc`;
+  if (className) params += `&class_name=eq.${encodeURIComponent(className)}`;
+  const rows = await sb('reports', 'GET', params);
   if (!Array.isArray(rows)) return [];
   return rows.map(r => ({
     reportNum: r.report_num, createdAt: fmtDate(r.created_at), studentName: r.student_name,
