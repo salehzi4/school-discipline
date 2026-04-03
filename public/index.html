@@ -3612,63 +3612,11 @@ tr:hover td{background:var(--em-ghost);}
       <div id="frReportDate" style="font-size:11px;opacity:.6;margin-top:10px;"></div>
     </div>
 
-    <!-- الملخص التنفيذي - 5 أرقام -->
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px;" id="frSummaryGrid">
-      <div class="fr-stat" style="--fc:#e74c3c;"><div class="fr-stat-val" id="frTotalViol">0</div><div class="fr-stat-lbl">مخالفة سلوكية</div></div>
-      <div class="fr-stat" style="--fc:#e67e22;"><div class="fr-stat-val" id="frTotalCls">0</div><div class="fr-stat-lbl">مخالفة صفية</div></div>
-      <div class="fr-stat" style="--fc:#3498db;"><div class="fr-stat-val" id="frTotalMsg">0</div><div class="fr-stat-lbl">رسالة أُرسلت</div></div>
-      <div class="fr-stat" style="--fc:#27ae60;"><div class="fr-stat-val" id="frTotalPos">0</div><div class="fr-stat-lbl">سلوك إيجابي</div></div>
-      <div class="fr-stat" style="--fc:#0A5C44;"><div class="fr-stat-val" id="frTotalRpts">0</div><div class="fr-stat-lbl">محضر صادر</div></div>
-    </div>
 
-    <!-- المخالفات: أعلى الفصول + أكثر الأنواع -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
-      <div class="card">
-        <div class="card-title" style="font-size:13px;"><span class="material-icons-round" style="color:#e74c3c;font-size:16px;">gavel</span> أعلى الفصول مخالفات</div>
-        <div id="frTopClasses" style="min-height:80px;"></div>
-      </div>
-      <div class="card">
-        <div class="card-title" style="font-size:13px;"><span class="material-icons-round" style="color:#e67e22;font-size:16px;">list_alt</span> أكثر أنواع المخالفات</div>
-        <div id="frTopTypes" style="min-height:80px;"></div>
-      </div>
-    </div>
+    <!-- إحصاءات الملخص - مخفية للحساب فقط -->
+    <div style="display:none;"><div id="frSummaryGrid"><div class="fr-stat"><div class="fr-stat-val" id="frTotalViol">0</div></div><div class="fr-stat"><div class="fr-stat-val" id="frTotalCls">0</div></div><div class="fr-stat"><div class="fr-stat-val" id="frTotalMsg">0</div></div><div class="fr-stat"><div class="fr-stat-val" id="frTotalPos">0</div></div><div class="fr-stat"><div class="fr-stat-val" id="frTotalRpts">0</div></div></div><div id="frTopClasses"></div><div id="frTopTypes"></div><div id="frTopPosStudents"></div><div id="frTopPosClasses"></div><div id="frMsgSent">0</div><div id="frMsgRead">0</div><div id="frMsgRate">0%</div></div>
 
-    <!-- الإيجابيات: أبرز الطلاب والفصول -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
-      <div class="card">
-        <div class="card-title" style="font-size:13px;"><span class="material-icons-round" style="color:#27ae60;font-size:16px;">emoji_events</span> أبرز الطلاب إيجابياً</div>
-        <div id="frTopPosStudents" style="min-height:80px;"></div>
-      </div>
-      <div class="card">
-        <div class="card-title" style="font-size:13px;"><span class="material-icons-round" style="color:#27ae60;font-size:16px;">school</span> الفصول المتميزة</div>
-        <div id="frTopPosClasses" style="min-height:80px;"></div>
-      </div>
-    </div>
-
-
-
-
-
-    <!-- أولياء الأمور -->
-    <div class="card" style="margin-bottom:14px;">
-      <div class="card-title" style="font-size:13px;"><span class="material-icons-round" style="color:var(--gold);font-size:16px;">family_restroom</span> إحصاءات أولياء الأمور</div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
-        <div style="background:var(--bg);border-radius:10px;padding:14px;text-align:center;">
-          <div style="font-size:24px;font-weight:900;color:#3498db;" id="frMsgSent">0</div>
-          <div style="font-size:11px;color:var(--text-3);">رسالة أُرسلت</div>
-        </div>
-        <div style="background:var(--bg);border-radius:10px;padding:14px;text-align:center;">
-          <div style="font-size:24px;font-weight:900;color:#27ae60;" id="frMsgRead">0</div>
-          <div style="font-size:11px;color:var(--text-3);">محضر وُقّع عليه</div>
-        </div>
-        <div style="background:var(--bg);border-radius:10px;padding:14px;text-align:center;">
-          <div style="font-size:24px;font-weight:900;color:#f39c12;" id="frMsgRate">0%</div>
-          <div style="font-size:11px;color:var(--text-3);">نسبة الاستجابة</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ══ KPIs ══ -->
+        <!-- ══ KPIs ══ -->
     <div class="card" style="margin-bottom:14px;" id="frKpiSection">
       <div class="card-title" style="font-size:13px;"><span class="material-icons-round" style="color:#1A4A7A;font-size:16px;">bar_chart</span> مؤشرات الأداء الرئيسية</div>
       <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;" id="frKpiGrid">
