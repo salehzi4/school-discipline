@@ -8089,158 +8089,183 @@ function getPageData(pageId) {
         title: 'التقرير الدوري للسلوك الالتزامي المدرسي',
         period: period,
         body: (function() {
-          var fv = parseInt((document.getElementById('frTotalViol')||{}).textContent)||0;
-          var fc = parseInt((document.getElementById('frTotalCls')||{}).textContent)||0;
-          var fm = parseInt((document.getElementById('frTotalMsg')||{}).textContent)||0;
-          var fp = parseInt((document.getElementById('frTotalPos')||{}).textContent)||0;
-          var fr = parseInt((document.getElementById('frTotalRpts')||{}).textContent)||0;
+          var d = window._frData || {};
+          var fv  = d.totalViolations||0;
+          var fc  = d.totalClassViolations||0;
+          var fm  = d.totalMessages||0;
+          var fp  = (d.totalPositive||0)+(d.totalDistinct||0);
+          var fr  = d.totalReports||0;
           var ftot = fv+fc;
-          var stu = parseInt((document.getElementById('statStudents')||{}).textContent)||1;
-          var ms = fm, mr = parseInt((document.getElementById('frMsgRead')||{}).textContent)||0;
+          var stu = (function(){ try{ return parseInt(document.getElementById('statStudents').textContent)||1; }catch(e){return 1;} })();
+          var ms  = fm;
+          var mr  = d.totalReportsResponded||0;
           var mrt = ms>0?Math.round(mr/ms*100):0;
-          var posRate = ftot+fp>0?Math.round(fp/(ftot+fp)*100):0;
+          var posRate  = ftot+fp>0?Math.round(fp/(ftot+fp)*100):0;
           var violRate = stu>0?(fv/stu).toFixed(1):'0.0';
-          var clsRate = ftot>0?Math.round(fc/ftot*100):0;
+          var clsRate  = ftot>0?Math.round(fc/ftot*100):0;
           var recs = (document.getElementById('frRecommendations')||{}).value||'';
 
+          // ── أفضل فصل ──
+          var topCls = '', topClsPct = 0;
+          if(d.classRanking && d.classRanking.length) {
+            topCls = d.classRanking[0].name||'';
+            topClsPct = ftot>0?Math.round(d.classRanking[0].count/ftot*100):0;
+          }
+
+          // ── KPI row ──
           function kpiRow(lbl,val,good,warn,lowerBetter) {
             var n=parseFloat(val);
             var st,bg;
             if(lowerBetter){st=n<=good?'جيد':n<=warn?'يحتاج تحسين':'خطر';bg=n<=good?'#dcfce7':n<=warn?'#fef3c7':'#fee2e2';}
             else{st=n>=good?'جيد':n>=warn?'مقبول':'يحتاج تحسين';bg=n>=good?'#dcfce7':n>=warn?'#fef3c7':'#fee2e2';}
-            return '<tr style="-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
-              +'<td style="padding:5px 10px;font-size:11px;">'+lbl+'</td>'
-              +'<td style="padding:5px 10px;font-size:13px;font-weight:700;text-align:center;">'+val+'</td>'
-              +'<td style="padding:5px 10px;text-align:center;"><span style="background:'+bg+';color:#333;padding:2px 10px;border-radius:10px;font-size:10px;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'+st+'</span></td>'
-              +'</tr>';
+            return '<tr><td style="padding:6px 10px;font-size:11px;border:1px solid #e5e7eb;">'+lbl+'</td>'
+              +'<td style="padding:6px 10px;font-size:13px;font-weight:700;text-align:center;border:1px solid #e5e7eb;">'+val+'</td>'
+              +'<td style="padding:6px 10px;text-align:center;border:1px solid #e5e7eb;"><span style="background:'+bg+';color:#1e293b;padding:2px 10px;border-radius:10px;font-size:10px;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'+st+'</span></td></tr>';
           }
 
+          // ── تحليل box ──
           function anaBox(title,text,color) {
-            return '<div style="border-right:3px solid '+color+';border-radius:0 6px 6px 0;padding:8px 12px;background:'+color+'11;margin-bottom:8px;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
+            return '<div style="border-right:3px solid '+color+';border-radius:0 6px 6px 0;padding:8px 12px;background:'+color+'18;margin-bottom:8px;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
               +'<div style="font-size:10px;font-weight:700;color:'+color+';margin-bottom:3px;">'+title+'</div>'
-              +'<div style="font-size:11px;color:#334155;line-height:1.6;">'+text+'</div>'
-              +'</div>';
+              +'<div style="font-size:11px;color:#334155;line-height:1.6;">'+text+'</div></div>';
           }
 
-          // التحليلات
-          var topCls = ''; var topClsPct = 0;
-          try {
-            var tc = document.getElementById('frTopClasses');
-            if(tc) { var tn=tc.querySelector('.fr-rank-name'); var tcount=tc.querySelector('.fr-rank-count'); if(tn&&tcount){topCls=tn.textContent;topClsPct=ftot>0?Math.round(parseInt(tcount.textContent)/ftot*100):0;}}
-          } catch(e){}
+          // ── rank table من _frData ──
+          function rankTable(arr, emptyMsg) {
+            if(!arr||!arr.length) return '<p style="color:#94a3b8;font-size:11px;padding:8px;">'+(emptyMsg||'لا توجد بيانات')+'</p>';
+            var h='<table style="width:100%;border-collapse:collapse;font-size:11px;"><thead><tr style="background:#0D2E44;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
+              +'<th style="padding:5px 8px;">#</th><th style="padding:5px 8px;">الاسم</th><th style="padding:5px 8px;text-align:center;">العدد</th></tr></thead><tbody>';
+            arr.slice(0,5).forEach(function(r,i){
+              h+='<tr style="background:'+(i%2===0?'#f8fafc':'#fff')+';-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
+                +'<td style="padding:4px 8px;color:#64748b;">'+(i+1)+'</td>'
+                +'<td style="padding:4px 8px;font-weight:600;">'+(r.name||'—')+'</td>'
+                +'<td style="padding:4px 8px;text-align:center;font-weight:700;color:#0D2E44;">'+(r.count||0)+'</td></tr>';
+            });
+            return h+'</tbody></table>';
+          }
 
-          var a1 = clsRate>40?'المخالفات الصفية تمثل '+clsRate+'% من الإجمالي مما يشير لتحديات في ضبط الفصل.'+(topCls?' الفصل '+topCls+' الأعلى بنسبة '+topClsPct+'%.':''):fv>fc?'المخالفات السلوكية ('+fv+') أعلى من الصفية ('+fc+')، يستلزم التركيز على التوجيه السلوكي العام.'+(topCls?' أبرز الفصول: '+topCls+'.':''):'المخالفات موزعة بشكل متوازن.';
-          var a2 = ms===0?'لم تُرسل رسائل خلال هذه الفترة.':mrt>=80?'استجابة أولياء الأمور ممتازة ('+mrt+'%).':mrt>=60?'استجابة مقبولة ('+mrt+'%) مع إمكانية تحسين التواصل.':'نسبة الاستجابة منخفضة ('+mrt+'%) تستلزم تدخلاً.';
-          var a3 = fp>=fv?'السلوكيات الإيجابية ('+fp+') تفوق المخالفات ('+fv+')، مؤشر صحي يعكس بيئة إيجابية.':'يُنصح برفع نسبة رصد السلوكيات الإيجابية لخلق توازن في التوثيق السلوكي.';
+          // ── stat cards ──
+          function statCards() {
+            var cards=[
+              [fv,'مخالفة سلوكية','#e74c3c'],
+              [fc,'مخالفة صفية','#e67e22'],
+              [fm,'رسالة أُرسلت','#3498db'],
+              [fp,'سلوك إيجابي','#27ae60'],
+              [fr,'محضر صادر','#0A5C44']
+            ];
+            return '<div style="display:flex;gap:10px;margin-bottom:16px;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
+              +cards.map(function(c){
+                return '<div style="flex:1;border:1.5px solid #e5e7eb;border-radius:8px;border-top:3px solid '+c[2]+';padding:12px 8px;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
+                  +'<div style="font-size:24px;font-weight:900;color:'+c[2]+';">'+c[0]+'</div>'
+                  +'<div style="font-size:10px;color:#6b7280;margin-top:3px;">'+c[1]+'</div></div>';
+              }).join('')+'</div>';
+          }
 
-          // التقييم
+          // ── التحليلات ──
+          var a1 = clsRate>40
+            ? 'المخالفات الصفية تمثل '+clsRate+'% من الإجمالي مما يشير لتحديات في ضبط الفصل.'+(topCls?' الفصل '+topCls+' الأعلى بنسبة '+topClsPct+'%.':'')
+            : fv>fc
+              ? 'المخالفات السلوكية ('+fv+') أعلى من الصفية ('+fc+')، يستلزم التركيز على التوجيه السلوكي العام.'+(topCls?' أبرز الفصول: '+topCls+'.':'')
+              : 'المخالفات موزعة بشكل متوازن بين السلوكية والصفية.'+(topCls?' أعلى الفصول: '+topCls+'.':'');
+          var a2 = ms===0
+            ? 'لم تُرسل رسائل لأولياء الأمور خلال هذه الفترة.'
+            : mrt>=80 ? 'استجابة أولياء الأمور ممتازة ('+mrt+'%)، يعكس تفاعلاً أسرياً إيجابياً.'
+            : mrt>=60 ? 'استجابة مقبولة ('+mrt+'%) مع إمكانية تحسين التواصل مع الفئة غير المستجيبة.'
+            : 'نسبة الاستجابة الأسرية منخفضة ('+mrt+'%)، يستلزم تدخلاً لتحسين التواصل.';
+          var a3 = fp>=fv
+            ? 'السلوكيات الإيجابية ('+fp+') تفوق المخالفات ('+fv+')، مؤشر صحي يعكس بيئة مدرسية إيجابية.'
+            : 'يُنصح برفع نسبة رصد السلوكيات الإيجابية لخلق توازن في التوثيق السلوكي.';
+          var a4 = fr>0
+            ? 'إصدار '+fr+' محضر يدل على تفعيل الإجراءات الرسمية. يجب التأكد من متابعة أولياء الأمور والتوقيع عليها.'
+            : 'لا توجد محاضر مُصدَرة خلال هذه الفترة.';
+
+          // ── التقييم ──
           var score=0;
-          if(parseFloat(violRate)<=0.3)score+=2;else if(parseFloat(violRate)<=0.6)score+=1;
-          if(mrt>=80)score+=2;else if(mrt>=60)score+=1;
-          if(clsRate<=20)score+=1;if(fp>=fv)score+=1;
-          var rating=score>=6?'ممتاز':score>=4?'جيد':score>=2?'متوسط':'يحتاج تدخل';
-          var ratingColor=score>=6?'#16a34a':score>=4?'#1A4A7A':score>=2?'#d97706':'#C0392B';
-          var ratingBg=score>=6?'#dcfce7':score>=4?'#dbeafe':score>=2?'#fef3c7':'#fee2e2';
-          var ratingText=score>=6?'المؤشرات ضمن النطاق الممتاز. بيئة مدرسية منضبطة وإدارة فاعلة.':score>=4?'أداء جيد عام مع فرص تحسين في بعض المؤشرات.':score>=2?'مستوى متوسط يستلزم مراجعة الأسباب واتخاذ إجراءات وقائية.':'مؤشرات تستدعي تدخلاً عاجلاً ووضع خطة تصحيحية فورية.';
+          if(parseFloat(violRate)<=0.3)score+=2; else if(parseFloat(violRate)<=0.6)score+=1;
+          if(mrt>=80)score+=2; else if(mrt>=60)score+=1;
+          if(clsRate<=20)score+=1; if(fp>=fv)score+=1;
+          var rating     = score>=6?'ممتاز':score>=4?'جيد':score>=2?'متوسط':'يحتاج تدخل';
+          var ratingColor= score>=6?'#16a34a':score>=4?'#1A4A7A':score>=2?'#d97706':'#C0392B';
+          var ratingBg   = score>=6?'#dcfce7':score>=4?'#dbeafe':score>=2?'#fef3c7':'#fee2e2';
+          var ratingText = score>=6?'المؤشرات ضمن النطاق الممتاز. بيئة مدرسية منضبطة وإدارة فاعلة.'
+            :score>=4?'أداء جيد عام مع فرص تحسين في بعض المؤشرات.'
+            :score>=2?'مستوى متوسط يستلزم مراجعة الأسباب واتخاذ إجراءات وقائية.'
+            :'مؤشرات تستدعي تدخلاً عاجلاً ووضع خطة تصحيحية فورية.';
 
-          // ── PAGE 1 ──
+          // ── التوصيات ──
+          var autoRecs=[];
+          if(topCls&&topClsPct>=30) autoRecs.push('عقد جلسة توجيهية مع طلاب '+topCls+' الذي يستأثر بـ'+topClsPct+'% من المخالفات.');
+          if(mrt<70&&ms>0) autoRecs.push('التواصل الهاتفي مع أولياء الأمور غير المستجيبين ('+(100-mrt)+'% من الإجمالي).');
+          if(clsRate>35) autoRecs.push('ورشة إدارة فصل للمعلمين نظراً لارتفاع المخالفات الصفية ('+clsRate+'%).');
+          if(fp<fv) autoRecs.push('تفعيل برنامج تعزيز إيجابي أسبوعي لخلق توازن في التوثيق السلوكي.');
+          autoRecs.push('الاستمرار في رصد المؤشرات أسبوعياً وتحديث التقرير بانتظام.');
+
+          var secHd = function(t){
+            return '<div style="font-size:12px;font-weight:800;color:#0A5C44;border-right:4px solid #0A5C44;padding:7px 12px;margin:16px 0 10px;background:#f0fdf4;border-radius:0 8px 8px 0;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'+t+'</div>';
+          };
+
+          // ═══ PAGE 1 ═══
           var p1 = '<div style="page-break-after:always;">'
-            +'<div style="background:#E5EDF5;padding:10px 20px;margin-bottom:16px;border-radius:6px;display:flex;justify-content:space-between;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
-            +'<span style="font-size:11px;font-weight:700;color:#1A4A7A;">الصفحة الأولى: الملخص ومؤشرات الأداء والتحليل</span>'
-            +'<span style="font-size:11px;color:#64748b;">'+period+'</span>'
-            +'</div>'
-
-            // إحصاءات الملخص
-            +'<div class="section-hd">الملخص التنفيذي</div>'
-            +extractStats([
-              ['frTotalViol','مخالفة سلوكية','#e74c3c'],
-              ['frTotalCls','مخالفة صفية','#e67e22'],
-              ['frTotalMsg','رسالة أُرسلت','#3498db'],
-              ['frTotalPos','سلوك إيجابي','#27ae60'],
-              ['frTotalRpts','محضر صادر','#0A5C44']
-            ])
-
-            // KPIs
-            +'<div class="section-hd" style="margin-top:12px;">مؤشرات الأداء الرئيسية</div>'
-            +'<table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:12px;">'
+            +'<div style="background:#E5EDF5;padding:8px 16px;margin-bottom:14px;border-radius:6px;display:flex;justify-content:space-between;font-size:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
+            +'<span style="font-weight:700;color:#1A4A7A;">الصفحة الأولى: الملخص ومؤشرات الأداء والتحليل</span>'
+            +'<span style="color:#64748b;">'+period+'</span></div>'
+            +secHd('الملخص التنفيذي')+statCards()
+            +secHd('مؤشرات الأداء الرئيسية')
+            +'<table style="width:100%;border-collapse:collapse;margin-bottom:14px;">'
             +'<thead><tr style="background:linear-gradient(135deg,#0D2E44,#1A5276);-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
-            +'<th style="padding:7px 10px;text-align:right;color:#fff;font-weight:700;">المؤشر</th>'
-            +'<th style="padding:7px 10px;text-align:center;color:#fff;font-weight:700;">القيمة</th>'
-            +'<th style="padding:7px 10px;text-align:center;color:#fff;font-weight:700;">التقييم</th>'
+            +'<th style="padding:7px 10px;text-align:right;color:#fff;border:1px solid rgba(255,255,255,.2);">المؤشر</th>'
+            +'<th style="padding:7px 10px;text-align:center;color:#fff;border:1px solid rgba(255,255,255,.2);">القيمة</th>'
+            +'<th style="padding:7px 10px;text-align:center;color:#fff;border:1px solid rgba(255,255,255,.2);">التقييم</th>'
             +'</tr></thead><tbody>'
             +kpiRow('معدل المخالفات لكل طالب', violRate, 0.3, 0.6, true)
             +kpiRow('نسبة السلوكيات الإيجابية', posRate+'%', 40, 20, false)
             +kpiRow('استجابة أولياء الأمور', mrt+'%', 80, 60, false)
             +kpiRow('نسبة المخالفات الصفية من الإجمالي', clsRate+'%', 20, 40, true)
             +'</tbody></table>'
-
-            // التحليل
-            +'<div class="section-hd">التحليل والاستنتاجات</div>'
+            +secHd('التحليل والاستنتاجات')
+            +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">'
             +anaBox('تركّز المشكلة', a1, '#C0392B')
             +anaBox('التفاعل الأسري', a2, '#d97706')
             +anaBox('ملاحظة من البيانات', a3, '#16a34a')
-            +'</div>';
+            +anaBox('ملاحظة غير مباشرة', a4, '#1A4A7A')
+            +'</div></div>';
 
-          // ── PAGE 2 ──
-          // توصيات تلقائية
-          var autoRecs = [];
-          if(topCls&&topClsPct>=30) autoRecs.push('عقد جلسة توجيهية مع طلاب '+topCls+' ('+topClsPct+'% من المخالفات).');
-          if(mrt<70&&ms>0) autoRecs.push('التواصل الهاتفي مع أولياء الأمور غير المستجيبين ('+(100-mrt)+'%).');
-          if(clsRate>35) autoRecs.push('ورشة إدارة فصل للمعلمين بسبب ارتفاع المخالفات الصفية ('+clsRate+'%).');
-          if(fp<fv) autoRecs.push('تفعيل برنامج تعزيز إيجابي أسبوعي لخلق توازن في التوثيق السلوكي.');
-          autoRecs.push('الاستمرار في رصد المؤشرات أسبوعياً وتحديث التقرير بانتظام.');
-
+          // ═══ PAGE 2 ═══
           var p2 = '<div>'
-            +'<div style="background:#E5EDF5;padding:10px 20px;margin-bottom:16px;border-radius:6px;display:flex;justify-content:space-between;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
-            +'<span style="font-size:11px;font-weight:700;color:#1A4A7A;">الصفحة الثانية: التوصيات والتقييم والترتيبات</span>'
-            +'<span style="font-size:11px;color:#64748b;">'+period+'</span>'
+            +'<div style="background:#E5EDF5;padding:8px 16px;margin-bottom:14px;border-radius:6px;display:flex;justify-content:space-between;font-size:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
+            +'<span style="font-weight:700;color:#1A4A7A;">الصفحة الثانية: التوصيات والتقييم والترتيبات</span>'
+            +'<span style="color:#64748b;">'+period+'</span></div>'
+            +secHd('الترتيبات والإحصاءات')
+            +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">'
+            +'<div>'+secHd('أعلى الفصول مخالفات')+rankTable(d.classRanking)+'</div>'
+            +'<div>'+secHd('أكثر أنواع المخالفات')+rankTable(d.typeRanking)+'</div>'
             +'</div>'
-
-            // ترتيبات
-            +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px;">'
-            +'<div><div class="section-hd">أعلى الفصول مخالفات</div>'+extractRankList('frTopClasses')+'</div>'
-            +'<div><div class="section-hd">أكثر أنواع المخالفات</div>'+extractRankList('frTopTypes')+'</div>'
+            +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">'
+            +'<div>'+secHd('أبرز الطلاب إيجابياً')+rankTable(d.positiveStudents,'لا توجد سلوكيات إيجابية')+'</div>'
+            +'<div>'+secHd('الفصول المتميزة')+rankTable(d.positiveClasses,'لا توجد بيانات')+'</div>'
             +'</div>'
-
-            +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px;">'
-            +'<div><div class="section-hd">أبرز الطلاب إيجابياً</div>'+extractRankList('frTopPosStudents')+'</div>'
-            +'<div><div class="section-hd">الفصول المتميزة</div>'+extractRankList('frTopPosClasses')+'</div>'
-            +'</div>'
-
-            // توصيات
-            +'<div class="section-hd">التوصيات العملية</div>'
-            +'<div style="margin-bottom:12px;">'
+            +secHd('التوصيات العملية')
+            +'<div style="margin-bottom:14px;">'
             +autoRecs.map(function(r,i){
-              return '<div style="display:flex;gap:10px;align-items:flex-start;padding:7px 10px;background:#f8fafc;border-radius:6px;border:1px solid #e2e8f0;margin-bottom:6px;">'
-                +'<div style="width:20px;height:20px;border-radius:50%;background:#0D2E44;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'+(i+1)+'</div>'
-                +'<div style="font-size:11px;color:#334155;line-height:1.6;">'+r+'</div>'+'</div>';
+              return '<div style="display:flex;gap:8px;align-items:flex-start;padding:7px 10px;background:#f8fafc;border-radius:6px;border:1px solid #e2e8f0;margin-bottom:6px;">'
+                +'<div style="width:20px;height:20px;min-width:20px;border-radius:50%;background:#0D2E44;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'+(i+1)+'</div>'
+                +'<div style="font-size:11px;color:#334155;line-height:1.6;">'+r+'</div></div>';
             }).join('')
-            +(recs?'<div style="padding:8px 12px;background:#fffbeb;border:1px solid #fde68a;border-radius:6px;font-size:11px;color:#92400e;">توصيات إضافية: '+recs+'</div>':'')
+            +(recs?'<div style="padding:8px 12px;background:#fffbeb;border:1px solid #fde68a;border-radius:6px;font-size:11px;color:#92400e;margin-top:4px;">ملاحظات إضافية من الإدارة: '+recs+'</div>':'')
             +'</div>'
+            +secHd('التقييم العام')
+            +'<div style="display:flex;align-items:center;gap:14px;padding:12px 16px;background:'+ratingBg+';border-radius:10px;margin-bottom:18px;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
+            +'<div style="font-size:20px;font-weight:900;color:'+ratingColor+';min-width:90px;text-align:center;">'+rating+'</div>'
+            +'<div style="font-size:11px;color:#334155;line-height:1.8;">'+ratingText+'</div></div>'
+            +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;border-top:1.5px solid #e5e7eb;padding-top:16px;margin-top:8px;">'
+            +'<div style="text-align:center;"><div style="font-size:10px;color:#6b7280;margin-bottom:22px;">توقيع مدير المدرسة</div><div style="border-bottom:1.5px solid #374151;width:80%;margin:0 auto;"></div></div>'
+            +'<div style="text-align:center;"><div style="font-size:10px;color:#6b7280;margin-bottom:22px;">توقيع الموجه الطلابي</div><div style="border-bottom:1.5px solid #374151;width:80%;margin:0 auto;"></div></div>'
+            +'</div></div>';
 
-            // التقييم
-            +'<div class="section-hd">التقييم العام</div>'
-            +'<div style="display:flex;align-items:center;gap:16px;padding:12px 16px;background:'+ratingBg+';border-radius:10px;margin-bottom:14px;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
-            +'<div style="font-size:20px;font-weight:900;color:'+ratingColor+';min-width:100px;text-align:center;">'+rating+'</div>'
-            +'<div style="font-size:11px;color:#334155;line-height:1.8;">'+ratingText+'</div>'
-            +'</div>'
-
-            // توقيعات
-            +'<div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:40px;border-top:1.5px solid #e5e7eb;padding-top:16px;">'
-            +'<div style="text-align:center;">'
-            +'<div style="font-size:10px;color:#6b7280;margin-bottom:24px;">توقيع مدير المدرسة</div>'
-            +'<div style="border-bottom:1.5px solid #374151;width:80%;margin:0 auto;"></div>'
-            +'</div>'
-            +'<div style="text-align:center;">'
-            +'<div style="font-size:10px;color:#6b7280;margin-bottom:24px;">توقيع الموجه الطلابي</div>'
-            +'<div style="border-bottom:1.5px solid #374151;width:80%;margin:0 auto;"></div>'
-            +'</div>'
-            +'</div>'
-            +'</div>';
-
-          return p1 + p2;
+          return p1+p2;
         })()
-      };    }
+      };
+    }
 
     default:
       return { title: PAGE_LABELS[pageId] || pageId, body: '<p class="empty">لا توجد بيانات</p>' };
