@@ -178,6 +178,7 @@ async function dispatch(action, body, schoolCode) {
     case 'getReports':        return getReports(schoolCode);
     case 'deleteReport':      return deleteReport(body.reportNum, schoolCode);
     case 'getReportByNum':    return getReportByNum(body.reportNum, schoolCode);
+    case 'updateAdminPassword':  return updateAdminPassword(body.schoolCode, body.currentPass, body.newPass);
     case 'updateReportStatus':return updateReportStatus(body.reportNum, body.status, schoolCode);
     case 'getReportsByStudent':return getReportsByStudent(body.studentName, body.className, schoolCode);
     case 'getFullReportData': return getFullReportData(body.dateFrom, body.dateTo, schoolCode);
@@ -1456,6 +1457,19 @@ async function getFullReportData(dateFrom, dateTo, sc) {
 // ═══════════════════════════════════════════════════════════
 //  الإعدادات المخصصة
 // ═══════════════════════════════════════════════════════════
+
+async function updateAdminPassword(schoolCode, currentPass, newPass) {
+  // تحقق من الرمز الحالي
+  const rows = await sb('schools', 'GET', `school_code=eq.${schoolCode}&admin_password=eq.${encodeURIComponent(currentPass)}&select=school_code`);
+  if (!Array.isArray(rows) || !rows.length) {
+    return { success: false, error: 'الرمز الحالي غير صحيح' };
+  }
+  // تحديث الرمز
+  const res = await sb('schools', 'PATCH', `school_code=eq.${schoolCode}`, { admin_password: newPass });
+  if (!res) return { success: false, error: 'فشل تحديث الرمز' };
+  return { success: true };
+}
+
 const DEFAULT_SETTINGS = {
   headerTitle:'سجل المخالفات السلوكية',headerSubtitle:'نظام إدارة المخالفات والتواصل',
   headerExtraText:'',headerExtraPosition:'subtitle',headerExtraSize:'13px',
