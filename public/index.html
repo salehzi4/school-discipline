@@ -7781,7 +7781,7 @@ function buildFullReportAnalysis(d, students) {
     var lvlA          = parseFloat(absRateA)<=2?'ضمن النطاق الجيد':parseFloat(absRateA)<=5?'يحتاج متابعة':'مرتفع ويستلزم تدخلاً';
     absEl.textContent = absTotD===0
       ? 'لا توجد سجلات غياب خلال هذه الفترة.'
-      : 'نسبة الغياب الكلية '+absRateA+'% من إجمالي '+possibleA+' يوم دراسي ممكن ('+stuD+' طالب × 180 يوم) — المستوى: '+lvlA+'.'
+      : 'نسبة الغياب الكلية '+absRateA+'% — المستوى: '+lvlA+'.'
         +' التفصيل: '+absExD+' يوم بعذر و'+absNoExD+' يوم بدون عذر.';
   }
 
@@ -7792,6 +7792,22 @@ function buildFullReportAnalysis(d, students) {
   if(treatPctNum < 60 && (imp+rep) > 0) recs.push('مراجعة جميع الحالات المعلقة وتحديد مسؤول متابعة لكل حالة مع تحديد موعد إغلاقها للرفع من نسبة المعالجة الحالية ('+treatPctNum+'%).');
   if(clsPctNum > 35) recs.push('تنظيم ورشة قصيرة للمعلمين حول استراتيجيات إدارة الفصل، بالنظر إلى ارتفاع نسبة المخالفات الصفية ('+clsPctNum+'%).');
   if(fp < fv) recs.push('تفعيل برنامج تعزيز إيجابي أسبوعي للطلاب المتميزين سلوكياً، لخلق توازن بين الرصد السلبي والإيجابي وتحفيز الطلاب على الالتزام.');
+  // توصية الغياب
+  var absExR   = d.totalAbsenceExcused  || 0;
+  var absNoExR = d.totalAbsenceNoExcuse || 0;
+  var absTotR  = absExR + absNoExR;
+  var possibleR = students * 180;
+  var absRateR  = possibleR>0 ? absTotR/possibleR*100 : 0;
+  if(absNoExR > absExR && absTotR > 0) {
+    recs.push('متابعة حالات الغياب بدون عذر ('+absNoExR+' يوم) والتي تتجاوز الغياب بعذر — التواصل الفوري مع أولياء أمور الطلاب المتغيبين بدون مبرر.');
+  } else if(absRateR > 5) {
+    recs.push('نسبة الغياب الكلية مرتفعة ('+absRateR.toFixed(1)+'%) وتستلزم مراجعة أسباب التغيب ووضع خطة لتحسين الحضور المدرسي.');
+  } else if(absRateR > 2) {
+    recs.push('متابعة الطلاب ذوي الغياب المتكرر وإشعار أولياء أمورهم للحدّ من تصاعد نسبة الغياب الحالية ('+absRateR.toFixed(1)+'%).');
+  } else if(absTotR > 0) {
+    recs.push('نسبة الغياب ضمن المعدل الجيد ('+absRateR.toFixed(1)+'%) — الاستمرار في تفعيل آليات التحفيز على الحضور للحفاظ على هذا المستوى.');
+  }
+
   if(recs.length === 0) recs.push('مواصلة النهج الحالي مع رفع وتيرة رصد السلوكيات الإيجابية لتعزيز الثقافة السلوكية الإيجابية في المدرسة.');
 
   var recsEl = document.getElementById('frAutoRecs');
@@ -8260,6 +8276,21 @@ function getPageData(pageId) {
           if(mrt<70&&ms>0) autoRecs.push('التواصل الهاتفي مع أولياء الأمور غير المستجيبين ('+(100-mrt)+'% من الإجمالي).');
           if(clsRate>35) autoRecs.push('ورشة إدارة فصل للمعلمين نظراً لارتفاع المخالفات الصفية ('+clsRate+'%).');
           if(fp<fv) autoRecs.push('تفعيل برنامج تعزيز إيجابي أسبوعي لخلق توازن في التوثيق السلوكي.');
+          // توصية الغياب في الطباعة
+          var absNoExR2 = absNoExcuse;
+          var absExR2   = absExcused;
+          var absTotR2  = absNoExR2 + absExR2;
+          var possibleR2 = stu * 180;
+          var absRateR2  = possibleR2>0 ? absTotR2/possibleR2*100 : 0;
+          if(absNoExR2 > absExR2 && absTotR2>0) {
+            autoRecs.push('متابعة حالات الغياب بدون عذر ('+absNoExR2+' يوم) التي تتجاوز الغياب بعذر — التواصل الفوري مع أولياء أمور الطلاب المتغيبين.');
+          } else if(absRateR2 > 5) {
+            autoRecs.push('نسبة الغياب مرتفعة ('+absRateR2.toFixed(1)+'%) — مراجعة أسباب التغيب ووضع خطة لتحسين الحضور المدرسي.');
+          } else if(absRateR2 > 2) {
+            autoRecs.push('متابعة الطلاب ذوي الغياب المتكرر وإشعار أولياء أمورهم للحدّ من تصاعد نسبة الغياب ('+absRateR2.toFixed(1)+'%).');
+          } else if(absTotR2 > 0) {
+            autoRecs.push('نسبة الغياب ضمن المعدل الجيد ('+absRateR2.toFixed(1)+'%) — الحفاظ على آليات التحفيز على الحضور.');
+          }
           autoRecs.push('الاستمرار في رصد المؤشرات أسبوعياً وتحديث التقرير بانتظام.');
 
           var secHd = function(t){
@@ -8341,7 +8372,7 @@ function getPageData(pageId) {
               var possible = stu * 180;
               var rate = possible>0?(tot/possible*100).toFixed(1):0;
               var lvl = rate<=2?'ضمن النطاق الجيد':rate<=5?'يحتاج متابعة':'مرتفع ويستلزم تدخلاً';
-              return 'نسبة الغياب الكلية '+rate+'% من إجمالي '+possible+' يوم دراسي ممكن. المستوى: '+lvl+'.'
+              return 'نسبة الغياب الكلية '+rate+'% — المستوى: '+lvl+'.'
                 +' التفصيل: '+absExcused+' يوم بعذر و'+absNoExcuse+' يوم بدون عذر.';
             })(), '#1AB1D4')
             +'</div></div>';
