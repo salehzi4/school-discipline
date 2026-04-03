@@ -7143,50 +7143,42 @@ function previewReport() {
   };
 
   showLoading();
-  google.script.run
-    .withSuccessHandler(function(result) {
-      hideLoading();
-      if (!result || !result.success) {
-        showAlert('reportModalAlert','error', (result && result.message) || 'حدث خطأ في الحفظ');
-        return;
-      }
-      data.reportNum     = result.reportNum;
-      data.createdAt     = new Date().toLocaleString('ar-SA');
-      data.status        = 'بانتظار الاستلام';
-      data.violationDate = data.createdAt;
+  GAS.saveReport(data).then(function(result) {
+    hideLoading();
+    if (!result || !result.success) {
+      showAlert('reportModalAlert','error', (result && result.message) || 'حدث خطأ في الحفظ');
+      return;
+    }
+    data.reportNum     = result.reportNum;
+    data.createdAt     = new Date().toLocaleString('ar-SA');
+    data.status        = 'بانتظار الاستلام';
+    data.violationDate = data.createdAt;
 
-      var total = _rptBatchStudents.length;
-      var next  = _rptCurrentIdx + 1;
+    var total = _rptBatchStudents.length;
+    var next  = _rptCurrentIdx + 1;
 
-      if (next < total) {
-        // ── يوجد طلاب تاليون — انتقل للطالب التالي ──
-        _rptCurrentIdx = next;
-        var vtData = (allViolationTypes && allViolationTypes['سلوكية']) || [];
-        var vEl    = document.getElementById('recordViolationType');
-        var vt     = vEl ? vtData[parseInt(vEl.value)] : null;
-        // حفظ البيانات المشتركة للاستخدام في الطالب التالي
-        _rptLastSharedData = {
-          regionName   : data.regionName,
-          schoolName   : data.schoolName,
-          reporterRole : data.reporterRole,
-          reporterName : data.reporterName
-        };
-        _fillReportModal(_rptBatchStudents[next], vt, next, total);
-        showAlert('reportModalAlert','success',
-          '✅ تم حفظ محضر ' + data.studentName + ' — الطالب ' + (next) + ' من ' + total);
-      } else {
-        // ── آخر طالب — أغلق وافتح المعاينة ──
-        document.getElementById('reportModal').style.display = 'none';
-        _rptBatchStudents = [];
-        _rptCurrentIdx    = 0;
-        setTimeout(function() { showReportView(data, false); }, 50);
-      }
-    })
-    .withFailureHandler(function(e) {
-      hideLoading();
-      showAlert('reportModalAlert','error','فشل الحفظ: ' + (e.message || e));
-    })
-    .saveReport(data);
+    if (next < total) {
+      _rptCurrentIdx = next;
+      _rptLastSharedData = {
+        regionName   : data.regionName,
+        schoolName   : data.schoolName,
+        reporterRole : data.reporterRole,
+        reporterName : data.reporterName
+      };
+      _fillReportModal(_rptBatchStudents[next], null, next, total);
+      showAlert('reportModalAlert','success',
+        '✅ تم حفظ محضر ' + data.studentName + ' — الطالب ' + (next) + ' من ' + total);
+    } else {
+      document.getElementById('reportModal').style.display = 'none';
+      _rptBatchStudents = [];
+      _rptCurrentIdx    = 0;
+      loadReports();
+      setTimeout(function() { showReportView(data, false); }, 50);
+    }
+  }).catch(function(e) {
+    hideLoading();
+    showAlert('reportModalAlert','error','فشل الحفظ: ' + (e.message || e));
+  });
 }
 
 // ── عرض المحضر الرسمي ──
@@ -7199,11 +7191,7 @@ function showReportView(r, isParentView) {
   document.getElementById('rv_num').textContent         = r.reportNum || '—';
   document.getElementById('rv_region').textContent      = 'الإدارة العامة للتعليم بمنطقة ' + (r.regionName || '—');
   document.getElementById('rv_school').textContent      = r.schoolName || '—';
-  // تحديث الشعار ديناميكياً
-  getPrintLogo(function(b64) {
-    var logoEl = document.getElementById('rv_logo');
-    if (logoEl && b64) { logoEl.src = b64; logoEl.style.display = ''; }
-  });
+  // الشعار الآن SVG مضمّن - لا حاجة لتحديثه
   document.getElementById('rv_date').textContent        = datePart;
   document.getElementById('rv_time').textContent        = timePart;
   document.getElementById('rv_class').textContent       = r.className || '—';
@@ -7907,10 +7895,17 @@ function buildPrintHTML(pageId, mode, logoB64) {
 
 // ── زر الطباعة ──────────────────────────────────────────
 function getPrintLogo(callback) {
-  // حاول تجلب الصورة من الـ DOM أولاً (محمّلة في المتصفح مسبقاً)
-  var existingImg = document.querySelector('.header-ministry-img');
-  var logoUrl = existingImg ? existingImg.src : 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/MOE_Saudi_Arabia.svg/200px-MOE_Saudi_Arabia.svg.png';
-  imgToBase64(logoUrl, callback);
+  // SVG شعار وزارة التعليم مضمّن كـ data URI - لا يعاني من CORS
+  var svgLogo = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent([
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">',
+    '<circle cx="50" cy="50" r="46" fill="none" stroke="#fff" stroke-width="2.5"/>',
+    '<circle cx="50" cy="50" r="36" fill="none" stroke="#fff" stroke-width="1.5"/>',
+    '<text x="50" y="38" text-anchor="middle" fill="#fff" font-size="9" font-family="Tajawal,Arial" font-weight="700">وزارة</text>',
+    '<text x="50" y="52" text-anchor="middle" fill="#fff" font-size="9" font-family="Tajawal,Arial" font-weight="700">التعليم</text>',
+    '<text x="50" y="66" text-anchor="middle" fill="#C9A227" font-size="7.5" font-family="Tajawal,Arial">المملكة العربية السعودية</text>',
+    '</svg>'
+  ].join(''));
+  callback(svgLogo);
 }
 
 function _printHomePage() {
@@ -8667,7 +8662,13 @@ window.addEventListener('resize', applySidebarBounds);
     <div style="height:4px;background:linear-gradient(90deg,#3C86B7,#57AC9D,#C9860A);"></div>
     <!-- هيدر المحضر -->
     <div id="rv_header" style="background:linear-gradient(135deg,#0D2E44 0%,#1A5276 100%);padding:16px 24px;display:flex;align-items:center;justify-content:center;gap:14px;-webkit-print-color-adjust:exact;print-color-adjust:exact;">
-      <img id="rv_logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/MOE_Saudi_Arabia.svg/200px-MOE_Saudi_Arabia.svg.png" alt="شعار" style="width:52px;height:52px;object-fit:contain;flex-shrink:0;filter:brightness(0) invert(1);" onerror="this.style.display='none'">
+      <svg id="rv_logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" style="width:52px;height:52px;flex-shrink:0;">
+        <circle cx="50" cy="50" r="46" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2.5"/>
+        <circle cx="50" cy="50" r="36" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="1.5"/>
+        <text x="50" y="38" text-anchor="middle" fill="#fff" font-size="9" font-family="Tajawal,Arial" font-weight="700">وزارة</text>
+        <text x="50" y="52" text-anchor="middle" fill="#fff" font-size="9" font-family="Tajawal,Arial" font-weight="700">التعليم</text>
+        <text x="50" y="66" text-anchor="middle" fill="#F0C040" font-size="7" font-family="Tajawal,Arial">المملكة العربية السعودية</text>
+      </svg>
       <div style="width:1.5px;height:40px;background:rgba(255,255,255,.35);flex-shrink:0;"></div>
       <div>
         <div id="rv_region" style="font-size:11px;color:rgba(255,255,255,.75);margin-bottom:2px;">—</div>
