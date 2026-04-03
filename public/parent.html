@@ -1309,7 +1309,7 @@ function toggleDetails(key, btn){
     document.getElementById('dpMBody').innerHTML = '<div style="text-align:center;padding:20px;color:#aaa;">جاري التحميل...</div>';
     document.getElementById('dpMSub').textContent = '';
     var name = P ? P.name : '';
-    var cls  = P ? P.className : '';
+    var cls  = ''; // بدون فلتر الفصل لضمان ظهور كل المحاضر
     GAS.getReportsByStudent(name, cls).then(function(reports){
       var rList = reports || [];
       document.getElementById('dpMSub').textContent = rList.length ? rList.length + ' سجل' : '';
@@ -1370,8 +1370,8 @@ function hideActionsPanel(){
 
 /* ══ LOAD PARENT REPORTS ══ */
 function loadParentReports(){
-  var sN = sessionStorage.getItem('parentStudentName');
-  var sC = sessionStorage.getItem('parentStudentClass');
+  var sN = (P && P.name) || sessionStorage.getItem('parentStudentName');
+  var sC = ''; // نجلب بدون فلتر الفصل لضمان ظهور كل المحاضر
   var container = $('parActionsList');
   if(!container) return;
   if(!sN){ container.innerHTML='<div style="padding:24px;text-align:center;color:var(--text-3);">يرجى تسجيل الدخول أولاً</div>'; return; }
