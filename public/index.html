@@ -3668,6 +3668,76 @@ tr:hover td{background:var(--em-ghost);}
       </div>
     </div>
 
+    <!-- ══ KPIs ══ -->
+    <div class="card" style="margin-bottom:14px;" id="frKpiSection">
+      <div class="card-title" style="font-size:13px;"><span class="material-icons-round" style="color:#1A4A7A;font-size:16px;">bar_chart</span> مؤشرات الأداء الرئيسية</div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;" id="frKpiGrid">
+        <div style="border-radius:10px;padding:10px 8px;text-align:center;border:1px solid #e2e8f0;background:#f8fafc;">
+          <div id="frKpiViolRate" style="font-size:18px;font-weight:900;color:#0D2E44;">—</div>
+          <div style="font-size:9px;color:#64748b;margin:4px 0;">معدل المخالفات/طالب</div>
+          <div id="frKpiViolRateTag" style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;display:inline-block;">—</div>
+        </div>
+        <div style="border-radius:10px;padding:10px 8px;text-align:center;border:1px solid #e2e8f0;background:#f8fafc;">
+          <div id="frKpiPosRate" style="font-size:18px;font-weight:900;color:#0D2E44;">—</div>
+          <div style="font-size:9px;color:#64748b;margin:4px 0;">نسبة السلوك الإيجابي</div>
+          <div id="frKpiPosRateTag" style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;display:inline-block;">—</div>
+        </div>
+        <div style="border-radius:10px;padding:10px 8px;text-align:center;border:1px solid #e2e8f0;background:#f8fafc;">
+          <div id="frKpiParentRate" style="font-size:18px;font-weight:900;color:#0D2E44;">—</div>
+          <div style="font-size:9px;color:#64748b;margin:4px 0;">استجابة أولياء الأمور</div>
+          <div id="frKpiParentRateTag" style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;display:inline-block;">—</div>
+        </div>
+        <div style="border-radius:10px;padding:10px 8px;text-align:center;border:1px solid #e2e8f0;background:#f8fafc;">
+          <div id="frKpiTreatRate" style="font-size:18px;font-weight:900;color:#0D2E44;">—</div>
+          <div style="font-size:9px;color:#64748b;margin:4px 0;">نسبة معالجة الحالات</div>
+          <div id="frKpiTreatRateTag" style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;display:inline-block;">—</div>
+        </div>
+        <div style="border-radius:10px;padding:10px 8px;text-align:center;border:1px solid #e2e8f0;background:#f8fafc;">
+          <div id="frKpiClsRate" style="font-size:18px;font-weight:900;color:#0D2E44;">—</div>
+          <div style="font-size:9px;color:#64748b;margin:4px 0;">المخالفات الصفية من الإجمالي</div>
+          <div id="frKpiClsRateTag" style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;display:inline-block;">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ التحليل والاستنتاجات ══ -->
+    <div class="card" style="margin-bottom:14px;" id="frAnalysisSection">
+      <div class="card-title" style="font-size:13px;"><span class="material-icons-round" style="color:#7C3AED;font-size:16px;">psychology</span> التحليل والاستنتاجات</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;" id="frAnalysisGrid">
+        <div style="border-right:3px solid #C0392B;border-radius:0 8px 8px 0;padding:10px 14px;background:#fef9f9;">
+          <div style="font-size:11px;font-weight:700;color:#C0392B;margin-bottom:5px;">تركّز المشكلة</div>
+          <div id="frAnalysis1" style="font-size:11px;color:#475569;line-height:1.7;">جاري التحليل...</div>
+        </div>
+        <div style="border-right:3px solid #d97706;border-radius:0 8px 8px 0;padding:10px 14px;background:#fffdf5;">
+          <div style="font-size:11px;font-weight:700;color:#d97706;margin-bottom:5px;">التفاعل الأسري</div>
+          <div id="frAnalysis2" style="font-size:11px;color:#475569;line-height:1.7;">جاري التحليل...</div>
+        </div>
+        <div style="border-right:3px solid #1A4A7A;border-radius:0 8px 8px 0;padding:10px 14px;background:#f7faff;">
+          <div style="font-size:11px;font-weight:700;color:#1A4A7A;margin-bottom:5px;">فعالية المعالجة</div>
+          <div id="frAnalysis3" style="font-size:11px;color:#475569;line-height:1.7;">جاري التحليل...</div>
+        </div>
+        <div style="border-right:3px solid #16a34a;border-radius:0 8px 8px 0;padding:10px 14px;background:#f7fdf9;">
+          <div style="font-size:11px;font-weight:700;color:#16a34a;margin-bottom:5px;">ملاحظة غير مباشرة</div>
+          <div id="frAnalysis4" style="font-size:11px;color:#475569;line-height:1.7;">جاري التحليل...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ التوصيات المقترحة ══ -->
+    <div class="card" style="margin-bottom:14px;" id="frAutoRecsSection">
+      <div class="card-title" style="font-size:13px;"><span class="material-icons-round" style="color:#16a34a;font-size:16px;">tips_and_updates</span> التوصيات المقترحة</div>
+      <div id="frAutoRecs" style="display:flex;flex-direction:column;gap:8px;"></div>
+    </div>
+
+    <!-- ══ التقييم العام ══ -->
+    <div class="card" style="margin-bottom:14px;" id="frRatingSection">
+      <div class="card-title" style="font-size:13px;"><span class="material-icons-round" style="color:#C9A227;font-size:16px;">grade</span> التقييم العام</div>
+      <div style="display:flex;align-items:center;gap:16px;">
+        <div id="frRatingBadge" style="font-size:20px;font-weight:900;padding:12px 24px;border-radius:12px;flex-shrink:0;">—</div>
+        <div id="frRatingReason" style="font-size:12px;color:#475569;line-height:1.8;flex:1;">—</div>
+      </div>
+    </div>
+
     <!-- توصيات الإدارة -->
     <div class="card" style="margin-bottom:14px;">
       <div class="card-title" style="font-size:13px;"><span class="material-icons-round" style="color:var(--primary);font-size:16px;">edit_note</span> توصيات الإدارة</div>
@@ -7195,8 +7265,6 @@ function openCreateReport() {
   var firstViol = behavioralViols[0];
   var vt = { type: firstViol.name + (firstViol.subViolation ? ' — ' + firstViol.subViolation : '') };
 
-  // تمرير المخالفات المحددة مع كل طالب
-  sel.forEach(function(s) { s._selectedViols = behavioralViols; });
   _rptBatchStudents = sel;
   _rptCurrentIdx    = 0;
 
@@ -7285,17 +7353,11 @@ function _fillReportModal(student, vt, idx, total) {
 
   // ── نص المحضر ──
   var today   = new Date().toLocaleDateString('ar-SA');
-  var bodyTpl = 'بسم الله الرحمن الرحيم\n\nنفيدكم بأن الطالب / {اسم_الطالب}   رقم الهوية: {رقم_الهوية}\nالفصل: {الفصل}   بتاريخ: {التاريخ}\n\nقد ثبت في حقه ارتكاب المخالفة الآتية:\n{المخالفة}   الدرجة: {الدرجة}\n\nوتؤكد إدارة المدرسة حرصها الدائم على غرس القيم الإيجابية لدى أبنائنا الطلاب، وتعزيز الانضباط السلوكي، وقد تم اتخاذ الإجراء التربوي المناسب حسب لائحة السلوك المعتمدة.\n\nالإجراء المتخذ: {الإجراء}\n\nنأمل منكم التعاون معنا بتوجيه ابنكم ومتابعته لما فيه مصلحته التعليمية والسلوكية، شاكرين ومقدرين تعاونكم الدائم.\n\nوتفضلوا بقبول فائق الاحترام والتقدير،،';
-  var degree = (student._selectedViols && student._selectedViols[0]) ? (student._selectedViols[0].degree || '—') : '—';
-  var action = (document.getElementById('rpt_actionTaken') || {}).value || '';
+  var bodyTpl = 'نفيدكم بأن الطالب {اسم_الطالب} قد ارتكب مخالفة سلوكية بتاريخ {التاريخ} داخل المدرسة، والمتمثلة في: {المخالفة}.\n\nوتؤكد إدارة المدرسة حرصها الدائم على غرس القيم الإيجابية لدى أبنائنا الطلاب، وتعزيز الانضباط السلوكي، وقد تم اتخاذ الإجراء التربوي المناسب حسب لائحة السلوك المعتمدة.\n\nنأمل منكم التعاون معنا بتوجيه ابنكم ومتابعته لما فيه مصلحته التعليمية والسلوكية، شاكرين ومقدرين تعاونكم الدائم.\n\nوتفضلوا بقبول فائق الاحترام والتقدير،،';
   setRptBodyText(bodyTpl
     .replace('{اسم_الطالب}', student.name)
-    .replace('{رقم_الهوية}', student.nationalId || student.national_id || '—')
-    .replace('{الفصل}',      student.className || '—')
-    .replace('{التاريخ}',    today)
-    .replace('{المخالفة}',   vt ? vt.type : '—')
-    .replace('{الدرجة}',     degree)
-    .replace('{الإجراء}',    action || '—'));
+    .replace('{التاريخ}',     today)
+    .replace('{المخالفة}',    vt ? vt.type : '—'));
 
   // ── مسح التوقيعات للطالب الجديد ──
   clearRptStudentSig();
@@ -7359,7 +7421,6 @@ function previewReport() {
     } catch(e){}
   }
 
-  var actionTaken = (document.getElementById('rpt_actionTaken')||{}).value || '';
   var data = {
     studentName       : studentName,
     className         : className,
@@ -7372,7 +7433,7 @@ function previewReport() {
     studentSignature  : studentSig,
     customReportNum   : reportNum,
     bodyText          : bodyText,
-    notes             : actionTaken
+    notes             : ''
   };
 
   showLoading();
@@ -7433,38 +7494,14 @@ function showReportView(r, isParentView) {
   document.getElementById('rv_reporterRole').textContent= r.reporterRole || '—';
   document.getElementById('rv_footerSchool').textContent= r.schoolName || '—';
 
-  // نص المحضر — بناء رسمي منظم
-  var rawText = r.bodyText ? r.bodyText.replace(/<[^>]*>/g,'').trim() : '';
+  // نص المحضر — يستخدم النص المخصص إن وُجد وإلا النص الافتراضي
   var body;
-  if (rawText) {
-    // تحويل الأسطر لـ HTML مع تمييز المتغيرات
-    body = '<div style="line-height:2;font-size:13.5px;">'
-      + rawText
-          .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')
-      + '</div>';
+  if (r.bodyText && r.bodyText.replace(/<[^>]*>/g,'').trim()) {
+    body = r.bodyText; // HTML مباشرة من المحرر
   } else {
-    // بناء تلقائي من البيانات مع تصميم رسمي
-    var sName  = r.studentName  || '—';
-    var sClass = r.className    || '—';
-    var sViol  = r.violationType|| '—';
-    var sDate  = datePart       || '—';
-    var sNotes = r.notes        || '—';
-    body = [
-      '<div style="background:#f8fafc;border-radius:8px;padding:12px 16px;margin-bottom:12px;border-right:3px solid #0D2E44;">',
-      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px;">',
-      '<div><span style="color:#64748b;font-size:11px;">اسم الطالب</span><div style="font-weight:700;color:#1e293b;">'+sName+'</div></div>',
-      '<div><span style="color:#64748b;font-size:11px;">الفصل</span><div style="font-weight:700;color:#1e293b;">'+sClass+'</div></div>',
-      '<div><span style="color:#64748b;font-size:11px;">التاريخ</span><div style="font-weight:700;color:#1e293b;">'+sDate+'</div></div>',
-      '</div></div>',
-      '<div style="background:#fef2f2;border-radius:8px;padding:12px 16px;margin-bottom:12px;border-right:3px solid #C0392B;">',
-      '<div style="font-size:11px;color:#64748b;margin-bottom:6px;font-weight:700;">المخالفة</div>',
-      '<div style="font-size:13px;font-weight:700;color:#C0392B;">'+sViol+'</div>',
-      '</div>',
-      '<div style="background:#f0f7ff;border-radius:8px;padding:12px 16px;border-right:3px solid #1A4A7A;">',
-      '<div style="font-size:11px;color:#64748b;margin-bottom:6px;font-weight:700;">الإجراء المتخذ</div>',
-      '<div style="font-size:13px;color:#1e293b;">'+sNotes+'</div>',
-      '</div>'
-    ].join('');
+    body = 'نفيدكم بأن الطالب <strong style="background:var(--em-pale);color:var(--em);padding:1px 6px;border-radius:4px;">' + (r.studentName||'—') + '</strong>' +
+      ' قد ارتكب مخالفة سلوكية بتاريخ <strong style="background:var(--em-pale);color:var(--em);padding:1px 6px;border-radius:4px;">' + datePart + '</strong>' +
+      ' داخل المدرسة، والمتمثلة في: <strong style="background:var(--em-pale);color:var(--em);padding:1px 6px;border-radius:4px;">' + (r.violationType||'—') + '</strong>.';
   }
   document.getElementById('rv_body').innerHTML = body;
 
@@ -7652,10 +7689,155 @@ function loadFullReport() {
       document.getElementById('frMsgSent').textContent = ms;
       document.getElementById('frMsgRead').textContent = mr;
       document.getElementById('frMsgRate').textContent = mrt+'%';
+      // ── التحليل الذكي ──
+      var totalStu = 0;
+      try { totalStu = parseInt(document.getElementById('statStudents').textContent)||1; } catch(e){}
+      buildFullReportAnalysis(d, totalStu);
     })
     .withFailureHandler(function(){ hideLoading(); })
     .getFullReportData(dateFrom, dateTo);
 }
+function buildFullReportAnalysis(d, students) {
+  var fv = d.totalViolations||0;
+  var fc = d.totalClassViolations||0;
+  var fm = d.totalMessages||0;
+  var fp = (d.totalPositive||0)+(d.totalDistinct||0);
+  var fr = d.totalReports||0;
+  var ftot = fv + fc;
+  var ms = d.totalMessages||0;
+  var mr = d.totalReportsResponded||0;
+  var imp = d.totalImproved||0;
+  var rep = d.repeatCount||0;
+  var totalStudents = students || 1;
+
+  // ── KPIs ──
+  function setKpi(valId, tagId, val, label, goodThresh, warnThresh, lowerIsBetter) {
+    var el = document.getElementById(valId);
+    var tag = document.getElementById(tagId);
+    if(!el||!tag) return;
+    el.textContent = val;
+    var num = parseFloat(val);
+    var status, bg, color;
+    if(lowerIsBetter) {
+      if(num <= goodThresh) { status='جيد'; bg='#dcfce7'; color='#16a34a'; }
+      else if(num <= warnThresh) { status='يحتاج تحسين'; bg='#fef3c7'; color='#d97706'; }
+      else { status='يحتاج تدخل'; bg='#fee2e2'; color='#C0392B'; }
+    } else {
+      if(num >= goodThresh) { status='جيد'; bg='#dcfce7'; color='#16a34a'; }
+      else if(num >= warnThresh) { status='مقبول'; bg='#fef3c7'; color='#d97706'; }
+      else { status='يحتاج تحسين'; bg='#fee2e2'; color='#C0392B'; }
+    }
+    tag.textContent = status;
+    tag.style.background = bg;
+    tag.style.color = color;
+    var card = el.closest ? el.closest('div[style*="border-radius:10px"]') : null;
+    if(card) { card.style.background = bg+'33'; card.style.borderColor = color+'66'; el.style.color = color; }
+  }
+
+  var violRate = totalStudents > 0 ? (fv/totalStudents).toFixed(1) : '0.0';
+  var posRate  = ftot+fp > 0 ? Math.round(fp/(ftot+fp)*100)+'%' : '0%';
+  var parentRate = ms > 0 ? Math.round(mr/ms*100)+'%' : (fr>0 ? Math.round(d.totalReportsResponded/fr*100)+'%' : '0%');
+  var treatRate = (imp+rep) > 0 ? Math.round(imp/(imp+rep)*100)+'%' : '0%';
+  var clsRate  = ftot > 0 ? Math.round(fc/ftot*100)+'%' : '0%';
+
+  setKpi('frKpiViolRate',   'frKpiViolRateTag',   violRate,   '',  0.3, 0.6, true);
+  setKpi('frKpiPosRate',    'frKpiPosRateTag',    posRate,    '',  40,  20,  false);
+  setKpi('frKpiParentRate', 'frKpiParentRateTag', parentRate, '',  80,  60,  false);
+  setKpi('frKpiTreatRate',  'frKpiTreatRateTag',  treatRate,  '',  70,  40,  false);
+  setKpi('frKpiClsRate',    'frKpiClsRateTag',    clsRate,    '',  20,  40,  true);
+
+  // ── التحليل ──
+  var topClass = (d.classRanking&&d.classRanking.length) ? d.classRanking[0].name : null;
+  var topClassPct = (topClass && ftot>0) ? Math.round(d.classRanking[0].count/ftot*100) : 0;
+  var clsPctNum = ftot>0 ? Math.round(fc/ftot*100) : 0;
+
+  var a1 = clsPctNum > 40
+    ? 'المخالفات الصفية تمثل '+clsPctNum+'% من الإجمالي، مما يشير إلى تحديات في ضبط الفصل. '+(topClass?'الفصل '+topClass+' يستأثر بـ'+topClassPct+'% من المخالفات ويحتاج متابعة مكثفة.':'')
+    : fv > fc
+      ? 'المخالفات السلوكية أعلى من الصفية ('+fv+' مقابل '+fc+')، مما يتطلب التركيز على التوجيه السلوكي العام.'+(topClass?' أبرز الفصول: '+topClass+'.':'')
+      : 'المخالفات موزعة بشكل متوازن بين السلوكية ('+fv+') والصفية ('+fc+'). '+(topClass?'الفصل '+topClass+' يحتل المرتبة الأولى.':'');
+
+  var parentPctNum = ms>0 ? Math.round(mr/ms*100) : 0;
+  var a2 = ms === 0
+    ? 'لم تُرسل رسائل لأولياء الأمور خلال هذه الفترة، مما يحدّ من إمكانية تقييم مستوى التفاعل الأسري.'
+    : parentPctNum >= 80
+      ? 'مستوى استجابة أولياء الأمور ممتاز ('+parentPctNum+'%)، يعكس تفاعلاً أسرياً إيجابياً مع متابعة المدرسة.'
+      : parentPctNum >= 60
+        ? 'استجاب '+parentPctNum+'% من أولياء الأمور للإشعارات، وهو مستوى مقبول مع وجود فرصة لتحسين التواصل مع الفئة غير المستجيبة.'
+        : 'نسبة الاستجابة الأسرية منخفضة ('+parentPctNum+'%)، مما يعني أن شريحة من الحالات تبقى دون متابعة أسرية فعّالة.';
+
+  var treatPctNum = (imp+rep)>0 ? Math.round(imp/(imp+rep)*100) : 0;
+  var a3 = (imp+rep) === 0
+    ? 'لا تتوفر بيانات كافية حول معالجة الحالات. يُنصح بتفعيل خاصية تتبع حالة المعالجة لكل مخالفة.'
+    : treatPctNum >= 70
+      ? 'نسبة معالجة الحالات مرتفعة ('+treatPctNum+'%)، مما يدل على فاعلية الإجراءات التربوية المتخذة.'
+      : treatPctNum >= 40
+        ? 'عُولجت '+treatPctNum+'% من الحالات، وهي نسبة متوسطة تستدعي مراجعة آليات المتابعة وضمان إغلاق جميع الحالات.'
+        : 'نسبة معالجة الحالات منخفضة ('+treatPctNum+'%)، وهو مؤشر خطر يستلزم إجراءً فورياً لمراجعة الحالات المعلقة.';
+
+  var a4 = fp > fv
+    ? 'ارتفاع السلوكيات الإيجابية ('+fp+') عن المخالفات السلوكية ('+fv+') مؤشر صحي يعكس بيئة مدرسية إيجابية وانتباه المعلمين لرصد السلوك الجيد.'
+    : fp > 0 && fv > 0
+      ? 'تسجيل '+fp+' سلوكاً إيجابياً بالتوازي مع '+fv+' مخالفة يشير إلى توجه المعلمين نحو التوثيق الشامل للسلوك، وهو مؤشر نضج مهني إيجابي.'
+      : fr > 0
+        ? 'إصدار '+fr+' محضر يدل على تفعيل الإجراءات الرسمية، لكن يجب التأكد من متابعة أولياء الأمور لهذه المحاضر والتوقيع عليها.'
+        : 'البيانات الحالية تُشير إلى مرحلة مستقرة نسبياً. مواصلة رصد المؤشرات أسبوعياً سيُمكّن من الكشف المبكر عن أي تغيير في الاتجاه.';
+
+  document.getElementById('frAnalysis1').textContent = a1;
+  document.getElementById('frAnalysis2').textContent = a2;
+  document.getElementById('frAnalysis3').textContent = a3;
+  document.getElementById('frAnalysis4').textContent = a4;
+
+  // ── التوصيات ──
+  var recs = [];
+  if(topClass && topClassPct >= 30) recs.push('عقد جلسة توجيهية مع طلاب '+topClass+' الذي يستأثر بـ'+topClassPct+'% من المخالفات، لتحديد الأسباب الجذرية ووضع خطة علاجية.');
+  if(parentPctNum < 70 && ms > 0) recs.push('التواصل الهاتفي المباشر مع أولياء الأمور غير المستجيبين للإشعارات الرقمية ('+(100-parentPctNum)+'% من الإجمالي) لضمان المتابعة الأسرية.');
+  if(treatPctNum < 60 && (imp+rep) > 0) recs.push('مراجعة جميع الحالات المعلقة وتحديد مسؤول متابعة لكل حالة مع تحديد موعد إغلاقها للرفع من نسبة المعالجة الحالية ('+treatPctNum+'%).');
+  if(clsPctNum > 35) recs.push('تنظيم ورشة قصيرة للمعلمين حول استراتيجيات إدارة الفصل، بالنظر إلى ارتفاع نسبة المخالفات الصفية ('+clsPctNum+'%).');
+  if(fp < fv) recs.push('تفعيل برنامج تعزيز إيجابي أسبوعي للطلاب المتميزين سلوكياً، لخلق توازن بين الرصد السلبي والإيجابي وتحفيز الطلاب على الالتزام.');
+  if(recs.length === 0) recs.push('مواصلة النهج الحالي مع رفع وتيرة رصد السلوكيات الإيجابية لتعزيز الثقافة السلوكية الإيجابية في المدرسة.');
+
+  var recsEl = document.getElementById('frAutoRecs');
+  if(recsEl) {
+    recsEl.innerHTML = recs.map(function(r,i){
+      return '<div style="display:flex;gap:10px;align-items:flex-start;padding:9px 12px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;">'
+        +'<div style="width:22px;height:22px;border-radius:50%;background:#0D2E44;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">'+(i+1)+'</div>'
+        +'<div style="font-size:12px;color:#334155;line-height:1.7;">'+r+'</div>'
+        +'</div>';
+    }).join('');
+  }
+
+  // ── التقييم العام ──
+  var score = 0;
+  if(parseFloat(violRate) <= 0.3) score+=2; else if(parseFloat(violRate) <= 0.6) score+=1;
+  if(parentPctNum >= 80) score+=2; else if(parentPctNum >= 60) score+=1;
+  if(treatPctNum >= 70) score+=2; else if(treatPctNum >= 40) score+=1;
+  if(clsPctNum <= 20) score+=1;
+  if(fp >= fv) score+=1;
+
+  var badge = document.getElementById('frRatingBadge');
+  var reason = document.getElementById('frRatingReason');
+  if(!badge||!reason) return;
+
+  if(score >= 7) {
+    badge.textContent = 'ممتاز';
+    badge.style.background = '#dcfce7'; badge.style.color = '#16a34a';
+    reason.textContent = 'صُنِّف الأسبوع بمستوى ممتاز بناءً على انخفاض معدل المخالفات، وارتفاع نسب الاستجابة الأسرية والمعالجة، مما يعكس بيئة مدرسية منضبطة وإدارة فاعلة.';
+  } else if(score >= 5) {
+    badge.textContent = 'جيد';
+    badge.style.background = '#dbeafe'; badge.style.color = '#1A4A7A';
+    reason.textContent = 'أداء جيد عام مع وجود فرص للتحسين في بعض المؤشرات. المؤشرات الأساسية ضمن المقبول، لكن يُنصح بمتابعة نسب المعالجة والتواصل مع الأسر.';
+  } else if(score >= 3) {
+    badge.textContent = 'متوسط';
+    badge.style.background = '#fef3c7'; badge.style.color = '#d97706';
+    reason.textContent = 'صُنِّف الأسبوع بمستوى متوسط لوجود تحديات واضحة في بعض المؤشرات. يستوجب الأمر مراجعة الأسباب واتخاذ إجراءات وقائية قبل تفاقم الوضع.';
+  } else {
+    badge.textContent = 'يحتاج تدخل';
+    badge.style.background = '#fee2e2'; badge.style.color = '#C0392B';
+    reason.textContent = 'المؤشرات تُشير إلى وضع يستدعي تدخلاً عاجلاً. ارتفاع المخالفات وانخفاض نسب المعالجة والاستجابة الأسرية تستلزم اجتماعاً عاجلاً لوضع خطة تصحيحية.';
+  }
+}
+
 function issueFullReport() {
   var recs = document.getElementById('frRecommendations') ? document.getElementById('frRecommendations').value : '';
   alert('تم إصدار التقرير الشامل ✅\n' + (recs ? 'التوصيات: ' + recs : 'بدون توصيات'));
@@ -7947,68 +8129,159 @@ function getPageData(pageId) {
       return {
         title: 'التقرير الدوري للسلوك الالتزامي المدرسي',
         period: period,
-        body: `
-          <div style="background:linear-gradient(135deg,#0A2240,#0A5C44);border-radius:12px;padding:20px 24px;margin-bottom:20px;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;text-align:center;">
-            <div style="font-size:17px;font-weight:900;margin-bottom:6px;">التقرير الدوري للسلوك الالتزامي المدرسي</div>
-            <div style="font-size:12px;opacity:.8;">${period}</div>
-          </div>
+        body: (function() {
+          var fv = parseInt((document.getElementById('frTotalViol')||{}).textContent)||0;
+          var fc = parseInt((document.getElementById('frTotalCls')||{}).textContent)||0;
+          var fm = parseInt((document.getElementById('frTotalMsg')||{}).textContent)||0;
+          var fp = parseInt((document.getElementById('frTotalPos')||{}).textContent)||0;
+          var fr = parseInt((document.getElementById('frTotalRpts')||{}).textContent)||0;
+          var ftot = fv+fc;
+          var stu = parseInt((document.getElementById('statStudents')||{}).textContent)||1;
+          var ms = fm, mr = parseInt((document.getElementById('frMsgRead')||{}).textContent)||0;
+          var mrt = ms>0?Math.round(mr/ms*100):0;
+          var posRate = ftot+fp>0?Math.round(fp/(ftot+fp)*100):0;
+          var violRate = stu>0?(fv/stu).toFixed(1):'0.0';
+          var clsRate = ftot>0?Math.round(fc/ftot*100):0;
+          var recs = (document.getElementById('frRecommendations')||{}).value||'';
 
-          <div class="section-hd">الملخص التنفيذي</div>
-          ${extractStats([
-            ['frTotalViol','مخالفة سلوكية','#e74c3c'],
-            ['frTotalCls','مخالفة صفية','#e67e22'],
-            ['frTotalMsg','رسالة أُرسلت','#3498db'],
-            ['frTotalPos','سلوك إيجابي','#27ae60'],
-            ['frTotalRpts','محضر صادر','#0A5C44']
-          ])}
+          function kpiRow(lbl,val,good,warn,lowerBetter) {
+            var n=parseFloat(val);
+            var st,bg;
+            if(lowerBetter){st=n<=good?'جيد':n<=warn?'يحتاج تحسين':'خطر';bg=n<=good?'#dcfce7':n<=warn?'#fef3c7':'#fee2e2';}
+            else{st=n>=good?'جيد':n>=warn?'مقبول':'يحتاج تحسين';bg=n>=good?'#dcfce7':n>=warn?'#fef3c7':'#fee2e2';}
+            return '<tr style="-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
+              +'<td style="padding:5px 10px;font-size:11px;">'+lbl+'</td>'
+              +'<td style="padding:5px 10px;font-size:13px;font-weight:700;text-align:center;">'+val+'</td>'
+              +'<td style="padding:5px 10px;text-align:center;"><span style="background:'+bg+';color:#333;padding:2px 10px;border-radius:10px;font-size:10px;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'+st+'</span></td>'
+              +'</tr>';
+          }
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
-            <div>
-              <div class="section-hd">أعلى الفصول مخالفات</div>
-              ${extractRankList('frTopClasses')}
-            </div>
-            <div>
-              <div class="section-hd">أكثر أنواع المخالفات</div>
-              ${extractRankList('frTopTypes')}
-            </div>
-          </div>
+          function anaBox(title,text,color) {
+            return '<div style="border-right:3px solid '+color+';border-radius:0 6px 6px 0;padding:8px 12px;background:'+color+'11;margin-bottom:8px;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
+              +'<div style="font-size:10px;font-weight:700;color:'+color+';margin-bottom:3px;">'+title+'</div>'
+              +'<div style="font-size:11px;color:#334155;line-height:1.6;">'+text+'</div>'
+              +'</div>';
+          }
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
-            <div>
-              <div class="section-hd">أبرز الطلاب إيجابياً</div>
-              ${extractRankList('frTopPosStudents')}
-            </div>
-            <div>
-              <div class="section-hd">الفصول المتميزة</div>
-              ${extractRankList('frTopPosClasses')}
-            </div>
-          </div>
+          // التحليلات
+          var topCls = ''; var topClsPct = 0;
+          try {
+            var tc = document.getElementById('frTopClasses');
+            if(tc) { var tn=tc.querySelector('.fr-rank-name'); var tcount=tc.querySelector('.fr-rank-count'); if(tn&&tcount){topCls=tn.textContent;topClsPct=ftot>0?Math.round(parseInt(tcount.textContent)/ftot*100):0;}}
+          } catch(e){}
 
-          
+          var a1 = clsRate>40?'المخالفات الصفية تمثل '+clsRate+'% من الإجمالي مما يشير لتحديات في ضبط الفصل.'+(topCls?' الفصل '+topCls+' الأعلى بنسبة '+topClsPct+'%.':''):fv>fc?'المخالفات السلوكية ('+fv+') أعلى من الصفية ('+fc+')، يستلزم التركيز على التوجيه السلوكي العام.'+(topCls?' أبرز الفصول: '+topCls+'.':''):'المخالفات موزعة بشكل متوازن.';
+          var a2 = ms===0?'لم تُرسل رسائل خلال هذه الفترة.':mrt>=80?'استجابة أولياء الأمور ممتازة ('+mrt+'%).':mrt>=60?'استجابة مقبولة ('+mrt+'%) مع إمكانية تحسين التواصل.':'نسبة الاستجابة منخفضة ('+mrt+'%) تستلزم تدخلاً.';
+          var a3 = fp>=fv?'السلوكيات الإيجابية ('+fp+') تفوق المخالفات ('+fv+')، مؤشر صحي يعكس بيئة إيجابية.':'يُنصح برفع نسبة رصد السلوكيات الإيجابية لخلق توازن في التوثيق السلوكي.';
 
-          <div class="section-hd">إحصاءات التواصل مع أولياء الأمور</div>
-          ${extractStats([
-            ['frMsgSent','رسالة أُرسلت','#3498db'],
-            ['frMsgRead','محضر وُقّع عليه','#27ae60'],
-            ['frMsgRate','نسبة الاستجابة','#f39c12']
-          ])}
+          // التقييم
+          var score=0;
+          if(parseFloat(violRate)<=0.3)score+=2;else if(parseFloat(violRate)<=0.6)score+=1;
+          if(mrt>=80)score+=2;else if(mrt>=60)score+=1;
+          if(clsRate<=20)score+=1;if(fp>=fv)score+=1;
+          var rating=score>=6?'ممتاز':score>=4?'جيد':score>=2?'متوسط':'يحتاج تدخل';
+          var ratingColor=score>=6?'#16a34a':score>=4?'#1A4A7A':score>=2?'#d97706':'#C0392B';
+          var ratingBg=score>=6?'#dcfce7':score>=4?'#dbeafe':score>=2?'#fef3c7':'#fee2e2';
+          var ratingText=score>=6?'المؤشرات ضمن النطاق الممتاز. بيئة مدرسية منضبطة وإدارة فاعلة.':score>=4?'أداء جيد عام مع فرص تحسين في بعض المؤشرات.':score>=2?'مستوى متوسط يستلزم مراجعة الأسباب واتخاذ إجراءات وقائية.':'مؤشرات تستدعي تدخلاً عاجلاً ووضع خطة تصحيحية فورية.';
 
-          ${recs ? '<div class="section-hd">توصيات الإدارة</div><div class="note">' + recs + '</div>' : ''}
+          // ── PAGE 1 ──
+          var p1 = '<div style="page-break-after:always;">'
+            +'<div style="background:#E5EDF5;padding:10px 20px;margin-bottom:16px;border-radius:6px;display:flex;justify-content:space-between;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
+            +'<span style="font-size:11px;font-weight:700;color:#1A4A7A;">الصفحة الأولى: الملخص ومؤشرات الأداء والتحليل</span>'
+            +'<span style="font-size:11px;color:#64748b;">'+period+'</span>'
+            +'</div>'
 
-          <div style="margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:40px;border-top:1.5px solid #e5e7eb;padding-top:20px;">
-            <div style="text-align:center;">
-              <div style="font-size:11px;color:#6b7280;margin-bottom:30px;">توقيع ${window._schoolGender==='female'?'مديرة المدرسة':'مدير المدرسة'}</div>
-              <div style="border-bottom:1.5px solid #374151;width:80%;margin:0 auto;"></div>
-            </div>
-            <div style="text-align:center;">
-              <div style="font-size:11px;color:#6b7280;margin-bottom:30px;">توقيع ${window._schoolGender==='female'?'الموجهة الطلابية':'الموجه الطلابي'}</div>
-              <div style="border-bottom:1.5px solid #374151;width:80%;margin:0 auto;"></div>
-              <div style="font-size:11px;color:#374151;margin-top:6px;">${window._schoolGender==='female'?'الموجهة الطلابية':'الموجه الطلابي'}</div>
-            </div>
-          </div>
-        `
-      };
-    }
+            // إحصاءات الملخص
+            +'<div class="section-hd">الملخص التنفيذي</div>'
+            +extractStats([
+              ['frTotalViol','مخالفة سلوكية','#e74c3c'],
+              ['frTotalCls','مخالفة صفية','#e67e22'],
+              ['frTotalMsg','رسالة أُرسلت','#3498db'],
+              ['frTotalPos','سلوك إيجابي','#27ae60'],
+              ['frTotalRpts','محضر صادر','#0A5C44']
+            ])
+
+            // KPIs
+            +'<div class="section-hd" style="margin-top:12px;">مؤشرات الأداء الرئيسية</div>'
+            +'<table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:12px;">'
+            +'<thead><tr style="background:linear-gradient(135deg,#0D2E44,#1A5276);-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
+            +'<th style="padding:7px 10px;text-align:right;color:#fff;font-weight:700;">المؤشر</th>'
+            +'<th style="padding:7px 10px;text-align:center;color:#fff;font-weight:700;">القيمة</th>'
+            +'<th style="padding:7px 10px;text-align:center;color:#fff;font-weight:700;">التقييم</th>'
+            +'</tr></thead><tbody>'
+            +kpiRow('معدل المخالفات لكل طالب', violRate, 0.3, 0.6, true)
+            +kpiRow('نسبة السلوكيات الإيجابية', posRate+'%', 40, 20, false)
+            +kpiRow('استجابة أولياء الأمور', mrt+'%', 80, 60, false)
+            +kpiRow('نسبة المخالفات الصفية من الإجمالي', clsRate+'%', 20, 40, true)
+            +'</tbody></table>'
+
+            // التحليل
+            +'<div class="section-hd">التحليل والاستنتاجات</div>'
+            +anaBox('تركّز المشكلة', a1, '#C0392B')
+            +anaBox('التفاعل الأسري', a2, '#d97706')
+            +anaBox('ملاحظة من البيانات', a3, '#16a34a')
+            +'</div>';
+
+          // ── PAGE 2 ──
+          // توصيات تلقائية
+          var autoRecs = [];
+          if(topCls&&topClsPct>=30) autoRecs.push('عقد جلسة توجيهية مع طلاب '+topCls+' ('+topClsPct+'% من المخالفات).');
+          if(mrt<70&&ms>0) autoRecs.push('التواصل الهاتفي مع أولياء الأمور غير المستجيبين ('+(100-mrt)+'%).');
+          if(clsRate>35) autoRecs.push('ورشة إدارة فصل للمعلمين بسبب ارتفاع المخالفات الصفية ('+clsRate+'%).');
+          if(fp<fv) autoRecs.push('تفعيل برنامج تعزيز إيجابي أسبوعي لخلق توازن في التوثيق السلوكي.');
+          autoRecs.push('الاستمرار في رصد المؤشرات أسبوعياً وتحديث التقرير بانتظام.');
+
+          var p2 = '<div>'
+            +'<div style="background:#E5EDF5;padding:10px 20px;margin-bottom:16px;border-radius:6px;display:flex;justify-content:space-between;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
+            +'<span style="font-size:11px;font-weight:700;color:#1A4A7A;">الصفحة الثانية: التوصيات والتقييم والترتيبات</span>'
+            +'<span style="font-size:11px;color:#64748b;">'+period+'</span>'
+            +'</div>'
+
+            // ترتيبات
+            +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px;">'
+            +'<div><div class="section-hd">أعلى الفصول مخالفات</div>'+extractRankList('frTopClasses')+'</div>'
+            +'<div><div class="section-hd">أكثر أنواع المخالفات</div>'+extractRankList('frTopTypes')+'</div>'
+            +'</div>'
+
+            +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px;">'
+            +'<div><div class="section-hd">أبرز الطلاب إيجابياً</div>'+extractRankList('frTopPosStudents')+'</div>'
+            +'<div><div class="section-hd">الفصول المتميزة</div>'+extractRankList('frTopPosClasses')+'</div>'
+            +'</div>'
+
+            // توصيات
+            +'<div class="section-hd">التوصيات العملية</div>'
+            +'<div style="margin-bottom:12px;">'
+            +autoRecs.map(function(r,i){
+              return '<div style="display:flex;gap:10px;align-items:flex-start;padding:7px 10px;background:#f8fafc;border-radius:6px;border:1px solid #e2e8f0;margin-bottom:6px;">'
+                +'<div style="width:20px;height:20px;border-radius:50%;background:#0D2E44;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'+(i+1)+'</div>'
+                +'<div style="font-size:11px;color:#334155;line-height:1.6;">'+r+'</div>'+'</div>';
+            }).join('')
+            +(recs?'<div style="padding:8px 12px;background:#fffbeb;border:1px solid #fde68a;border-radius:6px;font-size:11px;color:#92400e;">توصيات إضافية: '+recs+'</div>':'')
+            +'</div>'
+
+            // التقييم
+            +'<div class="section-hd">التقييم العام</div>'
+            +'<div style="display:flex;align-items:center;gap:16px;padding:12px 16px;background:'+ratingBg+';border-radius:10px;margin-bottom:14px;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
+            +'<div style="font-size:20px;font-weight:900;color:'+ratingColor+';min-width:100px;text-align:center;">'+rating+'</div>'
+            +'<div style="font-size:11px;color:#334155;line-height:1.8;">'+ratingText+'</div>'
+            +'</div>'
+
+            // توقيعات
+            +'<div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:40px;border-top:1.5px solid #e5e7eb;padding-top:16px;">'
+            +'<div style="text-align:center;">'
+            +'<div style="font-size:10px;color:#6b7280;margin-bottom:24px;">توقيع مدير المدرسة</div>'
+            +'<div style="border-bottom:1.5px solid #374151;width:80%;margin:0 auto;"></div>'
+            +'</div>'
+            +'<div style="text-align:center;">'
+            +'<div style="font-size:10px;color:#6b7280;margin-bottom:24px;">توقيع الموجه الطلابي</div>'
+            +'<div style="border-bottom:1.5px solid #374151;width:80%;margin:0 auto;"></div>'
+            +'</div>'
+            +'</div>'
+            +'</div>';
+
+          return p1 + p2;
+        })()
+      };    }
 
     default:
       return { title: PAGE_LABELS[pageId] || pageId, body: '<p class="empty">لا توجد بيانات</p>' };
@@ -8784,8 +9057,6 @@ window.addEventListener('resize', applySidebarBounds);
         <div>
           <label style="display:block;font-size:11px;font-weight:700;color:var(--text-2);margin-bottom:5px;">اسم المدرسة <span style="color:#dc2626;">*</span></label>
           <input id="rpt_schoolName" type="text" placeholder="مثال: متوسطة الأمير فيصل" style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--r2);font-family:inherit;font-size:12px;outline:none;">
-          <label style="display:block;font-size:11px;font-weight:700;color:var(--text-2);margin-bottom:5px;margin-top:10px;">الإجراء المتخذ</label>
-          <input id="rpt_actionTaken" type="text" placeholder="مثال: توقيع تعهد، إشعار ولي الأمر..." style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--r2);font-family:inherit;font-size:13px;background:var(--surface);" value="">
         </div>
         <div>
           <label style="display:block;font-size:11px;font-weight:700;color:var(--text-2);margin-bottom:5px;">رقم المحضر <span style="color:#dc2626;">*</span></label>
@@ -8940,37 +9211,29 @@ window.addEventListener('resize', applySidebarBounds);
       <span>الفصل: <strong id="rv_class" style="color:var(--em);">—</strong></span>
       <span>الوقت: <strong id="rv_time" style="color:var(--em);">—</strong></span>
     </div>
-    <!-- بسملة -->
-    <div style="text-align:center;padding:8px 28px;font-size:13px;color:var(--text-2);border-bottom:1px solid var(--border);background:var(--surface-2,#fafafa);">بسم الله الرحمن الرحيم</div>
     <!-- عنوان المحضر -->
-    <div style="text-align:center;padding:14px 28px 10px;border-bottom:1px solid var(--border);">
+    <div style="text-align:center;padding:16px 28px 12px;border-bottom:1px solid var(--border);">
       <h2 style="font-size:17px;font-weight:900;color:var(--text);">محضر مخالفة سلوكية</h2>
-      <div style="width:48px;height:2px;background:#0D2E44;border-radius:1px;margin:6px auto 0;"></div>
+      <div style="width:56px;height:3px;background:linear-gradient(90deg,var(--em),#C9860A);border-radius:2px;margin:7px auto 0;"></div>
     </div>
     <!-- نص المحضر — ديناميكي بالكامل -->
     <div id="rv_body" style="padding:22px 32px;line-height:2.1;font-size:13.5px;color:var(--text);"></div>
     <!-- التوقيعان -->
-    <div style="padding:16px 28px 20px;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
+    <div style="padding:18px 32px 24px;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:20px;">
       <div style="text-align:center;">
-        <div style="font-size:10px;font-weight:700;color:var(--text-3);margin-bottom:3px;">توقيع الطالب</div>
-        <div id="rv_studentName" style="font-size:12px;font-weight:800;color:var(--text);margin-bottom:8px;">—</div>
-        <div id="rv_studentSigWrap" style="border:1.5px dashed var(--border-dk);border-radius:var(--r2);height:64px;background:#f9fafc;display:flex;align-items:center;justify-content:center;color:var(--text-3);font-size:11px;gap:5px;">
-          <span class="material-icons-round" style="font-size:15px;">gesture</span> لا يوجد توقيع
+        <div style="font-size:10px;font-weight:700;color:var(--text-3);margin-bottom:3px;">اسم الطالب</div>
+        <div id="rv_studentName" style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:3px;">—</div>
+        <div style="font-size:11px;color:var(--text-3);margin-bottom:10px;">طالب</div>
+        <div id="rv_studentSigWrap" style="border:1.5px dashed var(--border-dk);border-radius:var(--r2);height:70px;background:#f9fafc;display:flex;align-items:center;justify-content:center;color:var(--text-3);font-size:11px;gap:5px;">
+          <span class="material-icons-round" style="font-size:16px;">gesture</span> لا يوجد توقيع
         </div>
       </div>
       <div style="text-align:center;">
-        <div style="font-size:10px;font-weight:700;color:var(--text-3);margin-bottom:3px;">معد المحضر</div>
-        <div id="rv_reporterName" style="font-size:12px;font-weight:800;color:var(--text);margin-bottom:2px;">—</div>
-        <div id="rv_reporterRole" style="font-size:10px;color:var(--text-3);margin-bottom:6px;">—</div>
-        <div id="rv_reporterSigWrap" style="border:1.5px dashed var(--border-dk);border-radius:var(--r2);height:64px;background:#f9fafc;display:flex;align-items:center;justify-content:center;color:var(--text-3);font-size:11px;gap:5px;">
-          <span class="material-icons-round" style="font-size:15px;">gesture</span> لا يوجد توقيع
-        </div>
-      </div>
-      <div style="text-align:center;">
-        <div style="font-size:10px;font-weight:700;color:var(--text-3);margin-bottom:3px;">مدير المدرسة / الختم</div>
-        <div id="rv_principalName" style="font-size:12px;font-weight:800;color:var(--text);margin-bottom:8px;">—</div>
-        <div id="rv_principalSigWrap" style="border:1.5px dashed var(--border-dk);border-radius:var(--r2);height:64px;background:#f9fafc;display:flex;align-items:center;justify-content:center;color:var(--text-3);font-size:11px;">
-          <span style="font-size:10px;color:var(--text-3);">الختم الرسمي</span>
+        <div style="font-size:10px;font-weight:700;color:var(--text-3);margin-bottom:3px;">صفة معد المحضر</div>
+        <div id="rv_reporterName" style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:3px;">—</div>
+        <div id="rv_reporterRole" style="font-size:11px;color:var(--text-3);margin-bottom:10px;">—</div>
+        <div id="rv_reporterSigWrap" style="border:1.5px dashed var(--border-dk);border-radius:var(--r2);height:70px;background:#f9fafc;display:flex;align-items:center;justify-content:center;color:var(--text-3);font-size:11px;gap:5px;">
+          <span class="material-icons-round" style="font-size:16px;">gesture</span> لا يوجد توقيع
         </div>
       </div>
     </div>
