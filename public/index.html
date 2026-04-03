@@ -76,17 +76,22 @@ body { font-family: 'IBM Plex Sans Arabic', sans-serif; background: var(--bg); c
   background: rgba(255,255,255,.07);
   border: 1.5px solid rgba(255,255,255,.12);
   border-radius: 18px;
-  padding: 22px 18px 18px;
-  width: 170px;
-  min-width: 160px;
+  padding: 20px 20px 16px;
+  width: 130px;
   cursor: pointer;
   text-align: center;
   transition: all .25s;
 }
-.role-card:hover, .role-card.active {
-  background: rgba(255,255,255,.13);
-  border-color: rgba(255,255,255,.3);
+.role-card:hover {
+  background: rgba(255,255,255,.11);
+  border-color: rgba(255,255,255,.25);
+  transform: translateY(-2px);
+}
+.role-card.active {
+  background: rgba(255,255,255,.15);
+  border-color: rgba(255,255,255,.45);
   transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0,0,0,.2);
 }
 .role-icon-wrap {
   width: 56px; height: 56px; border-radius: 50%;
@@ -1936,80 +1941,51 @@ tr:hover td{background:var(--em-ghost);}
     <h1 class="lp-title" id="loginTitle">سجل المخالفات السلوكية</h1>
     <p class="lp-sub" id="loginSubtitle">منصة متكاملة لإدارة السلوك المدرسي</p>
 
-    <!-- ثلاث بطاقات الأدوار -->
-    <div style="display:flex;gap:16px;justify-content:center;align-items:flex-start;margin-bottom:12px;flex-wrap:nowrap;">
+    <!-- الأيقونات الثلاث -->
+    <div style="display:flex;gap:20px;justify-content:center;align-items:center;margin-bottom:20px;">
 
-      <!-- إدارة المدرسة -->
-      <div class="role-card" id="roleCard_admin" onclick="selectRole('admin')">
+      <div class="role-card" id="roleCard_admin" onclick="selectRole('admin')" title="إدارة المدرسة">
         <div class="role-icon-wrap" style="background:linear-gradient(135deg,#0A5C44,#0D7A5C);">
           <span class="material-icons-round">admin_panel_settings</span>
         </div>
         <div class="role-lbl">إدارة المدرسة</div>
-        <!-- خانة الإدخال -->
-        <div class="role-input-wrap" id="roleInput_admin" style="display:none;">
-          <div class="role-field">
-            <span class="material-icons-round role-field-ico">lock</span>
-            <input type="password" class="role-inp" id="rolePass_admin"
-              placeholder="رمز الإدارة"
-              maxlength="30" autocomplete="off"
-              onkeypress="if(event.key==='Enter')doRoleLogin('admin')"
-              onclick="event.stopPropagation()">
-          </div>
-          <button class="role-btn" onclick="event.stopPropagation();doRoleLogin('admin')">
-            <span class="material-icons-round" style="font-size:15px;">login</span> دخول
-          </button>
-        </div>
       </div>
 
-      <!-- الكادر التعليمي -->
-      <div class="role-card" id="roleCard_teacher" onclick="selectRole('teacher')">
+      <div class="role-card" id="roleCard_teacher" onclick="selectRole('teacher')" title="الكادر التعليمي">
         <div class="role-icon-wrap" style="background:linear-gradient(135deg,#1A4A7A,#2563EB);">
           <span class="material-icons-round">school</span>
         </div>
         <div class="role-lbl">الكادر التعليمي</div>
-        <div class="role-input-wrap" id="roleInput_teacher" style="display:none;">
-          <div class="role-field">
-            <span class="material-icons-round role-field-ico">vpn_key</span>
-            <input type="password" class="role-inp" id="rolePass_teacher"
-              placeholder="رمز المعلم"
-              maxlength="30" autocomplete="off"
-              onkeypress="if(event.key==='Enter')doRoleLogin('teacher')"
-              onclick="event.stopPropagation()">
-          </div>
-          <button class="role-btn" style="background:linear-gradient(135deg,#1A4A7A,#2563EB);" onclick="event.stopPropagation();doRoleLogin('teacher')">
-            <span class="material-icons-round" style="font-size:15px;">login</span> دخول
-          </button>
-        </div>
       </div>
 
-      <!-- الأسرة -->
-      <div class="role-card" id="roleCard_parent" onclick="selectRole('parent')">
+      <div class="role-card" id="roleCard_parent" onclick="selectRole('parent')" title="الأسرة">
         <div class="role-icon-wrap" style="background:linear-gradient(135deg,#7C3AED,#9333EA);">
           <span class="material-icons-round">family_restroom</span>
         </div>
         <div class="role-lbl">الأسرة</div>
-        <div class="role-input-wrap" id="roleInput_parent" style="display:none;">
-          <div class="role-field">
-            <span class="material-icons-round role-field-ico">badge</span>
-            <input type="text" class="role-inp" id="rolePass_parent"
-              placeholder="رقم هوية الطالب"
-              maxlength="20" autocomplete="off"
-              inputmode="numeric"
-              onkeypress="if(event.key==='Enter')doRoleLogin('parent')"
-              onclick="event.stopPropagation()">
-          </div>
-          <button class="role-btn" style="background:linear-gradient(135deg,#7C3AED,#9333EA);" onclick="event.stopPropagation();doRoleLogin('parent')">
-            <span class="material-icons-round" style="font-size:15px;">login</span> دخول
-          </button>
-        </div>
       </div>
 
     </div>
 
-    <!-- رسالة الخطأ -->
-    <div class="lfc-err" id="loginError" style="display:none;margin-top:8px;">رمز غير صحيح</div>
+    <!-- خانة الرمز الموحدة -->
+    <div id="unifiedInputWrap" style="display:none;width:100%;max-width:320px;margin:0 auto 10px;">
+      <div id="unifiedInputLabel" style="font-size:11px;font-weight:700;color:rgba(255,255,255,.7);margin-bottom:8px;text-align:center;"></div>
+      <div class="role-field" style="margin-bottom:10px;">
+        <span class="material-icons-round role-field-ico" id="unifiedInputIco">lock</span>
+        <input class="role-inp" id="unifiedPass"
+          placeholder="••••••"
+          maxlength="30" autocomplete="off"
+          onkeypress="if(event.key==='Enter')doRoleLogin(window._selectedRole)">
+      </div>
+      <button class="role-btn" id="unifiedBtn" onclick="doRoleLogin(window._selectedRole)">
+        <span class="material-icons-round" style="font-size:15px;">login</span> دخول
+      </button>
+    </div>
 
-    <!-- حقل مخفي للتوافق مع الكود القديم -->
+    <!-- رسالة الخطأ -->
+    <div class="lfc-err" id="loginError" style="display:none;margin-top:4px;">رمز غير صحيح</div>
+
+    <!-- حقل مخفي للتوافق -->
     <input type="hidden" id="loginPassword">
   </div>
 </div>
@@ -4017,31 +3993,61 @@ function showAlert(id,type,msg){const c=document.getElementById(id);if(!c)return
 
 // Login
 // ── اختيار الدور ──
+window._selectedRole = null;
+
 function selectRole(role) {
-  var roles = ['admin','teacher','parent'];
-  roles.forEach(function(r) {
-    var card  = document.getElementById('roleCard_'+r);
-    var input = document.getElementById('roleInput_'+r);
-    if(r === role) {
-      card.classList.toggle('active');
-      var isOpen = input.style.display === 'block';
-      input.style.display = isOpen ? 'none' : 'block';
-      if(!isOpen) {
-        setTimeout(function() {
-          var inp = document.getElementById('rolePass_'+r);
-          if(inp) inp.focus();
-        }, 50);
-      }
-    } else {
-      card.classList.remove('active');
-      input.style.display = 'none';
-    }
+  var wrap  = document.getElementById('unifiedInputWrap');
+  var inp   = document.getElementById('unifiedPass');
+  var lbl   = document.getElementById('unifiedInputLabel');
+  var ico   = document.getElementById('unifiedInputIco');
+  var btn   = document.getElementById('unifiedBtn');
+  var err   = document.getElementById('loginError');
+
+  // إذا نفس الأيقونة — أغلق
+  if(window._selectedRole === role) {
+    window._selectedRole = null;
+    wrap.style.display = 'none';
+    inp.value = '';
+    if(err) err.style.display = 'none';
+    document.getElementById('roleCard_'+role).classList.remove('active');
+    return;
+  }
+
+  // امسح القديم دائماً عند التبديل
+  inp.value = '';
+  if(err) err.style.display = 'none';
+
+  // حدّد الدور الجديد
+  window._selectedRole = role;
+
+  // تحديث البطاقات
+  ['admin','teacher','parent'].forEach(function(r) {
+    var c = document.getElementById('roleCard_'+r);
+    if(r === role) c.classList.add('active');
+    else c.classList.remove('active');
   });
+
+  // تهيئة الخانة الموحدة
+  var configs = {
+    admin:   { lbl:'رمز إدارة المدرسة', ico:'lock',          type:'password', placeholder:'رمز الإدارة',        btnBg:'linear-gradient(135deg,#0A5C44,#0D7A5C)' },
+    teacher: { lbl:'رمز الكادر التعليمي', ico:'vpn_key',     type:'password', placeholder:'رمز المعلم',          btnBg:'linear-gradient(135deg,#1A4A7A,#2563EB)' },
+    parent:  { lbl:'رقم هوية الطالب',    ico:'badge',        type:'text',     placeholder:'رقم الهوية الوطنية', btnBg:'linear-gradient(135deg,#7C3AED,#9333EA)' }
+  };
+  var cfg = configs[role];
+  lbl.textContent    = cfg.lbl;
+  ico.textContent    = cfg.ico;
+  inp.type           = cfg.type;
+  inp.placeholder    = cfg.placeholder;
+  inp.inputMode      = role==='parent' ? 'numeric' : 'text';
+  btn.style.background = cfg.btnBg;
+  wrap.style.display = 'block';
+  setTimeout(function(){ inp.focus(); }, 80);
 }
 
 // ── تسجيل الدخول بالدور ──
 function doRoleLogin(selectedRole) {
-  var passEl = document.getElementById('rolePass_'+selectedRole);
+  if(!selectedRole) return;
+  var passEl = document.getElementById('unifiedPass');
   var errEl  = document.getElementById('loginError');
   if(!passEl) return;
   var p = passEl.value.trim();
@@ -4057,8 +4063,9 @@ function doRoleLogin(selectedRole) {
     if(!res || !res.success) {
       errEl.textContent = res && res.error ? res.error : 'رمز الدخول غير صحيح';
       errEl.style.display = 'block';
-      passEl.style.borderColor = 'rgba(239,71,111,.6)';
-      setTimeout(function(){ passEl.style.borderColor = ''; }, 2000);
+      passEl.style.borderColor = 'rgba(239,71,111,.8)';
+      passEl.value = '';
+      setTimeout(function(){ passEl.style.borderColor = ''; passEl.focus(); }, 2000);
       return;
     }
     // التحقق: هل الدور المُرجَع يطابق الخانة المختارة؟
