@@ -7605,45 +7605,32 @@ function loadFullReport() {
   var frFoot = document.getElementById('frFooterDate'); if(frFoot) frFoot.textContent = new Date().toLocaleDateString('ar-SA');
   var frFootN = document.getElementById('frFooterName'); if(frFootN) frFootN.textContent = document.getElementById('headerSubEl') ? document.getElementById('headerSubEl').textContent : '';
   showLoading();
-  google.script.run
-    .withSuccessHandler(function(d) {
-      hideLoading();
-      if(!d) return;
-      // الملخص التنفيذي
-      var fv = d.totalViolations||0, fc = d.totalClassViolations||0, fm = d.totalMessages||0, fp = (d.totalPositive||0)+(d.totalDistinct||0), fr = d.totalReports||0;
-      document.getElementById('frTotalViol').textContent = fv;
-      document.getElementById('frTotalCls').textContent = fc;
-      document.getElementById('frTotalMsg').textContent = fm;
-      document.getElementById('frTotalPos').textContent = fp;
-      document.getElementById('frTotalRpts').textContent = fr;
-      // أعلى الفصول
-      var tc = document.getElementById('frTopClasses');
-      if(tc) tc.innerHTML = (d.classRanking&&d.classRanking.length) ? d.classRanking.slice(0,5).map(function(r,i){var pct=d.classRanking[0].count>0?Math.round(r.count/d.classRanking[0].count*100):0;return '<div class="fr-rank-row" style="--fc:#e74c3c"><span class="fr-rank-num">'+(i+1)+'</span><div style="flex:1"><div class="fr-rank-name">'+esc(r.name)+'</div><div class="fr-progress-bar"><div class="fr-progress-fill" style="width:'+pct+'%;background:#e74c3c;"></div></div></div><span class="fr-rank-count" style="background:#e74c3c;">'+r.count+'</span></div>';}).join('') : '<div class="empty-state">لا توجد بيانات</div>';
-      // أكثر الأنواع
-      var tt = document.getElementById('frTopTypes');
-      if(tt) tt.innerHTML = (d.typeRanking&&d.typeRanking.length) ? d.typeRanking.slice(0,5).map(function(r,i){var pct=d.typeRanking[0].count>0?Math.round(r.count/d.typeRanking[0].count*100):0;return '<div class="fr-rank-row" style="--fc:#e67e22"><span class="fr-rank-num">'+(i+1)+'</span><div style="flex:1"><div class="fr-rank-name">'+esc(r.name)+'</div><div class="fr-progress-bar"><div class="fr-progress-fill" style="width:'+pct+'%;background:#e67e22;"></div></div></div><span class="fr-rank-count" style="background:#e67e22;">'+r.count+'</span></div>';}).join('') : '<div class="empty-state">لا توجد بيانات</div>';
-      // الإيجابيات
-      var tp = document.getElementById('frTopPosStudents');
-      if(tp) tp.innerHTML = (d.positiveStudents&&d.positiveStudents.length) ? d.positiveStudents.slice(0,5).map(function(r,i){return '<div class="fr-rank-row" style="--fc:#27ae60"><span class="fr-rank-num">'+['🥇','🥈','🥉','4','5'][i]+'</span><span class="fr-rank-name">'+esc(r.name)+'</span><span class="fr-rank-count" style="background:#27ae60;">'+r.count+'</span></div>';}).join('') : '<div class="empty-state">لا توجد بيانات</div>';
-      var tpc = document.getElementById('frTopPosClasses');
-      if(tpc) tpc.innerHTML = (d.positiveClasses&&d.positiveClasses.length) ? d.positiveClasses.slice(0,5).map(function(r,i){return '<div class="fr-rank-row" style="--fc:#27ae60"><span class="fr-rank-num">'+(i+1)+'</span><span class="fr-rank-name">'+esc(r.name)+'</span><span class="fr-rank-count" style="background:#27ae60;">'+r.count+'</span></div>';}).join('') : '<div class="empty-state">لا توجد بيانات</div>';
-      // (سجل المحاضر أُزيل من التقرير الشامل)
-      var imp = d.totalImproved||0, rep = d.repeatCount||0, tot = imp+rep;
-      document.getElementById('frImproved').textContent = imp;
-      document.getElementById('frRepeat').textContent = rep;
-      document.getElementById('frImproveRate').textContent = tot>0 ? Math.round(imp/tot*100)+'%' : '0%';
-      // أولياء الأمور
-      var ms = d.totalMessages||0, mr = d.totalReportsResponded||0, mrt = ms>0?Math.round(mr/ms*100):0;
-      document.getElementById('frMsgSent').textContent = ms;
-      document.getElementById('frMsgRead').textContent = mr;
-      document.getElementById('frMsgRate').textContent = mrt+'%';
-      // ── التحليل الذكي ──
-      var totalStu = 0;
-      try { totalStu = parseInt(document.getElementById('statStudents').textContent)||1; } catch(e){}
-      buildFullReportAnalysis(d, totalStu);
-    })
-    .withFailureHandler(function(){ hideLoading(); })
-    .getFullReportData(dateFrom, dateTo);
+  GAS.getFullReportData(dateFrom, dateTo).then(function(d) {
+    hideLoading();
+    if(!d) return;
+    var fv = d.totalViolations||0, fc = d.totalClassViolations||0, fm = d.totalMessages||0, fp = (d.totalPositive||0)+(d.totalDistinct||0), fr = d.totalReports||0;
+    document.getElementById('frTotalViol').textContent = fv;
+    document.getElementById('frTotalCls').textContent = fc;
+    document.getElementById('frTotalMsg').textContent = fm;
+    document.getElementById('frTotalPos').textContent = fp;
+    document.getElementById('frTotalRpts').textContent = fr;
+    var tc = document.getElementById('frTopClasses');
+    if(tc) tc.innerHTML = (d.classRanking&&d.classRanking.length) ? d.classRanking.slice(0,5).map(function(r,i){var pct=d.classRanking[0].count>0?Math.round(r.count/d.classRanking[0].count*100):0;return '<div class="fr-rank-row" style="--fc:#e74c3c"><span class="fr-rank-num">'+(i+1)+'</span><div style="flex:1"><div class="fr-rank-name">'+esc(r.name)+'</div><div class="fr-progress-bar"><div class="fr-progress-fill" style="width:'+pct+'%;background:#e74c3c;"></div></div></div><span class="fr-rank-count" style="background:#e74c3c;">'+r.count+'</span></div>';}).join('') : '<div class="empty-state">لا توجد بيانات</div>';
+    var tt = document.getElementById('frTopTypes');
+    if(tt) tt.innerHTML = (d.typeRanking&&d.typeRanking.length) ? d.typeRanking.slice(0,5).map(function(r,i){var pct=d.typeRanking[0].count>0?Math.round(r.count/d.typeRanking[0].count*100):0;return '<div class="fr-rank-row" style="--fc:#e67e22"><span class="fr-rank-num">'+(i+1)+'</span><div style="flex:1"><div class="fr-rank-name">'+esc(r.name)+'</div><div class="fr-progress-bar"><div class="fr-progress-fill" style="width:'+pct+'%;background:#e67e22;"></div></div></div><span class="fr-rank-count" style="background:#e67e22;">'+r.count+'</span></div>';}).join('') : '<div class="empty-state">لا توجد بيانات</div>';
+    var tp = document.getElementById('frTopPosStudents');
+    if(tp) tp.innerHTML = (d.positiveStudents&&d.positiveStudents.length) ? d.positiveStudents.slice(0,5).map(function(r,i){return '<div class="fr-rank-row" style="--fc:#27ae60"><span class="fr-rank-num">'+['🥇','🥈','🥉','4','5'][i]+'</span><span class="fr-rank-name">'+esc(r.name)+'</span><span class="fr-rank-count" style="background:#27ae60;">'+r.count+'</span></div>';}).join('') : '<div class="empty-state">لا توجد بيانات</div>';
+    var tpc = document.getElementById('frTopPosClasses');
+    if(tpc) tpc.innerHTML = (d.positiveClasses&&d.positiveClasses.length) ? d.positiveClasses.slice(0,5).map(function(r,i){return '<div class="fr-rank-row" style="--fc:#27ae60"><span class="fr-rank-num">'+(i+1)+'</span><span class="fr-rank-name">'+esc(r.name)+'</span><span class="fr-rank-count" style="background:#27ae60;">'+r.count+'</span></div>';}).join('') : '<div class="empty-state">لا توجد بيانات</div>';
+    var ms = d.totalMessages||0, mr = d.totalReportsResponded||0, mrt = ms>0?Math.round(mr/ms*100):0;
+    document.getElementById('frMsgSent').textContent = ms;
+    document.getElementById('frMsgRead').textContent = mr;
+    document.getElementById('frMsgRate').textContent = mrt+'%';
+    var totalStu = 0;
+    try { totalStu = parseInt(document.getElementById('statStudents').textContent)||1; } catch(e){}
+    window._frData = d;
+    buildFullReportAnalysis(d, totalStu);
+  }).catch(function(){ hideLoading(); });
 }
 function buildFullReportAnalysis(d, students) {
   var fv = d.totalViolations||0;
@@ -7888,12 +7875,18 @@ function getPageData(pageId) {
 
   // ── استخراج إحصاءات البطاقات ──
   function extractStats(cards) {
-    return '<div class="stats-row">' + cards.map(([id, label, accent]) => {
-      const val = g(id);
-      return `<div class="stat-box" style="border-top:3px solid ${accent}">
-        <div class="stat-val" style="color:${accent}">${val}</div>
-        <div class="stat-lbl">${label}</div>
-      </div>`;
+    var d = window._frData;
+    var dataMap2 = {
+      'frTotalViol': d ? (d.totalViolations||0) : 0,
+      'frTotalCls':  d ? (d.totalClassViolations||0) : 0,
+      'frTotalMsg':  d ? (d.totalMessages||0) : 0,
+      'frTotalPos':  d ? ((d.totalPositive||0)+(d.totalDistinct||0)) : 0,
+      'frTotalRpts': d ? (d.totalReports||0) : 0
+    };
+    return '<div class="stats-row">' + cards.map(function(c) {
+      var id=c[0], label=c[1], accent=c[2];
+      var val = (id in dataMap2) ? dataMap2[id] : g(id);
+      return '<div class="stat-box" style="border-top:3px solid '+accent+'"><div class="stat-val" style="color:'+accent+'">'+val+'</div><div class="stat-lbl">'+label+'</div></div>';
     }).join('') + '</div>';
   }
 
@@ -8056,16 +8049,34 @@ function getPageData(pageId) {
     case 'fullreport': {
       // دالة مساعدة لاستخراج قائمة ترتيب (fr-rank-row)
       function extractRankList(id) {
+        // أولاً: حاول قراءة البيانات من window._frData مباشرة
+        var d = window._frData;
+        var dataMap = {
+          'frTopClasses':     d && d.classRanking    ? d.classRanking.slice(0,5)    : null,
+          'frTopTypes':       d && d.typeRanking      ? d.typeRanking.slice(0,5)      : null,
+          'frTopPosStudents': d && d.positiveStudents ? d.positiveStudents.slice(0,5) : null,
+          'frTopPosClasses':  d && d.positiveClasses  ? d.positiveClasses.slice(0,5)  : null
+        };
+        var rows = dataMap[id];
+        if (rows && rows.length) {
+          var h = '<table style="width:100%;border-collapse:collapse;font-size:11px;"><thead><tr style="background:#0D2E44;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;"><th style="padding:5px 8px;">#</th><th style="padding:5px 8px;">الاسم</th><th style="padding:5px 8px;text-align:center;">العدد</th></tr></thead><tbody>';
+          rows.forEach(function(r, i) {
+            h += '<tr style="background:'+(i%2===0?'#f8fafc':'#fff')+';"><td style="padding:4px 8px;color:#64748b;">'+(i+1)+'</td><td style="padding:4px 8px;font-weight:600;">'+(r.name||'—')+'</td><td style="padding:4px 8px;text-align:center;font-weight:700;color:#0D2E44;">'+(r.count||0)+'</td></tr>';
+          });
+          h += '</tbody></table>';
+          return h;
+        }
+        // ثانياً: fallback للقراءة من DOM
         const el = document.getElementById(id);
-        if (!el) return '<p class="empty">لا توجد بيانات</p>';
-        const rows = el.querySelectorAll('.fr-rank-row');
-        if (!rows.length) return '<p class="empty">لا توجد بيانات</p>';
-        let html = '<table><thead><tr><th>#</th><th>الاسم</th><th>العدد</th></tr></thead><tbody>';
-        rows.forEach(row => {
-          const num   = row.querySelector('.fr-rank-num')  ? row.querySelector('.fr-rank-num').textContent.trim()  : '';
-          const name  = row.querySelector('.fr-rank-name') ? row.querySelector('.fr-rank-name').textContent.trim() : '';
-          const count = row.querySelector('.fr-rank-count')? row.querySelector('.fr-rank-count').textContent.trim(): '';
-          html += '<tr><td>' + num + '</td><td>' + name + '</td><td>' + count + '</td></tr>';
+        if (!el) return '<p style="color:#94a3b8;font-size:11px;text-align:center;padding:8px;">لا توجد بيانات</p>';
+        const domRows = el.querySelectorAll('.fr-rank-row');
+        if (!domRows.length) return '<p style="color:#94a3b8;font-size:11px;text-align:center;padding:8px;">لا توجد بيانات</p>';
+        let html = '<table style="width:100%;border-collapse:collapse;font-size:11px;"><thead><tr style="background:#0D2E44;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;"><th style="padding:5px 8px;">#</th><th style="padding:5px 8px;">الاسم</th><th style="padding:5px 8px;text-align:center;">العدد</th></tr></thead><tbody>';
+        domRows.forEach(function(row, i) {
+          const num   = row.querySelector('.fr-rank-num')   ? row.querySelector('.fr-rank-num').textContent.trim()   : (i+1);
+          const name  = row.querySelector('.fr-rank-name')  ? row.querySelector('.fr-rank-name').textContent.trim()  : '—';
+          const count = row.querySelector('.fr-rank-count') ? row.querySelector('.fr-rank-count').textContent.trim() : '0';
+          html += '<tr style="background:'+(i%2===0?'#f8fafc':'#fff')+';"><td style="padding:4px 8px;color:#64748b;">'+num+'</td><td style="padding:4px 8px;font-weight:600;">'+name+'</td><td style="padding:4px 8px;text-align:center;font-weight:700;color:#0D2E44;">'+count+'</td></tr>';
         });
         html += '</tbody></table>';
         return html;
