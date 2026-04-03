@@ -1436,6 +1436,8 @@ async function getFullReportData(dateFrom, dateTo, sc) {
   return {
     totalViolations: fv.filter(v=>v.category==='سلوكية').length,
     totalClassViolations: fv.filter(v=>v.category==='صفية').length,
+    totalAbsenceExcused: fv.filter(v=>(v.category==='غياب'||v.category==='absence')&&!(v.violation_type||'').includes('بدون عذر')).length,
+    totalAbsenceNoExcuse: fv.filter(v=>(v.category==='غياب'||v.category==='absence')&&(v.violation_type||'').includes('بدون عذر')).length,
     totalMessages: fm.length,
     totalPositive: fp.filter(p=>p.sub_type!=='متميز').length,
     totalDistinct: fp.filter(p=>p.sub_type==='متميز').length,
