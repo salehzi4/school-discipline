@@ -3630,7 +3630,7 @@ tr:hover td{background:var(--em-ghost);}
         </div>
         <div style="border-radius:10px;padding:10px 8px;text-align:center;border:1px solid #e2e8f0;background:#f8fafc;">
           <div id="frKpiAbsRate" style="font-size:18px;font-weight:900;color:#0369a1;">0.00</div>
-          <div style="font-size:9px;color:#64748b;margin:4px 0;">معدل الغياب/طالب</div>
+          <div style="font-size:9px;color:#64748b;margin:4px 0;">نسبة الغياب الكلية</div>
           <div id="frKpiAbsRateTag" style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;display:inline-block;">—</div>
         </div>
         <div style="border-radius:10px;padding:10px 8px;text-align:center;border:1px solid #e2e8f0;background:#f8fafc;">
@@ -7656,13 +7656,17 @@ function loadFullReport() {
     if(absKpiNoEx) absKpiNoEx.textContent = absNoEx;
     var totalStu2 = 0;
     try { totalStu2 = parseInt(document.getElementById('statStudents').textContent)||1; } catch(e){}
-    var absPerStuVal = totalStu2>0 ? ((absEx+absNoEx)/totalStu2).toFixed(2) : '0.00';
-    if(absKpiRate) { absKpiRate.textContent = absPerStuVal; }
+    var STUDY_DAYS_UI  = 180;
+    var absTotUI       = absEx + absNoEx;
+    var absPossibleUI  = totalStu2 * STUDY_DAYS_UI;
+    var absRateUI      = absPossibleUI>0 ? (absTotUI/absPossibleUI*100).toFixed(1) : '0.0';
+    var absRateStrUI   = absRateUI + '%';
+    if(absKpiRate) { absKpiRate.textContent = absRateStrUI; }
     if(absKpiRateTag) {
-      var n = parseFloat(absPerStuVal);
-      var st = n<=0.5?'جيد':n<=1.5?'يحتاج متابعة':'مرتفع';
-      var bg = n<=0.5?'#dcfce7':n<=1.5?'#fef3c7':'#fee2e2';
-      var cl = n<=0.5?'#16a34a':n<=1.5?'#d97706':'#C0392B';
+      var n = parseFloat(absRateUI);
+      var st = n<=2?'جيد':n<=5?'يحتاج متابعة':'مرتفع';
+      var bg = n<=2?'#dcfce7':n<=5?'#fef3c7':'#fee2e2';
+      var cl = n<=2?'#16a34a':n<=5?'#d97706':'#C0392B';
       absKpiRateTag.textContent = st;
       absKpiRateTag.style.background = bg;
       absKpiRateTag.style.color = cl;
@@ -7771,11 +7775,14 @@ function buildFullReportAnalysis(d, students) {
     var absTotD  = absExD + absNoExD;
     var pctNoD   = absTotD>0?Math.round(absNoExD/absTotD*100):0;
     var stuD     = students||1;
-    var rateD    = (absTotD/stuD).toFixed(2);
+    var STUDY_DAYS_A  = 180;
+    var possibleA     = stuD * STUDY_DAYS_A;
+    var absRateA      = possibleA>0 ? (absTotD/possibleA*100).toFixed(1) : '0.0';
+    var lvlA          = parseFloat(absRateA)<=2?'ضمن النطاق الجيد':parseFloat(absRateA)<=5?'يحتاج متابعة':'مرتفع ويستلزم تدخلاً';
     absEl.textContent = absTotD===0
       ? 'لا توجد سجلات غياب خلال هذه الفترة.'
-      : 'سُجِّل '+absTotD+' يوم غياب من أصل '+stuD+' طالب (معدل '+rateD+' يوم/طالب) — '+absExD+' بعذر و'+absNoExD+' بدون عذر.'
-        +(pctNoD>40?' نسبة الغياب بدون عذر مرتفعة ('+pctNoD+'%) وتستلزم متابعة فورية.':' نسبة بدون عذر ضمن المعدل المقبول ('+pctNoD+'%).');
+      : 'نسبة الغياب الكلية '+absRateA+'% من إجمالي '+possibleA+' يوم دراسي ممكن ('+stuD+' طالب × 180 يوم) — المستوى: '+lvlA+'.'
+        +' التفصيل: '+absExD+' يوم بعذر و'+absNoExD+' يوم بدون عذر.';
   }
 
   // ── التوصيات ──
@@ -8287,15 +8294,17 @@ function getPageData(pageId) {
               +(tag||'')+'</div>';
           }
 
+          var STUDY_DAYS  = 180;
           var absTot2     = absExcused + absNoExcuse;
+          var absTotalPossible = stu * STUDY_DAYS;
+          var absRatePct  = absTotalPossible>0 ? (absTot2/absTotalPossible*100).toFixed(1)+'%' : '0.0%';
           var absPerStu   = stu>0 ? (absTot2/stu).toFixed(2) : '0.00';
-          var absNoExcPct = absTot2>0 ? Math.round(absNoExcuse/absTot2*100)+'%' : '0%';
 
           function kpiCards() {
             return '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:7px;margin-bottom:14px;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
               +kpiCard('الغياب بعذر',            absExcused,   '#1AB1D4')
               +kpiCard('الغياب بدون عذر',        absNoExcuse,  '#C0392B')
-              +kpiCard('معدل الغياب/طالب',       absPerStu,    '#0369a1', kpiTag(parseFloat(absPerStu), 0.5, 1.5, true))
+              +kpiCard('نسبة الغياب الكلية',    absRatePct,   '#0369a1', kpiTag(parseFloat(absRatePct), 2, 5, true))
               +kpiCard('معدل المخالفات/طالب',    kpiViolRate,  '#0D2E44', kpiTag(kpiViolRate, 0.3, 0.6, true))
               +kpiCard('نسبة السلوك الإيجابي',   kpiPosRate,   '#27ae60', kpiTag(parseFloat(kpiPosRate), 40, 20, false))
               +kpiCard('استجابة أولياء الأمور',  kpiParentRate,'#3498db', kpiTag(parseFloat(kpiParentRate), 80, 60, false))
@@ -8329,9 +8338,11 @@ function getPageData(pageId) {
             +anaBox('مؤشر الغياب', (function(){
               var tot = absExcused + absNoExcuse;
               if(tot===0) return 'لا توجد سجلات غياب خلال هذه الفترة.';
-              var pctNo = tot>0?Math.round(absNoExcuse/tot*100):0;
-              return 'سُجِّل '+tot+' يوم غياب خلال الفترة — '+absExcused+' بعذر و'+absNoExcuse+' بدون عذر.'
-                +(pctNo>40?' نسبة الغياب بدون عذر مرتفعة ('+pctNo+'%) وتستلزم متابعة.':' نسبة الغياب بدون عذر ضمن المعدل المقبول ('+pctNo+'%).');
+              var possible = stu * 180;
+              var rate = possible>0?(tot/possible*100).toFixed(1):0;
+              var lvl = rate<=2?'ضمن النطاق الجيد':rate<=5?'يحتاج متابعة':'مرتفع ويستلزم تدخلاً';
+              return 'نسبة الغياب الكلية '+rate+'% من إجمالي '+possible+' يوم دراسي ممكن. المستوى: '+lvl+'.'
+                +' التفصيل: '+absExcused+' يوم بعذر و'+absNoExcuse+' يوم بدون عذر.';
             })(), '#1AB1D4')
             +'</div></div>';
 
