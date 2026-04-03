@@ -71,6 +71,54 @@ body { font-family: 'IBM Plex Sans Arabic', sans-serif; background: var(--bg); c
 .l-blob2 { width: 200px; height: 200px; background: rgba(201,134,10,.05); bottom: -50px; left: -50px; border-radius: 50%; }
 
 /* CENTERED COLUMN LAYOUT */
+/* ── Role Cards Login ── */
+.role-card {
+  background: rgba(255,255,255,.07);
+  border: 1.5px solid rgba(255,255,255,.12);
+  border-radius: 18px;
+  padding: 20px 16px 16px;
+  width: 140px;
+  cursor: pointer;
+  text-align: center;
+  transition: all .25s;
+}
+.role-card:hover, .role-card.active {
+  background: rgba(255,255,255,.13);
+  border-color: rgba(255,255,255,.3);
+  transform: translateY(-3px);
+}
+.role-icon-wrap {
+  width: 56px; height: 56px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.25);
+}
+.role-icon-wrap .material-icons-round { font-size: 28px; color: #fff; }
+.role-lbl { font-size: 12px; font-weight: 700; color: rgba(255,255,255,.9); margin-bottom: 12px; }
+.role-input-wrap { margin-top: 10px; }
+.role-field {
+  display: flex; align-items: center;
+  background: rgba(255,255,255,.12);
+  border: 1.5px solid rgba(255,255,255,.2);
+  border-radius: 10px; padding: 8px 10px; margin-bottom: 8px; gap: 6px;
+}
+.role-field-ico { font-size: 16px; color: rgba(255,255,255,.6); flex-shrink: 0; }
+.role-inp {
+  background: transparent; border: none; outline: none;
+  color: #fff; font-family: inherit; font-size: 13px;
+  width: 100%; direction: ltr; text-align: center;
+}
+.role-inp::placeholder { color: rgba(255,255,255,.4); font-size: 11px; }
+.role-btn {
+  width: 100%; padding: 8px;
+  background: linear-gradient(135deg,#0A5C44,#0D7A5C);
+  color: #fff; border: none; border-radius: 10px;
+  font-family: inherit; font-size: 12px; font-weight: 700;
+  cursor: pointer; display: flex; align-items: center;
+  justify-content: center; gap: 5px; transition: opacity .15s;
+}
+.role-btn:hover { opacity: .9; }
+
 .lp-center-wrap {
   position: relative; z-index: 1;
   display: flex; flex-direction: column;
@@ -1788,6 +1836,7 @@ tr:hover td{background:var(--em-ghost);}
     deleteReport:           (reportNum)               => callAPI('deleteReport', { reportNum }),
     deleteMessageLog:       (date, studentName, violationType) => callAPI('deleteMessageLog', { date, studentName, violationType }),
     getReportByNum:     (reportNum)                  => callAPI('getReportByNum', { reportNum }),
+    updateAdminPassword: (schoolCode, currentPass, newPass) => callAPI('updateAdminPassword', { schoolCode, currentPass, newPass }),
     updateReportStatus: (reportNum, status)          => callAPI('updateReportStatus', { reportNum, status }),
     getParentSettings:     ()                            => callAPI('getParentSettings', {}),
     getStudentProfile:     (studentName, className, viewerRole) => callAPI('getStudentProfile', { studentName, className, viewerRole }),
@@ -1884,17 +1933,82 @@ tr:hover td{background:var(--em-ghost);}
     </div>
     <h1 class="lp-title" id="loginTitle">سجل المخالفات السلوكية</h1>
     <p class="lp-sub" id="loginSubtitle">منصة متكاملة لإدارة السلوك المدرسي</p>
-    <div class="lp-card">
-      <label class="lfc-lbl">كلمة المرور أو رقم الهوية</label>
-      <div class="lfc-field">
-        <span class="material-icons-round lfc-ico">lock</span>
-        <input type="password" class="lfc-inp" id="loginPassword" placeholder="••••••" maxlength="30" onkeypress="if(event.key==='Enter')doLogin()" autocomplete="off">
+
+    <!-- ثلاث بطاقات الأدوار -->
+    <div style="display:flex;gap:14px;justify-content:center;margin-bottom:8px;flex-wrap:wrap;">
+
+      <!-- إدارة المدرسة -->
+      <div class="role-card" id="roleCard_admin" onclick="selectRole('admin')">
+        <div class="role-icon-wrap" style="background:linear-gradient(135deg,#0A5C44,#0D7A5C);">
+          <span class="material-icons-round">admin_panel_settings</span>
+        </div>
+        <div class="role-lbl">إدارة المدرسة</div>
+        <!-- خانة الإدخال -->
+        <div class="role-input-wrap" id="roleInput_admin" style="display:none;">
+          <div class="role-field">
+            <span class="material-icons-round role-field-ico">lock</span>
+            <input type="password" class="role-inp" id="rolePass_admin"
+              placeholder="رمز الإدارة"
+              maxlength="30" autocomplete="off"
+              onkeypress="if(event.key==='Enter')doRoleLogin('admin')"
+              onclick="event.stopPropagation()">
+          </div>
+          <button class="role-btn" onclick="event.stopPropagation();doRoleLogin('admin')">
+            <span class="material-icons-round" style="font-size:15px;">login</span> دخول
+          </button>
+        </div>
       </div>
-      <button class="lfc-btn" onclick="doLogin()">
-        <span class="material-icons-round" style="font-size:17px;">login</span> دخول
-      </button>
-      <div class="lfc-err" id="loginError">رمز غير صحيح</div>
+
+      <!-- الكادر التعليمي -->
+      <div class="role-card" id="roleCard_teacher" onclick="selectRole('teacher')">
+        <div class="role-icon-wrap" style="background:linear-gradient(135deg,#1A4A7A,#2563EB);">
+          <span class="material-icons-round">school</span>
+        </div>
+        <div class="role-lbl">الكادر التعليمي</div>
+        <div class="role-input-wrap" id="roleInput_teacher" style="display:none;">
+          <div class="role-field">
+            <span class="material-icons-round role-field-ico">vpn_key</span>
+            <input type="password" class="role-inp" id="rolePass_teacher"
+              placeholder="رمز المعلم"
+              maxlength="30" autocomplete="off"
+              onkeypress="if(event.key==='Enter')doRoleLogin('teacher')"
+              onclick="event.stopPropagation()">
+          </div>
+          <button class="role-btn" style="background:linear-gradient(135deg,#1A4A7A,#2563EB);" onclick="event.stopPropagation();doRoleLogin('teacher')">
+            <span class="material-icons-round" style="font-size:15px;">login</span> دخول
+          </button>
+        </div>
+      </div>
+
+      <!-- الأسرة -->
+      <div class="role-card" id="roleCard_parent" onclick="selectRole('parent')">
+        <div class="role-icon-wrap" style="background:linear-gradient(135deg,#7C3AED,#9333EA);">
+          <span class="material-icons-round">family_restroom</span>
+        </div>
+        <div class="role-lbl">الأسرة</div>
+        <div class="role-input-wrap" id="roleInput_parent" style="display:none;">
+          <div class="role-field">
+            <span class="material-icons-round role-field-ico">badge</span>
+            <input type="text" class="role-inp" id="rolePass_parent"
+              placeholder="رقم هوية الطالب"
+              maxlength="20" autocomplete="off"
+              inputmode="numeric"
+              onkeypress="if(event.key==='Enter')doRoleLogin('parent')"
+              onclick="event.stopPropagation()">
+          </div>
+          <button class="role-btn" style="background:linear-gradient(135deg,#7C3AED,#9333EA);" onclick="event.stopPropagation();doRoleLogin('parent')">
+            <span class="material-icons-round" style="font-size:15px;">login</span> دخول
+          </button>
+        </div>
+      </div>
+
     </div>
+
+    <!-- رسالة الخطأ -->
+    <div class="lfc-err" id="loginError" style="display:none;margin-top:8px;">رمز غير صحيح</div>
+
+    <!-- حقل مخفي للتوافق مع الكود القديم -->
+    <input type="hidden" id="loginPassword">
   </div>
 </div>
 
@@ -1934,6 +2048,9 @@ tr:hover td{background:var(--em-ghost);}
             <div class="empty-state" style="padding:24px;">لا توجد إحالات جديدة</div>
           </div>
         </div>
+        <button onclick="showChangePasswordModal()" style="color:rgba(255,255,255,.8);font-size:11px;display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.08);padding:6px 10px;border-radius:7px;border:1px solid rgba(255,255,255,.12);font-family:inherit;cursor:pointer;" title="تغيير رمز الدخول">
+          <span class="material-icons-round" style="font-size:15px;">lock_reset</span>
+        </button>
         <button onclick="doLogout()" style="color:rgba(255,255,255,.8);font-size:11px;display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.12);padding:6px 10px;border-radius:7px;border:1px solid rgba(255,255,255,.12);font-family:inherit;cursor:pointer;">
           <span class="material-icons-round" style="font-size:15px;">logout</span> خروج
         </button>
@@ -3897,6 +4014,159 @@ function hideLoading(){document.getElementById('loadingOverlay').classList.remov
 function showAlert(id,type,msg){const c=document.getElementById(id);if(!c)return;c.innerHTML='<div class="alert alert-'+type+'">'+msg+'</div>';setTimeout(()=>{c.innerHTML='';},5000);}
 
 // Login
+// ── اختيار الدور ──
+function selectRole(role) {
+  var roles = ['admin','teacher','parent'];
+  roles.forEach(function(r) {
+    var card  = document.getElementById('roleCard_'+r);
+    var input = document.getElementById('roleInput_'+r);
+    if(r === role) {
+      card.classList.toggle('active');
+      var isOpen = input.style.display === 'block';
+      input.style.display = isOpen ? 'none' : 'block';
+      if(!isOpen) {
+        setTimeout(function() {
+          var inp = document.getElementById('rolePass_'+r);
+          if(inp) inp.focus();
+        }, 50);
+      }
+    } else {
+      card.classList.remove('active');
+      input.style.display = 'none';
+    }
+  });
+}
+
+// ── تسجيل الدخول بالدور ──
+function doRoleLogin(selectedRole) {
+  var passEl = document.getElementById('rolePass_'+selectedRole);
+  var errEl  = document.getElementById('loginError');
+  if(!passEl) return;
+  var p = passEl.value.trim();
+  if(!p) {
+    errEl.textContent = 'أدخل الرمز أو رقم الهوية';
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+  showLoading();
+  GAS.doUnifiedLogin(p).then(function(res) {
+    hideLoading();
+    if(!res || !res.success) {
+      errEl.textContent = res && res.error ? res.error : 'رمز الدخول غير صحيح';
+      errEl.style.display = 'block';
+      passEl.style.borderColor = 'rgba(239,71,111,.6)';
+      setTimeout(function(){ passEl.style.borderColor = ''; }, 2000);
+      return;
+    }
+    // التحقق: هل الدور المُرجَع يطابق الخانة المختارة؟
+    var returnedRole = res.role;
+    var roleMatch = (selectedRole === 'admin'   && returnedRole === 'admin')
+                 || (selectedRole === 'teacher' && returnedRole === 'teacher')
+                 || (selectedRole === 'parent'  && returnedRole === 'parent');
+    if(!roleMatch) {
+      var roleNames = {admin:'إدارة المدرسة', teacher:'الكادر التعليمي', parent:'الأسرة'};
+      errEl.textContent = 'هذا الرمز خاص بـ "' + (roleNames[returnedRole]||returnedRole) + '" — يرجى الدخول من الخانة الصحيحة';
+      errEl.style.display = 'block';
+      passEl.value = '';
+      return;
+    }
+    // حفظ الجلسة والتوجيه
+    sessionStorage.setItem('loggedIn','true');
+    sessionStorage.setItem('userRole', res.role||'teacher');
+    sessionStorage.setItem('schoolCode', res.schoolCode||'');
+    if(res.role==='admin') sessionStorage.setItem('adminPass', p);
+    window.setSchoolCode && window.setSchoolCode(res.schoolCode||'');
+    if(res.role==='parent') {
+      var sc = res.schoolCode||'';
+      window.location.href = '/parent.html?school='+sc+'&student='+encodeURIComponent(res.student.name)+'&class='+encodeURIComponent(res.student.className);
+      return;
+    }
+    if(res.role==='teacher') {
+      sessionStorage.setItem('tCode', p);
+      sessionStorage.setItem('tName', res.teacher.name);
+      sessionStorage.setItem('tSubjects', res.teacher.subjects||'');
+      sessionStorage.setItem('tClasses', JSON.stringify(res.teacher.classes||[]));
+      window.location.href = '/teacher.html?school='+(res.schoolCode||'');
+      return;
+    }
+    // الإدارة
+    var ls = document.getElementById('loginScreen');
+    ls.style.transition='opacity .4s ease'; ls.style.opacity='0';
+    setTimeout(function(){
+      ls.classList.remove('active'); ls.style.display='none';
+      document.getElementById('mainApp').style.display='block';
+      document.getElementById('appFooter').style.display='block';
+      document.body.classList.add('app-ready');
+      setTimeout(applySidebarBounds,150);
+      initApp(); restoreTab();
+      loadSettingsFromSupabase();
+      if(res.readOnly) {
+        setTimeout(function(){ showExpiredBanner(res.expiredMsg, res.contactUrl||res.whatsapp||''); lockAllInputs(); },600);
+      } else if(res.warning) { showExpiryWarning(res.daysLeft); }
+    },400);
+  }).catch(function(e){ hideLoading(); console.error(e); });
+}
+
+// ── تغيير رمز الإدارة ──
+function showChangePasswordModal() {
+  var m = document.getElementById('changePassModal');
+  if(m) { m.style.display='flex'; return; }
+  var modal = document.createElement('div');
+  modal.id = 'changePassModal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;';
+  modal.innerHTML = [
+    '<div style="background:var(--bg-card);border-radius:16px;padding:28px 28px 24px;width:360px;max-width:92vw;border:1px solid var(--border);">',
+    '<h3 style="font-size:15px;font-weight:800;color:var(--text);margin-bottom:20px;display:flex;align-items:center;gap:8px;">',
+    '<span class="material-icons-round" style="color:var(--primary);font-size:20px;">lock_reset</span> تغيير رمز الإدارة</h3>',
+    _cpField('cpCurrent',  'الرمز الحالي',    'password', 'lock'),
+    _cpField('cpNew',      'الرمز الجديد',    'password', 'lock_open'),
+    _cpField('cpConfirm',  'تأكيد الرمز الجديد','password','verified'),
+    '<div id="cpErr" style="display:none;color:#ef4444;font-size:12px;margin-bottom:10px;text-align:center;"></div>',
+    '<div style="display:flex;gap:8px;margin-top:4px;">',
+    '<button onclick="doChangePassword()" style="flex:1;padding:10px;background:var(--primary);color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">حفظ</button>',
+    '<button onclick="closeChangePassModal()" style="flex:1;padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:13px;cursor:pointer;color:var(--text-2);">إلغاء</button>',
+    '</div></div>'
+  ].join('');
+  document.body.appendChild(modal);
+}
+function _cpField(id, label, type, ico) {
+  return '<div style="margin-bottom:12px;"><label style="font-size:11px;font-weight:700;color:var(--text-2);display:block;margin-bottom:5px;">'+label+'</label>'
+    +'<div style="display:flex;align-items:center;gap:8px;background:var(--bg);border:1.5px solid var(--border);border-radius:9px;padding:9px 12px;">'
+    +'<span class="material-icons-round" style="font-size:16px;color:var(--text-3);">'+ico+'</span>'
+    +'<input type="'+type+'" id="'+id+'" style="border:none;outline:none;background:transparent;font-family:inherit;font-size:13px;color:var(--text);width:100%;" autocomplete="off">'
+    +'</div></div>';
+}
+function doChangePassword() {
+  var cur  = (document.getElementById('cpCurrent') ||{}).value||'';
+  var nw   = (document.getElementById('cpNew')     ||{}).value||'';
+  var conf = (document.getElementById('cpConfirm') ||{}).value||'';
+  var err  = document.getElementById('cpErr');
+  if(!cur||!nw||!conf){ err.textContent='جميع الحقول مطلوبة'; err.style.display='block'; return; }
+  if(nw !== conf)      { err.textContent='الرمز الجديد وتأكيده غير متطابقَين'; err.style.display='block'; return; }
+  if(nw.length < 4)   { err.textContent='الرمز الجديد يجب أن يكون 4 أحرف على الأقل'; err.style.display='block'; return; }
+  var storedPass = sessionStorage.getItem('adminPass')||'';
+  if(cur !== storedPass){ err.textContent='الرمز الحالي غير صحيح'; err.style.display='block'; return; }
+  err.style.display='none';
+  showLoading();
+  var sc = sessionStorage.getItem('schoolCode')||'';
+  GAS.updateAdminPassword(sc, cur, nw).then(function(res){
+    hideLoading();
+    if(!res||!res.success){ err.textContent = res&&res.error?res.error:'فشل تغيير الرمز'; err.style.display='block'; return; }
+    sessionStorage.setItem('adminPass', nw);
+    document.getElementById('changePassModal').style.display='none';
+    showAlert('settingsAlert','success','✅ تم تغيير رمز الدخول بنجاح');
+  }).catch(function(){ hideLoading(); err.textContent='خطأ في الاتصال'; err.style.display='block'; });
+}
+
+function closeChangePassModal(){
+  var m=document.getElementById('changePassModal');
+  if(m) m.style.display='none';
+}
+function doLogin(){
+  // دالة فارغة للتوافق مع الكود القديم
+}
+
 function doLogin(){
   const p=document.getElementById('loginPassword').value;
   if(!p){document.getElementById('loginError').style.display='block';return;}
