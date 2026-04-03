@@ -3676,6 +3676,10 @@ tr:hover td{background:var(--em-ghost);}
           <div style="font-size:11px;font-weight:700;color:#16a34a;margin-bottom:5px;">ملاحظة غير مباشرة</div>
           <div id="frAnalysis4" style="font-size:11px;color:#475569;line-height:1.7;">جاري التحليل...</div>
         </div>
+        <div style="border-right:3px solid #1AB1D4;border-radius:0 8px 8px 0;padding:10px 14px;background:#f0f9ff;">
+          <div style="font-size:11px;font-weight:700;color:#1AB1D4;margin-bottom:5px;">مؤشر الغياب</div>
+          <div id="frAnalysisAbs" style="font-size:11px;color:#475569;line-height:1.7;">جاري التحليل...</div>
+        </div>
       </div>
     </div>
 
@@ -7737,6 +7741,19 @@ function buildFullReportAnalysis(d, students) {
   document.getElementById('frAnalysis3').textContent = a3;
   document.getElementById('frAnalysis4').textContent = a4;
 
+  // بطاقة الغياب في التحليل التفاعلي
+  var absEl = document.getElementById('frAnalysisAbs');
+  if(absEl) {
+    var absExD   = d.totalAbsenceExcused  || 0;
+    var absNoExD = d.totalAbsenceNoExcuse || 0;
+    var absTotD  = absExD + absNoExD;
+    var pctNoD   = absTotD>0?Math.round(absNoExD/absTotD*100):0;
+    absEl.textContent = absTotD===0
+      ? 'لا توجد سجلات غياب خلال هذه الفترة.'
+      : 'سُجِّل '+absTotD+' يوم غياب — '+absExD+' بعذر و'+absNoExD+' بدون عذر.'
+        +(pctNoD>40?' نسبة الغياب بدون عذر مرتفعة ('+pctNoD+'%) وتستلزم متابعة.':' نسبة بدون عذر ضمن المقبول ('+pctNoD+'%).');
+  }
+
   // ── التوصيات ──
   var recs = [];
   if(topClass && topClassPct >= 30) recs.push('عقد جلسة توجيهية مع طلاب '+topClass+' الذي يستأثر بـ'+topClassPct+'% من المخالفات، لتحديد الأسباب الجذرية ووضع خطة علاجية.');
@@ -8224,21 +8241,38 @@ function getPageData(pageId) {
           var absTot       = absExcused + absNoExcuse;
 
           // بطاقات KPIs مع الغياب
+          // ── حساب KPIs مطابقة للواجهة ──
+          var kpiViolRate   = stu>0?(fv/stu).toFixed(1):'0.0';
+          var kpiPosRate    = (ftot+fp)>0?Math.round(fp/(ftot+fp)*100)+'%':'0%';
+          var kpiParentRate = ms>0?Math.round(mr/ms*100)+'%':'0%';
+          var kpiTreatRate  = (d.totalImproved||0)+(d.repeatCount||0)>0?Math.round((d.totalImproved||0)/((d.totalImproved||0)+(d.repeatCount||0))*100)+'%':'0%';
+          var kpiClsRate    = ftot>0?Math.round(fc/ftot*100)+'%':'0%';
+
+          function kpiTag(val, good, warn, lowerBetter) {
+            var n=parseFloat(val);
+            var st,bg,color;
+            if(lowerBetter){st=n<=good?'جيد':n<=warn?'يحتاج تحسين':'خطر';bg=n<=good?'#dcfce7':n<=warn?'#fef3c7':'#fee2e2';color=n<=good?'#16a34a':n<=warn?'#d97706':'#C0392B';}
+            else{st=n>=good?'جيد':n>=warn?'مقبول':'يحتاج تحسين';bg=n>=good?'#dcfce7':n>=warn?'#fef3c7':'#fee2e2';color=n>=good?'#16a34a':n>=warn?'#d97706':'#C0392B';}
+            return '<div style="font-size:8px;font-weight:700;padding:1px 6px;border-radius:8px;background:'+bg+';color:'+color+';display:inline-block;margin-top:3px;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'+st+'</div>';
+          }
+
+          function kpiCard(lbl, val, color, tag) {
+            return '<div style="border:1.5px solid #e5e7eb;border-radius:8px;border-top:3px solid '+color+';padding:9px 6px;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
+              +'<div style="font-size:18px;font-weight:900;color:'+color+';">'+val+'</div>'
+              +'<div style="font-size:9px;color:#6b7280;margin-top:2px;">'+lbl+'</div>'
+              +(tag||'')+'</div>';
+          }
+
           function kpiCards() {
-            var cards = [
-              {lbl:'المخالفات السلوكية', val:fv, color:'#e74c3c'},
-              {lbl:'المخالفات الصفية',   val:fc, color:'#e67e22'},
-              {lbl:'السلوكيات الإيجابية',val:fp, color:'#27ae60'},
-              {lbl:'الغياب بعذر',        val:absExcused,  color:'#1AB1D4'},
-              {lbl:'الغياب بدون عذر',    val:absNoExcuse, color:'#C0392B'},
-              {lbl:'المحاضر الصادرة',    val:fr, color:'#7C3AED'}
-            ];
-            return '<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:14px;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
-              + cards.map(function(c){
-                return '<div style="border:1.5px solid #e5e7eb;border-radius:8px;border-top:3px solid '+c.color+';padding:10px 6px;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
-                  +'<div style="font-size:22px;font-weight:900;color:'+c.color+';">'+c.val+'</div>'
-                  +'<div style="font-size:9px;color:#6b7280;margin-top:3px;">'+c.lbl+'</div></div>';
-              }).join('') + '</div>';
+            return '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:7px;margin-bottom:14px;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
+              +kpiCard('الغياب بعذر',         absExcused,    '#1AB1D4')
+              +kpiCard('الغياب بدون عذر',     absNoExcuse,   '#C0392B')
+              +kpiCard('معدل المخالفات/طالب', kpiViolRate,   '#0D2E44', kpiTag(kpiViolRate, 0.3, 0.6, true))
+              +kpiCard('نسبة السلوك الإيجابي',kpiPosRate,    '#27ae60',  kpiTag(parseFloat(kpiPosRate), 40, 20, false))
+              +kpiCard('استجابة أولياء الأمور',kpiParentRate,'#3498db',  kpiTag(parseFloat(kpiParentRate), 80, 60, false))
+              +kpiCard('نسبة معالجة الحالات', kpiTreatRate,  '#e67e22',  kpiTag(parseFloat(kpiTreatRate), 70, 40, false))
+              +kpiCard('المخالفات الصفية %',  kpiClsRate,    '#7C3AED',  kpiTag(parseFloat(kpiClsRate), 20, 40, true))
+              +'</div>';
           }
 
           var p1 = '<div style="page-break-after:always;">'
@@ -8264,6 +8298,13 @@ function getPageData(pageId) {
             +anaBox('التفاعل الأسري', a2, '#d97706')
             +anaBox('ملاحظة من البيانات', a3, '#16a34a')
             +anaBox('ملاحظة غير مباشرة', a4, '#1A4A7A')
+            +anaBox('مؤشر الغياب', (function(){
+              var tot = absExcused + absNoExcuse;
+              if(tot===0) return 'لا توجد سجلات غياب خلال هذه الفترة.';
+              var pctNo = tot>0?Math.round(absNoExcuse/tot*100):0;
+              return 'سُجِّل '+tot+' يوم غياب خلال الفترة — '+absExcused+' بعذر و'+absNoExcuse+' بدون عذر.'
+                +(pctNo>40?' نسبة الغياب بدون عذر مرتفعة ('+pctNo+'%) وتستلزم متابعة.':' نسبة الغياب بدون عذر ضمن المعدل المقبول ('+pctNo+'%).');
+            })(), '#1AB1D4')
             +'</div></div>';
 
           // ═══ PAGE 2 ═══
