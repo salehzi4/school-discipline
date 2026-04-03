@@ -1296,20 +1296,52 @@ function buildDetailList(key, items, clr, fields){
 
 /* ══ TOGGLE / CLOSE DETAILS ══ */
 function toggleDetails(key, btn){
-  var panel = $('dp_'+key);
   var colors = {absence:'#1AB1D4',behavior:'#A32D2D',class:'#B45309',positive:'#0F6E56',reports:'#7C3AED'};
   var titles = {absence:'تفاصيل الغياب',behavior:'تفاصيل المخالفات السلوكية',class:'تفاصيل المخالفات الصفية',positive:'تفاصيل السلوك الإيجابي',reports:'سجل المحاضر'};
   var hd = document.getElementById('dpMHd');
   if(hd) hd.style.background = colors[key] || 'var(--em)';
   document.getElementById('dpMTitle').textContent = titles[key] || 'التفاصيل';
+  document.getElementById('dpOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  // المحاضر: جلب مباشر من API
+  if(key === 'reports'){
+    document.getElementById('dpMBody').innerHTML = '<div style="text-align:center;padding:20px;color:#aaa;">جاري التحميل...</div>';
+    document.getElementById('dpMSub').textContent = '';
+    var name = P ? P.name : '';
+    var cls  = P ? P.className : '';
+    GAS.getReportsByStudent(name, cls).then(function(reports){
+      var rList = reports || [];
+      document.getElementById('dpMSub').textContent = rList.length ? rList.length + ' سجل' : '';
+      if(!rList.length){
+        document.getElementById('dpMBody').innerHTML = '<div class="dp-empty">لا توجد محاضر 🎉</div>';
+        return;
+      }
+      document.getElementById('dpMBody').innerHTML = rList.map(function(r){
+        return '<div class="rec-item" style="border-right:3px solid #7C3AED;">'
+          +'<div class="ri-row"><span class="ri-label">رقم المحضر</span><span class="ri-val">'+(r.reportNum||'—')+'</span></div>'
+          +'<div class="ri-row"><span class="ri-label">المخالفة</span><span class="ri-val">'+(r.violationType||'—')+'</span></div>'
+          +'<div class="ri-row"><span class="ri-label">التاريخ</span><span class="ri-val">'+(r.createdAt||r.date||'—')+'</span></div>'
+          +'<div class="ri-row"><span class="ri-label">الحالة</span><span class="ri-val" style="color:'
+            +(r.status==='تم الاطلاع'?'#10B981':r.status==='تم الاستلام'?'#F59E0B':'#EF4444')
+            +';font-weight:800;">'+(r.status||'—')+'</span></div>'
+          +(r.notes?'<div class="ri-row"><span class="ri-label">ملاحظات</span><span class="ri-val">'+r.notes+'</span></div>':'')
+          +'</div>';
+      }).join('');
+    }).catch(function(){
+      document.getElementById('dpMBody').innerHTML = '<div class="dp-empty">تعذّر جلب البيانات</div>';
+    });
+    return;
+  }
+
+  // باقي الأقسام: من DOM
+  var panel = $('dp_'+key);
   var inner = panel ? panel.querySelector('#dpl_'+key) : null;
   var bodyContent = inner ? inner.innerHTML : (panel ? panel.innerHTML : '');
   var tmp = document.createElement('div'); tmp.innerHTML = bodyContent;
   var cnt = tmp.querySelectorAll('.rec-item').length;
   document.getElementById('dpMSub').textContent = cnt ? cnt + ' سجل' : '';
   document.getElementById('dpMBody').innerHTML = bodyContent || '<div class="dp-empty">لا توجد سجلات 🎉</div>';
-  document.getElementById('dpOverlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
 }
 function dpClose(){
   document.getElementById('dpOverlay').classList.remove('open');
