@@ -76,11 +76,10 @@ table { min-width: 500px; }
   }
 }
 
-/* ── السيدبار ── */
-@media (max-width: 768px) {
-  .sidebar { transform: translateX(100%); transition: transform .3s; }
-  .sidebar.open { transform: translateX(0); }
+/* ── السيدبار — handled above ── */
+@media (max-width: 900px) {
   .content { margin-right: 0 !important; padding: 10px !important; }
+  .app-layout { margin-right: 0 !important; }
 }
 
 /* ── الفلاتر والـ inputs ── */
@@ -526,12 +525,32 @@ body { font-family: 'IBM Plex Sans Arabic', sans-serif; background: var(--bg); c
   right: 0;
   height: 100vh;
   max-height: 100vh;
-  z-index: 150;
+  z-index: 9000;
   scrollbar-width: thin;
   scrollbar-color: rgba(255,255,255,.15) transparent;
-  animation: sidebarSlideIn .35s cubic-bezier(.4,0,.2,1);
   overscroll-behavior: contain;
   padding-bottom: 80px;
+}
+/* جوال: تنزل من الأعلى */
+@media (max-width: 900px) {
+  .sidebar {
+    right: 0 !important;
+    top: -100% !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: 75vh !important;
+    border-radius: 0 0 20px 20px;
+    border-left: none;
+    border-bottom: 1px solid rgba(255,255,255,.1);
+    transition: top 0.32s cubic-bezier(.4,0,.2,1) !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,.4);
+  }
+  .sidebar.sb-open {
+    top: 0 !important;
+    right: 0 !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,.5) !important;
+  }
 }
 @keyframes sidebarSlideIn {
   from { opacity:0; transform:translateX(20px); }
@@ -1852,7 +1871,7 @@ tr:hover td{background:var(--em-ghost);}
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.5);
-  z-index: 8999;
+  z-index: 8998;
 }
 #sidebarOverlay.active {
   display: block;
@@ -9502,14 +9521,21 @@ function toggleSidebar() {
   var lbl = document.getElementById('sbBtnLabel');
   if (!sb) return;
   var open = sb.classList.contains('sb-open');
-  // ضبط top وheight بناءً على الهيدر
-  if (!open) {
-    var bounds = getSidebarBounds();
-    sb.style.top = bounds.top;
-    sb.style.height = bounds.height;
-    sb.style.overflowY = 'auto';
-    sb.style.overflowY = 'auto';
-    if(ov) { ov.style.top = bounds.top; ov.style.height = bounds.height; }
+  // على الجوال: reset الـ inline styles لتعمل الـ CSS
+  if (window.innerWidth <= 900) {
+    sb.style.top = '';
+    sb.style.height = '';
+    sb.style.right = '';
+    sb.style.width = '';
+    if (ov) { ov.style.top = ''; ov.style.height = ''; }
+  } else {
+    if (!open) {
+      var bounds = getSidebarBounds();
+      sb.style.top = bounds.top;
+      sb.style.height = bounds.height;
+      sb.style.overflowY = 'auto';
+      if(ov) { ov.style.top = bounds.top; ov.style.height = bounds.height; }
+    }
   }
   sb.classList.toggle('sb-open', !open);
   if(ov) ov.classList.toggle('active', !open);
