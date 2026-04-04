@@ -487,7 +487,7 @@ body { font-family: 'IBM Plex Sans Arabic', sans-serif; background: var(--bg); c
 /* الحاوية الخارجية */
 .main-nav { display: none !important; }
 /* ══ SIDEBAR LAYOUT ══ */
-.app-layout { display: block; min-height: 100vh; margin-right: 220px; }
+.app-layout { display: block; min-height: 100vh; margin-right: 220px; overflow-x: clip; }
 .sidebar {
   width: 220px;
   min-width: 220px;
@@ -2144,7 +2144,7 @@ tr:hover td{background:var(--em-ghost);}
   </div>
 </div>
 
-<div id="mainApp" style="display:none;overflow-x:hidden;max-width:100vw;">
+<div id="mainApp" style="display:none;">
 <div class="app-header" id="appHeaderEl">
   <div style="display:flex;align-items:center;padding:10px 16px;gap:10px;border-bottom:1px solid rgba(255,255,255,.1);">
 
