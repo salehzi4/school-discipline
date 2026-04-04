@@ -9487,16 +9487,15 @@ function openStudentProfile(studentName, className){
 // ══ Mobile Sidebar ══
 function getSidebarBounds() {
   var hdr = document.getElementById('appHeaderEl') || document.querySelector('.app-header');
-  var top = hdr ? Math.round(hdr.getBoundingClientRect().bottom) : 0;
+  var top = hdr ? hdr.offsetHeight : 0;
   return { top: top + 'px', height: 'calc(100vh - ' + top + 'px)' };
 }
 function applySidebarBounds() {
   var sb = document.getElementById('appSidebar');
   if (!sb || window.innerWidth <= 900) return;
-  var hdr = document.getElementById('appHeaderEl') || document.querySelector('.app-header');
-  var top = hdr ? hdr.offsetHeight : 0;
-  sb.style.top    = top + 'px';
-  sb.style.bottom = '0px';
+  var bounds = getSidebarBounds();
+  sb.style.top    = bounds.top;
+  sb.style.bottom = '0';
   sb.style.height = 'auto';
 }
 
