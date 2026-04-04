@@ -85,7 +85,7 @@ table { min-width: 500px; }
 
 /* ── السيدبار ── */
 @media (max-width: 768px) {
-  .sidebar { transform: translateX(100%); transition: transform .3s; }
+  .sidebar { /* handled by 900px media query */ }
   .sidebar.open { transform: translateX(0); }
   .content { margin-right: 0 !important; padding: 10px !important; }
 }
@@ -511,7 +511,7 @@ tr:hover td{background:var(--em-ghost);}
 .fingerprint-btn .material-icons-round{font-size:24px;}
 /* ═══ FOOTER (fixed dark bar) ═══ */
 .app-layout{display:block;min-height:100vh;margin-right:210px;}
-.sidebar{width:210px;min-width:210px;background:var(--sidebar-dark);border-left:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;flex-shrink:0;position:fixed;top:0;right:0;height:100vh;max-height:100vh;z-index:150;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.15) transparent;animation:sidebarSlideIn .35s cubic-bezier(.4,0,.2,1);padding-bottom:80px;overscroll-behavior:contain;};animation:sidebarSlideIn .35s cubic-bezier(.4,0,.2,1);}
+.sidebar{width:210px;min-width:210px;background:var(--sidebar-dark);border-left:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;flex-shrink:0;position:fixed;top:0;right:0;height:100vh;max-height:100vh;z-index:9000;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.15) transparent;padding-bottom:80px;overscroll-behavior:contain;};animation:sidebarSlideIn .35s cubic-bezier(.4,0,.2,1);}
 @keyframes sidebarSlideIn{from{opacity:0;transform:translateX(16px);}to{opacity:1;transform:translateX(0);}}
 .sidebar::-webkit-scrollbar{width:3px;}.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
 .sidebar-home-btn{margin:10px 10px 4px;padding:8px 12px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#fff;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px;width:calc(100% - 20px);transition:all .15s;}
@@ -2974,13 +2974,21 @@ function toggleSidebar() {
   var lbl = document.getElementById('sbBtnLabel');
   if (!sb) return;
   var open = sb.classList.contains('sb-open');
-  if (!open) {
-    var bounds = getSidebarBounds();
-    if(window.innerWidth > 900) sb.style.top = bounds.top;
-    if(window.innerWidth > 900) sb.style.height = bounds.height;
-    sb.style.overflowY = 'auto';
-    sb.style.overflowY = 'auto';
-    if(ov) { ov.style.top = bounds.top; ov.style.height = bounds.height; }
+  if (window.innerWidth <= 900) {
+    // جوال: نزيل أي inline styles تتعارض مع CSS
+    sb.style.top = '';
+    sb.style.height = '';
+    sb.style.right = '';
+    sb.style.width = '';
+    if (ov) { ov.style.top = ''; ov.style.height = ''; }
+  } else {
+    if (!open) {
+      var bounds = getSidebarBounds ? getSidebarBounds() : {top:'0px', height:'100vh'};
+      sb.style.top = bounds.top;
+      sb.style.height = bounds.height;
+      sb.style.overflowY = 'auto';
+      if(ov) { ov.style.top = bounds.top; ov.style.height = bounds.height; }
+    }
   }
   sb.classList.toggle('sb-open', !open);
   if(ov) ov.classList.toggle('active', !open);
