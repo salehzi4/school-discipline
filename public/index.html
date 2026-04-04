@@ -15,11 +15,31 @@ table { min-width: 500px; }
 
 /* ── الهيدر ── */
 @media (max-width: 768px) {
-  .header-top-bar { padding: 6px 10px; gap: 6px; }
-  .header-school-name { font-size: 12px !important; }
-  .header-school-sub  { font-size: 10px !important; }
-  .header-ministry-img { width: 32px !important; height: 32px !important; }
-  .header-brand-divider { display: none; }
+  .header-top-bar {
+    padding: 6px 8px;
+    gap: 4px;
+    flex-wrap: nowrap;
+    min-height: 52px;
+  }
+  .header-school-info {
+    position: static !important;
+    transform: none !important;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    justify-content: center;
+  }
+  .header-school-name { font-size: 11px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
+  .header-school-sub  { font-size: 9px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .header-ministry-img { width: 28px !important; height: 28px !important; }
+  .header-brand-divider { display: none !important; }
+  .header-brand { gap: 6px !important; }
+  .header-actions-wrap { flex-shrink: 0; }
+}
+@media (max-width: 480px) {
+  .header-school-name { font-size: 10px !important; max-width: 120px; }
+  .header-school-sub  { display: none !important; }
+  .header-ministry-img { display: none !important; }
 }
 
 /* ── البطاقات الإحصائية ── */
@@ -840,6 +860,9 @@ body { font-family: 'IBM Plex Sans Arabic', sans-serif; background: var(--bg); c
 .home-collapse-wrap{background:var(--surface);border-radius:14px;border:1.5px solid var(--border);margin-bottom:14px;overflow:visible;box-shadow:0 2px 8px rgba(0,0,0,.05);}
 /* ── summary chart cards ── */
 .summary-charts-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;width:100%;overflow:hidden;}
+@media(max-width:900px){.summary-charts-grid{grid-template-columns:repeat(3,1fr)!important;gap:8px;}}
+@media(max-width:600px){.summary-charts-grid{grid-template-columns:repeat(2,1fr)!important;gap:8px;}}
+@media(max-width:380px){.summary-charts-grid{grid-template-columns:1fr!important;}}
 .summary-chart-card{background:var(--surface);border-radius:12px;border:1.5px solid var(--border);padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.05);display:flex;flex-direction:column;gap:8px;border-top:3px solid var(--sc);}
 .scc-title{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:800;color:var(--sc);}
 .scc-title .material-icons-round{font-size:14px;}
@@ -847,6 +870,7 @@ body { font-family: 'IBM Plex Sans Arabic', sans-serif; background: var(--bg); c
 .scc-legend{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text-3);flex-wrap:wrap;}
 .scc-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;display:inline-block;}
 .css-donut-wrap{position:relative;width:110px;height:110px;flex-shrink:0;}
+@media(max-width:600px){.css-donut-wrap{width:80px;height:80px;}.css-donut-wrap svg{width:80px;height:80px;}.css-donut-num{font-size:16px!important;}}
 .css-donut-wrap svg{transform:rotate(-90deg);}
 .css-donut-track{fill:none;stroke:var(--border);stroke-width:12;}
 .css-donut-fill{fill:none;stroke-width:10;stroke-linecap:round;transition:stroke-dasharray .7s ease;}
