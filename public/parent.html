@@ -111,6 +111,117 @@
   #calFloatPanel { width:100%; max-width:320px; }
 }
 @media print { #calFloatBtn,#calFloatPanel,#calOverlay{display:none!important;} }
+
+/* ── MOBILE RESPONSIVE ── */
+/* ═══════════════════════════════════════════
+   RESPONSIVE — MOBILE FIRST
+   Breakpoints: 768px | 520px | 400px
+═══════════════════════════════════════════ */
+
+/* ── الجداول: تمرير أفقي بدل الفيضان ── */
+.table-wrapper, .tw { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table { min-width: 500px; }
+
+/* ── الهيدر ── */
+@media (max-width: 768px) {
+  .header-top-bar { padding: 6px 10px; gap: 6px; }
+  .header-school-name { font-size: 12px !important; }
+  .header-school-sub  { font-size: 10px !important; }
+  .header-ministry-img { width: 32px !important; height: 32px !important; }
+  .header-brand-divider { display: none; }
+}
+
+/* ── البطاقات الإحصائية ── */
+@media (max-width: 768px) {
+  .stats-grid-new { grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; }
+  .stat-card-new  { min-height: 80px; padding: 10px 6px !important; }
+  .sc-val  { font-size: 20px !important; }
+  .sc-lbl  { font-size: 10px !important; }
+}
+@media (max-width: 520px) {
+  .stats-grid-new { grid-template-columns: repeat(2, 1fr) !important; }
+}
+
+/* ── الـ modals ── */
+@media (max-width: 768px) {
+  .modal-overlay > div,
+  [class*="modal"] > div:first-child {
+    width: 95vw !important;
+    max-width: 95vw !important;
+    margin: 10px auto !important;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+}
+
+/* ── الـ cards grids ── */
+@media (max-width: 768px) {
+  [style*="grid-template-columns: repeat(4"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  [style*="grid-template-columns: 1fr 1fr 1fr"],
+  [style*="grid-template-columns:1fr 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── السيدبار ── */
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(100%); transition: transform .3s; }
+  .sidebar.open { transform: translateX(0); }
+  .content { margin-right: 0 !important; padding: 10px !important; }
+}
+
+/* ── الفلاتر والـ inputs ── */
+@media (max-width: 768px) {
+  .filters-row, [style*="display:flex"][style*="gap"][style*="flex-wrap"] {
+    flex-wrap: wrap !important;
+  }
+  select, input[type="text"], input[type="date"], input[type="search"] {
+    min-width: 120px;
+    max-width: 100%;
+  }
+}
+
+/* ── page-fullreport ── */
+@media (max-width: 768px) {
+  #frKpiGrid { grid-template-columns: repeat(4, 1fr) !important; }
+  #frAnalysisGrid { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 520px) {
+  #frKpiGrid { grid-template-columns: repeat(2, 1fr) !important; }
+}
+
+/* ── overflow global ── */
+body { overflow-x: hidden; }
+.content, .page { max-width: 100%; overflow-x: hidden; }
+
+
+/* ── إصلاحات جوال إضافية parent ── */
+@media (max-width: 768px) {
+  /* بطاقات النظرة العامة */
+  .overview-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; }
+  .ind-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; }
+  /* الـ modal */
+  .dp-modal { width: 96vw !important; max-width: 96vw !important; }
+  /* التقويم العائم */
+  #calFloatPanel { width: 240px !important; }
+  /* بطاقة ولي الأمر */
+  .ov-card { padding: 10px 6px !important; }
+  .ov-num { font-size: 20px !important; }
+  .ov-lbl { font-size: 10px !important; }
+  /* بطاقات المؤشرات */
+  .ind-card { padding: 10px 6px !important; }
+}
+@media (max-width: 520px) {
+  .overview-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .ind-grid      { grid-template-columns: repeat(2, 1fr) !important; }
+  /* اسم الطالب */
+  .sb-name  { font-size: 18px !important; }
+  .sb-class { font-size: 12px !important; }
+  /* درجة السلوك */
+  .score-circle { width: 80px !important; height: 80px !important; }
+}
 </style>
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -273,14 +384,14 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
 
 /* ══ RESPONSIVE ══ */
 @media(max-width:640px){
-  .overview-grid{grid-template-columns:repeat(5,1fr);}
-  .ind-grid{grid-template-columns:repeat(5,1fr);}
+  .overview-grid{grid-template-columns:repeat(3,1fr);}
+  .ind-grid{grid-template-columns:repeat(3,1fr);}
   .sb-name{font-size:20px;}
   .sb-class{font-size:16px;}
 }
 @media(max-width:400px){
-  .overview-grid{grid-template-columns:repeat(3,1fr);}
-  .ind-grid{grid-template-columns:repeat(5,1fr);}
+  .overview-grid{grid-template-columns:repeat(2,1fr);}
+  .ind-grid{grid-template-columns:repeat(2,1fr);}
 }
 
 /* ══ GLOBAL ALERT ══ */
