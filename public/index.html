@@ -52,8 +52,8 @@ table { min-width: 500px; }
 /* ── السيدبار — handled above ── */
 @media (max-width: 900px) {
   .content { margin-right: 0 !important; padding: 10px !important; }
-  .app-layout { margin-right: 0 !important; }
 }
+
 
 /* ── الفلاتر والـ inputs ── */
 @media (max-width: 768px) {
@@ -793,7 +793,6 @@ body { font-family: 'IBM Plex Sans Arabic', sans-serif; background: var(--bg); c
   .nav-group-btn .nav-arrow { margin-right: 0; margin-left: auto; }
 
   /* الجوال: القائمة الجانبية تنزلق من اليمين */
-  .app-layout { margin-right: 0 !important; }
   .sidebar {
     right: -220px;
     transition: right .28s cubic-bezier(.4,0,.2,1);
@@ -9494,11 +9493,10 @@ function getSidebarBounds() {
 function applySidebarBounds() {
   var sb = document.getElementById('appSidebar');
   if (!sb || window.innerWidth <= 900) return;
-  var hdr = document.getElementById('appHeaderEl') || document.querySelector('.app-header');
-  var top = hdr ? hdr.offsetHeight : 0;
-  sb.style.top    = top + 'px';
-  sb.style.bottom = '0';
-  sb.style.height = 'auto';
+  var bounds = getSidebarBounds();
+  sb.style.top    = bounds.top;
+  sb.style.height = bounds.height;
+  sb.style.bottom = '';
 }
 
 // تحديث السيدبار عند التمرير على desktop
