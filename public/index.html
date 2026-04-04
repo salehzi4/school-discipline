@@ -4456,7 +4456,16 @@ function updateSidebarActive(page) {
   document.querySelectorAll('.sidebar-group-btn').forEach(b => b.classList.add('open'));
 }
 
-function showPage(page,btn){document.querySelectorAll('.page-section').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+page).classList.add('active');document.querySelectorAll('.tab-btn').forEach(t=>t.classList.remove('active'));if(btn&&btn.classList&&btn.classList.contains('sidebar-sub-btn')){}else if(btn)btn.classList.add('active');sessionStorage.setItem('activeTab',page);if(page==='messages')loadMessagesLog();if(page==='whatsapp')populateWAClassDropdown();if(page==='violationsLog')loadViolationsLog();if(page==='attachments'){loadTeacherUrl();loadParentUrl();}if(page==='home')loadStats();if(page==='violations'){loadViolationTypesTable();loadClassViolationTypesTable();loadPositiveBehaviorTypesTable();}if(page==='teachers')loadTeachersTable();if(page==='alerts')loadAlerts();if(page==='charts')loadCharts();if(page==='weekly'){}if(page==='reports')loadReports();if(page==='referred')loadReferredViolations();if(page==='positiveLog'){loadPositiveLogTable();populatePosLogClasses();}if(page==='home')refreshAdminNotifBadge();if(page==='fullreport')loadFullReport();updateSidebarActive(page);}
+function showPage(page,btn){
+  // إغلاق السيدبار على الجوال عند اختيار صفحة
+  if (window.innerWidth <= 900) {
+    var _sb = document.getElementById('appSidebar');
+    var _ov = document.getElementById('sidebarOverlay');
+    var _lbl = document.getElementById('sbBtnLabel');
+    if(_sb) { _sb.style.right=''; _sb.classList.remove('sb-open'); }
+    if(_ov) { _ov.style.top=''; _ov.classList.remove('active'); }
+    if(_lbl) _lbl.textContent = 'القائمة';
+  }document.querySelectorAll('.page-section').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+page).classList.add('active');document.querySelectorAll('.tab-btn').forEach(t=>t.classList.remove('active'));if(btn&&btn.classList&&btn.classList.contains('sidebar-sub-btn')){}else if(btn)btn.classList.add('active');sessionStorage.setItem('activeTab',page);if(page==='messages')loadMessagesLog();if(page==='whatsapp')populateWAClassDropdown();if(page==='violationsLog')loadViolationsLog();if(page==='attachments'){loadTeacherUrl();loadParentUrl();}if(page==='home')loadStats();if(page==='violations'){loadViolationTypesTable();loadClassViolationTypesTable();loadPositiveBehaviorTypesTable();}if(page==='teachers')loadTeachersTable();if(page==='alerts')loadAlerts();if(page==='charts')loadCharts();if(page==='weekly'){}if(page==='reports')loadReports();if(page==='referred')loadReferredViolations();if(page==='positiveLog'){loadPositiveLogTable();populatePosLogClasses();}if(page==='home')refreshAdminNotifBadge();if(page==='fullreport')loadFullReport();updateSidebarActive(page);}
 function restoreTab(){
   const s=sessionStorage.getItem('activeTab');
   if(s) showPage(s, null); else showPage('home',null);
