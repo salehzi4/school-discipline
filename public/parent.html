@@ -1111,9 +1111,9 @@ function doLogout(){
   sessionStorage.removeItem('loggedIn');
   sessionStorage.removeItem('userRole');
   sessionStorage.removeItem('schoolCode');
-  // أعد تحميل الصفحة بدون params الطالب — يظهر شاشة الدخول
+  // العودة لصفحة الدخول الموحد
   var sc = new URLSearchParams(window.location.search).get('school') || '';
-  window.location.href = '/parent.html?school=' + sc;
+  window.location.href = sc ? '/?school=' + sc : '/';
 }
 
 /* ══ CHECK NEW REPORTS ══ */
