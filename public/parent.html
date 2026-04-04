@@ -677,12 +677,12 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
         <div class="hd-brand-divider"></div>
         <div class="hd-titles">
           <div class="hd-school">الإدارة العامة للتعليم بمنطقة نجران</div>
-          <div class="hd-region">مدرسة محمد بن القاسم الابتدائية</div>
+          <div class="hd-region" id="hdSchoolName">مدرسة محمد بن القاسم الابتدائية</div>
         </div>
       </div>
       <div class="hd-spacer"></div>
     </div>
-    <div class="hd-sys" id="hdTitle">نظام متابعة السلوك والانضباط المدرسي — بوابة ولي الأمر</div>
+    <div class="hd-sys" id="parPageTitle">نظام متابعة السلوك والانضباط المدرسي — بوابة ولي الأمر</div>
   </div>
 
   <!-- STUDENT BANNER -->
@@ -1070,21 +1070,59 @@ document.addEventListener('DOMContentLoaded', function(){
 
 function applySettings(s){
   if(!s) return;
-  var map = {
-    loginIconEl:s.parentHeaderIcon, loginTitleEl:s.parentLoginTitle,
-    loginSubEl:s.parentLoginSubtitle, hdTitle:s.parentHeaderTitle,
-    hdSchoolName:s.schoolName, hdRegionName:s.regionName,
-  };
-  Object.entries(map).forEach(function(e){
-    if(e[1]){ var el=document.getElementById(e[0]); if(el) el.textContent=e[1]; }
-  });
-  var fa=$('ftAuthor'); if(fa){ if(s.footerAuthor) fa.textContent=s.footerAuthor; if(s.footerLink) fa.href=s.footerLink; }
-  var fcy=$('ftCopy'); var fyr=$('ftYear');
-  if(s.footerCopyright && fcy) fcy.textContent = ' - ' + s.footerCopyright + ' لـ';
-  var ftr=document.querySelector('.app-ft');
-  if(s.footerBg && ftr) ftr.style.background=s.footerBg;
-  var ftClr=s.footerTextColor||'rgba(0,0,0,0.4)'; var faClr=s.footerAuthorColor||'rgba(0,0,0,0.6)';
-  if(fcy) fcy.style.color=ftClr; if(fyr) fyr.style.color=ftClr;
+  var v = function(key,def){ return s[key]!==undefined && s[key]!=='' ? s[key] : def; };
+
+  // ── شاشة الدخول ──
+  var li = document.getElementById('loginIconEl');
+  if(li && s.loginIcon) li.textContent = s.loginIcon;
+  var lt = document.getElementById('loginTitleEl');
+  if(lt && s.loginTitle) lt.textContent = s.loginTitle;
+  var ls = document.getElementById('loginSubEl');
+  if(ls && s.loginSubtitle) ls.textContent = s.loginSubtitle;
+  if(s.loginBg1 || s.loginBg2){
+    var lpg = document.querySelector('.login-pg');
+    if(lpg) lpg.style.background = 'linear-gradient(150deg, '+v('loginBg1','#0D2E44')+' 0%, '+v('loginBg2','#1A5276')+' 100%)';
+  }
+  var lbtn = document.querySelector('.lp-btn');
+  if(lbtn){
+    if(s.loginBtnBg) lbtn.style.background = s.loginBtnBg;
+    if(s.loginBtnColor) lbtn.style.color = s.loginBtnColor;
+  }
+
+  // ── الهيدر ──
+  var h1 = document.getElementById('parPageTitle');
+  var h2 = document.getElementById('hdSchoolName');
+  if(h1 && s.headerSysTitle) h1.textContent = s.headerSysTitle;
+  if(h2 && s.headerSubTitle) h2.textContent = s.headerSubTitle;
+  if(s.headerBg1 || s.headerBg2){
+    var hdr = document.querySelector('.par-hd');
+    if(hdr) hdr.style.background = 'linear-gradient(135deg, '+v('headerBg1','#0A5C44')+' 0%, '+v('headerBg2','#0D7A5C')+' 100%)';
+  }
+  // عنوان النظام
+  var hst = document.getElementById('parPageTitle');
+  if(hst){
+    if(s.headerSysTitle) hst.textContent = s.headerSysTitle;
+    if(s.sysTitleColor) hst.style.color = s.sysTitleColor;
+    if(s.sysTitleSize) hst.style.fontSize = s.sysTitleSize+'px';
+    if(s.sysTitleWeight) hst.style.fontWeight = s.sysTitleWeight;
+    if(s.sysTitleFont) hst.style.fontFamily = "'"+s.sysTitleFont+"', sans-serif";
+  }
+
+  // ── خلفية الصفحة ──
+  if(s.pageBg) document.documentElement.style.setProperty('--bg', s.pageBg);
+
+  // ── الفوتر ──
+  var fa = document.getElementById('ftAuthor');
+  var fcy = document.getElementById('ftCopy');
+  var fyr = document.getElementById('ftYear');
+  if(fa){ if(s.footerAuthor) fa.textContent=s.footerAuthor; if(s.footerLink) fa.href=s.footerLink||'#'; }
+  if(fcy && s.footerCopyright) fcy.textContent = ' - '+s.footerCopyright+' لـ';
+  var ftr = document.querySelector('.app-ft');
+  if(s.footerBg && ftr) ftr.style.background = s.footerBg;
+  var ftClr = s.footerTextColor||'rgba(0,0,0,0.4)';
+  var faClr = s.footerAuthorColor||'rgba(0,0,0,0.6)';
+  if(fcy) fcy.style.color=ftClr;
+  if(fyr) fyr.style.color=ftClr;
   if(fa) fa.style.color=faClr;
 }
 
