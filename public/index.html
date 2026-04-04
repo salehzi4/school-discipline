@@ -13,34 +13,7 @@
 .table-wrapper, .tw { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 table { min-width: 500px; }
 
-/* ── الهيدر ── */
-@media (max-width: 768px) {
-  .header-top-bar {
-    padding: 6px 8px;
-    gap: 4px;
-    flex-wrap: nowrap;
-    min-height: 52px;
-  }
-  .header-school-info {
-    position: static !important;
-    transform: none !important;
-    flex: 1;
-    min-width: 0;
-    overflow: hidden;
-    justify-content: center;
-  }
-  .header-school-name { font-size: 11px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
-  .header-school-sub  { font-size: 9px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .header-ministry-img { width: 28px !important; height: 28px !important; }
-  .header-brand-divider { display: none !important; }
-  .header-brand { gap: 6px !important; }
-  .header-actions-wrap { flex-shrink: 0; }
-}
-@media (max-width: 480px) {
-  .header-school-name { font-size: 10px !important; max-width: 120px; }
-  .header-school-sub  { display: none !important; }
-  .header-ministry-img { display: none !important; }
-}
+/* header responsive — defined above */
 
 /* ── البطاقات الإحصائية ── */
 @media (max-width: 768px) {
@@ -463,9 +436,8 @@ body { font-family: 'IBM Plex Sans Arabic', sans-serif; background: var(--bg); c
 }
 .header-top-bar {
   display: flex; align-items: center;
-  padding: 10px 20px; gap: 14px;
+  padding: 10px 16px; gap: 10px;
   border-bottom: 1px solid rgba(255,255,255,.1);
-  position: relative;
 }
 .header-logo-wrap {
   display: flex; align-items: center; gap: 12px; flex: 1;
@@ -477,7 +449,7 @@ body { font-family: 'IBM Plex Sans Arabic', sans-serif; background: var(--bg); c
 }
 .header-ministry-logo span { color: rgba(255,255,255,.9); font-size: 9px; font-weight: 700; letter-spacing: .5px; }
 .header-ministry-logo .material-icons-round { font-size: 22px; color: #fff; }
-.header-school-info { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; justify-content: center; }
+.header-school-info { display: flex; align-items: center; justify-content: center; flex: 1; min-width: 0; }
 .header-brand { display: flex; align-items: center; gap: 12px; }
 .header-ministry-img { width: 46px; height: 46px; object-fit: contain; filter: brightness(0) invert(1); flex-shrink: 0; }
 .header-brand-divider { width: 1.5px; height: 36px; background: rgba(255,255,255,.35); flex-shrink: 0; }
@@ -2174,12 +2146,11 @@ tr:hover td{background:var(--em-ghost);}
     <div class="header-actions-wrap">
 
     </div>
-    <!-- الوسط: شعار + نص (مركز حقيقي) -->
+    <!-- الوسط: شعار + نص -->
     <div class="header-school-info">
       <div class="header-brand">
         <img src="https://k.top4top.io/p_3744u4kxe1.png" alt="وزارة التعليم" class="header-ministry-img">
-        <div class="header-brand-divider"></div>
-        <div class="header-brand-text">
+        <div class="header-brand-text" style="text-align:center;">
           <div class="header-school-name" id="headerTitleEl">الإدارة العامة للتعليم بمنطقة نجران</div>
           <div class="header-school-sub" id="headerSubEl">مدرسة محمد بن القاسم الابتدائية</div>
         </div>
