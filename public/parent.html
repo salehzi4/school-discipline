@@ -1221,8 +1221,8 @@ function renderAll(p){
   if(typeof indDrawAbsence === 'function') indDrawAbsence(absExcused, absUnexcused);
   if($('im_absence')) $('im_absence').textContent = absExcused + ' بعذر — ' + absUnexcused + ' بدون عذر';
   drawDonut('positive', pList.length - pDist, pDist);
-  buildDetailList('behavior', vList,  'var(--red)',    ['recorder','subject','treatmentDate','notes','actionTaken']);
-  buildDetailList('class',    cList,  'var(--orange)', ['recorder','subject','treatmentDate','notes','actionTaken']);
+  buildDetailList('behavior', vList,  'var(--red)',    ['recorder','subject','treatmentDate','notes']);
+  buildDetailList('class',    cList,  'var(--orange)', ['recorder','subject','treatmentDate','notes']);
   buildDetailList('positive', pList,  '#059669',       ['recorder','notes']);
   // ابن التقويم
   buildCalEvents(p);
@@ -1422,7 +1422,7 @@ function buildDetailList(key, items, clr, fields){
   }
   var fieldLabels = {
     recorder:'المعلم / الإدارة', subject:'المادة', treatmentDate:'التاريخ',
-    notes: (window._parentGender === 'female' ? 'ملاحظات المعلمة' : 'ملاحظات المعلم'), actionTaken:'ملاحظات الإدارة', followUp:'المعالجة'
+    notes: 'ملاحظات الإدارة', followUp:'المعالجة'
   };
   var html = items.map(function(v){
     var rows = '';
