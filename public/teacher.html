@@ -1974,7 +1974,16 @@ function updateSidebarActive(page) {
   document.querySelectorAll('.sidebar-group-btn').forEach(b => b.classList.add('open'));
 }
 
-function showPage(p,b){document.querySelectorAll('.page-section').forEach(s=>s.classList.remove('active'));const el=document.getElementById('page-'+p);if(el)el.classList.add('active');document.querySelectorAll('.tab-btn').forEach(t=>t.classList.remove('active'));if(b&&b.classList&&b.classList.contains('sidebar-sub-btn')){}else if(b)b.classList.add('active');sessionStorage.setItem('tTab',p);if(p==='mylog')loadMyLog();if(p==='mymessages')loadMyMsgs();if(p==='alerts')loadAlerts();if(p==='home')loadTeacherStats();if(p==='referred-log')loadReferredLog();if(p==='positive-log'){loadTPosLog();tPopulatePosLogClasses();}updateSidebarActive(p);}
+function showPage(p,b){
+  // إغلاق السيدبار على الجوال عند اختيار صفحة
+  if (window.innerWidth <= 900) {
+    var _sb = document.getElementById('tSidebar');
+    var _ov = document.getElementById('sidebarOverlay');
+    var _lbl = document.getElementById('sbBtnLabel');
+    if(_sb) { _sb.style.right=''; _sb.classList.remove('sb-open'); }
+    if(_ov) { _ov.style.top=''; _ov.classList.remove('active'); }
+    if(_lbl) _lbl.textContent = 'القائمة';
+  }document.querySelectorAll('.page-section').forEach(s=>s.classList.remove('active'));const el=document.getElementById('page-'+p);if(el)el.classList.add('active');document.querySelectorAll('.tab-btn').forEach(t=>t.classList.remove('active'));if(b&&b.classList&&b.classList.contains('sidebar-sub-btn')){}else if(b)b.classList.add('active');sessionStorage.setItem('tTab',p);if(p==='mylog')loadMyLog();if(p==='mymessages')loadMyMsgs();if(p==='alerts')loadAlerts();if(p==='home')loadTeacherStats();if(p==='referred-log')loadReferredLog();if(p==='positive-log'){loadTPosLog();tPopulatePosLogClasses();}updateSidebarActive(p);}
 // ══ رسوم ملخص المعلم (CSS دوائر بدون مكتبة) ══
 function drawTeacherSummary(s) {
   const referred = s.referredCount || 0;
