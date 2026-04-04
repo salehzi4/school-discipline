@@ -732,7 +732,6 @@ tr:hover td{background:var(--em-ghost);}
    MOBILE RESPONSIVE - TEACHER
 ══════════════════════════════════ */
 #sidebarToggleBtn { display: none; }
-@media screen and (max-width: 900px) { body.app-ready #sidebarToggleBtn { display: flex !important; } }
 
 #sidebarOverlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:8999; }
 #sidebarOverlay.active { display:block; }
@@ -741,22 +740,39 @@ tr:hover td{background:var(--em-ghost);}
   .app-layout { margin-right: 0 !important; }
   .sidebar {
     position: fixed !important;
-    right: 0 !important;
-    top: -100% !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    height: auto !important;
-    max-height: 75vh !important;
+    top: 0 !important;
+    right: -230px !important;
+    height: 100vh !important;
+    width: 210px !important;
     z-index: 9000 !important;
-    transition: top 0.32s cubic-bezier(.4,0,.2,1) !important;
-    border-radius: 0 0 20px 20px !important;
-    border-left: none !important;
-    border-bottom: 1px solid rgba(255,255,255,.1) !important;
+    transition: right 0.3s ease !important;
     box-shadow: none !important;
+    border-radius: 0 !important;
+    border-left: 1px solid rgba(255,255,255,.06) !important;
+    border-bottom: none !important;
   }
   .sidebar.sb-open {
-    top: 0 !important;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
+    right: 0 !important;
+    box-shadow: -4px 0 30px rgba(0,0,0,0.4) !important;
+  }
+  body.app-ready #sidebarToggleBtn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    position: fixed;
+    bottom: 75px;
+    right: 12px;
+    z-index: 9999;
+    background: var(--em, #1a5276);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 18px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.35);
   }
   body.app-ready #sidebarToggleBtn {
     display: flex;
@@ -2974,25 +2990,24 @@ function toggleSidebar() {
   var lbl = document.getElementById('sbBtnLabel');
   if (!sb) return;
   var open = sb.classList.contains('sb-open');
-  if (window.innerWidth <= 900) {
-    // جوال: نزيل أي inline styles تتعارض مع CSS
-    sb.style.top = '';
-    sb.style.height = '';
-    sb.style.right = '';
-    sb.style.width = '';
-    if (ov) { ov.style.top = ''; ov.style.height = ''; }
-  } else {
-    if (!open) {
-      var bounds = getSidebarBounds ? getSidebarBounds() : {top:'0px', height:'100vh'};
-      sb.style.top = bounds.top;
-      sb.style.height = bounds.height;
-      sb.style.overflowY = 'auto';
-      if(ov) { ov.style.top = bounds.top; ov.style.height = bounds.height; }
-    }
-  }
+  // نزيل أي inline styles تتعارض مع CSS
+  sb.style.top = '';
+  sb.style.height = '';
+  sb.style.right = '';
+  sb.style.width = '';
+  if (ov) { ov.style.top = ''; ov.style.height = ''; }
   sb.classList.toggle('sb-open', !open);
   if(ov) ov.classList.toggle('active', !open);
   if(lbl) lbl.textContent = open ? 'القائمة' : 'إغلاق';
+}
+
+function closeSidebar() {
+  var sb = document.getElementById('tSidebar');
+  var ov = document.getElementById('sidebarOverlay');
+  var lbl = document.getElementById('sbBtnLabel');
+  if(sb) { sb.style.right=''; sb.classList.remove('sb-open'); }
+  if(ov) { ov.style.top=''; ov.classList.remove('active'); }
+  if(lbl) lbl.textContent = 'القائمة';
 }
 function closeSidebar() {
   var sb = document.getElementById('tSidebar');
