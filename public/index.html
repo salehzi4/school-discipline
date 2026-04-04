@@ -1,50 +1,4 @@
-class="app-header" id="appHeaderEl">
-  <div style="display:flex;align-items:center;padding:10px 16px;gap:10px;border-bottom:1px solid rgba(255,255,255,.1);">
-
-    <!-- اليسار: أزرار الإجراءات -->
-    <div style="display:flex;gap:6px;align-items:center;flex-shrink:0;" class="header-actions-wrap">
-      <button onclick="showChangePasswordModal()" style="color:rgba(255,255,255,.8);font-size:11px;display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.08);padding:6px 10px;border-radius:7px;border:1px solid rgba(255,255,255,.12);font-family:inherit;cursor:pointer;" title="تغيير رمز الدخول">
-        <span class="material-icons-round" style="font-size:14px;">lock_reset</span>
-      </button>
-      <button class="bell-btn" onclick="toggleAdminNotif()" title="إشعارات المعلمين" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.15);color:#fff;width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;">
-        <span class="material-icons-round" style="font-size:18px;">notifications</span>
-        <span class="bell-badge" id="bellBadge" style="display:none;">0</span>
-      </button>
-      <!-- popup إشعارات المعلمين -->
-      <div id="adminNotifPopup" style="display:none;position:absolute;top:58px;left:0;width:320px;background:#fff;border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.18);z-index:9999;padding:0;overflow:hidden;border:1px solid #e5e7eb;">
-        <div style="background:#15445A;color:#fff;padding:12px 16px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;">
-          <span class="material-icons-round" style="font-size:16px;">notifications_active</span>
-          إشعارات المعلمين
-          <span id="adminNotifCount" style="background:rgba(255,255,255,.2);padding:1px 8px;border-radius:10px;font-size:11px;margin-right:auto;">0</span>
-        </div>
-        <div id="adminNotifList" style="max-height:350px;overflow-y:auto;padding:8px 0;">
-          <div class="empty-state" style="padding:24px;">لا توجد إشعارات</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- الوسط: شعار + نص -->
-    <div style="flex:1;display:flex;align-items:center;justify-content:center;gap:12px;">
-      <img src="https://k.top4top.io/p_3744u4kxe1.png" alt="وزارة التعليم" class="header-ministry-img" style="width:42px;height:42px;object-fit:contain;filter:brightness(0) invert(1);flex-shrink:0;">
-      <div style="width:1.5px;height:34px;background:rgba(255,255,255,.35);flex-shrink:0;"></div>
-      <div style="text-align:right;">
-        <div id="headerTitleEl" class="header-school-name" style="color:#fff;font-size:14px;font-weight:900;">الإدارة العامة للتعليم بمنطقة نجران</div>
-        <div id="headerSubEl" class="header-school-sub" style="color:rgba(255,255,255,.65);font-size:11px;">مدرسة محمد بن القاسم الابتدائية</div>
-      </div>
-    </div>
-
-    <!-- اليمين: خروج -->
-    <div style="display:flex;gap:6px;align-items:center;flex-shrink:0;">
-      <button onclick="doLogout()" style="color:rgba(255,255,255,.8);font-size:11px;display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.12);padding:6px 10px;border-radius:7px;border:1px solid rgba(255,255,255,.12);font-family:inherit;cursor:pointer;">
-        <span class="material-icons-round" style="font-size:14px;">logout</span> خروج
-      </button>
-    </div>
-
-  </div>
-  <div class="header-title-bar-t">
-    <span id="pageTitle">نظام متابعة السلوك والانضباط المدرسي</span>
-  </div>
-</div><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <!-- ✅ FIX: يُطبَّق فوراً قبل اكتمال تحميل الصفحة -->
@@ -2192,54 +2146,52 @@ tr:hover td{background:var(--em-ghost);}
 
 <div id="mainApp" style="display:none;overflow-x:hidden;max-width:100vw;">
 <div class="app-header" id="appHeaderEl">
-  <div class="header-top-bar">
-    <!-- اليسار: أزرار الإجراءات -->
-    <div class="header-actions-wrap">
+  <div style="display:flex;align-items:center;padding:10px 16px;gap:10px;border-bottom:1px solid rgba(255,255,255,.1);">
 
+    <!-- اليسار: أزرار الإجراءات -->
+    <div style="display:flex;gap:6px;align-items:center;flex-shrink:0;" class="header-actions-wrap">
+      <button onclick="showChangePasswordModal()" style="color:rgba(255,255,255,.8);font-size:11px;display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.08);padding:6px 10px;border-radius:7px;border:1px solid rgba(255,255,255,.12);font-family:inherit;cursor:pointer;" title="تغيير رمز الدخول">
+        <span class="material-icons-round" style="font-size:14px;">lock_reset</span>
+      </button>
+      <button class="bell-btn" onclick="toggleAdminNotif()" title="إشعارات المعلمين" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.15);color:#fff;width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;">
+        <span class="material-icons-round" style="font-size:18px;">notifications</span>
+        <span class="bell-badge" id="bellBadge" style="display:none;">0</span>
+      </button>
+      <!-- popup إشعارات المعلمين -->
+      <div id="adminNotifPopup" style="display:none;position:absolute;top:58px;left:0;width:320px;background:#fff;border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.18);z-index:9999;padding:0;overflow:hidden;border:1px solid #e5e7eb;">
+        <div style="background:#15445A;color:#fff;padding:12px 16px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;">
+          <span class="material-icons-round" style="font-size:16px;">notifications_active</span>
+          إشعارات المعلمين
+          <span id="adminNotifCount" style="background:rgba(255,255,255,.2);padding:1px 8px;border-radius:10px;font-size:11px;margin-right:auto;">0</span>
+        </div>
+        <div id="adminNotifList" style="max-height:350px;overflow-y:auto;padding:8px 0;">
+          <div class="empty-state" style="padding:24px;">لا توجد إشعارات</div>
+        </div>
+      </div>
     </div>
+
     <!-- الوسط: شعار + نص -->
-    <div class="header-school-info">
-      <div class="header-brand">
-        <img src="https://k.top4top.io/p_3744u4kxe1.png" alt="وزارة التعليم" class="header-ministry-img">
-        <div class="header-brand-text" style="text-align:center;">
-          <div class="header-school-name" id="headerTitleEl">الإدارة العامة للتعليم بمنطقة نجران</div>
-          <div class="header-school-sub" id="headerSubEl">مدرسة محمد بن القاسم الابتدائية</div>
-        </div>
+    <div style="flex:1;display:flex;align-items:center;justify-content:center;gap:12px;">
+      <img src="https://k.top4top.io/p_3744u4kxe1.png" alt="وزارة التعليم" class="header-ministry-img" style="width:42px;height:42px;object-fit:contain;filter:brightness(0) invert(1);flex-shrink:0;">
+      <div style="width:1.5px;height:34px;background:rgba(255,255,255,.35);flex-shrink:0;"></div>
+      <div style="text-align:right;">
+        <div id="headerTitleEl" class="header-school-name" style="color:#fff;font-size:14px;font-weight:900;">الإدارة العامة للتعليم بمنطقة نجران</div>
+        <div id="headerSubEl" class="header-school-sub" style="color:rgba(255,255,255,.65);font-size:11px;">مدرسة محمد بن القاسم الابتدائية</div>
       </div>
     </div>
-    <!-- اليمين: تنبيهات + خروج -->
-    <div class="header-logo-wrap" style="justify-content:flex-end;">
-      <div style="display:flex;gap:6px;margin-right:8px;">
-        <button class="bell-btn" onclick="toggleAdminNotif()" title="إشعارات المعلمين" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.15);color:#fff;width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;">
-          <span class="material-icons-round" style="font-size:18px;">notifications</span>
-          <span class="bell-badge" id="bellBadge" style="display:none;">0</span>
-        </button>
-        <!-- popup إشعارات المعلمين -->
-        <div id="adminNotifPopup" style="display:none;position:absolute;top:48px;left:0;width:320px;background:#fff;border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.18);z-index:9999;padding:0;overflow:hidden;border:1px solid #e5e7eb;">
-          <div style="background:#15445A;color:#fff;padding:12px 16px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;">
-            <span class="material-icons-round" style="font-size:16px;">notifications_active</span>
-            إشعارات المعلمين
-            <span id="adminNotifCount" style="background:rgba(255,255,255,.2);padding:1px 8px;border-radius:10px;font-size:11px;margin-right:auto;">0</span>
-          </div>
-          <div id="adminNotifList" style="max-height:350px;overflow-y:auto;padding:8px 0;">
-            <div class="empty-state" style="padding:24px;">لا توجد إحالات جديدة</div>
-          </div>
-        </div>
-        <button onclick="showChangePasswordModal()" style="color:rgba(255,255,255,.8);font-size:11px;display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.08);padding:6px 10px;border-radius:7px;border:1px solid rgba(255,255,255,.12);font-family:inherit;cursor:pointer;" title="تغيير رمز الدخول">
-          <span class="material-icons-round" style="font-size:15px;">lock_reset</span>
-        </button>
-        <button onclick="doLogout()" style="color:rgba(255,255,255,.8);font-size:11px;display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.12);padding:6px 10px;border-radius:7px;border:1px solid rgba(255,255,255,.12);font-family:inherit;cursor:pointer;">
-          <span class="material-icons-round" style="font-size:15px;">logout</span> خروج
-        </button>
-      </div>
+
+    <!-- اليمين: خروج -->
+    <div style="display:flex;gap:6px;align-items:center;flex-shrink:0;">
+      <button onclick="doLogout()" style="color:rgba(255,255,255,.8);font-size:11px;display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.12);padding:6px 10px;border-radius:7px;border:1px solid rgba(255,255,255,.12);font-family:inherit;cursor:pointer;">
+        <span class="material-icons-round" style="font-size:14px;">logout</span> خروج
+      </button>
     </div>
+
   </div>
-  <div class="header-title-bar">
+  <div class="header-title-bar-t">
     <span id="pageTitle">نظام متابعة السلوك والانضباط المدرسي</span>
   </div>
 </div>
-
-<!-- ══ SIDEBAR + CONTENT LAYOUT ══ -->
 <div class="app-layout">
 
 <!-- ══ SIDEBAR ══ -->
