@@ -1947,8 +1947,9 @@ tr:hover td{background:var(--em-ghost);}
     deletePositiveBehaviorType:    (typeName)        => callAPI('deletePositiveBehaviorType', { typeName }),
 
     // تسجيل
-    recordViolation: function(studentsData, violationType, notes, recorder, severity, signature, fingerprint, category, score, subject, actionType, actionTaken, subType, visibleToParentOverride) {
-      return callAPI('recordViolation', { studentsData, violationType, notes, recorder, severity, signature, fingerprint, category, score, subject, actionType, actionTaken, subType, visibleToParentOverride });
+    recordViolation: function(body) {
+      return callAPI('recordViolation', body
+    }
     },
     recordPositiveBehavior: function(studentsData, behaviorType, notes, recorder, score, subType, sendMessage) {
       return callAPI('recordPositiveBehavior', { studentsData, behaviorType, notes, recorder, score, subType, sendMessage });
@@ -6174,7 +6175,14 @@ function submitViolation(sendWA){
   const pvBtn = document.getElementById('parentVisibilityToggle');
   const visibleToParent = (cat==='إيجابية') ? 'نعم' : (isDangerous ? 'لا' : (pvBtn && pvBtn.classList.contains('on') ? 'نعم' : 'لا'));
 
-  google.script.run.withSuccessHandler(function(result){
+;
+  GAS.recordViolation({
+    studentsData: sd, violationType: v.type, notes: notes,
+    recorder: 'الإدارة', severity: sev, signature: sigData, fingerprint: fpData,
+    category: cat, score: score, subject: subject,
+    actionType: '', actionTaken: '', subType: subType,
+    visibleToParentOverride: visibleToParent
+  }).then(function(result){
     if(isDangerous){
       showAlert('recordAlert','error','⚠️ المخالفة الخطيرة أُحيلت تلقائياً لصندوق المُحالات');
       loadReferredCount();
@@ -6188,18 +6196,17 @@ function submitViolation(sendWA){
         ma.push({studentName:s.name,className:s.className,violationType:v.type,phone:s.phone,messageText:msg,status:'تم الفتح',sender:'الإدارة',subType:subType,category:cat});
         const item=document.createElement('div');item.className='whatsapp-link-item';item.innerHTML='<div><span class="student-name">'+s.name+'</span></div><a href="'+wa+'" target="_blank" class="btn btn-whatsapp btn-sm" onclick="setTimeout(()=>{this.innerHTML=\'✅\';this.style.pointerEvents=\'none\';},500);">إرسال</a>';ll.appendChild(item);
       });
-      google.script.run.logMessagesBatch(ma,'الإدارة');lc.style.display='block';
+      GAS.logMessagesBatch(ma,'الإدارة');lc.style.display='block';
     }
     hideLoading();
-    if(!isDangerous) showAlert('recordAlert','success',result.message);
+    if(!isDangerous) showAlert('recordAlert','success',result&&result.message?result.message:'تم التسجيل ✅');
     loadStats();
     document.querySelectorAll('#studentsCheckboxList input:checked').forEach(cb=>cb.checked=false);
     document.getElementById('selectAllStudents').checked=false;
-    if(sel.length === 1) { clearSig(); document.getElementById('fpBtn').classList.remove('active'); document.getElementById('fpText').textContent = 'اضغط للتبصيم'; }
+    if(sel.length===1){clearSig();document.getElementById('fpBtn').classList.remove('active');document.getElementById('fpText').textContent='اضغط للتبصيم';}
     updSelCnt();document.getElementById('recordNotes').value='';document.getElementById('recordScore').value='';document.getElementById('recordSubject').value='';document.getElementById('messagePreviewContainer').style.display='none';
-    // إعادة ضبط الخطورة
     selectSeverity('بسيطة');
-  }).recordViolation(sd,v.type,notes,'الإدارة',sev,sigData,fpData,cat,score,subject,'','',subType,visibleToParent);
+  }).catch(function(e){ hideLoading(); showAlert('recordAlert','error','خطأ في التسجيل'); console.error(e); });
 }
 
 // Messages Log
