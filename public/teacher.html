@@ -741,17 +741,22 @@ tr:hover td{background:var(--em-ghost);}
   .app-layout { margin-right: 0 !important; }
   .sidebar {
     position: fixed !important;
-    top: 0 !important;
-    right: -230px !important;
-    height: 100vh !important;
-    width: 210px !important;
+    right: 0 !important;
+    top: -100% !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: 75vh !important;
     z-index: 9000 !important;
-    transition: right 0.3s ease !important;
+    transition: top 0.32s cubic-bezier(.4,0,.2,1) !important;
+    border-radius: 0 0 20px 20px !important;
+    border-left: none !important;
+    border-bottom: 1px solid rgba(255,255,255,.1) !important;
     box-shadow: none !important;
   }
   .sidebar.sb-open {
-    right: 0 !important;
-    box-shadow: -4px 0 30px rgba(0,0,0,0.4) !important;
+    top: 0 !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
   }
   body.app-ready #sidebarToggleBtn {
     display: flex;
@@ -2971,8 +2976,8 @@ function toggleSidebar() {
   var open = sb.classList.contains('sb-open');
   if (!open) {
     var bounds = getSidebarBounds();
-    sb.style.top = bounds.top;
-    sb.style.height = bounds.height;
+    if(window.innerWidth > 900) sb.style.top = bounds.top;
+    if(window.innerWidth > 900) sb.style.height = bounds.height;
     sb.style.overflowY = 'auto';
     sb.style.overflowY = 'auto';
     if(ov) { ov.style.top = bounds.top; ov.style.height = bounds.height; }
