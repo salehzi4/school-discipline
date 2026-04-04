@@ -1948,8 +1948,7 @@ tr:hover td{background:var(--em-ghost);}
 
     // تسجيل
     recordViolation: function(body) {
-      return callAPI('recordViolation', body
-    }
+      return callAPI('recordViolation', body);
     },
     recordPositiveBehavior: function(studentsData, behaviorType, notes, recorder, score, subType, sendMessage) {
       return callAPI('recordPositiveBehavior', { studentsData, behaviorType, notes, recorder, score, subType, sendMessage });
@@ -4489,12 +4488,16 @@ function toggleSheetLink(){document.getElementById('sheetLink').style.display=do
 function toggleSetup(){const c=document.getElementById('setupContent');c.classList.toggle('hidden');}
 function loadSheetLink(){google.script.run.withSuccessHandler(function(u){if(u){const hl=document.getElementById('headerSheetLink');if(hl)hl.href=u;}}).withFailureHandler(function(){}).getSpreadsheetUrl();}
 function initializeSystem(){if(!confirm('تهيئة النظام وإنشاء الشيت؟'))return;showLoading();google.script.run.withSuccessHandler(function(r){hideLoading();alert(r.message);const hl=document.getElementById('headerSheetLink');if(hl&&r.url)hl.href=r.url;}).withFailureHandler(function(e){hideLoading();alert('حدث خطأ');}).initializeSheets();}
-function populateClassDropdowns(){google.script.run.withSuccessHandler(function(classes){['recordClass','studentClass','viewStudentsClass','msgFilterClass','logFilterClass','profileClass','posLogFilterClass'].forEach(id=>{const s=document.getElementById(id);if(!s)return;
+function populateClassDropdowns(){
+  GAS.getClasses().then(function(classes){
+    ['recordClass','studentClass','viewStudentsClass','msgFilterClass','logFilterClass','profileClass','posLogFilterClass'].forEach(id=>{const s=document.getElementById(id);if(!s)return;
     const currentVal = s.value;
     s.innerHTML = (id.includes('Filter') || id === 'viewStudentsClass') ? '<option value="الكل">كل الفصول</option>' : '<option value="">-- اختر --</option>';
     classes.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;s.appendChild(o);});
     if(currentVal) s.value = currentVal;
-  });}).getClasses();}
+  });
+  }).catch(function(){});
+}
 function addNewClassManually(){const n=prompt('أدخل اسم الفصل الجديد:');if(n&&n.trim()){const s=document.getElementById('studentClass');const o=document.createElement('option');o.value=n.trim();o.textContent=n.trim();s.appendChild(o);s.value=n.trim();}}
 function toggleStatDetail(id){
   // أغلق كل dropdowns مفتوحة أولاً
