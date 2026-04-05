@@ -700,7 +700,7 @@ async function recordFixedViolation(body, sc) {
         student_name: student.name,
         class_name: student.className,
         violation_type: fullViolName,
-        notes: (recorder === 'الإدارة') ? '' : (notes || ''),
+        notes: notes || '',
         recorder: recorder || 'الإدارة',
         severity: deg,
         degree: deg,
