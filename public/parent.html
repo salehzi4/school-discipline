@@ -1577,7 +1577,7 @@ function openParentReport(r){
   $('pr_reporterName').textContent=r.reporterName||'—';
   $('pr_reporterRole').textContent=r.reporterRole||'—';
   var body;
-  if(r.bodyText&&r.bodyText.trim()){ body=r.bodyText.replace(/\n/g,'<br>'); }
+  if(r.bodyText&&r.bodyText.trim()){ body=r.bodyText; }
   else{
     body='نفيدكم بأن الطالب <strong style="background:var(--em-pale);color:var(--em);padding:1px 6px;border-radius:4px;">'+(r.studentName||'—')+'</strong>'
       +' قد ارتكب مخالفة سلوكية بتاريخ <strong style="background:var(--em-pale);color:var(--em);padding:1px 6px;border-radius:4px;">'+datePart+'</strong>'
