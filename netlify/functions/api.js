@@ -1407,7 +1407,10 @@ async function getReportsByStudent(studentName, className, sc) {
     reportNum: r.report_num, createdAt: fmtDate(r.created_at), studentName: r.student_name,
     className: r.class_name, violationType: r.violation_type, status: r.status||'بانتظار الاستلام',
     studentSig: r.student_signature||'', reporterSig: r.reporter_signature||'',
-    violationDate: fmtDate(r.violation_date), notes: r.notes||''
+    reporterName: r.reporter_name||'', reporterRole: r.reporter_role||'',
+    regionName: r.region_name||'', schoolName: r.school_name||'',
+    violationDate: fmtDate(r.violation_date), notes: r.notes||'',
+    bodyText: r.notes||''
   }));
 }
 
