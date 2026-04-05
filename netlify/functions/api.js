@@ -1032,6 +1032,7 @@ async function getStudentProfile(studentName, className, viewerRole, sc) {
   }).map(r => ({
     date: fmtDate(r.recorded_at), type: r.violation_type, notes: r.notes || '',
     adminNotes: (r.recorder === 'الإدارة' && r.notes) ? r.notes : '',
+    teacherNotes: (r.recorder !== 'الإدارة' && r.notes) ? r.notes : '',
     recorder: r.recorder || '', severity: r.severity || 'بسيطة', followUp: r.follow_up || '',
     signature: r.student_signature || '', fingerprint: r.fingerprint || '',
     category: r.category || 'سلوكية', score: r.score || '0', subject: r.subject || '',
