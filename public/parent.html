@@ -1227,6 +1227,8 @@ function renderAll(p){
   // ابن التقويم
   buildCalEvents(p);
   renderCal();
+  // فحص المحاضر الجديدة
+  checkNewReports(p.name, p.className);
 }
 
 /* ══ CALENDAR ══ */
