@@ -1997,6 +1997,7 @@ tr:hover td{background:var(--em-ghost);}
     deleteReport:           (reportNum)               => callAPI('deleteReport', { reportNum }),
     deleteMessageLog:       (date, studentName, violationType) => callAPI('deleteMessageLog', { date, studentName, violationType }),
     getReportByNum:     (reportNum)                  => callAPI('getReportByNum', { reportNum }),
+    resetYearData:       (body)                              => callAPI('resetYearData', body),
     updateAdminPassword: (schoolCode, currentPass, newPass) => callAPI('updateAdminPassword', { schoolCode, currentPass, newPass }),
     updateReportStatus: (reportNum, status)          => callAPI('updateReportStatus', { reportNum, status }),
     getParentSettings:     ()                            => callAPI('getParentSettings', {}),
@@ -2268,6 +2269,12 @@ tr:hover td{background:var(--em-ghost);}
   </button>
   <button class="sidebar-sub-btn" data-page="attachments" style="display:none;" onclick="showPage('attachments',this)">
     <span class="material-icons-round">family_restroom</span> صفحة ولي الأمر
+  </button>
+
+  <!-- ── العام الدراسي ── -->
+  <div class="sb-section-lbl">العام الدراسي</div>
+  <button class="sidebar-sub-btn" onclick="openNewYearModal()" style="color:#f87171;">
+    <span class="material-icons-round" style="color:#f87171;">restart_alt</span> بدء عام دراسي جديد
   </button>
 
 </aside>
@@ -7988,17 +7995,17 @@ function delMessage(btn) {
 function sendReportToParent() {
   if (!currentReportData || !currentReportData.reportNum) return;
   showLoading();
-  google.script.run
-    .withSuccessHandler(function(res) {
+  GAS.updateReportStatus(currentReportData.reportNum, 'بانتظار الاستلام')
+    .then(function(res) {
       hideLoading();
-      if (res.success) {
+      if (res && res.success) {
         currentReportData.status = 'بانتظار الاستلام';
         var btn = document.getElementById('btnSendReport');
         if (btn) { btn.textContent = '✅ تم الإرسال'; btn.style.opacity='.5'; btn.style.pointerEvents='none'; }
         loadReports();
       }
     })
-    .updateReportStatus(currentReportData.reportNum, 'بانتظار الاستلام');
+    .catch(function(e) { hideLoading(); console.error(e); });
 }
 
 // ── تحميل جدول المحاضر ──
@@ -8338,6 +8345,101 @@ function printReport() {
     w.document.write('<style>' + css + '</style></head><body>');
     w.document.write(clone.outerHTML);
     w.document.write('</body></html>');
+    w.document.close();
+  });
+}
+
+</script>
+
+<!-- ══ مودال العام الدراسي الجديد ══ -->
+<div id="newYearModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--surface);border-radius:18px;padding:28px;max-width:480px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.4);">
+
+    <!-- الخطوة 1: تحذير وتأكيد -->
+    <div id="nyStep1">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+        <div style="width:48px;height:48px;border-radius:14px;background:#fef2f2;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <span class="material-icons-round" style="color:#dc2626;font-size:26px;">warning</span>
+        </div>
+        <div>
+          <div style="font-size:16px;font-weight:900;color:var(--text);">بدء عام دراسي جديد</div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:3px;">هذا الإجراء لا يمكن التراجع عنه</div>
+        </div>
+      </div>
+
+      <div style="background:#fef2f2;border:1.5px solid #fca5a5;border-radius:12px;padding:14px 16px;margin-bottom:20px;font-size:12px;color:#dc2626;line-height:1.8;">
+        <strong>تحذير:</strong> سيتم حذف جميع سجلات العام الحالي بما فيها:<br>
+        • سجل المخالفات السلوكية والصفية<br>
+        • سجل السلوكيات الإيجابية<br>
+        • سجل الرسائل والمحاضر<br>
+        • عداد المحاضر
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <label style="font-size:12px;font-weight:700;color:var(--text);display:block;margin-bottom:8px;">اكتب <strong style="color:#dc2626;">تأكيد</strong> للمتابعة:</label>
+        <input type="text" id="nyConfirmInput" placeholder="اكتب تأكيد هنا..." autocomplete="off"
+          style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:inherit;font-size:14px;box-sizing:border-box;">
+        <div id="nyConfirmErr" style="display:none;color:#dc2626;font-size:11px;margin-top:5px;">يرجى كتابة كلمة "تأكيد" للمتابعة</div>
+      </div>
+
+      <div style="display:flex;gap:10px;">
+        <button onclick="nyStep1Next()" style="flex:1;padding:11px;background:#dc2626;color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer;">
+          <span class="material-icons-round" style="font-size:15px;vertical-align:middle;">arrow_forward</span> التالي
+        </button>
+        <button onclick="closeNewYearModal()" style="flex:0.5;padding:11px;background:var(--bg);border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:13px;cursor:pointer;color:var(--text-2);">إلغاء</button>
+      </div>
+    </div>
+
+    <!-- الخطوة 2: سؤال الطلاب والمعلمين -->
+    <div id="nyStep2" style="display:none;">
+      <div style="font-size:15px;font-weight:900;color:var(--text);margin-bottom:6px;">هل تريد الاحتفاظ بقوائم الطلاب والمعلمين والفصول؟</div>
+      <div style="font-size:12px;color:var(--text-3);margin-bottom:20px;">يمكنك الاحتفاظ بها وتعديلها لاحقاً أو حذفها وإدخال بيانات العام الجديد من البداية</div>
+
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
+        <button onclick="nyExecute(true)" style="padding:14px;background:var(--surface);border:2px solid var(--em);border-radius:12px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;color:var(--em);display:flex;align-items:center;gap:10px;">
+          <span class="material-icons-round" style="font-size:20px;">check_circle</span>
+          <div style="text-align:right;">
+            <div>نعم — احتفظ بالطلاب والمعلمين والفصول</div>
+            <div style="font-size:10px;font-weight:400;color:var(--text-3);margin-top:2px;">تُحذف السجلات فقط — تبقى القوائم</div>
+          </div>
+        </button>
+        <button onclick="nyExecute(false)" style="padding:14px;background:var(--surface);border:2px solid #dc2626;border-radius:12px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;color:#dc2626;display:flex;align-items:center;gap:10px;">
+          <span class="material-icons-round" style="font-size:20px;">delete_forever</span>
+          <div style="text-align:right;">
+            <div>لا — احذف كل شيء وابدأ من الصفر</div>
+            <div style="font-size:10px;font-weight:400;color:var(--text-3);margin-top:2px;">تُحذف السجلات والطلاب والمعلمين والفصول</div>
+          </div>
+        </button>
+      </div>
+
+      <button onclick="document.getElementById('nyStep1').style.display='block';document.getElementById('nyStep2').style.display='none';"
+        style="width:100%;padding:9px;background:var(--bg);border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:12px;cursor:pointer;color:var(--text-3);">
+        <span class="material-icons-round" style="font-size:14px;vertical-align:middle;">arrow_back</span> رجوع
+      </button>
+    </div>
+
+    <!-- الخطوة 3: جارٍ التنفيذ -->
+    <div id="nyStep3" style="display:none;text-align:center;padding:20px 0;">
+      <div class="spinner" style="margin:0 auto 16px;"></div>
+      <div style="font-size:14px;font-weight:700;color:var(--text);" id="nyProgressMsg">جارٍ تصدير البيانات...</div>
+      <div style="font-size:11px;color:var(--text-3);margin-top:6px;">يرجى الانتظار — لا تغلق الصفحة</div>
+    </div>
+
+    <!-- الخطوة 4: تم -->
+    <div id="nyStep4" style="display:none;text-align:center;padding:10px 0;">
+      <div style="width:64px;height:64px;background:#dcfce7;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+        <span class="material-icons-round" style="color:#16a34a;font-size:36px;">check_circle</span>
+      </div>
+      <div style="font-size:16px;font-weight:900;color:var(--text);margin-bottom:6px;">تم بنجاح!</div>
+      <div style="font-size:12px;color:var(--text-3);margin-bottom:20px;" id="nyDoneMsg">تم تصفير النظام وتحميل النسخة الاحتياطية</div>
+      <button onclick="closeNewYearModal();location.reload();" style="padding:11px 28px;background:var(--em);color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer;">
+        <span class="material-icons-round" style="font-size:15px;vertical-align:middle;">refresh</span> تحديث الصفحة
+      </button>
+    </div>
+
+  </div>
+</div>
+</body></html>');
     w.document.close();
     setTimeout(function(){ w.print(); }, 800);
   });
@@ -10308,6 +10410,95 @@ function refreshAdminNotifBadge() {
     if (refBadge) { refBadge.textContent = pending; refBadge.style.display = pending ? 'inline' : 'none'; }
   }).catch(function(){});
 }
+
+// ══ العام الدراسي الجديد ══
+function openNewYearModal() {
+  var m = document.getElementById('newYearModal');
+  if (!m) return;
+  // reset
+  document.getElementById('nyStep1').style.display = 'block';
+  document.getElementById('nyStep2').style.display = 'none';
+  document.getElementById('nyStep3').style.display = 'none';
+  document.getElementById('nyStep4').style.display = 'none';
+  document.getElementById('nyConfirmInput').value = '';
+  document.getElementById('nyConfirmErr').style.display = 'none';
+  m.style.display = 'flex';
+}
+
+function closeNewYearModal() {
+  var m = document.getElementById('newYearModal');
+  if (m) m.style.display = 'none';
+}
+
+function nyStep1Next() {
+  var inp = document.getElementById('nyConfirmInput').value.trim();
+  var err = document.getElementById('nyConfirmErr');
+  if (inp !== 'تأكيد') {
+    err.style.display = 'block';
+    return;
+  }
+  err.style.display = 'none';
+  document.getElementById('nyStep1').style.display = 'none';
+  document.getElementById('nyStep2').style.display = 'block';
+}
+
+function nySetProgress(msg) {
+  var el = document.getElementById('nyProgressMsg');
+  if (el) el.textContent = msg;
+}
+
+function nyExecute(keepRosters) {
+  document.getElementById('nyStep2').style.display = 'none';
+  document.getElementById('nyStep3').style.display = 'block';
+
+  var sc = window.getSchoolCode ? window.getSchoolCode() : '';
+
+  // ── خطوة 1: تصدير البيانات ──
+  nySetProgress('جارٍ تصدير بيانات العام الحالي...');
+
+  Promise.all([
+    GAS.getViolationsLog ? GAS.getViolationsLog() : Promise.resolve([]),
+    GAS.getPositiveBehaviors ? GAS.getPositiveBehaviors() : Promise.resolve([]),
+    GAS.getMessagesLog ? GAS.getMessagesLog() : Promise.resolve([]),
+    GAS.getReports ? GAS.getReports() : Promise.resolve([])
+  ]).then(function(results) {
+    // تصدير JSON
+    var backup = {
+      exportDate: new Date().toLocaleDateString('ar-SA'),
+      schoolCode: sc,
+      violations: results[0] || [],
+      positiveBehaviors: results[1] || [],
+      messages: results[2] || [],
+      reports: results[3] || []
+    };
+    var blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'backup_' + sc + '_' + new Date().toISOString().split('T')[0] + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    // ── خطوة 2: حذف السجلات ──
+    nySetProgress('جارٍ حذف سجلات العام الحالي...');
+    return GAS.resetYearData({ keepRosters: keepRosters });
+  }).then(function(res) {
+    document.getElementById('nyStep3').style.display = 'none';
+    document.getElementById('nyStep4').style.display = 'block';
+    var msg = keepRosters
+      ? 'تم حذف سجلات العام — الطلاب والمعلمين والفصول محفوظة'
+      : 'تم حذف جميع البيانات — النظام جاهز للعام الجديد';
+    document.getElementById('nyDoneMsg').textContent = msg;
+  }).catch(function(e) {
+    console.error(e);
+    document.getElementById('nyStep3').style.display = 'none';
+    document.getElementById('nyStep2').style.display = 'block';
+    showAlert('nyAlert', 'error', 'حدث خطأ — ' + (e.message || 'يرجى المحاولة مجدداً'));
+  });
+}
+
 </script>
 
 </body>
