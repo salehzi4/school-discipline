@@ -178,6 +178,7 @@ async function dispatch(action, body, schoolCode) {
     case 'getReports':        return getReports(schoolCode);
     case 'deleteReport':      return deleteReport(body.reportNum, schoolCode);
     case 'getReportByNum':    return getReportByNum(body.reportNum, schoolCode);
+    case 'resetYearData':          return resetYearData(body, schoolCode);
     case 'updateAdminPassword':  return updateAdminPassword(body.schoolCode, body.currentPass, body.newPass);
     case 'updateReportStatus':return updateReportStatus(body.reportNum, body.status, schoolCode);
     case 'getReportsByStudent':return getReportsByStudent(body.studentName, body.className, schoolCode);
@@ -1476,6 +1477,36 @@ async function updateAdminPassword(schoolCode, currentPass, newPass) {
   const res = await sb('schools', 'PATCH', `school_code=eq.${schoolCode}`, { admin_password: newPass });
   if (!res) return { success: false, error: 'فشل تحديث الرمز' };
   return { success: true };
+}
+
+
+async function resetYearData(body, sc) {
+  const keepRosters = body && body.keepRosters;
+  const errors = [];
+
+  // الجداول التي تُحذف دائماً
+  const alwaysDelete = [
+    'violations_log',
+    'positive_behaviors_log',
+    'messages_log',
+    'reports',
+    'report_counters'
+  ];
+
+  for (const tbl of alwaysDelete) {
+    const r = await sb(tbl, 'DELETE', `school_code=eq.${sc}`);
+    if (!r) errors.push(tbl);
+  }
+
+  // الجداول الاختيارية
+  if (!keepRosters) {
+    const optional = ['students', 'teachers', 'classes'];
+    for (const tbl of optional) {
+      await sb(tbl, 'DELETE', `school_code=eq.${sc}`);
+    }
+  }
+
+  return { success: true, errors };
 }
 
 const DEFAULT_SETTINGS = {
