@@ -1399,8 +1399,11 @@ async function updateReportStatus(reportNum, status, sc) {
 }
 
 async function getReportsByStudent(studentName, className, sc) {
-  let params = `school_code=eq.${sc}&student_name=eq.${encodeURIComponent(studentName)}&order=created_at.desc`;
-  if (className) params += `&class_name=eq.${encodeURIComponent(className)}`;
+  // فلترة بالاسم — نستخدم ilike لتجنب مشاكل المسافات أو الترميز
+  const cleanName = (studentName||'').trim();
+  let params = `school_code=eq.${sc}&student_name=ilike.${encodeURIComponent(cleanName)}&order=created_at.desc`;
+  // لا نفلتر بالفصل لضمان ظهور كل محاضر الطالب
+  // if (className) params += `&class_name=eq.${encodeURIComponent(className)}`;
   const rows = await sb('reports', 'GET', params);
   if (!Array.isArray(rows)) return [];
   return rows.map(r => ({
