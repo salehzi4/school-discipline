@@ -726,7 +726,7 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
       <div class="ov-card" style="--c:var(--orange);--c-pale:var(--orange-pale);--c-border:#fcd34d;">
         <div class="ov-icon"><span class="material-icons-round">edit_note</span></div>
         <div class="ov-num" id="ovClass">0</div>
-        <div class="ov-lbl">المخالفات الصفية</div>
+        <div class="ov-lbl">المخالفات التعليمية</div>
       </div>
       <div class="ov-card" style="--c:#059669;--c-pale:var(--green-pale);--c-border:#6ee7b7;">
         <div class="ov-icon"><span class="material-icons-round">emoji_events</span></div>
@@ -790,7 +790,7 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
               <div class="donut-sub" id="ds_behavior">مخالفة</div>
             </div>
           </div>
-          <div class="ind-title">مؤشر السلوكيات</div>
+          <div class="ind-title">مؤشر المخالفات السلوكية</div>
           <div class="ind-meta" id="im_behavior">المخالفات السلوكية</div>
         </div>
         <button class="ind-btn" style="background:var(--red);" onclick="toggleDetails('behavior',this)">
@@ -820,8 +820,8 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
               <div class="donut-sub" id="ds_class">مخالفة</div>
             </div>
           </div>
-          <div class="ind-title">مؤشر السلوكيات</div>
-          <div class="ind-meta" id="im_class">المخالفات الصفية</div>
+          <div class="ind-title">مؤشر المخالفات التعليمية</div>
+          <div class="ind-meta" id="im_class">المخالفات التعليمية</div>
         </div>
         <button class="ind-btn" style="background:var(--orange);" onclick="toggleDetails('class',this)">
           <span class="material-icons-round">expand_more</span> عرض التفاصيل
@@ -829,7 +829,7 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
         <div class="details-panel" id="dp_class">
           <div class="dp-inner">
             <div class="dp-close-row">
-              <div class="dp-title">المخالفات الصفية</div>
+              <div class="dp-title">المخالفات التعليمية</div>
               <button class="dp-close" onclick="closeDetails('class')"><span class="material-icons-round" style="font-size:12px;">close</span> إغلاق</button>
             </div>
             <div id="dpl_class"></div>
@@ -850,7 +850,7 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
               <div class="donut-sub" id="ds_positive">إيجابي</div>
             </div>
           </div>
-          <div class="ind-title">مؤشر السلوكيات</div>
+          <div class="ind-title">مؤشر السلوكيات الإيجابية والمتميزة</div>
           <div class="ind-meta" id="im_positive">إيجابي vs متميز</div>
         </div>
         <button class="ind-btn" style="background:#059669;" onclick="toggleDetails('positive',this)">
@@ -1457,7 +1457,7 @@ function buildDetailList(key, items, clr, fields){
 /* ══ TOGGLE / CLOSE DETAILS ══ */
 function toggleDetails(key, btn){
   var colors = {absence:'#1AB1D4',behavior:'#A32D2D',class:'#B45309',positive:'#0F6E56',reports:'#7C3AED'};
-  var titles = {absence:'تفاصيل الغياب',behavior:'تفاصيل المخالفات السلوكية',class:'تفاصيل المخالفات الصفية',positive:'تفاصيل السلوك الإيجابي',reports:'سجل المحاضر'};
+  var titles = {absence:'تفاصيل الغياب',behavior:'تفاصيل المخالفات السلوكية',class:'تفاصيل المخالفات التعليمية',positive:'تفاصيل السلوك الإيجابي',reports:'سجل المحاضر'};
   var hd = document.getElementById('dpMHd');
   if(hd) hd.style.background = colors[key] || 'var(--em)';
   document.getElementById('dpMTitle').textContent = titles[key] || 'التفاصيل';
