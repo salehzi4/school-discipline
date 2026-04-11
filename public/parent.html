@@ -1111,6 +1111,15 @@ function applySettings(s){
   // ── خلفية الصفحة ──
   if(s.pageBg) document.documentElement.style.setProperty('--bg', s.pageBg);
 
+  // ── شريط اسم الطالب والفصل ──
+  if(s.heroBg1 || s.heroBg2 || s.heroBg3){
+    var banner = document.querySelector('.student-banner');
+    if(banner) banner.style.background = 'linear-gradient(135deg, '+
+      v('heroBg1','#0A5C44')+' 0%, '+
+      v('heroBg2','#0D7A5C')+' 60%, '+
+      v('heroBg3','#10A37F')+' 100%)';
+  }
+
   // ── الفوتر ──
   var fa = document.getElementById('ftAuthor');
   var fcy = document.getElementById('ftCopy');
