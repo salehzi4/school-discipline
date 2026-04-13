@@ -714,6 +714,14 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
         <div class="sb-label">الصف والفصل</div>
         <div class="sb-class" id="heroClass">{الصف_والفصل}</div>
       </div>
+      <!-- زر تفعيل الإشعارات -->
+      <div id="notifBtnWrap" style="display:none;margin-right:auto;">
+        <button id="enableNotifBtn" onclick="requestNotificationPermission()"
+          style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.5);background:rgba(255,255,255,0.15);color:#fff;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;backdrop-filter:blur(4px);">
+          <span class="material-icons-round" style="font-size:15px;">notifications_active</span>
+          تفعيل الإشعارات
+        </button>
+      </div>
     </div>
   </div>
 
@@ -1154,33 +1162,79 @@ function applySettings(s){
 
 /* ══ AUTH ══ */
 function registerForNotifications(studentName, className) {
-  // لا نسجل إذا كان المستخدم إدارة أو معلم
   var role = sessionStorage.getItem('userRole');
   if (role === 'admin' || role === 'teacher') return;
-
   var sc = window.getSchoolCode ? window.getSchoolCode() : '';
   if (!sc || !studentName) return;
 
-  // نطلب الإذن ونسجل الجهاز
+  // نحفظ بيانات الطالب للاستخدام لاحقاً
+  window._notifStudentName = studentName;
+  window._notifClassName   = className || '';
+  window._notifSchoolCode  = sc;
+
+  // نتحقق من حالة الإذن
   if (typeof OneSignalDeferred !== 'undefined') {
     OneSignalDeferred.push(async function(OneSignal) {
       try {
-        // طلب إذن الإشعارات
-        await OneSignal.Notifications.requestPermission();
-
-        // إضافة Tags لتمييز المدرسة والطالب
-        await OneSignal.User.addTags({
-          school_code: sc,
-          student_name: studentName,
-          class_name: className || ''
-        });
-
-        console.log('[OneSignal] تم التسجيل — المدرسة:', sc, '— الطالب:', studentName);
+        var permission = OneSignal.Notifications.permission;
+        if (permission) {
+          // مفعّل مسبقاً — سجّل Tags مباشرة
+          await tagDevice(OneSignal, sc, studentName, className);
+          hideNotifBtn();
+        } else {
+          // اعرض الزر لطلب الإذن
+          showNotifBtn();
+        }
       } catch(e) {
-        console.warn('[OneSignal] خطأ في التسجيل:', e);
+        showNotifBtn();
       }
     });
   }
+}
+
+async function tagDevice(OneSignal, sc, studentName, className) {
+  await OneSignal.User.addTags({
+    school_code:  sc,
+    student_name: studentName,
+    class_name:   className || ''
+  });
+  console.log('[OneSignal] Tags أُضيفت:', sc, studentName);
+}
+
+function showNotifBtn() {
+  var wrap = document.getElementById('notifBtnWrap');
+  if (wrap) wrap.style.display = 'block';
+}
+
+function hideNotifBtn() {
+  var wrap = document.getElementById('notifBtnWrap');
+  if (wrap) wrap.style.display = 'none';
+}
+
+function requestNotificationPermission() {
+  if (typeof OneSignalDeferred === 'undefined') return;
+  OneSignalDeferred.push(async function(OneSignal) {
+    try {
+      await OneSignal.Notifications.requestPermission();
+      var granted = OneSignal.Notifications.permission;
+      if (granted) {
+        var sc   = window._notifSchoolCode  || '';
+        var name = window._notifStudentName || '';
+        var cls  = window._notifClassName   || '';
+        await tagDevice(OneSignal, sc, name, cls);
+        hideNotifBtn();
+        // تأكيد للمستخدم
+        var btn = document.getElementById('enableNotifBtn');
+        if (btn) {
+          btn.innerHTML = '<span class="material-icons-round" style="font-size:15px;">check_circle</span> تم التفعيل';
+          btn.style.background = 'rgba(255,255,255,0.3)';
+          setTimeout(hideNotifBtn, 2000);
+        }
+      }
+    } catch(e) {
+      console.warn('[OneSignal] خطأ:', e);
+    }
+  });
 }
 
 function doLogin(){
