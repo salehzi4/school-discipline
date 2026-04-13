@@ -226,6 +226,7 @@ body { overflow-x: hidden; }
 <meta charset="UTF-8">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#0A5C44">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="المخالفات">
@@ -1082,6 +1083,7 @@ document.addEventListener('DOMContentLoaded', function(){
     // قادم من شاشة الدخول الموحدة
     sessionStorage.setItem('parentStudentName', urlStudent);
     sessionStorage.setItem('parentStudentClass', urlClass);
+    registerForNotifications(urlStudent, urlClass);
     var ls = document.getElementById('loginScreen');
     if(ls){ ls.style.display='none'; ls.style.opacity='0'; }
     checkNewReports(urlStudent, urlClass);
