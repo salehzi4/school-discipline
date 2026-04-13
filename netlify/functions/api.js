@@ -1506,6 +1506,22 @@ async function updateReportStatus(reportNum, status, sc) {
   if (status === 'تم الاستلام') patch.received_at = now;
   if (status === 'تم الاطلاع')  patch.read_at = now;
   await sb('reports', 'PATCH', `school_code=eq.${sc}&report_num=eq.${encodeURIComponent(reportNum)}`, patch);
+
+  // إشعار لولي الأمر فقط عند الإرسال الرسمي
+  if (status === 'بانتظار الاستلام') {
+    // نجلب بيانات المحضر لمعرفة اسم الطالب
+    const rows = await sb('reports', 'GET', `school_code=eq.${sc}&report_num=eq.${encodeURIComponent(reportNum)}&select=student_name,class_name`);
+    if (Array.isArray(rows) && rows.length) {
+      await sendPushNotification(
+        sc,
+        rows[0].student_name || '',
+        rows[0].class_name   || '',
+        'تم إرسال محضر مخالفة سلوكية — اضغط للاطلاع عليه',
+        '📋 محضر جديد من مدرسة ابنك'
+      );
+    }
+  }
+
   return { success: true };
 }
 
