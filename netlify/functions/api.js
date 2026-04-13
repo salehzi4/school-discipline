@@ -645,6 +645,18 @@ async function recordViolation(body, sc) {
       );
     }
   }
+  // إرسال إشعار لكل طالب
+  if (!isPositive) {
+    for (const s of studentsData) {
+      await sendPushNotification(
+        sc,
+        s.name,
+        s.className || '',
+        'تم تسجيل مخالفة: ' + violationType,
+        '🔔 إشعار من مدرسة ابنك'
+      );
+    }
+  }
   return { success: true, message: `تم تسجيل المخالفة لـ ${studentsData.length} طالب ✅` };
 }
 
