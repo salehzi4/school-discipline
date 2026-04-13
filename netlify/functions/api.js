@@ -569,8 +569,10 @@ async function sendPushNotification(schoolCode, studentName, className, message,
   const ONESIGNAL_APP_ID  = '02b5a380-ec64-4f1d-8db4-3e4963197408';
   const ONESIGNAL_API_KEY = process.env.ONESIGNAL_API_KEY || '';
 
+  console.log('[OneSignal] sendPushNotification called:', { schoolCode, studentName, hasKey: !!ONESIGNAL_API_KEY });
+
   if (!ONESIGNAL_API_KEY) {
-    console.warn('[OneSignal] REST API Key غير موجود');
+    console.warn('[OneSignal] REST API Key غير موجود — تحقق من Environment Variables');
     return;
   }
 
