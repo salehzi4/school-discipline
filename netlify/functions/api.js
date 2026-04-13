@@ -631,34 +631,8 @@ async function recordViolation(body, sc) {
     referral_date: isDangerous ? now : null, sub_type: subType || ''
   }));
   await sb('violations_log', 'POST', '', rows);
-  // إرسال إشعار لكل طالب
-  for (const student of studentsData) {
-    const violNames = violations
-      .filter(v => v.category !== 'positive' && v.category !== 'إيجابية')
-      .map(v => v.subViolation ? v.name + ' — ' + v.subViolation : v.name)
-      .join('، ');
-    if (violNames) {
-      await sendPushNotification(
-        sc,
-        student.name,
-        student.className || '',
-        'تم تسجيل مخالفة: ' + violNames,
-        '🔔 إشعار من مدرسة ابنك'
-      );
-    }
-  }
-  // إرسال إشعار لكل طالب
-  if (!isPositive) {
-    for (const s of studentsData) {
-      await sendPushNotification(
-        sc,
-        s.name,
-        s.className || '',
-        'تم تسجيل مخالفة: ' + violationType,
-        '🔔 إشعار من مدرسة ابنك'
-      );
-    }
-  }
+  // الإشعار يُرسل فقط عند تحويل المخالفة لـ 'ظاهر'
+  // الإشعار يُرسل فقط عند تحويل المخالفة لـ 'ظاهر'
   return { success: true, message: `تم تسجيل المخالفة لـ ${studentsData.length} طالب ✅` };
 }
 
@@ -810,23 +784,6 @@ async function recordFixedViolation(body, sc) {
     }));
     await sb('positive_behaviors_log', 'POST', '', posRows);
   }
-
-  // إشعار للمخالفات
-  const violNames = violations
-    .filter(v => v.category !== 'positive' && v.category !== 'إيجابية')
-    .map(v => v.subViolation ? v.name + ' — ' + v.subViolation : v.name)
-    .join('، ');
-
-  if (violNames) {
-    for (const student of studentsData) {
-      await sendPushNotification(
-        sc, student.name, student.className || '',
-        'تم تسجيل مخالفة: ' + violNames,
-        '🔔 إشعار من مدرسة ابنك'
-      );
-    }
-  }
-
   // إشعار للسلوك الإيجابي
   const posNames = violations
     .filter(v => v.category === 'positive' || v.category === 'إيجابية')
