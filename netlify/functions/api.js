@@ -1163,8 +1163,9 @@ async function getStudentProfile(studentName, className, viewerRole, sc) {
   const messages = Array.isArray(mRows) ? mRows.map(r => ({ date: fmtDate(r.sent_at), type: r.violation_type, sender: r.sender || '' })) : [];
 
   // المحاضر
+  // نستثني المسودات — تظهر فقط المحاضر المرسلة رسمياً
   const rptRows = await sb('reports', 'GET',
-    `school_code=eq.${sc}&student_name=eq.${encodeURIComponent(studentName)}&order=created_at.desc`);
+    `school_code=eq.${sc}&student_name=eq.${encodeURIComponent(studentName)}&status=neq.مسودة&order=created_at.desc`);
   const reports = Array.isArray(rptRows) ? rptRows.map(r => ({
     reportNum: r.report_num, date: fmtDate(r.created_at),
     violationType: r.violation_type, status: r.status || 'بانتظار الاستلام',
