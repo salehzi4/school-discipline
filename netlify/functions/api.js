@@ -591,8 +591,8 @@ async function sendPushNotification(schoolCode, studentName, className, message,
           { operator: 'AND' },
           { field: 'tag', key: 'student_name', relation: '=', value: studentName }
         ],
-        headings: { ar: title   || 'سجل المخالفات السلوكية' },
-        contents: { ar: message || 'يوجد تحديث جديد لابنك' },
+        headings: { en: title   || 'سجل المخالفات السلوكية' },
+        contents: { en: message || 'يوجد تحديث جديد لابنك' },
         url: 'https://schools00.netlify.app/parent.html?school=' + schoolCode
       })
     });
