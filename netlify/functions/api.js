@@ -561,6 +561,46 @@ async function deletePositiveBehaviorType(typeName, sc) {
 // ═══════════════════════════════════════════════════════════
 //  تسجيل المخالفات
 // ═══════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════
+// OneSignal Push Notifications
+// ═══════════════════════════════════════════════════════
+async function sendPushNotification(schoolCode, studentName, className, message, title) {
+  const ONESIGNAL_APP_ID  = '02b5a380-ec64-4f1d-8db4-3e4963197408';
+  const ONESIGNAL_API_KEY = process.env.ONESIGNAL_API_KEY || '';
+
+  if (!ONESIGNAL_API_KEY) {
+    console.warn('[OneSignal] REST API Key غير موجود');
+    return;
+  }
+
+  try {
+    const res = await fetch('https://onesignal.com/api/v1/notifications', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Basic ' + ONESIGNAL_API_KEY
+      },
+      body: JSON.stringify({
+        app_id: ONESIGNAL_APP_ID,
+        // فلترة بـ school_code + student_name
+        filters: [
+          { field: 'tag', key: 'school_code',  relation: '=', value: schoolCode  },
+          { operator: 'AND' },
+          { field: 'tag', key: 'student_name', relation: '=', value: studentName }
+        ],
+        headings: { ar: title   || 'سجل المخالفات السلوكية' },
+        contents: { ar: message || 'يوجد تحديث جديد لابنك' },
+        url: 'https://schools00.netlify.app/parent.html?school=' + schoolCode
+      })
+    });
+    const data = await res.json();
+    console.log('[OneSignal] إشعار أُرسل:', data.id || data.errors);
+  } catch(e) {
+    console.error('[OneSignal] خطأ:', e);
+  }
+}
+
 async function recordViolation(body, sc) {
   const { studentsData, violationType, notes, recorder, severity, signature, fingerprint, category, score, subject, actionType, actionTaken, subType, visibleToParentOverride } = body;
   const isPositive  = (category === 'إيجابية');
@@ -589,6 +629,22 @@ async function recordViolation(body, sc) {
     referral_date: isDangerous ? now : null, sub_type: subType || ''
   }));
   await sb('violations_log', 'POST', '', rows);
+  // إرسال إشعار لكل طالب
+  for (const student of studentsData) {
+    const violNames = violations
+      .filter(v => v.category !== 'positive' && v.category !== 'إيجابية')
+      .map(v => v.subViolation ? v.name + ' — ' + v.subViolation : v.name)
+      .join('، ');
+    if (violNames) {
+      await sendPushNotification(
+        sc,
+        student.name,
+        student.className || '',
+        'تم تسجيل مخالفة: ' + violNames,
+        '🔔 إشعار من مدرسة ابنك'
+      );
+    }
+  }
   return { success: true, message: `تم تسجيل المخالفة لـ ${studentsData.length} طالب ✅` };
 }
 
