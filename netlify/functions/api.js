@@ -1457,14 +1457,6 @@ async function saveReport(data, sc) {
     status: 'بانتظار الاستلام', violation_date: data.violationDate || new Date().toISOString(),
     notes: data.bodyText || data.notes || ''
   });
-  // إشعار لولي الأمر عند حفظ المحضر
-  await sendPushNotification(
-    sc,
-    (data.studentName || '').trim(),
-    data.className || '',
-    'تم إرسال محضر مخالفة سلوكية — اضغط للاطلاع عليه',
-    '📋 محضر جديد من مدرسة ابنك'
-  );
   return { success: true, reportNum, message: 'تم حفظ المحضر ✅' };
 }
 
