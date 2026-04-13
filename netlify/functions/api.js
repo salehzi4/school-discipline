@@ -1012,11 +1012,24 @@ async function addFollowUp(date, studentName, violationType, followUpText, behav
 async function setVisibleToParent(date, studentName, violationType, visible, sc) {
   // تحديث جميع سجلات نفس المخالفة لنفس الطالب
   const rows = await sb('violations_log', 'GET',
-    `school_code=eq.${sc}&student_name=eq.${encodeURIComponent(studentName)}&violation_type=eq.${encodeURIComponent(violationType)}&select=id`);
+    `school_code=eq.${sc}&student_name=eq.${encodeURIComponent(studentName)}&violation_type=eq.${encodeURIComponent(violationType)}&select=id,class_name`);
   if (!Array.isArray(rows) || !rows.length) return { success: false };
   for (const r of rows) {
     await sb('violations_log', 'PATCH', `id=eq.${r.id}`, { visible_to_parent: visible ? 'نعم' : 'لا' });
   }
+
+  // إشعار فوري عند التحويل لـ 'ظاهر'
+  if (visible) {
+    const className = (rows[0] && rows[0].class_name) || '';
+    await sendPushNotification(
+      sc,
+      studentName,
+      className,
+      'تم تسجيل مخالفة: ' + violationType,
+      '🔔 إشعار من مدرسة ابنك'
+    );
+  }
+
   return { success: true };
 }
 
