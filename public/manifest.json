@@ -1,0 +1,24 @@
+{
+  "name": "سجل المخالفات السلوكية",
+  "short_name": "المخالفات",
+  "description": "بوابة ولي الأمر لمتابعة سلوك الطالب",
+  "start_url": "/parent.html",
+  "display": "standalone",
+  "background_color": "#0A5C44",
+  "theme_color": "#0A5C44",
+  "orientation": "portrait",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "https://k.top4top.io/p_3744u4kxe1.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://k.top4top.io/p_3744u4kxe1.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
