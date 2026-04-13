@@ -1454,7 +1454,7 @@ async function saveReport(data, sc) {
     region_name: data.regionName||'', school_name: data.schoolName||'',
     reporter_role: data.reporterRole||'', reporter_name: data.reporterName||'',
     student_signature: data.studentSignature||'', reporter_signature: data.reporterSignature||'',
-    status: 'بانتظار الاستلام', violation_date: data.violationDate || new Date().toISOString(),
+    status: 'مسودة', violation_date: data.violationDate || new Date().toISOString(),
     notes: data.bodyText || data.notes || ''
   });
   return { success: true, reportNum, message: 'تم حفظ المحضر ✅' };
@@ -1520,7 +1520,8 @@ async function updateReportStatus(reportNum, status, sc) {
 async function getReportsByStudent(studentName, className, sc) {
   // فلترة بالاسم — نستخدم ilike لتجنب مشاكل المسافات أو الترميز
   const cleanName = (studentName||'').trim();
-  let params = `school_code=eq.${sc}&student_name=ilike.${encodeURIComponent(cleanName)}&order=created_at.desc`;
+  // نُظهر فقط المحاضر المرسلة رسمياً (ليس المسودات)
+  let params = `school_code=eq.${sc}&student_name=ilike.${encodeURIComponent(cleanName)}&status=neq.مسودة&order=created_at.desc`;
   // لا نفلتر بالفصل لضمان ظهور كل محاضر الطالب
   // if (className) params += `&class_name=eq.${encodeURIComponent(className)}`;
   const rows = await sb('reports', 'GET', params);
