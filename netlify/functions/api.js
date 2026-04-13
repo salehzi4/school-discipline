@@ -811,6 +811,24 @@ async function recordFixedViolation(body, sc) {
     await sb('positive_behaviors_log', 'POST', '', posRows);
   }
 
+  // إرسال إشعار لكل طالب عند تسجيل مخالفة (غير إيجابية)
+  const violNames = violations
+    .filter(v => v.category !== 'positive' && v.category !== 'إيجابية')
+    .map(v => v.subViolation ? v.name + ' — ' + v.subViolation : v.name)
+    .join('، ');
+
+  if (violNames) {
+    for (const student of studentsData) {
+      await sendPushNotification(
+        sc,
+        student.name,
+        student.className || '',
+        'تم تسجيل مخالفة: ' + violNames,
+        '🔔 إشعار من مدرسة ابنك'
+      );
+    }
+  }
+
   return { success: true, message: `تم التسجيل ✅` };
 }
 
