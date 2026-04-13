@@ -811,7 +811,7 @@ async function recordFixedViolation(body, sc) {
     await sb('positive_behaviors_log', 'POST', '', posRows);
   }
 
-  // إرسال إشعار لكل طالب عند تسجيل مخالفة (غير إيجابية)
+  // إشعار للمخالفات
   const violNames = violations
     .filter(v => v.category !== 'positive' && v.category !== 'إيجابية')
     .map(v => v.subViolation ? v.name + ' — ' + v.subViolation : v.name)
@@ -820,11 +820,25 @@ async function recordFixedViolation(body, sc) {
   if (violNames) {
     for (const student of studentsData) {
       await sendPushNotification(
-        sc,
-        student.name,
-        student.className || '',
+        sc, student.name, student.className || '',
         'تم تسجيل مخالفة: ' + violNames,
         '🔔 إشعار من مدرسة ابنك'
+      );
+    }
+  }
+
+  // إشعار للسلوك الإيجابي
+  const posNames = violations
+    .filter(v => v.category === 'positive' || v.category === 'إيجابية')
+    .map(v => v.name)
+    .join('، ');
+
+  if (posNames) {
+    for (const student of studentsData) {
+      await sendPushNotification(
+        sc, student.name, student.className || '',
+        'تم تسجيل سلوك إيجابي: ' + posNames,
+        '⭐ إشعار من مدرسة ابنك'
       );
     }
   }
@@ -1443,6 +1457,14 @@ async function saveReport(data, sc) {
     status: 'بانتظار الاستلام', violation_date: data.violationDate || new Date().toISOString(),
     notes: data.bodyText || data.notes || ''
   });
+  // إشعار لولي الأمر عند حفظ المحضر
+  await sendPushNotification(
+    sc,
+    (data.studentName || '').trim(),
+    data.className || '',
+    'تم إرسال محضر مخالفة سلوكية — اضغط للاطلاع عليه',
+    '📋 محضر جديد من مدرسة ابنك'
+  );
   return { success: true, reportNum, message: 'تم حفظ المحضر ✅' };
 }
 
