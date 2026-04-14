@@ -1,13 +1,10 @@
 {
   "name": "بوابة ولي الأمر",
   "short_name": "بوابة الأسرة",
-  "description": "متابعة سلوك الطالب المدرسي",
-  "start_url": "./parent.html",
-  "scope": "./parent.html",
+  "start_url": "/public/parent.html",
   "display": "standalone",
   "background_color": "#0A5C44",
   "theme_color": "#0A5C44",
-  "orientation": "portrait",
   "lang": "ar",
   "dir": "rtl",
   "icons": [
