@@ -430,9 +430,13 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
   // schoolCode يُقرأ من: localStorage أو URL param أو الإعداد الافتراضي
   function getSchoolCode() {
     const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('school') ||
-           localStorage.getItem('schoolCode') ||
-           'SCH001'; // الافتراضي
+    var sc = urlParams.get('school');
+    if (sc) {
+      // نحفظ school_code في localStorage عند أول دخول
+      localStorage.setItem('schoolCode', sc);
+      return sc;
+    }
+    return localStorage.getItem('schoolCode') || 'SCH001';
   }
 
   // ── عنوان الـ API ──
@@ -673,6 +677,11 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
         <span class="material-icons-round lfc-ico">badge</span>
         <input type="password" class="lfc-inp" id="nationalIdInput" placeholder="••••••••••" maxlength="20">
       </div>
+      <!-- تذكرني -->
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <input type="checkbox" id="rememberMe" style="width:16px;height:16px;accent-color:#0A5C44;cursor:pointer;">
+        <label for="rememberMe" style="font-size:12px;color:rgba(255,255,255,0.75);cursor:pointer;">تذكرني في هذا الجهاز</label>
+      </div>
       <button class="lfc-btn" id="loginBtn">
         <span class="material-icons-round" style="font-size:17px;">login</span> دخول
       </button>
@@ -717,10 +726,10 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
       </div>
       <!-- زر تفعيل الإشعارات -->
       <div id="notifBtnWrap" style="display:none;margin-right:auto;">
-        <button id="enableNotifBtn" onclick="requestNotificationPermission()"
+        <button id="enableNotifBtn" onclick="toggleNotifications()"
           style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.5);background:rgba(255,255,255,0.15);color:#fff;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;backdrop-filter:blur(4px);">
-          <span class="material-icons-round" style="font-size:15px;">notifications_active</span>
-          تفعيل الإشعارات
+          <span class="material-icons-round" id="notifBtnIcon" style="font-size:15px;">notifications_active</span>
+          <span id="notifBtnText">تفعيل الإشعارات</span>
         </button>
       </div>
     </div>
@@ -1075,12 +1084,13 @@ document.addEventListener('DOMContentLoaded', function(){
   if(lBtn) lBtn.addEventListener('click', doLogin);
   if(lInp) lInp.addEventListener('keypress', function(e){ if(e.key==='Enter') doLogin(); });
   GAS.getParentSettings().then(applySettings).catch(function(){});
-  // ── الدخول الموحد: تحقق من URL params ──
+  // ── تحقق من URL params أو تذكرني ──
   var urlParams = new URLSearchParams(window.location.search);
   var urlStudent = urlParams.get('student');
   var urlClass   = urlParams.get('class');
+
   if(urlStudent && urlClass){
-    // قادم من شاشة الدخول الموحدة
+    // دخول عبر رابط مباشر
     sessionStorage.setItem('parentStudentName', urlStudent);
     sessionStorage.setItem('parentStudentClass', urlClass);
     registerForNotifications(urlStudent, urlClass);
@@ -1088,10 +1098,29 @@ document.addEventListener('DOMContentLoaded', function(){
     if(ls){ ls.style.display='none'; ls.style.opacity='0'; }
     checkNewReports(urlStudent, urlClass);
     loadProfile(urlStudent, urlClass);
+
   } else {
-    var sN = sessionStorage.getItem('parentStudentName');
-    var sC = sessionStorage.getItem('parentStudentClass');
-    if(sN && sC){ checkNewReports(sN,sC); loadProfile(sN,sC); }
+    // تحقق من تذكرني
+    var remName  = localStorage.getItem('rememberedName');
+    var remClass = localStorage.getItem('rememberedClass');
+    if(remName && remClass){
+      sessionStorage.setItem('parentStudentName', remName);
+      sessionStorage.setItem('parentStudentClass', remClass);
+      registerForNotifications(remName, remClass);
+      var ls2 = document.getElementById('loginScreen');
+      if(ls2){ ls2.style.display='none'; ls2.style.opacity='0'; }
+      checkNewReports(remName, remClass);
+      loadProfile(remName, remClass);
+    } else {
+      // عرض شاشة الدخول مع تعبئة رقم الهوية المحفوظ
+      var remId = localStorage.getItem('rememberedId');
+      if(remId){
+        var inp = document.getElementById('nationalIdInput');
+        if(inp) inp.value = remId;
+        var cb = document.getElementById('rememberMe');
+        if(cb) cb.checked = true;
+      }
+    }
   }
 });
 
@@ -1206,6 +1235,13 @@ async function tagDevice(OneSignal, sc, studentName, className) {
 function showNotifBtn() {
   var wrap = document.getElementById('notifBtnWrap');
   if (wrap) wrap.style.display = 'block';
+  // فحص الحالة الحالية وتحديث الزر
+  if (typeof OneSignalDeferred !== 'undefined') {
+    OneSignalDeferred.push(async function(OneSignal) {
+      var enabled = OneSignal.Notifications.permission;
+      updateNotifBtn(!!enabled);
+    });
+  }
 }
 
 function hideNotifBtn() {
@@ -1213,30 +1249,56 @@ function hideNotifBtn() {
   if (wrap) wrap.style.display = 'none';
 }
 
-function requestNotificationPermission() {
+function toggleNotifications() {
   if (typeof OneSignalDeferred === 'undefined') return;
   OneSignalDeferred.push(async function(OneSignal) {
     try {
-      await OneSignal.Notifications.requestPermission();
-      var granted = OneSignal.Notifications.permission;
-      if (granted) {
-        var sc   = window._notifSchoolCode  || '';
-        var name = window._notifStudentName || '';
-        var cls  = window._notifClassName   || '';
-        await tagDevice(OneSignal, sc, name, cls);
-        hideNotifBtn();
-        // تأكيد للمستخدم
-        var btn = document.getElementById('enableNotifBtn');
-        if (btn) {
-          btn.innerHTML = '<span class="material-icons-round" style="font-size:15px;">check_circle</span> تم التفعيل';
-          btn.style.background = 'rgba(255,255,255,0.3)';
-          setTimeout(hideNotifBtn, 2000);
+      var isEnabled = OneSignal.Notifications.permission;
+      if (!isEnabled) {
+        // تفعيل
+        await OneSignal.Notifications.requestPermission();
+        var granted = OneSignal.Notifications.permission;
+        if (granted) {
+          var sc   = window._notifSchoolCode  || '';
+          var name = window._notifStudentName || '';
+          var cls  = window._notifClassName   || '';
+          await tagDevice(OneSignal, sc, name, cls);
+          localStorage.setItem('notifEnabled', '1');
+          updateNotifBtn(true);
         }
+      } else {
+        // تعطيل
+        await OneSignal.Notifications.setDefaultTitle('');
+        try { await OneSignal.User.removeTags(['school_code','student_name','class_name']); } catch(e){}
+        localStorage.setItem('notifEnabled', '0');
+        updateNotifBtn(false);
       }
     } catch(e) {
       console.warn('[OneSignal] خطأ:', e);
     }
   });
+}
+
+function updateNotifBtn(enabled) {
+  var icon = document.getElementById('notifBtnIcon');
+  var text = document.getElementById('notifBtnText');
+  var btn  = document.getElementById('enableNotifBtn');
+  if (!icon || !text || !btn) return;
+  if (enabled) {
+    icon.textContent = 'notifications_off';
+    text.textContent = 'تعطيل الإشعارات';
+    btn.style.background = 'rgba(255,255,255,0.25)';
+    btn.style.borderColor = 'rgba(255,255,255,0.8)';
+  } else {
+    icon.textContent = 'notifications_active';
+    text.textContent = 'تفعيل الإشعارات';
+    btn.style.background = 'rgba(255,255,255,0.15)';
+    btn.style.borderColor = 'rgba(255,255,255,0.5)';
+  }
+}
+
+function requestNotificationPermission() {
+  toggleNotifications();
 }
 
 function doLogin(){
@@ -1248,7 +1310,17 @@ function doLogin(){
     if(!r){ showErr('رقم الهوية غير صحيح أو غير مسجل في النظام'); return; }
     sessionStorage.setItem('parentStudentName', r.name);
     sessionStorage.setItem('parentStudentClass', r.className);
-    // تسجيل الجهاز في OneSignal للإشعارات
+    // حفظ بيانات تذكرني
+    var remember = document.getElementById('rememberMe');
+    if(remember && remember.checked){
+      localStorage.setItem('rememberedId', id);
+      localStorage.setItem('rememberedName', r.name);
+      localStorage.setItem('rememberedClass', r.className);
+    } else {
+      localStorage.removeItem('rememberedId');
+      localStorage.removeItem('rememberedName');
+      localStorage.removeItem('rememberedClass');
+    }
     registerForNotifications(r.name, r.className);
     loadProfile(r.name, r.className);
   }).catch(function(){ hideL(); showErr('حدث خطأ، يرجى المحاولة مجدداً'); });
@@ -1258,6 +1330,10 @@ function showErr(msg){
   setTimeout(function(){ e.style.display='none'; }, 4000);
 }
 function doLogout(){
+  // حذف بيانات تذكرني عند الخروج
+  localStorage.removeItem('rememberedId');
+  localStorage.removeItem('rememberedName');
+  localStorage.removeItem('rememberedClass');
   sessionStorage.removeItem('parentStudentName');
   sessionStorage.removeItem('parentStudentClass');
   sessionStorage.removeItem('loggedIn');
