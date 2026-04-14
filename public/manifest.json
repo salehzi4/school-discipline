@@ -3,7 +3,7 @@
   "short_name": "بوابة الأسرة",
   "description": "متابعة سلوك الطالب المدرسي",
   "start_url": "./parent.html",
-  "scope": "./",
+  "scope": "./parent.html",
   "display": "standalone",
   "background_color": "#0A5C44",
   "theme_color": "#0A5C44",
