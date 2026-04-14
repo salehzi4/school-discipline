@@ -129,7 +129,7 @@ body { overflow-x: hidden; }
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>نظام الانضباط المدرسي </title>
+<title>نظام الانضباط المدرسي</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
 <style>
@@ -2106,14 +2106,14 @@ tr:hover td{background:var(--em-ghost);}
         <div class="role-lbl">إدارة المدرسة</div>
       </div>
 
-      <div class="role-card" id="roleCard_teacher" onclick="goToTeacher()" title="الكادر التعليمي">
+      <div class="role-card" id="roleCard_teacher" onclick="selectRole('teacher')" title="الكادر التعليمي">
         <div class="role-icon-wrap" style="background:linear-gradient(135deg,#1A4A7A,#2563EB);">
           <span class="material-icons-round">school</span>
         </div>
         <div class="role-lbl">الكادر التعليمي</div>
       </div>
 
-      <div class="role-card" id="roleCard_parent" onclick="goToParent()" title="الأسرة">
+      <div class="role-card" id="roleCard_parent" onclick="selectRole('parent')" title="الأسرة">
         <div class="role-icon-wrap" style="background:linear-gradient(135deg,#7C3AED,#9333EA);">
           <span class="material-icons-round">family_restroom</span>
         </div>
@@ -4152,16 +4152,6 @@ function showAlert(id,type,msg){const c=document.getElementById(id);if(!c)return
 // Login
 // ── اختيار الدور ──
 window._selectedRole = null;
-
-function goToTeacher() {
-  var sc = new URLSearchParams(window.location.search).get('school') || '';
-  window.location.href = 'teacher.html' + (sc ? '?school=' + sc : '');
-}
-
-function goToParent() {
-  var sc = new URLSearchParams(window.location.search).get('school') || '';
-  window.location.href = 'parent.html' + (sc ? '?school=' + sc : '');
-}
 
 function selectRole(role) {
   var wrap  = document.getElementById('unifiedInputWrap');
