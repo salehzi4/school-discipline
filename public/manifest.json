@@ -1,8 +1,9 @@
 {
-  "name": "سجل المخالفات السلوكية",
-  "short_name": "المخالفات",
-  "description": "بوابة ولي الأمر لمتابعة سلوك الطالب",
-  "start_url": "/parent.html",
+  "name": "بوابة ولي الأمر",
+  "short_name": "بوابة الأسرة",
+  "description": "متابعة سلوك الطالب المدرسي",
+  "start_url": "./parent.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#0A5C44",
   "theme_color": "#0A5C44",
