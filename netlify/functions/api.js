@@ -562,46 +562,7 @@ async function deletePositiveBehaviorType(typeName, sc) {
 //  تسجيل المخالفات
 // ═══════════════════════════════════════════════════════════
 
-// ═══════════════════════════════════════════════════════
-// OneSignal Push Notifications
-// ═══════════════════════════════════════════════════════
-async function sendPushNotification(schoolCode, studentName, className, message, title) {
-  const ONESIGNAL_APP_ID  = '02b5a380-ec64-4f1d-8db4-3e4963197408';
-  const ONESIGNAL_API_KEY = process.env.ONESIGNAL_API_KEY || '';
 
-  console.log('[OneSignal] sendPushNotification called:', { schoolCode, studentName, hasKey: !!ONESIGNAL_API_KEY });
-
-  if (!ONESIGNAL_API_KEY) {
-    console.warn('[OneSignal] REST API Key غير موجود — تحقق من Environment Variables');
-    return;
-  }
-
-  try {
-    const res = await fetch('https://onesignal.com/api/v1/notifications', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Basic ' + ONESIGNAL_API_KEY
-      },
-      body: JSON.stringify({
-        app_id: ONESIGNAL_APP_ID,
-        // فلترة بـ school_code + student_name
-        filters: [
-          { field: 'tag', key: 'school_code',  relation: '=', value: schoolCode  },
-          { operator: 'AND' },
-          { field: 'tag', key: 'student_name', relation: '=', value: studentName }
-        ],
-        headings: { en: title   || 'سجل المخالفات السلوكية' },
-        contents: { en: message || 'يوجد تحديث جديد لابنك' },
-        url: 'https://schools00.netlify.app/parent.html?school=' + schoolCode
-      })
-    });
-    const data = await res.json();
-    console.log('[OneSignal] إشعار أُرسل:', data.id || data.errors);
-  } catch(e) {
-    console.error('[OneSignal] خطأ:', e);
-  }
-}
 
 async function recordViolation(body, sc) {
   const { studentsData, violationType, notes, recorder, severity, signature, fingerprint, category, score, subject, actionType, actionTaken, subType, visibleToParentOverride } = body;
@@ -631,9 +592,8 @@ async function recordViolation(body, sc) {
     referral_date: isDangerous ? now : null, sub_type: subType || ''
   }));
   await sb('violations_log', 'POST', '', rows);
-  // الإشعار يُرسل فقط عند تحويل المخالفة لـ 'ظاهر'
-  // الإشعار يُرسل فقط عند تحويل المخالفة لـ 'ظاهر'
-  return { success: true, message: `تم تسجيل المخالفة لـ ${studentsData.length} طالب ✅` };
+
+return { success: true, message: `تم تسجيل المخالفة لـ ${studentsData.length} طالب ✅` };
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -783,21 +743,6 @@ async function recordFixedViolation(body, sc) {
       sub_type: r.sub_type || 'إيجابي'
     }));
     await sb('positive_behaviors_log', 'POST', '', posRows);
-  }
-  // إشعار للسلوك الإيجابي
-  const posNames = violations
-    .filter(v => v.category === 'positive' || v.category === 'إيجابية')
-    .map(v => v.name)
-    .join('، ');
-
-  if (posNames) {
-    for (const student of studentsData) {
-      await sendPushNotification(
-        sc, student.name, student.className || '',
-        'تم تسجيل سلوك إيجابي: ' + posNames,
-        '⭐ إشعار من مدرسة ابنك'
-      );
-    }
   }
 
   return { success: true, message: `تم التسجيل ✅` };
@@ -975,17 +920,6 @@ async function setVisibleToParent(date, studentName, violationType, visible, sc)
     await sb('violations_log', 'PATCH', `id=eq.${r.id}`, { visible_to_parent: visible ? 'نعم' : 'لا' });
   }
 
-  // إشعار فوري عند التحويل لـ 'ظاهر'
-  if (visible) {
-    const className = (rows[0] && rows[0].class_name) || '';
-    await sendPushNotification(
-      sc,
-      studentName,
-      className,
-      'تم تسجيل مخالفة: ' + violationType,
-      '🔔 إشعار من مدرسة ابنك'
-    );
-  }
 
   return { success: true };
 }
@@ -1470,20 +1404,6 @@ async function updateReportStatus(reportNum, status, sc) {
   if (status === 'تم الاطلاع')  patch.read_at = now;
   await sb('reports', 'PATCH', `school_code=eq.${sc}&report_num=eq.${encodeURIComponent(reportNum)}`, patch);
 
-  // إشعار لولي الأمر فقط عند الإرسال الرسمي
-  if (status === 'بانتظار الاستلام') {
-    // نجلب بيانات المحضر لمعرفة اسم الطالب
-    const rows = await sb('reports', 'GET', `school_code=eq.${sc}&report_num=eq.${encodeURIComponent(reportNum)}&select=student_name,class_name`);
-    if (Array.isArray(rows) && rows.length) {
-      await sendPushNotification(
-        sc,
-        rows[0].student_name || '',
-        rows[0].class_name   || '',
-        'تم إرسال محضر مخالفة سلوكية — اضغط للاطلاع عليه',
-        '📋 محضر جديد من مدرسة ابنك'
-      );
-    }
-  }
 
   return { success: true };
 }
