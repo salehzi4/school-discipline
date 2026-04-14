@@ -1365,6 +1365,8 @@ function loadProfile(name, cls){
       setTimeout(function(){ ls.style.display='none'; }, 350);
       $('app').style.display='block';
       document.body.classList.add('app-ready');
+      // نعرض زر الإشعارات بعد ظهور الصفحة
+      setTimeout(showNotifBtn, 500);
       var ft=document.querySelector('.app-ft'); if(ft) ft.style.display='block';
       renderAll(p);
   }).catch(function(){ hideL(); showErr('خطأ في جلب البيانات'); });
