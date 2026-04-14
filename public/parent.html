@@ -1239,8 +1239,12 @@ function showNotifBtn() {
   // فحص الحالة الحالية وتحديث الزر
   if (typeof OneSignalDeferred !== 'undefined') {
     OneSignalDeferred.push(async function(OneSignal) {
-      var enabled = OneSignal.Notifications.permission;
-      updateNotifBtn(!!enabled);
+      try {
+        var enabled = await OneSignal.User.PushSubscription.optedIn;
+        updateNotifBtn(!!enabled);
+      } catch(e) {
+        updateNotifBtn(false);
+      }
     });
   }
 }
@@ -1251,31 +1255,37 @@ function hideNotifBtn() {
 }
 
 function toggleNotifications() {
-  if (typeof OneSignalDeferred === 'undefined') return;
+  if (typeof OneSignalDeferred === 'undefined') {
+    console.warn('[OneSignal] SDK لم يتحمل بعد');
+    return;
+  }
   OneSignalDeferred.push(async function(OneSignal) {
     try {
-      var isEnabled = OneSignal.Notifications.permission;
+      var isEnabled = await OneSignal.User.PushSubscription.optedIn;
+      console.log('[OneSignal] الحالة الحالية:', isEnabled);
+
       if (!isEnabled) {
-        // تفعيل
-        await OneSignal.Notifications.requestPermission();
-        var granted = OneSignal.Notifications.permission;
-        if (granted) {
+        // تفعيل — طلب الإذن
+        var permission = await OneSignal.Notifications.requestPermission();
+        console.log('[OneSignal] الإذن:', permission);
+        if (permission) {
+          // الاشتراك
+          await OneSignal.User.PushSubscription.optIn();
           var sc   = window._notifSchoolCode  || '';
           var name = window._notifStudentName || '';
           var cls  = window._notifClassName   || '';
-          await tagDevice(OneSignal, sc, name, cls);
+          if (sc && name) await tagDevice(OneSignal, sc, name, cls);
           localStorage.setItem('notifEnabled', '1');
           updateNotifBtn(true);
         }
       } else {
-        // تعطيل
-        await OneSignal.Notifications.setDefaultTitle('');
-        try { await OneSignal.User.removeTags(['school_code','student_name','class_name']); } catch(e){}
+        // تعطيل — إلغاء الاشتراك
+        await OneSignal.User.PushSubscription.optOut();
         localStorage.setItem('notifEnabled', '0');
         updateNotifBtn(false);
       }
     } catch(e) {
-      console.warn('[OneSignal] خطأ:', e);
+      console.error('[OneSignal] خطأ في toggleNotifications:', e);
     }
   });
 }
