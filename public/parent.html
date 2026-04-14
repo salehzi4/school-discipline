@@ -647,17 +647,6 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
 
 </script>
 
-<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-<script>
-  window.OneSignalDeferred = window.OneSignalDeferred || [];
-  OneSignalDeferred.push(async function(OneSignal) {
-    await OneSignal.init({
-      appId: "02b5a380-ec64-4f1d-8db4-3e4963197408",
-      notifyButton: { enable: false },
-      autoPrompt: false,
-    });
-  });
-</script>
 </head>
 <body>
 <div class="overlay" id="loadingOverlay"><div class="spin"></div></div>
@@ -723,14 +712,7 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
         <div class="sb-label">الصف والفصل</div>
         <div class="sb-class" id="heroClass">{الصف_والفصل}</div>
       </div>
-      <!-- زر تفعيل الإشعارات -->
-      <div id="notifBtnWrap" style="display:none;margin-right:auto;">
-        <button id="enableNotifBtn" onclick="toggleNotifications()"
-          style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.5);background:rgba(255,255,255,0.15);color:#fff;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;backdrop-filter:blur(4px);">
-          <span class="material-icons-round" id="notifBtnIcon" style="font-size:15px;">notifications_active</span>
-          <span id="notifBtnText">تفعيل الإشعارات</span>
-        </button>
-      </div>
+
     </div>
   </div>
 
@@ -1092,7 +1074,6 @@ document.addEventListener('DOMContentLoaded', function(){
     // دخول عبر رابط مباشر
     sessionStorage.setItem('parentStudentName', urlStudent);
     sessionStorage.setItem('parentStudentClass', urlClass);
-    registerForNotifications(urlStudent, urlClass);
     var ls = document.getElementById('loginScreen');
     if(ls){ ls.style.display='none'; ls.style.opacity='0'; }
     checkNewReports(urlStudent, urlClass);
@@ -1105,7 +1086,6 @@ document.addEventListener('DOMContentLoaded', function(){
     if(remName && remClass){
       sessionStorage.setItem('parentStudentName', remName);
       sessionStorage.setItem('parentStudentClass', remClass);
-      registerForNotifications(remName, remClass);
       var ls2 = document.getElementById('loginScreen');
       if(ls2){ ls2.style.display='none'; ls2.style.opacity='0'; }
       checkNewReports(remName, remClass);
@@ -1191,175 +1171,7 @@ function applySettings(s){
 }
 
 /* ══ AUTH ══ */
-function registerForNotifications(studentName, className) {
-  var role = sessionStorage.getItem('userRole');
-  if (role === 'admin' || role === 'teacher') return;
-  var sc = window.getSchoolCode ? window.getSchoolCode() : '';
-  if (!sc || !studentName) return;
-
-  // نحفظ بيانات الطالب للاستخدام لاحقاً
-  window._notifStudentName = studentName;
-  window._notifClassName   = className || '';
-  window._notifSchoolCode  = sc;
-
-  // نتحقق من حالة الإذن
-  if (typeof OneSignalDeferred !== 'undefined') {
-    OneSignalDeferred.push(async function(OneSignal) {
-      try {
-        var permission = OneSignal.Notifications.permission;
-        if (permission) {
-          // مفعّل مسبقاً — سجّل Tags مباشرة
-          await tagDevice(OneSignal, sc, studentName, className);
-          hideNotifBtn();
-        } else {
-          // اعرض الزر لطلب الإذن
-          showNotifBtn();
-        }
-      } catch(e) {
-        showNotifBtn();
-      }
-    });
-  }
-}
-
-async function tagDevice(OneSignal, sc, studentName, className) {
-  await OneSignal.User.addTags({
-    school_code:  sc,
-    student_name: studentName,
-    class_name:   className || ''
-  });
-  console.log('[OneSignal] Tags أُضيفت:', sc, studentName);
-}
-
-function showNotifBtn() {
-  var wrap = document.getElementById('notifBtnWrap');
-  if (wrap) wrap.style.display = 'block';
-  // فحص الحالة الحالية وتحديث الزر
-  if (typeof OneSignalDeferred !== 'undefined') {
-    OneSignalDeferred.push(async function(OneSignal) {
-      try {
-        var enabled = await OneSignal.User.PushSubscription.optedIn;
-        updateNotifBtn(!!enabled);
-      } catch(e) {
-        updateNotifBtn(false);
-      }
-    });
-  }
-}
-
-function hideNotifBtn() {
-  var wrap = document.getElementById('notifBtnWrap');
-  if (wrap) wrap.style.display = 'none';
-}
-
-function toggleNotifications() {
-  if (typeof OneSignalDeferred === 'undefined') {
-    console.warn('[OneSignal] SDK لم يتحمل بعد');
-    return;
-  }
-  OneSignalDeferred.push(async function(OneSignal) {
-    try {
-      var isEnabled = await OneSignal.User.PushSubscription.optedIn;
-      console.log('[OneSignal] الحالة الحالية:', isEnabled);
-
-      if (!isEnabled) {
-        // فحص إذا كان المتصفح منع الإشعارات مسبقاً
-        var browserPerm = Notification.permission;
-        console.log('[OneSignal] إذن المتصفح:', browserPerm);
-
-        if (browserPerm === 'denied') {
-          // المتصفح منع — نوجه المستخدم لإعدادات المتصفح
-          showNotifGuide();
-          return;
-        }
-
-        // طلب الإذن
-        var permission = await OneSignal.Notifications.requestPermission();
-        console.log('[OneSignal] الإذن:', permission);
-        if (permission) {
-          await OneSignal.User.PushSubscription.optIn();
-          var sc   = window._notifSchoolCode  || '';
-          var name = window._notifStudentName || '';
-          var cls  = window._notifClassName   || '';
-          if (sc && name) await tagDevice(OneSignal, sc, name, cls);
-          localStorage.setItem('notifEnabled', '1');
-          updateNotifBtn(true);
-        } else {
-          // رُفض — نوجه للإعدادات
-          showNotifGuide();
-        }
-      } else {
-        // تعطيل — إلغاء الاشتراك
-        await OneSignal.User.PushSubscription.optOut();
-        localStorage.setItem('notifEnabled', '0');
-        updateNotifBtn(false);
-      }
-    } catch(e) {
-      console.error('[OneSignal] خطأ في toggleNotifications:', e);
-    }
-  });
-}
-
-function closeNotifGuide() {
-  var m = document.getElementById('notifGuideModal');
-  if (m) m.remove();
-}
-
-function showNotifGuide() {
-  var isIOS     = /iPad|iPhone|iPod/.test(navigator.userAgent);
-  var isAndroid = /Android/.test(navigator.userAgent);
-  var steps = isIOS
-    ? 'الإعدادات ← Safari ← الإشعارات ← schools00.netlify.app ← سماح'
-    : isAndroid
-    ? 'اضغط أيقونة القفل في شريط العنوان ← إذونات الموقع ← الإشعارات ← سماح'
-    : 'اضغط أيقونة القفل 🔒 في شريط العنوان ← إعدادات الموقع ← الإشعارات ← سماح';
-
-  var old = document.getElementById('notifGuideModal');
-  if (old) old.remove();
-
-  var modal = document.createElement('div');
-  modal.id = 'notifGuideModal';
-  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
-
-  var box = document.createElement('div');
-  box.style.cssText = 'background:#fff;border-radius:16px;padding:24px;max-width:360px;width:100%;text-align:center;';
-  box.innerHTML = '<span class="material-icons-round" style="font-size:40px;color:#0A5C44;display:block;margin-bottom:12px;">notifications</span>'
-    + '<div style="font-size:15px;font-weight:800;color:#1a1a1a;margin-bottom:8px;">تفعيل الإشعارات</div>'
-    + '<div style="font-size:12px;color:#666;line-height:1.8;margin-bottom:16px;">لتفعيل الإشعارات اتبع الخطوات:<br><strong style="color:#0A5C44;">' + steps + '</strong></div>';
-
-  var btn = document.createElement('button');
-  btn.textContent = 'حسناً';
-  btn.style.cssText = 'padding:10px 24px;background:#0A5C44;color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;';
-  btn.onclick = closeNotifGuide;
-
-  box.appendChild(btn);
-  modal.appendChild(box);
-  document.body.appendChild(modal);
-}
-
-function updateNotifBtn(enabled) {
-  var icon = document.getElementById('notifBtnIcon');
-  var text = document.getElementById('notifBtnText');
-  var btn  = document.getElementById('enableNotifBtn');
-  if (!icon || !text || !btn) return;
-  if (enabled) {
-    icon.textContent = 'notifications_off';
-    text.textContent = 'تعطيل الإشعارات';
-    btn.style.background = 'rgba(255,255,255,0.25)';
-    btn.style.borderColor = 'rgba(255,255,255,0.8)';
-  } else {
-    icon.textContent = 'notifications_active';
-    text.textContent = 'تفعيل الإشعارات';
-    btn.style.background = 'rgba(255,255,255,0.15)';
-    btn.style.borderColor = 'rgba(255,255,255,0.5)';
-  }
-}
-
-function requestNotificationPermission() {
-  toggleNotifications();
-}
-
-function doLogin(){
+async function doLogin(){
   var id = $('nationalIdInput').value.trim();
   if(!id){ showErr('أدخل رقم الهوية'); return; }
   showL();
@@ -1379,7 +1191,6 @@ function doLogin(){
       localStorage.removeItem('rememberedName');
       localStorage.removeItem('rememberedClass');
     }
-    registerForNotifications(r.name, r.className);
     loadProfile(r.name, r.className);
   }).catch(function(){ hideL(); showErr('حدث خطأ، يرجى المحاولة مجدداً'); });
 }
@@ -1423,8 +1234,7 @@ function loadProfile(name, cls){
       $('app').style.display='block';
       document.body.classList.add('app-ready');
       // نعرض زر الإشعارات بعد ظهور الصفحة
-      setTimeout(showNotifBtn, 500);
-      var ft=document.querySelector('.app-ft'); if(ft) ft.style.display='block';
+            var ft=document.querySelector('.app-ft'); if(ft) ft.style.display='block';
       renderAll(p);
   }).catch(function(){ hideL(); showErr('خطأ في جلب البيانات'); });
 }
