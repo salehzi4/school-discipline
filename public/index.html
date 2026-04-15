@@ -2595,6 +2595,13 @@ tr:hover td{background:var(--em-ghost);}
     </div>
     <div id="studentsListContainer" style="display:none;">
       <label style="font-size:11px;font-weight:700;color:#555;margin-bottom:5px;display:block;">اختر الطلاب <span class="chip" id="selectedCount">0</span></label>
+      <!-- بحث الطلاب -->
+      <div style="position:relative;margin-bottom:8px;">
+        <span class="material-icons-round" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:16px;color:#aaa;pointer-events:none;">search</span>
+        <input type="text" id="studentSearchInput" placeholder="بحث باسم الطالب..."
+          oninput="filterStudentsList(this.value)"
+          style="width:100%;padding:8px 34px 8px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:12px;box-sizing:border-box;">
+      </div>
       <div class="select-all-bar"><label style="cursor:pointer;display:flex;align-items:center;gap:6px;"><input type="checkbox" id="selectAllStudents" onchange="toggleSelectAll()" style="width:16px;height:16px;accent-color:#07A869;"> تحديد الكل</label></div>
       <div class="students-checkbox-list" id="studentsCheckboxList"></div>
     </div>
@@ -6099,8 +6106,22 @@ function getSelectedStudents() {
 }
 
 
-function loadClassStudents(){const cn=document.getElementById('recordClass').value;if(!cn){document.getElementById('studentsListContainer').style.display='none';return;}showLoading();google.script.run.withSuccessHandler(function(students){hideLoading();currentStudents=students;const list=document.getElementById('studentsCheckboxList');if(!students.length){list.innerHTML='<div class="empty-state">لا يوجد</div>';document.getElementById('studentsListContainer').style.display='block';
+function loadClassStudents(){
+  // مسح البحث عند تغيير الفصل
+  var si = document.getElementById('studentSearchInput');
+  if (si) si.value = '';
+  const cn=document.getElementById('recordClass').value;if(!cn){document.getElementById('studentsListContainer').style.display='none';return;}showLoading();google.script.run.withSuccessHandler(function(students){hideLoading();currentStudents=students;const list=document.getElementById('studentsCheckboxList');if(!students.length){list.innerHTML='<div class="empty-state">لا يوجد</div>';document.getElementById('studentsListContainer').style.display='block';
       if(students.length){document.getElementById('fixedViolationsArea').style.display='block';renderAllViolationGrids();}return;}list.innerHTML=students.map((s,i)=>'<div class="student-checkbox-item"><input type="checkbox" id="st_'+i+'" value="'+i+'" onchange="updSelCnt();updateMessagePreview();"><label for="st_'+i+'">'+s.name+'</label></div>').join('');document.getElementById('studentsListContainer').style.display='block';document.getElementById('selectAllStudents').checked=false;updSelCnt();}).getStudentsByClass(cn);}
+
+function filterStudentsList(query) {
+  var q = query.trim().toLowerCase();
+  var items = document.querySelectorAll('#studentsCheckboxList .student-checkbox-item');
+  items.forEach(function(item) {
+    var label = item.querySelector('label');
+    var name  = label ? label.textContent.trim().toLowerCase() : '';
+    item.style.display = (!q || name.includes(q)) ? '' : 'none';
+  });
+}
 function toggleSelectAll(){const c=document.getElementById('selectAllStudents').checked;document.querySelectorAll('#studentsCheckboxList input[type="checkbox"]').forEach(cb=>cb.checked=c);updSelCnt();updateMessagePreview();}
 function updSelCnt(){
   const sel = getSelectedStudents();
