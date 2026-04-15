@@ -144,6 +144,12 @@ body { overflow-x: hidden; }
     grid-template-columns: repeat(2, 1fr) !important;
   }
 }
+
+.bulk-bar { display:none; align-items:center; gap:10px; padding:8px 14px; background:#fff3cd; border:1.5px solid #ffc107; border-radius:8px; margin-bottom:8px; }
+.bulk-bar-count { font-size:12px; font-weight:700; color:#856404; }
+.cb-col { width:36px; text-align:center; }
+.bulk-row-cb { width:15px; height:15px; accent-color:#E24B4A; cursor:pointer; }
+
 </style>
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1559,7 +1565,17 @@ tr:hover td{background:var(--em-ghost);}
         <select id="myLogFilterVtype" onchange="loadMyLog()" style="font-family:inherit;padding:5px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px;"><option value="">كل المخالفات</option></select>
         <button class="btn btn-outline btn-sm" onclick="clearMyLogFilters()">مسح</button>
         <span class="chip" id="myLogCount">0</span>
-      </div><div class="table-wrapper"><table><thead><tr><th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>المخالفة</th><th>الإجراء المتخذ</th><th>التكرار</th><th title="تحكم بظهور المخالفة في ملف الطالب لدى ولي الأمر">ولي الأمر 👁</th><th>إجراءات</th></tr></thead><tbody id="myLogBody"><tr><td colspan="7" class="empty-state">لا توجد</td></tr></tbody></table></div></div></div>
+      </div><div class="table-wrapper"><table><div id="myLogBulkBar" class="bulk-bar">
+  <span class="bulk-bar-count"><span id="myLogBulkCount">0</span> محدد</span>
+  <button class="btn btn-danger btn-sm" onclick="bulkDeleteMyLog()">
+    <span class="material-icons-round" style="font-size:14px;">delete_sweep</span> حذف المحدد
+  </button>
+  <button class="btn btn-outline btn-sm" onclick="clearBulkSelection('myLogBody','myLogSelectAll','myLogBulkBar','myLogBulkCount')">إلغاء</button>
+</div>
+<thead><tr>
+  <th class="cb-col"><input type="checkbox" class="bulk-cb" id="myLogSelectAll" onchange="toggleBulkAll('myLogBody','myLogSelectAll','myLogBulkBar','myLogBulkCount')"></th>
+  <th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>المخالفة</th><th>الإجراء المتخذ</th><th>التكرار</th><th title="تحكم بظهور المخالفة في ملف الطالب لدى ولي الأمر">ولي الأمر 👁</th><th>إجراءات</th>
+</tr></thead><tbody id="myLogBody"><tr><td colspan="7" class="empty-state">لا توجد</td></tr></tbody></table></div></div></div>
 
 <div class="page-section" id="page-mymessages">
 <div class="page-toolbar">
@@ -1570,7 +1586,17 @@ tr:hover td{background:var(--em-ghost);}
     <button class="pt-print" onclick="printSection('mymessages')"><span class="material-icons-round">print</span> طباعة</button>
     <button class="pt-pdf" onclick="exportPDF('mymessages')"><span class="material-icons-round">picture_as_pdf</span> PDF</button>
   </div>
-<div class="card"><div class="card-title"><span class="material-icons-round">chat</span> رسائلي</div><div class="filters-bar"><input type="date" id="myMsgDate" onchange="loadMyMsgs()"><button class="btn btn-outline btn-sm" onclick="document.getElementById('myMsgDate').value='';loadMyMsgs();">الكل</button><span class="chip" id="myMsgCount">0</span></div><div class="table-wrapper"><table><thead><tr><th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>المخالفة</th><th>الحالة</th></tr></thead><tbody id="myMsgBody"><tr><td colspan="6" class="empty-state">لا توجد</td></tr></tbody></table></div></div></div>
+<div class="card"><div class="card-title"><span class="material-icons-round">chat</span> رسائلي</div><div class="filters-bar"><input type="date" id="myMsgDate" onchange="loadMyMsgs()"><button class="btn btn-outline btn-sm" onclick="document.getElementById('myMsgDate').value='';loadMyMsgs();">الكل</button><span class="chip" id="myMsgCount">0</span></div><div class="table-wrapper"><table><div id="myMsgBulkBar" class="bulk-bar">
+  <span class="bulk-bar-count"><span id="myMsgBulkCount">0</span> محدد</span>
+  <button class="btn btn-danger btn-sm" onclick="bulkDeleteMyMsg()">
+    <span class="material-icons-round" style="font-size:14px;">delete_sweep</span> حذف المحدد
+  </button>
+  <button class="btn btn-outline btn-sm" onclick="clearBulkSelection('myMsgBody','myMsgSelectAll','myMsgBulkBar','myMsgBulkCount')">إلغاء</button>
+</div>
+<thead><tr>
+  <th class="cb-col"><input type="checkbox" class="bulk-cb" id="myMsgSelectAll" onchange="toggleBulkAll('myMsgBody','myMsgSelectAll','myMsgBulkBar','myMsgBulkCount')"></th>
+  <th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>المخالفة</th><th>الحالة</th>
+</tr></thead><tbody id="myMsgBody"><tr><td colspan="6" class="empty-state">لا توجد</td></tr></tbody></table></div></div></div>
 
 <div class="page-section" id="page-alerts">
 <div class="page-toolbar">
@@ -1648,11 +1674,19 @@ tr:hover td{background:var(--em-ghost);}
     </div>
     <div class="table-wrapper">
       <table>
-        <thead><tr>
-          <th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th>
-          <th>اسم السلوك</th><th>نوع السلوك</th><th>الإجراءات</th>
-        </tr></thead>
-        <tbody id="tPosLogBody">
+        <div id="tPosBulkBar" class="bulk-bar">
+  <span class="bulk-bar-count"><span id="tPosBulkCount">0</span> محدد</span>
+  <button class="btn btn-danger btn-sm" onclick="bulkDeleteTPos()">
+    <span class="material-icons-round" style="font-size:14px;">delete_sweep</span> حذف المحدد
+  </button>
+  <button class="btn btn-outline btn-sm" onclick="clearBulkSelection('tPosLogBody','tPosSelectAll','tPosBulkBar','tPosBulkCount')">إلغاء</button>
+</div>
+<thead><tr>
+  <th class="cb-col"><input type="checkbox" class="bulk-cb" id="tPosSelectAll" onchange="toggleBulkAll('tPosLogBody','tPosSelectAll','tPosBulkBar','tPosBulkCount')"></th>
+  <th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th>
+  <th>اسم السلوك</th><th>نوع السلوك</th><th>الإجراءات</th>
+</tr></thead>
+<tbody id="tPosLogBody">
           <tr><td colspan="7" class="empty-state">لا توجد سجلات</td></tr>
         </tbody>
       </table>
@@ -2316,6 +2350,29 @@ function getSelectedStudents() {
 }
 
 
+
+function toggleBulkAll(tbodyId, selectAllId, barId, countId) {
+  var checked = document.getElementById(selectAllId).checked;
+  var rows = document.querySelectorAll('#' + tbodyId + ' .bulk-row-cb');
+  rows.forEach(function(cb) { cb.checked = checked; });
+  updateBulkBar(tbodyId, barId, countId);
+}
+
+function updateBulkBar(tbodyId, barId, countId) {
+  var checked = document.querySelectorAll('#' + tbodyId + ' .bulk-row-cb:checked').length;
+  var bar = document.getElementById(barId);
+  var cnt = document.getElementById(countId);
+  if (bar) bar.style.display = checked > 0 ? 'flex' : 'none';
+  if (cnt) cnt.textContent = checked;
+}
+
+function clearBulkSelection(tbodyId, selectAllId, barId, countId) {
+  var all = document.getElementById(selectAllId);
+  if (all) all.checked = false;
+  document.querySelectorAll('#' + tbodyId + ' .bulk-row-cb').forEach(function(cb){ cb.checked = false; });
+  updateBulkBar(tbodyId, barId, countId);
+}
+
 function filterStudentsList(query) {
   var q = query.trim().toLowerCase();
   var items = document.querySelectorAll('#studentsCheckboxList .student-checkbox-item');
@@ -2604,6 +2661,7 @@ function loadMyLog(){
 
       var delBtn = '<button class="btn btn-danger btn-sm" onclick="tDelViolation(\''+r.date.replace(/\'/g,"\\'")+'\''+',\''+r.studentName.replace(/\'/g,"\\'")+'\''+',\''+r.violationType.replace(/\'/g,"\\'")+'\')" style="padding:4px 6px;" title="حذف"><span class="material-icons-round" style="font-size:14px;">delete</span></button>';
       return '<tr>'
+        + '<td><input type="checkbox" class="bulk-cb myLog-cb" onchange="updateBulkBar(\'myLogBulkBar\',\'myLog-cb\',\'myLogBulkCount\')"></td>'
         + '<td>'+(i+1)+'</td>'
         + '<td>'+r.date+'</td>'
         + '<td><strong>'+r.studentName+'</strong> '+icons+'</td>'
@@ -2669,7 +2727,7 @@ function toggleVis(date,studentName,violationType,makeVisible,btn){
   }).catch(function(e){ hideL(); console.error(e); });
 }
 
-function loadMyMsgs(){if(!T)return;const fd=document.getElementById('myMsgDate').value;showL();google.script.run.withSuccessHandler(msgs=>{hideL();const my=msgs.filter(m=>m.sender===T.name);document.getElementById('myMsgCount').textContent=my.length;const tb=document.getElementById('myMsgBody');tb.innerHTML=my.length?my.map((m,i)=>'<tr><td>'+(i+1)+'</td><td>'+m.date+'</td><td><strong>'+m.studentName+'</strong></td><td>'+m.className+'</td><td>'+m.violationType+'</td><td><span class="status-sent">'+m.status+'</span></td></tr>').join(''):'<tr><td colspan="6" class="empty-state">لا توجد</td></tr>';}).getMessagesLog('الكل',fd);}
+function loadMyMsgs(){if(!T)return;const fd=document.getElementById('myMsgDate').value;showL();google.script.run.withSuccessHandler(msgs=>{hideL();const my=msgs.filter(m=>m.sender===T.name);document.getElementById('myMsgCount').textContent=my.length;const tb=document.getElementById('myMsgBody');tb.innerHTML=my.length?my.map((m,i)=>'<tr><td><input type="checkbox" class="bulk-cb myMsg-cb" onchange="updateBulkBar(\'myMsgBulkBar\',\'myMsg-cb\',\'myMsgBulkCount\')"></td><td>'+(i+1)+'</td><td>'+m.date+'</td><td><strong>'+m.studentName+'</strong></td><td>'+m.className+'</td><td>'+m.violationType+'</td><td><span class="status-sent">'+m.status+'</span></td></tr>').join(''):'<tr><td colspan="6" class="empty-state">لا توجد</td></tr>';}).getMessagesLog('الكل',fd);}
 
 function loadReferredLog(){
   if(!T)return;
@@ -4103,6 +4161,7 @@ function loadTPosLog() {
         + 'data-date="'+rawDate+'" '
         + 'style="padding:3px 7px;" title="حذف"><span class="material-icons-round" style="font-size:13px;">delete</span></button>';
       return '<tr style="'+(isD?'background:rgba(34,211,238,0.03)':'') + '">'
+        + '<td><input type="checkbox" class="bulk-cb tPos-cb" onchange="updateBulkBar(\'tPosBulkBar\',\'tPos-cb\',\'tPosBulkCount\')"></td>'
         + '<td>'+(i+1)+'</td>'
         + '<td>'+dispDate+'</td>'
         + '<td><strong>'+sn+'</strong></td>'
