@@ -224,6 +224,22 @@ body { overflow-x: hidden; }
 }
 </style>
 <meta charset="UTF-8">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0A5C44">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="بوابة الأسرة">
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function(OneSignal) {
+    await OneSignal.init({
+      appId: "02b5a380-ec64-4f1d-8db4-3e4963197408",
+      notifyButton: { enable: false },
+      autoPrompt: false
+    });
+  });
+</script>
 
 <meta name="theme-color" content="#0A5C44">
 <meta name="mobile-web-app-capable" content="yes">
@@ -647,6 +663,17 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
 
 </script>
 
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function(OneSignal) {
+    await OneSignal.init({
+      appId: "02b5a380-ec64-4f1d-8db4-3e4963197408",
+      notifyButton: { enable: false },
+      autoPrompt: false
+    });
+  });
+</script>
 </head>
 <body>
 <div class="overlay" id="loadingOverlay"><div class="spin"></div></div>
@@ -712,7 +739,20 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
         <div class="sb-label">الصف والفصل</div>
         <div class="sb-class" id="heroClass">{الصف_والفصل}</div>
       </div>
-
+      <div id="notifBtnWrap" style="display:none;margin-right:auto;">
+        <button id="notifBtn" onclick="toggleNotifications()"
+          style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.5);background:rgba(255,255,255,0.15);color:#fff;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;">
+          <span class="material-icons-round" id="notifBtnIcon" style="font-size:15px;">notifications_active</span>
+          <span id="notifBtnText">تفعيل الإشعارات</span>
+        </button>
+      </div>
+      <div id="notifBtnWrap" style="display:none;margin-right:auto;">
+        <button id="notifBtn" onclick="toggleNotifications()"
+          style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.5);background:rgba(255,255,255,0.15);color:#fff;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;">
+          <span class="material-icons-round" id="notifIcon" style="font-size:15px;">notifications_active</span>
+          <span id="notifText">تفعيل الإشعارات</span>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -1074,6 +1114,7 @@ document.addEventListener('DOMContentLoaded', function(){
     // دخول عبر رابط مباشر
     sessionStorage.setItem('parentStudentName', urlStudent);
     sessionStorage.setItem('parentStudentClass', urlClass);
+    registerForNotifications(urlStudent, urlClass);
     var ls = document.getElementById('loginScreen');
     if(ls){ ls.style.display='none'; ls.style.opacity='0'; }
     checkNewReports(urlStudent, urlClass);
@@ -1102,6 +1143,97 @@ document.addEventListener('DOMContentLoaded', function(){
     }
   }
 });
+
+
+// ═══════════════════════════════════════════
+// نظام الإشعارات — OneSignal
+// ═══════════════════════════════════════════
+
+function initNotifications(studentName, className) {
+  // لا نسجل للإدارة أو المعلمين
+  var role = sessionStorage.getItem('userRole');
+  if (role === 'admin' || role === 'teacher') return;
+  var sc = window.getSchoolCode ? window.getSchoolCode() : '';
+  if (!sc || !studentName) return;
+
+  // نحفظ بيانات الطالب
+  window._os_sc   = sc;
+  window._os_name = studentName;
+  window._os_cls  = className || '';
+
+  if (typeof OneSignalDeferred === 'undefined') return;
+
+  OneSignalDeferred.push(async function(OneSignal) {
+    try {
+      // نعرض الزر دائماً
+      var wrap = document.getElementById('notifBtnWrap');
+      if (wrap) wrap.style.display = 'block';
+
+      // نحدث حالة الزر
+      var subscribed = await OneSignal.User.PushSubscription.optedIn;
+      updateNotifBtn(!!subscribed);
+
+      // إذا مشترك — نجدد Tags
+      if (subscribed) {
+        await OneSignal.User.addTags({
+          school_code: sc, student_name: studentName, class_name: className || ''
+        });
+      }
+    } catch(e) {
+      var wrap = document.getElementById('notifBtnWrap');
+      if (wrap) wrap.style.display = 'block';
+      updateNotifBtn(false);
+    }
+  });
+}
+
+function updateNotifBtn(enabled) {
+  var icon = document.getElementById('notifIcon');
+  var text = document.getElementById('notifText');
+  var btn  = document.getElementById('notifBtn');
+  if (!icon || !text) return;
+  if (enabled) {
+    icon.textContent = 'notifications_off';
+    text.textContent = 'تعطيل الإشعارات';
+    if (btn) { btn.style.background = 'rgba(255,255,255,0.3)'; btn.style.borderColor = 'rgba(255,255,255,0.9)'; }
+  } else {
+    icon.textContent = 'notifications_active';
+    text.textContent = 'تفعيل الإشعارات';
+    if (btn) { btn.style.background = 'rgba(255,255,255,0.15)'; btn.style.borderColor = 'rgba(255,255,255,0.5)'; }
+  }
+}
+
+function toggleNotifications() {
+  if (typeof OneSignalDeferred === 'undefined') return;
+  OneSignalDeferred.push(async function(OneSignal) {
+    try {
+      var subscribed = await OneSignal.User.PushSubscription.optedIn;
+      if (!subscribed) {
+        // فحص إذن المتصفح
+        if (typeof Notification !== 'undefined' && Notification.permission === 'denied') {
+          alert('الإشعارات محظورة في هذا المتصفح. يرجى السماح بها من إعدادات المتصفح ثم إعادة المحاولة.');
+          return;
+        }
+        // طلب الإذن والاشتراك
+        await OneSignal.User.PushSubscription.optIn();
+        var granted = await OneSignal.User.PushSubscription.optedIn;
+        if (granted) {
+          var sc   = window._os_sc   || '';
+          var name = window._os_name || '';
+          var cls  = window._os_cls  || '';
+          await OneSignal.User.addTags({ school_code: sc, student_name: name, class_name: cls });
+          updateNotifBtn(true);
+        }
+      } else {
+        // إلغاء الاشتراك
+        await OneSignal.User.PushSubscription.optOut();
+        updateNotifBtn(false);
+      }
+    } catch(e) {
+      console.error('[OneSignal]', e);
+    }
+  });
+}
 
 function applySettings(s){
   if(!s) return;
@@ -1171,7 +1303,97 @@ function applySettings(s){
 }
 
 /* ══ AUTH ══ */
-async function doLogin(){
+// ═══════════════════════════════════════════
+// نظام الإشعارات
+// ═══════════════════════════════════════════
+
+function registerForNotifications(studentName, className) {
+  var sc = window.getSchoolCode ? window.getSchoolCode() : '';
+  if (!sc || !studentName) return;
+  window._notifStudentName = studentName;
+  window._notifClassName   = className || '';
+  window._notifSchoolCode  = sc;
+  // نعرض الزر دائماً بعد الدخول
+  setTimeout(showNotifBtn, 600);
+}
+
+// ══ دوال الإشعارات ══
+function registerForNotifications(studentName, className) {
+  var role = sessionStorage.getItem('userRole');
+  if (role === 'admin' || role === 'teacher') return;
+  var sc = window.getSchoolCode ? window.getSchoolCode() : '';
+  if (!sc || !studentName) return;
+  window._notifSchoolCode  = sc;
+  window._notifStudentName = studentName;
+  window._notifClassName   = className || '';
+
+  if (typeof OneSignalDeferred === 'undefined') return;
+  OneSignalDeferred.push(async function(OneSignal) {
+    try {
+      var optedIn = await OneSignal.User.PushSubscription.optedIn;
+      if (optedIn) {
+        // مسجل مسبقاً — حدّث Tags فقط
+        await OneSignal.User.addTags({
+          school_code: sc, student_name: studentName, class_name: className || ''
+        });
+        updateNotifBtn(true);
+      }
+      // أظهر الزر دائماً
+      var wrap = document.getElementById('notifBtnWrap');
+      if (wrap) wrap.style.display = 'block';
+    } catch(e) {
+      var wrap = document.getElementById('notifBtnWrap');
+      if (wrap) wrap.style.display = 'block';
+      updateNotifBtn(false);
+    }
+  });
+}
+
+function toggleNotifications() {
+  if (typeof OneSignalDeferred === 'undefined') return;
+  OneSignalDeferred.push(async function(OneSignal) {
+    try {
+      var optedIn = await OneSignal.User.PushSubscription.optedIn;
+      if (!optedIn) {
+        // طلب الإذن
+        var granted = await OneSignal.Notifications.requestPermission();
+        if (granted) {
+          await OneSignal.User.PushSubscription.optIn();
+          await OneSignal.User.addTags({
+            school_code:  window._notifSchoolCode  || '',
+            student_name: window._notifStudentName || '',
+            class_name:   window._notifClassName   || ''
+          });
+          updateNotifBtn(true);
+        }
+      } else {
+        // تعطيل
+        await OneSignal.User.PushSubscription.optOut();
+        updateNotifBtn(false);
+      }
+    } catch(e) {
+      console.warn('[OneSignal]:', e);
+    }
+  });
+}
+
+function updateNotifBtn(enabled) {
+  var icon = document.getElementById('notifBtnIcon');
+  var text = document.getElementById('notifBtnText');
+  var btn  = document.getElementById('notifBtn');
+  if (!icon || !text) return;
+  if (enabled) {
+    icon.textContent = 'notifications_off';
+    text.textContent = 'تعطيل الإشعارات';
+    if (btn) btn.style.background = 'rgba(255,255,255,0.3)';
+  } else {
+    icon.textContent = 'notifications_active';
+    text.textContent = 'تفعيل الإشعارات';
+    if (btn) btn.style.background = 'rgba(255,255,255,0.15)';
+  }
+}
+
+function doLogin(){
   var id = $('nationalIdInput').value.trim();
   if(!id){ showErr('أدخل رقم الهوية'); return; }
   showL();
@@ -1180,6 +1402,8 @@ async function doLogin(){
     if(!r){ showErr('رقم الهوية غير صحيح أو غير مسجل في النظام'); return; }
     sessionStorage.setItem('parentStudentName', r.name);
     sessionStorage.setItem('parentStudentClass', r.className);
+    registerForNotifications(r.name, r.className);
+    registerForNotifications(r.name, r.className);
     // حفظ بيانات تذكرني
     var remember = document.getElementById('rememberMe');
     if(remember && remember.checked){
@@ -1233,6 +1457,12 @@ function loadProfile(name, cls){
       setTimeout(function(){ ls.style.display='none'; }, 350);
       $('app').style.display='block';
       document.body.classList.add('app-ready');
+      setTimeout(function(){ registerForNotifications(
+        sessionStorage.getItem('parentStudentName') || '',
+        sessionStorage.getItem('parentStudentClass') || ''
+      ); }, 800);
+      // تهيئة الإشعارات
+      setTimeout(function(){ initNotifications(name, cls); }, 600);
       // نعرض زر الإشعارات بعد ظهور الصفحة
             var ft=document.querySelector('.app-ft'); if(ft) ft.style.display='block';
       renderAll(p);
