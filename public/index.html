@@ -125,6 +125,16 @@ body { overflow-x: hidden; }
   .role-card { width: 110px !important; padding: 14px 12px 12px !important; }
   .role-icon-wrap { width: 46px !important; height: 46px !important; }
 }
+
+/* ══ Bulk Delete ══ */
+.bulk-bar {
+  display:none;align-items:center;gap:10px;padding:8px 14px;
+  background:#fff3cd;border:1.5px solid #ffc107;border-radius:8px;
+  margin-bottom:8px;font-size:12px;font-weight:700;
+}
+.bulk-bar.active { display:flex; }
+.bulk-cb { width:15px;height:15px;accent-color:var(--danger);cursor:pointer; }
+th.cb-col, td.cb-col { width:36px;text-align:center;padding:4px!important; }
 </style>
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -3455,7 +3465,18 @@ tr:hover td{background:var(--em-ghost);}
       <button class="btn btn-outline btn-sm" onclick="clearMsgFilters()">مسح</button>
       <span class="chip" id="msgCountChip">0</span>
     </div>
-    <div class="table-wrapper"><table><thead><tr><th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>نص الرسالة</th><th>المرسل</th><th>الحالة</th><th>الإجراءات</th></tr></thead><tbody id="messagesTableBody"><tr><td colspan="7" class="empty-state">لا توجد</td></tr></tbody></table></div>
+    <div class="table-wrapper"><table><!-- Bulk Bar رسائل -->
+<div id="msgBulkBar" class="bulk-bar">
+  <span class="bulk-bar-count"><span id="msgBulkCount">0</span> محدد</span>
+  <button class="btn btn-danger btn-sm" onclick="bulkDeleteMessages()">
+    <span class="material-icons-round" style="font-size:14px;">delete_sweep</span> حذف المحدد
+  </button>
+  <button class="btn btn-outline btn-sm" onclick="clearBulkSelection('messagesTableBody','msgSelectAll','msgBulkBar','msgBulkCount')">إلغاء</button>
+</div>
+<thead><tr>
+  <th class="cb-col"><input type="checkbox" class="bulk-cb" id="msgSelectAll" onchange="toggleBulkAll('messagesTableBody','msgSelectAll','msgBulkBar','msgBulkCount')"></th>
+  <th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>نص الرسالة</th><th>المرسل</th><th>الحالة</th><th>الإجراءات</th>
+</tr></thead><tbody id="messagesTableBody"><tr><td colspan="7" class="empty-state">لا توجد</td></tr></tbody></table></div>
   </div>
 </div>
 
@@ -3505,7 +3526,17 @@ tr:hover td{background:var(--em-ghost);}
         </select>
         <button class="btn btn-outline btn-sm" onclick="clearLogFilters()">مسح</button>
       </div>
-      <div class="table-wrapper"><table><thead><tr><th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>نوع المخالفة</th><th>المخالفة</th><th>الإجراء المتخذ</th><th>التكرار</th><th>المسجّل</th><th>ولي الأمر 👁</th><th>إجراءات</th></tr></thead><tbody id="violationsLogTableBody"><tr><td colspan="8" class="empty-state">لا توجد</td></tr></tbody></table></div>
+      <div class="table-wrapper"><table><div class="bulk-bar" id="vlBulkBar">
+  <span id="vlBulkCount">0 محدد</span>
+  <button class="btn btn-danger btn-sm" onclick="bulkDeleteViolations()">
+    <span class="material-icons-round" style="font-size:13px;">delete</span> حذف المحدد
+  </button>
+  <button class="btn btn-outline btn-sm" onclick="clearBulkViolations()">إلغاء</button>
+</div>
+<thead><tr>
+  <th class="cb-col"><input type="checkbox" class="bulk-cb" id="vlSelectAll" onchange="toggleBulkAll('violationsLogTableBody','vlSelectAll','vlBulkBar','vlBulkCount')"></th>
+  <th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>نوع المخالفة</th><th>المخالفة</th><th>الإجراء المتخذ</th><th>التكرار</th><th>المسجّل</th><th>ولي الأمر 👁</th><th>إجراءات</th>
+</tr></thead><tbody id="violationsLogTableBody"><tr><td colspan="8" class="empty-state">لا توجد</td></tr></tbody></table></div>
     </div>
   </div>
 
@@ -3800,9 +3831,16 @@ tr:hover td{background:var(--em-ghost);}
       <span id="reportsCount" style="background:var(--em-pale);color:var(--em);padding:3px 12px;border-radius:20px;font-size:11px;font-weight:700;"></span>
     </div>
     <div class="table-wrapper">
+        <div class="bulk-bar" id="rptBulkBar">
+          <span id="rptBulkCount">0 محدد</span>
+          <button class="btn btn-danger btn-sm" onclick="bulkDeleteReports()">
+            <span class="material-icons-round" style="font-size:13px;">delete</span> حذف المحدد
+          </button>
+        </div>
       <table>
         <thead>
           <tr>
+            <th class="cb-col"><input type="checkbox" class="bulk-cb" id="rptSelectAll" onchange="toggleBulkAll('reportsTableBody','rptSelectAll','rptBulkBar','rptBulkCount')"></th>
             <th>#</th>
             <th>اسم الطالب</th>
             <th>المخالفة</th>
@@ -4034,7 +4072,15 @@ tr:hover td{background:var(--em-ghost);}
       </div>
       <div class="table-wrapper">
         <table>
-          <thead><tr>
+          <div class="bulk-bar" id="posBulkBar">
+  <span id="posBulkCount">0 محدد</span>
+  <button class="btn btn-danger btn-sm" onclick="bulkDeletePositive()">
+    <span class="material-icons-round" style="font-size:13px;">delete</span> حذف المحدد
+  </button>
+  <button class="btn btn-outline btn-sm" onclick="clearBulkPositive()">إلغاء</button>
+</div>
+<thead><tr>
+  <th class="cb-col"><input type="checkbox" class="bulk-cb" id="posSelectAll" onchange="toggleBulkAll('positiveLogTableBody','posSelectAll','posBulkBar','posBulkCount')"></th>
             <th>#</th>
             <th>التاريخ</th>
             <th>الطالب</th>
@@ -4656,6 +4702,7 @@ function loadPositiveLogTable() {
           'style="padding:3px 7px;" title="حذف"><span class="material-icons-round" style="font-size:13px;">delete</span></button>'
         : '';
       return '<tr style="'+(isD?'background:rgba(34,211,238,0.03)':'')+'">'
+        +'<td class="cb-col"><input type="checkbox" class="bulk-cb pos-cb" data-idx="'+i+'" onchange="updateBulkBar(\'posBulkBar\',\'pos-cb\',\'posBulkCount\')"></td>'
         +'<td>'+(i+1)+'</td>'
         +'<td>'+date+'</td>'
         +'<td><strong>'+esc(r.student_name||r.studentName||'')+'</strong></td>'
@@ -6264,7 +6311,8 @@ function loadMessagesLog() {
     msgs.forEach(function(m, i) {
       var tr = document.createElement('tr');
       tr.innerHTML =
-          '<td>' + (i+1) + '</td>'
+          '<td><input type="checkbox" class="bulk-cb msg-cb"></td>'
+        + '<td>' + (i+1) + '</td>'
         + '<td>' + (m.date||'') + '</td>'
         + '<td><strong>' + (m.studentName||'') + '</strong></td>'
         + '<td>' + (m.className||'') + '</td>'
@@ -6282,6 +6330,8 @@ function loadMessagesLog() {
       delBtn.dataset.vtype = m.violationType || '';
       delBtn.onclick = function(){ delMessage(this); };
       tr.cells[7].appendChild(delBtn);
+      var msgCb = tr.querySelector('.msg-cb');
+      if (msgCb) msgCb.addEventListener('change', function(){ updateBulkBar('msgBulkBar','msg-cb','msgBulkCount'); });
       tb.appendChild(tr);
     });
   }).catch(function(e){ hideLoading(); console.error(e); });
@@ -6312,6 +6362,127 @@ function _getCategoryLabel(cat) {
     'positive':   '<span style="padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:#e8f5ee;color:#055c38;border:1px solid #07A869;">إيجابي</span>'
   };
   return map[cat] || '<span style="padding:2px 8px;border-radius:20px;font-size:10px;color:#999;border:1px solid #C2C1C1;">'+(cat||'—')+'</span>';
+}
+
+
+// ═══════════════════════════════════════════════════════
+// Bulk Delete — حذف متعدد
+// ═══════════════════════════════════════════════════════
+
+// تحديد/إلغاء الكل
+function toggleBulkAll(tbodyId, selectAllId, barId, countId) {
+  var checked = document.getElementById(selectAllId).checked;
+  var cbs = document.querySelectorAll('#' + tbodyId + ' .bulk-cb');
+  cbs.forEach(function(cb) { cb.checked = checked; });
+  updateBulkBar(barId, tbodyId + ' .bulk-cb', countId);
+}
+
+// تحديث شريط الـ bulk
+function updateBulkBar(barId, cbClass, countId) {
+  var cbs = document.querySelectorAll('.' + cbClass.split(' ').pop());
+  var checked = Array.from(cbs).filter(function(cb) { return cb.checked; });
+  var bar = document.getElementById(barId);
+  var cnt = document.getElementById(countId);
+  if (bar) bar.classList.toggle('active', checked.length > 0);
+  if (cnt) cnt.textContent = checked.length + ' محدد';
+}
+
+// ── حذف متعدد: سجل المخالفات ──
+function bulkDeleteViolations() {
+  var cbs = document.querySelectorAll('.vl-cb:checked');
+  if (!cbs.length) return;
+  if (!confirm('حذف ' + cbs.length + ' سجل؟ لا يمكن التراجع.')) return;
+  showLoading();
+  var promises = Array.from(cbs).map(function(cb) {
+    var idx = parseInt(cb.dataset.idx);
+    var rec = window._allVlRecords && window._allVlRecords[idx];
+    if (!rec) return Promise.resolve();
+    return GAS.deleteViolationLog(rec.date, rec.studentName, rec.violationType);
+  });
+  Promise.all(promises).then(function() {
+    hideLoading();
+    clearBulkViolations();
+    loadViolationsLog();
+  }).catch(function(e) { hideLoading(); console.error(e); });
+}
+
+function clearBulkViolations() {
+  document.querySelectorAll('.vl-cb').forEach(function(cb) { cb.checked = false; });
+  var bar = document.getElementById('vlBulkBar');
+  if (bar) bar.classList.remove('active');
+  var sa = document.getElementById('vlSelectAll');
+  if (sa) sa.checked = false;
+}
+
+// ── حذف متعدد: سجل الإيجابي ──
+function bulkDeletePositive() {
+  var cbs = document.querySelectorAll('.pos-cb:checked');
+  if (!cbs.length) return;
+  if (!confirm('حذف ' + cbs.length + ' سجل؟')) return;
+  showLoading();
+  var promises = Array.from(cbs).map(function(cb) {
+    var idx = parseInt(cb.dataset.idx);
+    var recs = window._allPosRecords || [];
+    var rec = recs[idx];
+    if (!rec) return Promise.resolve();
+    return GAS.deletePositiveBehaviorLog(rec.date, rec.studentName || rec.student_name, rec.behaviorType || rec.behavior_type);
+  });
+  Promise.all(promises).then(function() {
+    hideLoading();
+    clearBulkPositive();
+    loadPositiveLogTable();
+  }).catch(function(e) { hideLoading(); console.error(e); });
+}
+
+function clearBulkPositive() {
+  document.querySelectorAll('.pos-cb').forEach(function(cb) { cb.checked = false; });
+  var bar = document.getElementById('posBulkBar');
+  if (bar) bar.classList.remove('active');
+  var sa = document.getElementById('posSelectAll');
+  if (sa) sa.checked = false;
+}
+
+// ── حذف متعدد: سجل الرسائل ──
+
+// Bulk checkbox delegation
+document.addEventListener('change', function(e) {
+  if (e.target.classList.contains('bulk-row-cb')) {
+    var tr = e.target.closest('tr');
+    var tbody = tr && tr.closest('tbody');
+    if (!tbody) return;
+    var id = tbody.id;
+    var map = {
+      'messagesTableBody': ['msgBulkBar', 'msgBulkCount'],
+    };
+    if (map[id]) updateBulkBar(id, map[id][0], map[id][1]);
+  }
+});
+
+function bulkDeleteMessages() {
+  var cbs = document.querySelectorAll('.msg-cb:checked');
+  if (!cbs.length) return;
+  if (!confirm('حذف ' + cbs.length + ' رسالة؟')) return;
+  showLoading();
+  var promises = Array.from(cbs).map(function(cb) {
+    var idx = parseInt(cb.dataset.idx);
+    var recs = window._allMsgRecords || [];
+    var rec = recs[idx];
+    if (!rec) return Promise.resolve();
+    return GAS.deleteMessageLog(rec.date, rec.studentName, rec.violationType);
+  });
+  Promise.all(promises).then(function() {
+    hideLoading();
+    clearBulkMessages();
+    loadMessagesLog();
+  }).catch(function(e) { hideLoading(); console.error(e); });
+}
+
+function clearBulkMessages() {
+  document.querySelectorAll('.msg-cb').forEach(function(cb) { cb.checked = false; });
+  var bar = document.getElementById('msgBulkBar');
+  if (bar) bar.classList.remove('active');
+  var sa = document.getElementById('msgSelectAll');
+  if (sa) sa.checked = false;
 }
 
 function loadViolationsLog(){
@@ -6412,7 +6583,8 @@ function loadViolationsLog(){
       }
 
       return '<tr id="vlRow_'+i+'">'
-        +'<td>'+(i+1)+'</td>'
+        +'<td>'+'<td class="cb-col"><input type="checkbox" class="bulk-cb vl-cb" data-idx="'+i+'" onchange="updateBulkBar(\'vlBulkBar\',\'vl-cb\',\'vlBulkCount\')"></td>'
+        +(i+1)+'</td>'
         +'<td>'+r.date+'</td>'
         +'<td><strong>'+r.studentName+'</strong> '+icons+'</td>'
         +'<td>'+r.className+'</td>'
@@ -8040,6 +8212,22 @@ function sendReportToParent() {
 }
 
 // ── تحميل جدول المحاضر ──
+function bulkDeleteReports() {
+  var cbs = document.querySelectorAll('#reportsTableBody .rpt-cb:checked');
+  if (!cbs.length) return;
+  if (!confirm('حذف ' + cbs.length + ' محضر؟ لا يمكن التراجع.')) return;
+  showLoading();
+  var promises = Array.from(cbs).map(function(cb) {
+    return GAS.deleteReport(cb.dataset.num);
+  });
+  Promise.all(promises).then(function() {
+    hideLoading();
+    document.getElementById('rptSelectAll').checked = false;
+    updateBulkBar('rptBulkBar','#reportsTableBody .rpt-cb','rptBulkCount');
+    loadReports();
+  }).catch(function(e){ hideLoading(); console.error(e); });
+}
+
 function loadReports() {
   var tbody = document.getElementById('reportsTableBody');
   if (!tbody) return;
@@ -8060,7 +8248,16 @@ function loadReports() {
 
       var encData = encodeURIComponent(JSON.stringify(r));
       var tr = document.createElement('tr');
-      tr.innerHTML =
+      tr.dataset.num = r.reportNum || '';
+      var cbTd = document.createElement('td');
+      cbTd.style.cssText = 'padding:10px 8px;border-top:1px solid var(--border);text-align:center;';
+      var cb = document.createElement('input');
+      cb.type = 'checkbox'; cb.className = 'bulk-cb rpt-cb';
+      cb.dataset.num = r.reportNum || '';
+      cb.onchange = function(){ updateBulkBar('rptBulkBar','#reportsTableBody .rpt-cb','rptBulkCount'); };
+      cbTd.appendChild(cb);
+      tr.appendChild(cbTd);
+      tr.innerHTML +=
           '<td style="padding:10px 14px;border-top:1px solid var(--border);color:var(--text-2);font-weight:700;">' + (r.reportNum||'') + '</td>'
         + '<td style="padding:10px 14px;border-top:1px solid var(--border);color:var(--text);font-weight:700;">' + (r.studentName||'') + '</td>'
         + '<td style="padding:10px 14px;border-top:1px solid var(--border);color:var(--text-2);">' + (r.violationType||'') + '</td>'
