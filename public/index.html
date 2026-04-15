@@ -6379,7 +6379,11 @@ function toggleBulkAll(tbodyId, selectAllId, barId, countId) {
 
 // تحديث شريط الـ bulk
 function updateBulkBar(barId, cbClass, countId) {
-  var cbs = document.querySelectorAll('.' + cbClass.split(' ').pop());
+  // نبني الـ selector بشكل صحيح
+  var sel = cbClass;
+  if (sel.indexOf('#') === -1 && sel.indexOf('.') === -1) sel = '.' + sel;
+  else if (sel.charAt(0) === '.') sel = sel; // بالفعل يبدأ بنقطة
+  var cbs = document.querySelectorAll(sel);
   var checked = Array.from(cbs).filter(function(cb) { return cb.checked; });
   var bar = document.getElementById(barId);
   var cnt = document.getElementById(countId);
