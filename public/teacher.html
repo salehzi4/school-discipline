@@ -2661,7 +2661,7 @@ function loadMyLog(){
 
       var delBtn = '<button class="btn btn-danger btn-sm" onclick="tDelViolation(\''+r.date.replace(/\'/g,"\\'")+'\''+',\''+r.studentName.replace(/\'/g,"\\'")+'\''+',\''+r.violationType.replace(/\'/g,"\\'")+'\')" style="padding:4px 6px;" title="حذف"><span class="material-icons-round" style="font-size:14px;">delete</span></button>';
       return '<tr>'
-        + '<td><input type="checkbox" class="bulk-cb myLog-cb" onchange="updateBulkBar(\'myLogBulkBar\',\'myLog-cb\',\'myLogBulkCount\')"></td>'
+        + '<td><input type="checkbox" class="bulk-row-cb myLog-cb" onchange="updateBulkBar(\'myLogBody\',\'myLogBulkBar\',\'myLogBulkCount\')"></td>'
         + '<td>'+(i+1)+'</td>'
         + '<td>'+r.date+'</td>'
         + '<td><strong>'+r.studentName+'</strong> '+icons+'</td>'
@@ -2727,7 +2727,7 @@ function toggleVis(date,studentName,violationType,makeVisible,btn){
   }).catch(function(e){ hideL(); console.error(e); });
 }
 
-function loadMyMsgs(){if(!T)return;const fd=document.getElementById('myMsgDate').value;showL();google.script.run.withSuccessHandler(msgs=>{hideL();const my=msgs.filter(m=>m.sender===T.name);document.getElementById('myMsgCount').textContent=my.length;const tb=document.getElementById('myMsgBody');tb.innerHTML=my.length?my.map((m,i)=>'<tr><td><input type="checkbox" class="bulk-cb myMsg-cb" onchange="updateBulkBar(\'myMsgBulkBar\',\'myMsg-cb\',\'myMsgBulkCount\')"></td><td>'+(i+1)+'</td><td>'+m.date+'</td><td><strong>'+m.studentName+'</strong></td><td>'+m.className+'</td><td>'+m.violationType+'</td><td><span class="status-sent">'+m.status+'</span></td></tr>').join(''):'<tr><td colspan="6" class="empty-state">لا توجد</td></tr>';}).getMessagesLog('الكل',fd);}
+function loadMyMsgs(){if(!T)return;const fd=document.getElementById('myMsgDate').value;showL();google.script.run.withSuccessHandler(msgs=>{hideL();const my=msgs.filter(m=>m.sender===T.name);document.getElementById('myMsgCount').textContent=my.length;const tb=document.getElementById('myMsgBody');tb.innerHTML=my.length?my.map((m,i)=>'<tr><td><input type="checkbox" class="bulk-row-cb myMsg-cb" onchange="updateBulkBar(\'myMsgBody\',\'myMsgBulkBar\',\'myMsgBulkCount\')"></td><td>'+(i+1)+'</td><td>'+m.date+'</td><td><strong>'+m.studentName+'</strong></td><td>'+m.className+'</td><td>'+m.violationType+'</td><td><span class="status-sent">'+m.status+'</span></td></tr>').join(''):'<tr><td colspan="6" class="empty-state">لا توجد</td></tr>';}).getMessagesLog('الكل',fd);}
 
 function loadReferredLog(){
   if(!T)return;
@@ -4161,7 +4161,7 @@ function loadTPosLog() {
         + 'data-date="'+rawDate+'" '
         + 'style="padding:3px 7px;" title="حذف"><span class="material-icons-round" style="font-size:13px;">delete</span></button>';
       return '<tr style="'+(isD?'background:rgba(34,211,238,0.03)':'') + '">'
-        + '<td><input type="checkbox" class="bulk-cb tPos-cb" onchange="updateBulkBar(\'tPosBulkBar\',\'tPos-cb\',\'tPosBulkCount\')"></td>'
+        + '<td><input type="checkbox" class="bulk-row-cb tPos-cb" onchange="updateBulkBar(\'tPosLogBody\',\'tPosBulkBar\',\'tPosBulkCount\')"></td>'
         + '<td>'+(i+1)+'</td>'
         + '<td>'+dispDate+'</td>'
         + '<td><strong>'+sn+'</strong></td>'
