@@ -564,6 +564,77 @@ async function deletePositiveBehaviorType(typeName, sc) {
 
 
 
+
+
+// ═══════════════════════════════════════════════════════
+// OneSignal — إرسال إشعار Push
+// ═══════════════════════════════════════════════════════
+async function sendPushNotification(schoolCode, studentName, title, message) {
+  const API_KEY = process.env.ONESIGNAL_API_KEY || '';
+  const APP_ID  = '02b5a380-ec64-4f1d-8db4-3e4963197408';
+
+  if (!API_KEY) { console.warn('[OneSignal] ONESIGNAL_API_KEY غير موجود'); return; }
+  if (!schoolCode || !studentName) return;
+
+  try {
+    const res = await fetch('https://onesignal.com/api/v1/notifications', {
+      method: 'POST',
+      headers: {
+        'Content-Type':  'application/json',
+        'Authorization': 'Basic ' + API_KEY
+      },
+      body: JSON.stringify({
+        app_id:   APP_ID,
+        filters:  [
+          { field: 'tag', key: 'school_code',  relation: '=', value: schoolCode  },
+          { operator: 'AND' },
+          { field: 'tag', key: 'student_name', relation: '=', value: studentName }
+        ],
+        headings: { en: title   || 'سجل المخالفات السلوكية' },
+        contents: { en: message || 'يوجد تحديث جديد' },
+        url: 'https://schools00.netlify.app/parent.html?school=' + schoolCode
+      })
+    });
+    const data = await res.json();
+    if (data.errors) { console.error('[OneSignal] خطأ:', data.errors); }
+    else { console.log('[OneSignal] أُرسل:', data.id); }
+  } catch(e) {
+    console.error('[OneSignal] استثناء:', e);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// OneSignal Push Notifications
+// ═══════════════════════════════════════════════════════
+async function sendPushNotification(schoolCode, studentName, message, title) {
+  const API_KEY = process.env.ONESIGNAL_API_KEY || '';
+  if (!API_KEY) { console.warn('[OneSignal] API Key غير موجود'); return; }
+  try {
+    const res = await fetch('https://onesignal.com/api/v1/notifications', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Basic ' + API_KEY
+      },
+      body: JSON.stringify({
+        app_id: '02b5a380-ec64-4f1d-8db4-3e4963197408',
+        filters: [
+          { field: 'tag', key: 'school_code',  relation: '=', value: schoolCode  },
+          { operator: 'AND' },
+          { field: 'tag', key: 'student_name', relation: '=', value: studentName }
+        ],
+        headings: { en: title   || 'سجل المخالفات السلوكية' },
+        contents: { en: message || 'يوجد تحديث جديد' },
+        url: 'https://schools00.netlify.app/parent.html?school=' + schoolCode
+      })
+    });
+    const data = await res.json();
+    console.log('[OneSignal] إشعار:', data.id || JSON.stringify(data.errors));
+  } catch(e) {
+    console.error('[OneSignal] خطأ:', e);
+  }
+}
+
 async function recordViolation(body, sc) {
   const { studentsData, violationType, notes, recorder, severity, signature, fingerprint, category, score, subject, actionType, actionTaken, subType, visibleToParentOverride } = body;
   const isPositive  = (category === 'إيجابية');
@@ -744,7 +815,19 @@ async function recordFixedViolation(body, sc) {
     }));
     await sb('positive_behaviors_log', 'POST', '', posRows);
   }
-
+  // ملاحظة 1: إشعار للمخالفات (غير الإيجابية)
+  // إشعار السلوك الإيجابي والمتميز
+  const posItems = violations.filter(v => v.category === 'positive' || v.category === 'إيجابية');
+  if (posItems.length) {
+    const posNames = posItems.map(v => v.name).join('، ');
+    for (const student of studentsData) {
+      await sendPushNotification(
+        sc, student.name,
+        'سلوك إيجابي: ' + posNames,
+        '⭐ إشعار من مدرسة ابنك'
+      );
+    }
+  }
   return { success: true, message: `تم التسجيل ✅` };
 }
 
@@ -919,8 +1002,14 @@ async function setVisibleToParent(date, studentName, violationType, visible, sc)
   for (const r of rows) {
     await sb('violations_log', 'PATCH', `id=eq.${r.id}`, { visible_to_parent: visible ? 'نعم' : 'لا' });
   }
-
-
+  // إشعار عند التحويل لـ ظاهر فقط
+  if (visible) {
+    await sendPushNotification(
+      sc, studentName,
+      'تم تسجيل مخالفة: ' + violationType,
+      '🔔 إشعار من مدرسة ابنك'
+    );
+  }
   return { success: true };
 }
 
@@ -1404,7 +1493,19 @@ async function updateReportStatus(reportNum, status, sc) {
   if (status === 'تم الاطلاع')  patch.read_at = now;
   await sb('reports', 'PATCH', `school_code=eq.${sc}&report_num=eq.${encodeURIComponent(reportNum)}`, patch);
 
-
+  // ملاحظة 4: إشعار فقط عند الإرسال الرسمي
+  if (status === 'بانتظار الاستلام') {
+    const rows = await sb('reports', 'GET',
+      `school_code=eq.${sc}&report_num=eq.${encodeURIComponent(reportNum)}&select=student_name,class_name`);
+    if (Array.isArray(rows) && rows.length) {
+      await sendPushNotification(
+        sc,
+        rows[0].student_name || '',
+        'تم إرسال محضر رسمي — اضغط للاطلاع عليه',
+        '📋 محضر جديد من مدرسة ابنك'
+      );
+    }
+  }
   return { success: true };
 }
 
