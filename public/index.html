@@ -125,6 +125,16 @@ body { overflow-x: hidden; }
   .role-card { width: 110px !important; padding: 14px 12px 12px !important; }
   .role-icon-wrap { width: 46px !important; height: 46px !important; }
 }
+
+/* ══ Bulk Delete ══ */
+.bulk-bar {
+  display:none;align-items:center;gap:10px;padding:8px 14px;
+  background:#fff3cd;border:1.5px solid #ffc107;border-radius:8px;
+  margin-bottom:8px;font-size:12px;font-weight:700;
+}
+.bulk-bar.active { display:flex; }
+.bulk-cb { width:15px;height:15px;accent-color:var(--danger);cursor:pointer; }
+th.cb-col, td.cb-col { width:36px;text-align:center;padding:4px!important; }
 </style>
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -172,130 +182,137 @@ body { font-family: 'IBM Plex Sans Arabic', sans-serif; background: var(--bg); c
 /* ══ LOGIN PAGE ══ */
 .login-pg {
   display: flex; min-height: 100vh;
-  background: linear-gradient(150deg, #062E22 0%, #0A5C44 55%, #0D7A5C 100%);
-  position: relative; overflow: hidden;
+  background: #E4EBF0;
   align-items: center; justify-content: center;
-  transition: background 0.3s ease;
+  padding: 20px;
 }
-.login-pg::before {
-  content: ''; position: absolute; inset: 0;
-  background-image:
-    linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
-  background-size: 44px 44px;
+/* هيدر */
+.lp-header {
+  background: #0A5C44;
+  padding: 13px 24px;
+  display: flex; justify-content: space-between; align-items: center;
 }
-.login-pg::after {
-  content: ''; position: absolute; width: 600px; height: 600px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,.04) 0%, transparent 65%);
-  top: 50%; left: 50%; transform: translate(-50%,-50%);
+.lp-header-brand { display: flex; align-items: center; gap: 10px; }
+.lp-header-logo {
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.3);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
 }
-.l-blob1, .l-blob2 { position: absolute; pointer-events: none; }
-.l-blob1 { width: 280px; height: 280px; background: rgba(255,255,255,.03); top: -70px; right: -70px; border-radius: 30% 70% 70% 30%/30% 30% 70% 70%; }
-.l-blob2 { width: 200px; height: 200px; background: rgba(201,134,10,.05); bottom: -50px; left: -50px; border-radius: 50%; }
-
-/* CENTERED COLUMN LAYOUT */
-/* ── Role Cards Login ── */
+.lp-header-logo .material-icons-round { font-size: 17px; color: white; }
+.lp-header-title { color: white; font-size: 11px; font-weight: 600; }
+.lp-header-sub { color: rgba(255,255,255,0.55); font-size: 9px; margin-top: 2px; }
+.lp-header-date { color: rgba(255,255,255,0.45); font-size: 10px; }
+.lp-subheader {
+  background: #0D7A5C;
+  padding: 6px 24px;
+  display: flex; align-items: center; gap: 7px;
+}
+.lp-subheader-dot { width: 4px; height: 4px; background: rgba(255,255,255,0.5); border-radius: 50%; }
+.lp-subheader-text { color: rgba(255,255,255,0.7); font-size: 10px; }
+/* الجسم */
+.lp-body { display: flex; flex: 1; }
+.lp-info { flex: 1; padding: 32px 28px; display: flex; flex-direction: column; gap: 24px; justify-content: center; }
+.lp-eyebrow { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.lp-eyebrow-line { width: 22px; height: 2px; background: #C9860A; border-radius: 2px; }
+.lp-eyebrow-txt { color: #999; font-size: 9px; letter-spacing: 1.5px; }
+.lp-brand { color: #062E22; font-size: 24px; font-weight: 700; line-height: 1.25; margin-bottom: 8px; }
+.lp-brand .lp-ac { color: #0A5C44; }
+.lp-desc { color: #666; font-size: 11px; line-height: 1.9; }
+.lp-desc strong { color: #0A5C44; font-weight: 600; }
+.lp-features { display: flex; flex-direction: column; gap: 10px; }
+.lp-feat { display: flex; align-items: flex-start; gap: 9px; }
+.lp-feat-icon {
+  width: 28px; height: 28px; background: #E8F5EE; border-radius: 7px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.lp-feat-icon .material-icons-round { font-size: 15px; color: #0A5C44; }
+.lp-feat-title { color: #1A3A2A; font-size: 11px; font-weight: 600; margin-bottom: 1px; }
+.lp-feat-desc { color: #999; font-size: 9px; }
+/* كارد الدخول */
+.lp-login-side {
+  width: 220px; flex-shrink: 0;
+  background: white;
+  border-right: 1px solid #E8EDF5;
+  padding: 26px 18px;
+  display: flex; flex-direction: column; gap: 9px;
+}
+.lp-login-title { color: #1A3A2A; font-size: 13px; font-weight: 700; }
+.lp-login-sub { color: #AAA; font-size: 10px; margin-top: -4px; margin-bottom: 4px; }
+/* الأدوار الجديدة */
 .role-card {
-  background: rgba(255,255,255,.07);
-  border: 1.5px solid rgba(255,255,255,.12);
-  border-radius: 18px;
-  padding: 20px 20px 16px;
-  width: 130px;
-  cursor: pointer;
-  text-align: center;
-  transition: all .25s;
+  display: flex; align-items: center; gap: 9px;
+  padding: 10px 12px; border-radius: 9px; cursor: pointer;
+  transition: all 0.2s; width: 100%;
 }
-.role-card:hover {
-  background: rgba(255,255,255,.11);
-  border-color: rgba(255,255,255,.25);
-  transform: translateY(-2px);
+.role-card.off { background: #FAFBFC; border: 1px solid #E8EDF2; }
+.role-card.on, .role-card.active {
+  background: #EEF8F3; border: 1.5px solid #0A5C44;
 }
-.role-card.active {
-  background: rgba(255,255,255,.15);
-  border-color: rgba(255,255,255,.45);
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0,0,0,.2);
+.role-card:hover { border-color: #0A5C44; }
+.role-bar { width: 4px; height: 30px; border-radius: 3px; flex-shrink: 0; }
+.role-name { font-size: 11px; font-weight: 600; color: #1A3A2A; }
+.role-name.dim { color: #777; font-weight: 400; }
+.role-sub { font-size: 9px; color: #BBB; margin-top: 1px; }
+.role-check {
+  width: 15px; height: 15px; border-radius: 50%; background: #0A5C44;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
-.role-icon-wrap {
-  width: 56px; height: 56px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 10px;
-  box-shadow: 0 4px 16px rgba(0,0,0,.25);
+.role-check .material-icons-round { font-size: 10px; color: white; }
+.lp-divider { height: 1px; background: #F0F2F5; }
+.lp-pass-field {
+  background: #F8F9FA; border: 1px solid #E2E7EE;
+  border-radius: 7px; padding: 9px 11px;
+  display: flex; align-items: center; gap: 7px;
 }
-.role-icon-wrap .material-icons-round { font-size: 28px; color: #fff; }
-.role-lbl { font-size: 12px; font-weight: 700; color: rgba(255,255,255,.9); margin-bottom: 12px; }
-.role-input-wrap { margin-top: 10px; }
-.role-field {
-  display: flex; align-items: center;
-  background: rgba(255,255,255,.12);
-  border: 1.5px solid rgba(255,255,255,.25);
-  border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; gap: 8px;
+.lp-pass-field .material-icons-round { font-size: 14px; color: #CCC; }
+.lp-pass-ph { color: #CCC; font-size: 13px; letter-spacing: 3px; }
+.lp-enter-btn {
+  background: #0A5C44; border-radius: 8px; padding: 10px;
+  color: white; font-size: 11px; font-weight: 600; border: none;
+  font-family: inherit; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  width: 100%; transition: opacity 0.2s;
 }
-.role-field-ico { font-size: 18px; color: rgba(255,255,255,.7); flex-shrink: 0; }
-.role-inp {
-  background: transparent; border: none; outline: none;
-  color: #fff; font-family: inherit; font-size: 14px;
-  width: 100%; direction: ltr; text-align: center;
-  letter-spacing: 2px;
+.lp-enter-btn:hover { opacity: 0.9; }
+.lp-enter-btn .material-icons-round { font-size: 15px; }
+/* فوتر */
+.lp-footer {
+  background: #EEF4F0; border-top: 1px solid #D4E6DA;
+  padding: 8px 24px;
+  display: flex; justify-content: space-between; align-items: center;
 }
-.role-inp::placeholder { color: rgba(255,255,255,.45); font-size: 11px; letter-spacing: 0; }
-.role-btn {
-  width: 100%; padding: 10px;
-  background: linear-gradient(135deg,#0A5C44,#0D7A5C);
-  color: #fff; border: none; border-radius: 10px;
-  font-family: inherit; font-size: 13px; font-weight: 700;
-  cursor: pointer; display: flex; align-items: center;
-  justify-content: center; gap: 6px; transition: opacity .15s;
-}
-.role-btn:hover { opacity: .9; }
-
-.lp-center-wrap {
-  position: relative; z-index: 1;
+.lp-footer-text { color: #5A8A72; font-size: 9px; }
+/* الحاوية الكاملة */
+.lp-wrap {
+  background: #F8FAFB;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #D8E2EC;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.09);
+  width: 100%; max-width: 900px;
   display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  text-align: center;
-  padding: 40px 24px;
-  width: 100%; max-width: 440px;
 }
-.lp-icon-box {
-  width: 80px; height: 80px;
-  background: rgba(255,255,255,.12);
-  backdrop-filter: blur(14px);
-  border: 1px solid rgba(255,255,255,.22);
-  border-radius: 22px;
-  display: flex; align-items: center; justify-content: center;
-  margin-bottom: 20px;
+/* رسالة الخطأ */
+.lfc-err {
+  margin-top: 4px; padding: 8px 12px;
+  background: rgba(220,38,38,.08);
+  border: 1px solid rgba(220,38,38,.2);
+  border-radius: 7px; color: #DC2626;
+  font-size: 11px; text-align: center; display: none;
 }
-.lp-icon-box .material-icons-round { font-size: 40px; color: #fff; }
-.lp-title {
-  font-size: 26px; font-weight: 900; color: #fff;
-  margin-bottom: 8px; line-height: 1.25;
+/* شاشة صغيرة */
+@media (max-width: 640px) {
+  .lp-info { padding: 20px 16px; gap: 16px; }
+  .lp-brand { font-size: 18px; }
+  .lp-body { flex-direction: column; }
+  .lp-login-side { width: 100%; border-right: none; border-top: 1px solid #E8EDF5; padding: 18px 16px; }
+  .lp-header { padding: 10px 16px; }
+  .lp-subheader { padding: 5px 16px; }
+  .lp-footer { padding: 7px 16px; }
 }
-.lp-sub {
-  font-size: 14px; color: rgba(255,255,255,.62);
-  line-height: 1.7; margin-bottom: 28px;
-  max-width: 320px;
-}
-.lp-card {
-  width: 100%;
-  background: rgba(255,255,255,.09);
-  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255,255,255,.18);
-  border-radius: 20px;
-  padding: 28px 26px;
-  box-shadow: 0 40px 80px rgba(0,0,0,.26), inset 0 1px 0 rgba(255,255,255,.12);
-  text-align: right;
-}
-/* Shared lfc-* classes */
-.lfc-lbl { font-size: 11px; font-weight: 700; color: rgba(255,255,255,.44); letter-spacing: 1.2px; text-transform: uppercase; display: block; margin-bottom: 8px; }
-.lfc-field { position: relative; margin-bottom: 16px; }
-.lfc-ico { position: absolute; right: 13px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,.3); font-size: 18px; pointer-events: none; }
-.lfc-inp { width: 100%; padding: 13px 46px 13px 16px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); border-radius: 7px; font-family: inherit; font-size: 17px; font-weight: 700; color: #fff; letter-spacing: 5px; text-align: center; direction: ltr; transition: all .2s; }
-.lfc-inp::placeholder { color: rgba(255,255,255,.22); letter-spacing: 3px; font-size: 14px; }
-.lfc-inp:focus { outline: none; border-color: rgba(255,255,255,.55); background: rgba(255,255,255,.15); }
-.lfc-btn { width: 100%; padding: 14px; background: rgba(255,255,255,.94); color: #0A5C44; border: none; border-radius: 7px; font-family: inherit; font-size: 15px; font-weight: 900; cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-.lfc-btn:hover { background: #fff; transform: translateY(-1px); box-shadow: 0 10px 28px rgba(0,0,0,.2); }
-.lfc-err { margin-top: 12px; padding: 10px 14px; background: rgba(220,38,38,.14); border: 1px solid rgba(220,38,38,.28); border-radius: 7px; color: #fca5a5; font-size: 12px; text-align: center; display: none; }
 
 /* ══ APP SHELL ══ */
 #app { display: none; min-height: 100vh; }
@@ -2087,61 +2104,129 @@ tr:hover td{background:var(--em-ghost);}
 <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
 
 <div class="login-pg" id="loginScreen" style="opacity:0;transition:opacity .35s ease;">
-  <div class="l-blob1"></div>
-  <div class="l-blob2"></div>
-  <div class="lp-center-wrap">
-    <div class="lp-icon-box">
-      <span class="material-icons-round" id="loginLogoIcon">gavel</span>
+  <div class="lp-wrap">
+
+    <!-- هيدر -->
+    <div class="lp-header">
+      <div class="lp-header-brand">
+        <div class="lp-header-logo">
+          <span class="material-icons-round" id="loginLogoIcon">school</span>
+        </div>
+        <div>
+          <div class="lp-header-title" id="loginTitle">الإدارة العامة للتعليم</div>
+          <div class="lp-header-sub">المملكة العربية السعودية</div>
+        </div>
+      </div>
+      <div class="lp-header-date">1446 هـ</div>
     </div>
-    <h1 class="lp-title" id="loginTitle">سجل المخالفات السلوكية</h1>
-    <p class="lp-sub" id="loginSubtitle">منصة متكاملة لإدارة السلوك المدرسي</p>
-
-    <!-- الأيقونات الثلاث -->
-    <div style="display:flex;gap:20px;justify-content:center;align-items:center;margin-bottom:20px;">
-
-      <div class="role-card" id="roleCard_admin" onclick="selectRole('admin')" title="إدارة المدرسة">
-        <div class="role-icon-wrap" style="background:linear-gradient(135deg,#0A5C44,#0D7A5C);">
-          <span class="material-icons-round">admin_panel_settings</span>
-        </div>
-        <div class="role-lbl">إدارة المدرسة</div>
-      </div>
-
-      <div class="role-card" id="roleCard_teacher" onclick="goToTeacher()" title="الكادر التعليمي">
-        <div class="role-icon-wrap" style="background:linear-gradient(135deg,#1A4A7A,#2563EB);">
-          <span class="material-icons-round">school</span>
-        </div>
-        <div class="role-lbl">الكادر التعليمي</div>
-      </div>
-
-      <div class="role-card" id="roleCard_parent" onclick="goToParent()" title="الأسرة">
-        <div class="role-icon-wrap" style="background:linear-gradient(135deg,#7C3AED,#9333EA);">
-          <span class="material-icons-round">family_restroom</span>
-        </div>
-        <div class="role-lbl">الأسرة</div>
-      </div>
-
+    <div class="lp-subheader">
+      <div class="lp-subheader-dot"></div>
+      <div class="lp-subheader-text" id="loginSubtitle">منصة متابعة السلوك والانضباط المدرسي</div>
     </div>
 
-    <!-- خانة الرمز الموحدة -->
-    <div id="unifiedInputWrap" style="display:none;width:100%;max-width:320px;margin:0 auto 10px;">
-      <div id="unifiedInputLabel" style="font-size:11px;font-weight:700;color:rgba(255,255,255,.7);margin-bottom:8px;text-align:center;"></div>
-      <div class="role-field" style="margin-bottom:10px;">
-        <span class="material-icons-round role-field-ico" id="unifiedInputIco">lock</span>
-        <input class="role-inp" id="unifiedPass"
-          placeholder="••••••"
-          maxlength="30" autocomplete="off"
-          onkeypress="if(event.key==='Enter')doRoleLogin(window._selectedRole)">
+    <!-- الجسم -->
+    <div class="lp-body">
+
+      <!-- يمين: معلومات -->
+      <div class="lp-info">
+        <div>
+          <div class="lp-eyebrow">
+            <div class="lp-eyebrow-line"></div>
+            <div class="lp-eyebrow-txt">SCHOOL DISCIPLINE SYSTEM</div>
+          </div>
+          <div class="lp-brand">نظام <span class="lp-ac">الانضباط</span><br>المدرسي</div>
+          <div class="lp-desc">
+            منصة إلكترونية متكاملة تمكّن الإدارة والمعلمين من
+            <strong>رصد السلوك وتوثيقه</strong>،
+            مع إشراك أولياء الأمور بشكل فوري وشفاف.
+          </div>
+        </div>
+        <div class="lp-features">
+          <div class="lp-feat">
+            <div class="lp-feat-icon"><span class="material-icons-round">task_alt</span></div>
+            <div>
+              <div class="lp-feat-title">رصد المخالفات والسلوك الإيجابي</div>
+              <div class="lp-feat-desc">تسجيل فوري مع تصنيف حسب الدرجة والفئة</div>
+            </div>
+          </div>
+          <div class="lp-feat">
+            <div class="lp-feat-icon"><span class="material-icons-round">description</span></div>
+            <div>
+              <div class="lp-feat-title">محاضر ومراسلات رسمية موثقة</div>
+              <div class="lp-feat-desc">إصدار فوري مع التوقيع الإلكتروني</div>
+            </div>
+          </div>
+          <div class="lp-feat">
+            <div class="lp-feat-icon"><span class="material-icons-round">groups</span></div>
+            <div>
+              <div class="lp-feat-title">تواصل مباشر مع أولياء الأمور</div>
+              <div class="lp-feat-desc">إشعارات فورية وبوابة متابعة مخصصة</div>
+            </div>
+          </div>
+        </div>
       </div>
-      <button class="role-btn" id="unifiedBtn" onclick="doRoleLogin(window._selectedRole)">
-        <span class="material-icons-round" style="font-size:15px;">login</span> دخول
-      </button>
+
+      <!-- يسار: تسجيل الدخول -->
+      <div class="lp-login-side">
+        <div class="lp-login-title">تسجيل الدخول</div>
+        <div class="lp-login-sub">اختر صفتك للمتابعة</div>
+
+        <div class="role-card on" id="roleCard_admin" onclick="selectRole('admin')">
+          <div class="role-bar" style="background:#0A5C44;"></div>
+          <div style="flex:1;">
+            <div class="role-name">إدارة المدرسة</div>
+            <div class="role-sub">صلاحية كاملة</div>
+          </div>
+          <div class="role-check"><span class="material-icons-round">check</span></div>
+        </div>
+
+        <div class="role-card off" id="roleCard_teacher" onclick="goToTeacher()">
+          <div class="role-bar" style="background:#1A4A7A;"></div>
+          <div style="flex:1;">
+            <div class="role-name dim">الكادر التعليمي</div>
+            <div class="role-sub">رصد وتسجيل</div>
+          </div>
+        </div>
+
+        <div class="role-card off" id="roleCard_parent" onclick="goToParent()">
+          <div class="role-bar" style="background:#7C3AED;"></div>
+          <div style="flex:1;">
+            <div class="role-name dim">الأسرة</div>
+            <div class="role-sub">متابعة واطلاع</div>
+          </div>
+        </div>
+
+        <div class="lp-divider"></div>
+
+        <!-- حقل كلمة المرور -->
+        <div id="unifiedInputWrap" style="display:none;">
+          <div id="unifiedInputLabel" style="font-size:10px;font-weight:600;color:#555;margin-bottom:6px;"></div>
+          <div class="lp-pass-field" style="margin-bottom:8px;">
+            <span class="material-icons-round" id="unifiedInputIco">lock</span>
+            <input style="border:none;background:transparent;outline:none;font-family:inherit;font-size:13px;color:#333;width:100%;letter-spacing:3px;direction:ltr;text-align:center;"
+              id="unifiedPass" placeholder="••••••" maxlength="30" autocomplete="off"
+              onkeypress="if(event.key==='Enter')doRoleLogin(window._selectedRole)">
+          </div>
+        </div>
+
+        <button class="lp-enter-btn" id="unifiedBtn" onclick="doRoleLogin(window._selectedRole)" style="display:none;">
+          <span>دخول</span>
+          <span class="material-icons-round">login</span>
+        </button>
+
+        <!-- رسالة الخطأ -->
+        <div class="lfc-err" id="loginError">رمز غير صحيح</div>
+
+        <!-- حقل مخفي للتوافق -->
+        <input type="hidden" id="loginPassword">
+      </div>
     </div>
 
-    <!-- رسالة الخطأ -->
-    <div class="lfc-err" id="loginError" style="display:none;margin-top:4px;">رمز غير صحيح</div>
-
-    <!-- حقل مخفي للتوافق -->
-    <input type="hidden" id="loginPassword">
+    <!-- فوتر -->
+    <div class="lp-footer">
+      <span class="lp-footer-text">© 2026 M E H — جميع الحقوق محفوظة</span>
+      <span class="lp-footer-text">وزارة التعليم — المملكة العربية السعودية</span>
+    </div>
   </div>
 </div>
 
@@ -2595,6 +2680,13 @@ tr:hover td{background:var(--em-ghost);}
     </div>
     <div id="studentsListContainer" style="display:none;">
       <label style="font-size:11px;font-weight:700;color:#555;margin-bottom:5px;display:block;">اختر الطلاب <span class="chip" id="selectedCount">0</span></label>
+      <!-- بحث الطلاب -->
+      <div style="position:relative;margin-bottom:8px;">
+        <span class="material-icons-round" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:16px;color:#aaa;pointer-events:none;">search</span>
+        <input type="text" id="studentSearchInput" placeholder="بحث باسم الطالب..."
+          oninput="filterStudentsList(this.value)"
+          style="width:100%;padding:8px 34px 8px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:12px;box-sizing:border-box;">
+      </div>
       <div class="select-all-bar"><label style="cursor:pointer;display:flex;align-items:center;gap:6px;"><input type="checkbox" id="selectAllStudents" onchange="toggleSelectAll()" style="width:16px;height:16px;accent-color:#07A869;"> تحديد الكل</label></div>
       <div class="students-checkbox-list" id="studentsCheckboxList"></div>
     </div>
@@ -3448,7 +3540,18 @@ tr:hover td{background:var(--em-ghost);}
       <button class="btn btn-outline btn-sm" onclick="clearMsgFilters()">مسح</button>
       <span class="chip" id="msgCountChip">0</span>
     </div>
-    <div class="table-wrapper"><table><thead><tr><th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>نص الرسالة</th><th>المرسل</th><th>الحالة</th><th>الإجراءات</th></tr></thead><tbody id="messagesTableBody"><tr><td colspan="7" class="empty-state">لا توجد</td></tr></tbody></table></div>
+    <div class="table-wrapper"><table><!-- Bulk Bar رسائل -->
+<div id="msgBulkBar" class="bulk-bar">
+  <span class="bulk-bar-count"><span id="msgBulkCount">0</span> محدد</span>
+  <button class="btn btn-danger btn-sm" onclick="bulkDeleteMessages()">
+    <span class="material-icons-round" style="font-size:14px;">delete_sweep</span> حذف المحدد
+  </button>
+  <button class="btn btn-outline btn-sm" onclick="clearBulkSelection('messagesTableBody','msgSelectAll','msgBulkBar','msgBulkCount')">إلغاء</button>
+</div>
+<thead><tr>
+  <th class="cb-col"><input type="checkbox" class="bulk-cb" id="msgSelectAll" onchange="toggleBulkAll('messagesTableBody','msgSelectAll','msgBulkBar','msgBulkCount')"></th>
+  <th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>نص الرسالة</th><th>المرسل</th><th>الحالة</th><th>الإجراءات</th>
+</tr></thead><tbody id="messagesTableBody"><tr><td colspan="7" class="empty-state">لا توجد</td></tr></tbody></table></div>
   </div>
 </div>
 
@@ -3498,7 +3601,17 @@ tr:hover td{background:var(--em-ghost);}
         </select>
         <button class="btn btn-outline btn-sm" onclick="clearLogFilters()">مسح</button>
       </div>
-      <div class="table-wrapper"><table><thead><tr><th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>نوع المخالفة</th><th>المخالفة</th><th>الإجراء المتخذ</th><th>التكرار</th><th>المسجّل</th><th>ولي الأمر 👁</th><th>إجراءات</th></tr></thead><tbody id="violationsLogTableBody"><tr><td colspan="8" class="empty-state">لا توجد</td></tr></tbody></table></div>
+      <div class="table-wrapper"><table><div class="bulk-bar" id="vlBulkBar">
+  <span id="vlBulkCount">0 محدد</span>
+  <button class="btn btn-danger btn-sm" onclick="bulkDeleteViolations()">
+    <span class="material-icons-round" style="font-size:13px;">delete</span> حذف المحدد
+  </button>
+  <button class="btn btn-outline btn-sm" onclick="clearBulkViolations()">إلغاء</button>
+</div>
+<thead><tr>
+  <th class="cb-col"><input type="checkbox" class="bulk-cb" id="vlSelectAll" onchange="toggleBulkAll('violationsLogTableBody','vlSelectAll','vlBulkBar','vlBulkCount')"></th>
+  <th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>نوع المخالفة</th><th>المخالفة</th><th>الإجراء المتخذ</th><th>التكرار</th><th>المسجّل</th><th>ولي الأمر 👁</th><th>إجراءات</th>
+</tr></thead><tbody id="violationsLogTableBody"><tr><td colspan="8" class="empty-state">لا توجد</td></tr></tbody></table></div>
     </div>
   </div>
 
@@ -3793,9 +3906,16 @@ tr:hover td{background:var(--em-ghost);}
       <span id="reportsCount" style="background:var(--em-pale);color:var(--em);padding:3px 12px;border-radius:20px;font-size:11px;font-weight:700;"></span>
     </div>
     <div class="table-wrapper">
+        <div class="bulk-bar" id="rptBulkBar">
+          <span id="rptBulkCount">0 محدد</span>
+          <button class="btn btn-danger btn-sm" onclick="bulkDeleteReports()">
+            <span class="material-icons-round" style="font-size:13px;">delete</span> حذف المحدد
+          </button>
+        </div>
       <table>
         <thead>
           <tr>
+            <th class="cb-col"><input type="checkbox" class="bulk-cb" id="rptSelectAll" onchange="toggleBulkAll('reportsTableBody','rptSelectAll','rptBulkBar','rptBulkCount')"></th>
             <th>#</th>
             <th>اسم الطالب</th>
             <th>المخالفة</th>
@@ -4027,7 +4147,15 @@ tr:hover td{background:var(--em-ghost);}
       </div>
       <div class="table-wrapper">
         <table>
-          <thead><tr>
+          <div class="bulk-bar" id="posBulkBar">
+  <span id="posBulkCount">0 محدد</span>
+  <button class="btn btn-danger btn-sm" onclick="bulkDeletePositive()">
+    <span class="material-icons-round" style="font-size:13px;">delete</span> حذف المحدد
+  </button>
+  <button class="btn btn-outline btn-sm" onclick="clearBulkPositive()">إلغاء</button>
+</div>
+<thead><tr>
+  <th class="cb-col"><input type="checkbox" class="bulk-cb" id="posSelectAll" onchange="toggleBulkAll('positiveLogTableBody','posSelectAll','posBulkBar','posBulkCount')"></th>
             <th>#</th>
             <th>التاريخ</th>
             <th>الطالب</th>
@@ -4649,6 +4777,7 @@ function loadPositiveLogTable() {
           'style="padding:3px 7px;" title="حذف"><span class="material-icons-round" style="font-size:13px;">delete</span></button>'
         : '';
       return '<tr style="'+(isD?'background:rgba(34,211,238,0.03)':'')+'">'
+        +'<td class="cb-col"><input type="checkbox" class="bulk-cb pos-cb" data-idx="'+i+'" onchange="updateBulkBar(\'posBulkBar\',\'pos-cb\',\'posBulkCount\')"></td>'
         +'<td>'+(i+1)+'</td>'
         +'<td>'+date+'</td>'
         +'<td><strong>'+esc(r.student_name||r.studentName||'')+'</strong></td>'
@@ -6099,8 +6228,22 @@ function getSelectedStudents() {
 }
 
 
-function loadClassStudents(){const cn=document.getElementById('recordClass').value;if(!cn){document.getElementById('studentsListContainer').style.display='none';return;}showLoading();google.script.run.withSuccessHandler(function(students){hideLoading();currentStudents=students;const list=document.getElementById('studentsCheckboxList');if(!students.length){list.innerHTML='<div class="empty-state">لا يوجد</div>';document.getElementById('studentsListContainer').style.display='block';
+function loadClassStudents(){
+  // مسح البحث عند تغيير الفصل
+  var si = document.getElementById('studentSearchInput');
+  if (si) si.value = '';
+  const cn=document.getElementById('recordClass').value;if(!cn){document.getElementById('studentsListContainer').style.display='none';return;}showLoading();google.script.run.withSuccessHandler(function(students){hideLoading();currentStudents=students;const list=document.getElementById('studentsCheckboxList');if(!students.length){list.innerHTML='<div class="empty-state">لا يوجد</div>';document.getElementById('studentsListContainer').style.display='block';
       if(students.length){document.getElementById('fixedViolationsArea').style.display='block';renderAllViolationGrids();}return;}list.innerHTML=students.map((s,i)=>'<div class="student-checkbox-item"><input type="checkbox" id="st_'+i+'" value="'+i+'" onchange="updSelCnt();updateMessagePreview();"><label for="st_'+i+'">'+s.name+'</label></div>').join('');document.getElementById('studentsListContainer').style.display='block';document.getElementById('selectAllStudents').checked=false;updSelCnt();}).getStudentsByClass(cn);}
+
+function filterStudentsList(query) {
+  var q = query.trim().toLowerCase();
+  var items = document.querySelectorAll('#studentsCheckboxList .student-checkbox-item');
+  items.forEach(function(item) {
+    var label = item.querySelector('label');
+    var name  = label ? label.textContent.trim().toLowerCase() : '';
+    item.style.display = (!q || name.includes(q)) ? '' : 'none';
+  });
+}
 function toggleSelectAll(){const c=document.getElementById('selectAllStudents').checked;document.querySelectorAll('#studentsCheckboxList input[type="checkbox"]').forEach(cb=>cb.checked=c);updSelCnt();updateMessagePreview();}
 function updSelCnt(){
   const sel = getSelectedStudents();
@@ -6243,7 +6386,8 @@ function loadMessagesLog() {
     msgs.forEach(function(m, i) {
       var tr = document.createElement('tr');
       tr.innerHTML =
-          '<td>' + (i+1) + '</td>'
+          '<td><input type="checkbox" class="bulk-cb msg-cb"></td>'
+        + '<td>' + (i+1) + '</td>'
         + '<td>' + (m.date||'') + '</td>'
         + '<td><strong>' + (m.studentName||'') + '</strong></td>'
         + '<td>' + (m.className||'') + '</td>'
@@ -6261,6 +6405,8 @@ function loadMessagesLog() {
       delBtn.dataset.vtype = m.violationType || '';
       delBtn.onclick = function(){ delMessage(this); };
       tr.cells[7].appendChild(delBtn);
+      var msgCb = tr.querySelector('.msg-cb');
+      if (msgCb) msgCb.addEventListener('change', function(){ updateBulkBar('msgBulkBar','msg-cb','msgBulkCount'); });
       tb.appendChild(tr);
     });
   }).catch(function(e){ hideLoading(); console.error(e); });
@@ -6291,6 +6437,131 @@ function _getCategoryLabel(cat) {
     'positive':   '<span style="padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:#e8f5ee;color:#055c38;border:1px solid #07A869;">إيجابي</span>'
   };
   return map[cat] || '<span style="padding:2px 8px;border-radius:20px;font-size:10px;color:#999;border:1px solid #C2C1C1;">'+(cat||'—')+'</span>';
+}
+
+
+// ═══════════════════════════════════════════════════════
+// Bulk Delete — حذف متعدد
+// ═══════════════════════════════════════════════════════
+
+// تحديد/إلغاء الكل
+function toggleBulkAll(tbodyId, selectAllId, barId, countId) {
+  var checked = document.getElementById(selectAllId).checked;
+  var cbs = document.querySelectorAll('#' + tbodyId + ' .bulk-cb');
+  cbs.forEach(function(cb) { cb.checked = checked; });
+  updateBulkBar(barId, tbodyId + ' .bulk-cb', countId);
+}
+
+// تحديث شريط الـ bulk
+function updateBulkBar(barId, cbClass, countId) {
+  // نبني الـ selector بشكل صحيح
+  var sel = cbClass;
+  if (sel.indexOf('#') === -1 && sel.indexOf('.') === -1) sel = '.' + sel;
+  else if (sel.charAt(0) === '.') sel = sel; // بالفعل يبدأ بنقطة
+  var cbs = document.querySelectorAll(sel);
+  var checked = Array.from(cbs).filter(function(cb) { return cb.checked; });
+  var bar = document.getElementById(barId);
+  var cnt = document.getElementById(countId);
+  if (bar) bar.classList.toggle('active', checked.length > 0);
+  if (cnt) cnt.textContent = checked.length + ' محدد';
+}
+
+// ── حذف متعدد: سجل المخالفات ──
+function bulkDeleteViolations() {
+  var cbs = document.querySelectorAll('.vl-cb:checked');
+  if (!cbs.length) return;
+  if (!confirm('حذف ' + cbs.length + ' سجل؟ لا يمكن التراجع.')) return;
+  showLoading();
+  var promises = Array.from(cbs).map(function(cb) {
+    var idx = parseInt(cb.dataset.idx);
+    var rec = window._allVlRecords && window._allVlRecords[idx];
+    if (!rec) return Promise.resolve();
+    return GAS.deleteViolationLog(rec.date, rec.studentName, rec.violationType);
+  });
+  Promise.all(promises).then(function() {
+    hideLoading();
+    clearBulkViolations();
+    loadViolationsLog();
+  }).catch(function(e) { hideLoading(); console.error(e); });
+}
+
+function clearBulkViolations() {
+  document.querySelectorAll('.vl-cb').forEach(function(cb) { cb.checked = false; });
+  var bar = document.getElementById('vlBulkBar');
+  if (bar) bar.classList.remove('active');
+  var sa = document.getElementById('vlSelectAll');
+  if (sa) sa.checked = false;
+}
+
+// ── حذف متعدد: سجل الإيجابي ──
+function bulkDeletePositive() {
+  var cbs = document.querySelectorAll('.pos-cb:checked');
+  if (!cbs.length) return;
+  if (!confirm('حذف ' + cbs.length + ' سجل؟')) return;
+  showLoading();
+  var promises = Array.from(cbs).map(function(cb) {
+    var idx = parseInt(cb.dataset.idx);
+    var recs = window._allPosRecords || [];
+    var rec = recs[idx];
+    if (!rec) return Promise.resolve();
+    return GAS.deletePositiveBehaviorLog(rec.date, rec.studentName || rec.student_name, rec.behaviorType || rec.behavior_type);
+  });
+  Promise.all(promises).then(function() {
+    hideLoading();
+    clearBulkPositive();
+    loadPositiveLogTable();
+  }).catch(function(e) { hideLoading(); console.error(e); });
+}
+
+function clearBulkPositive() {
+  document.querySelectorAll('.pos-cb').forEach(function(cb) { cb.checked = false; });
+  var bar = document.getElementById('posBulkBar');
+  if (bar) bar.classList.remove('active');
+  var sa = document.getElementById('posSelectAll');
+  if (sa) sa.checked = false;
+}
+
+// ── حذف متعدد: سجل الرسائل ──
+
+// Bulk checkbox delegation
+document.addEventListener('change', function(e) {
+  if (e.target.classList.contains('bulk-row-cb')) {
+    var tr = e.target.closest('tr');
+    var tbody = tr && tr.closest('tbody');
+    if (!tbody) return;
+    var id = tbody.id;
+    var map = {
+      'messagesTableBody': ['msgBulkBar', 'msgBulkCount'],
+    };
+    if (map[id]) updateBulkBar(id, map[id][0], map[id][1]);
+  }
+});
+
+function bulkDeleteMessages() {
+  var cbs = document.querySelectorAll('.msg-cb:checked');
+  if (!cbs.length) return;
+  if (!confirm('حذف ' + cbs.length + ' رسالة؟')) return;
+  showLoading();
+  var promises = Array.from(cbs).map(function(cb) {
+    var idx = parseInt(cb.dataset.idx);
+    var recs = window._allMsgRecords || [];
+    var rec = recs[idx];
+    if (!rec) return Promise.resolve();
+    return GAS.deleteMessageLog(rec.date, rec.studentName, rec.violationType);
+  });
+  Promise.all(promises).then(function() {
+    hideLoading();
+    clearBulkMessages();
+    loadMessagesLog();
+  }).catch(function(e) { hideLoading(); console.error(e); });
+}
+
+function clearBulkMessages() {
+  document.querySelectorAll('.msg-cb').forEach(function(cb) { cb.checked = false; });
+  var bar = document.getElementById('msgBulkBar');
+  if (bar) bar.classList.remove('active');
+  var sa = document.getElementById('msgSelectAll');
+  if (sa) sa.checked = false;
 }
 
 function loadViolationsLog(){
@@ -6391,7 +6662,8 @@ function loadViolationsLog(){
       }
 
       return '<tr id="vlRow_'+i+'">'
-        +'<td>'+(i+1)+'</td>'
+        +'<td>'+'<td class="cb-col"><input type="checkbox" class="bulk-cb vl-cb" data-idx="'+i+'" onchange="updateBulkBar(\'vlBulkBar\',\'vl-cb\',\'vlBulkCount\')"></td>'
+        +(i+1)+'</td>'
         +'<td>'+r.date+'</td>'
         +'<td><strong>'+r.studentName+'</strong> '+icons+'</td>'
         +'<td>'+r.className+'</td>'
@@ -8019,6 +8291,22 @@ function sendReportToParent() {
 }
 
 // ── تحميل جدول المحاضر ──
+function bulkDeleteReports() {
+  var cbs = document.querySelectorAll('#reportsTableBody .rpt-cb:checked');
+  if (!cbs.length) return;
+  if (!confirm('حذف ' + cbs.length + ' محضر؟ لا يمكن التراجع.')) return;
+  showLoading();
+  var promises = Array.from(cbs).map(function(cb) {
+    return GAS.deleteReport(cb.dataset.num);
+  });
+  Promise.all(promises).then(function() {
+    hideLoading();
+    document.getElementById('rptSelectAll').checked = false;
+    updateBulkBar('rptBulkBar','#reportsTableBody .rpt-cb','rptBulkCount');
+    loadReports();
+  }).catch(function(e){ hideLoading(); console.error(e); });
+}
+
 function loadReports() {
   var tbody = document.getElementById('reportsTableBody');
   if (!tbody) return;
@@ -8039,7 +8327,16 @@ function loadReports() {
 
       var encData = encodeURIComponent(JSON.stringify(r));
       var tr = document.createElement('tr');
-      tr.innerHTML =
+      tr.dataset.num = r.reportNum || '';
+      var cbTd = document.createElement('td');
+      cbTd.style.cssText = 'padding:10px 8px;border-top:1px solid var(--border);text-align:center;';
+      var cb = document.createElement('input');
+      cb.type = 'checkbox'; cb.className = 'bulk-cb rpt-cb';
+      cb.dataset.num = r.reportNum || '';
+      cb.onchange = function(){ updateBulkBar('rptBulkBar','#reportsTableBody .rpt-cb','rptBulkCount'); };
+      cbTd.appendChild(cb);
+      tr.appendChild(cbTd);
+      tr.innerHTML +=
           '<td style="padding:10px 14px;border-top:1px solid var(--border);color:var(--text-2);font-weight:700;">' + (r.reportNum||'') + '</td>'
         + '<td style="padding:10px 14px;border-top:1px solid var(--border);color:var(--text);font-weight:700;">' + (r.studentName||'') + '</td>'
         + '<td style="padding:10px 14px;border-top:1px solid var(--border);color:var(--text-2);">' + (r.violationType||'') + '</td>'
