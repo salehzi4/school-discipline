@@ -144,6 +144,12 @@ body { overflow-x: hidden; }
     grid-template-columns: repeat(2, 1fr) !important;
   }
 }
+
+.bulk-bar { display:none; align-items:center; gap:10px; padding:8px 14px; background:#fff3cd; border:1.5px solid #ffc107; border-radius:8px; margin-bottom:8px; }
+.bulk-bar-count { font-size:12px; font-weight:700; color:#856404; }
+.cb-col { width:36px; text-align:center; }
+.bulk-row-cb { width:15px; height:15px; accent-color:#E24B4A; cursor:pointer; }
+
 </style>
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -183,75 +189,43 @@ body { font-family: 'IBM Plex Sans Arabic', sans-serif; background: var(--bg); c
 /* ══ LOGIN PAGE ══ */
 .login-pg {
   display: flex; min-height: 100vh;
-  background: linear-gradient(150deg, #062E22 0%, #0A5C44 55%, #0D7A5C 100%);
-  position: relative; overflow: hidden;
+  background: #E4EBF0;
   align-items: center; justify-content: center;
-  transition: background 0.3s ease;
+  padding: 20px;
 }
-.login-pg::before {
-  content: ''; position: absolute; inset: 0;
-  background-image:
-    linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
-  background-size: 44px 44px;
+.lp-wrap {
+  background: #F8FAFB; border-radius: 16px; overflow: hidden;
+  border: 1px solid #D8E2EC; box-shadow: 0 4px 24px rgba(0,0,0,0.09);
+  width: 100%; max-width: 520px; display: flex; flex-direction: column;
 }
-.login-pg::after {
-  content: ''; position: absolute; width: 600px; height: 600px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,.04) 0%, transparent 65%);
-  top: 50%; left: 50%; transform: translate(-50%,-50%);
-}
-.l-blob1, .l-blob2 { position: absolute; pointer-events: none; }
-.l-blob1 { width: 280px; height: 280px; background: rgba(255,255,255,.03); top: -70px; right: -70px; border-radius: 30% 70% 70% 30%/30% 30% 70% 70%; }
-.l-blob2 { width: 200px; height: 200px; background: rgba(201,134,10,.05); bottom: -50px; left: -50px; border-radius: 50%; }
-
-/* CENTERED COLUMN LAYOUT */
-.lp-center-wrap {
-  position: relative; z-index: 1;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  text-align: center;
-  padding: 40px 24px;
-  width: 100%; max-width: 440px;
-}
-.lp-icon-box {
-  width: 80px; height: 80px;
-  background: rgba(255,255,255,.12);
-  backdrop-filter: blur(14px);
-  border: 1px solid rgba(255,255,255,.22);
-  border-radius: 22px;
-  display: flex; align-items: center; justify-content: center;
-  margin-bottom: 20px;
-}
-.lp-icon-box .material-icons-round { font-size: 40px; color: #fff; }
-.lp-title {
-  font-size: 26px; font-weight: 900; color: #fff;
-  margin-bottom: 8px; line-height: 1.25;
-}
-.lp-sub {
-  font-size: 14px; color: rgba(255,255,255,.62);
-  line-height: 1.7; margin-bottom: 28px;
-  max-width: 320px;
-}
-.lp-card {
-  width: 100%;
-  background: rgba(255,255,255,.09);
-  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255,255,255,.18);
-  border-radius: 20px;
-  padding: 28px 26px;
-  box-shadow: 0 40px 80px rgba(0,0,0,.26), inset 0 1px 0 rgba(255,255,255,.12);
-  text-align: right;
-}
-/* Shared lfc-* classes */
-.lfc-lbl { font-size: 11px; font-weight: 700; color: rgba(255,255,255,.44); letter-spacing: 1.2px; text-transform: uppercase; display: block; margin-bottom: 8px; }
-.lfc-field { position: relative; margin-bottom: 16px; }
-.lfc-ico { position: absolute; right: 13px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,.3); font-size: 18px; pointer-events: none; }
-.lfc-inp { width: 100%; padding: 13px 46px 13px 16px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); border-radius: 7px; font-family: inherit; font-size: 17px; font-weight: 700; color: #fff; letter-spacing: 5px; text-align: center; direction: ltr; transition: all .2s; }
-.lfc-inp::placeholder { color: rgba(255,255,255,.22); letter-spacing: 3px; font-size: 14px; }
-.lfc-inp:focus { outline: none; border-color: rgba(255,255,255,.55); background: rgba(255,255,255,.15); }
-.lfc-btn { width: 100%; padding: 14px; background: rgba(255,255,255,.94); color: #0A5C44; border: none; border-radius: 7px; font-family: inherit; font-size: 15px; font-weight: 900; cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-.lfc-btn:hover { background: #fff; transform: translateY(-1px); box-shadow: 0 10px 28px rgba(0,0,0,.2); }
-.lfc-err { margin-top: 12px; padding: 10px 14px; background: rgba(220,38,38,.14); border: 1px solid rgba(220,38,38,.28); border-radius: 7px; color: #fca5a5; font-size: 12px; text-align: center; display: none; }
+.lp-header { background: #0D2E44; padding: 13px 22px; display: flex; justify-content: space-between; align-items: center; }
+.lp-header-brand { display: flex; align-items: center; gap: 10px; }
+.lp-header-logo { width: 34px; height: 34px; background: rgba(255,255,255,0.15); border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; }
+.lp-header-logo .material-icons-round { font-size: 17px; color: white; }
+.lp-header-title { color: white; font-size: 11px; font-weight: 600; }
+.lp-header-sub { color: rgba(255,255,255,0.5); font-size: 9px; margin-top: 2px; }
+.lp-header-date { color: rgba(255,255,255,0.4); font-size: 10px; }
+.lp-subheader { background: #1A4A7A; padding: 6px 22px; display: flex; align-items: center; gap: 7px; }
+.lp-subheader-dot { width: 4px; height: 4px; background: rgba(255,255,255,0.5); border-radius: 50%; }
+.lp-subheader-text { color: rgba(255,255,255,0.65); font-size: 10px; }
+.lp-body-gate { padding: 36px 32px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.lp-gate-icon { width: 64px; height: 64px; background: #E8EEF8; border-radius: 18px; display: flex; align-items: center; justify-content: center; }
+.lp-gate-icon .material-icons-round { font-size: 30px; color: #0D2E44; }
+.lp-gate-title { color: #0D2E44; font-size: 17px; font-weight: 700; text-align: center; margin-bottom: 4px; }
+.lp-gate-sub { color: #999; font-size: 11px; text-align: center; line-height: 1.7; }
+.lp-gate-card { background: white; border: 1px solid #E0E8F0; border-radius: 12px; padding: 20px; width: 100%; }
+.lfc-lbl { color: #555; font-size: 10px; font-weight: 600; display: block; margin-bottom: 6px; }
+.lfc-field { display: flex; align-items: center; background: #F8F9FA; border: 1px solid #E2E7EE; border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; gap: 8px; }
+.lfc-ico { font-size: 16px; color: #CCC; flex-shrink: 0; }
+.lfc-inp { border: none; background: transparent; outline: none; font-family: inherit; font-size: 15px; color: #333; width: 100%; letter-spacing: 4px; direction: ltr; text-align: center; }
+.lfc-inp::placeholder { color: #CCC; letter-spacing: 2px; font-size: 12px; }
+.lfc-btn { width: 100%; padding: 11px; background: #0D2E44; color: white; border: none; border-radius: 8px; font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: opacity 0.2s; }
+.lfc-btn:hover { opacity: 0.9; }
+.lfc-btn .material-icons-round { font-size: 15px; }
+.lfc-err { margin-top: 10px; padding: 8px 12px; background: rgba(220,38,38,.08); border: 1px solid rgba(220,38,38,.2); border-radius: 7px; color: #DC2626; font-size: 11px; text-align: center; display: none; }
+.lp-gate-hint { color: #CCC; font-size: 9px; text-align: center; margin-top: 6px; }
+.lp-footer { background: #E8EEF4; border-top: 1px solid #D0DCE8; padding: 8px 22px; display: flex; justify-content: space-between; }
+.lp-footer-text { color: #5A7A9A; font-size: 9px; }
 
 /* ══ APP SHELL ══ */
 #app { display: none; min-height: 100vh; }
@@ -1034,24 +1008,44 @@ tr:hover td{background:var(--em-ghost);}
 <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
 
 <div class="login-pg" id="loginScreen" style="opacity:0;transition:opacity .35s ease;">
-  <div class="l-blob1"></div>
-  <div class="l-blob2"></div>
-  <div class="lp-center-wrap">
-    <div class="lp-icon-box">
-      <span class="material-icons-round" id="loginIconEl">school</span>
-    </div>
-    <h1 class="lp-title" id="loginTitleEl">بوابة المعلم</h1>
-    <p class="lp-sub" id="loginSubEl">أدخل رمز الدخول الخاص بك</p>
-    <div class="lp-card">
-      <label class="lfc-lbl">رمز الدخول</label>
-      <div class="lfc-field">
-        <span class="material-icons-round lfc-ico">lock</span>
-        <input type="password" class="lfc-inp" id="loginCode" placeholder="••••••" maxlength="20" onkeypress="if(event.key==='Enter')doLogin()">
+  <div class="lp-wrap">
+    <div class="lp-header">
+      <div class="lp-header-brand">
+        <div class="lp-header-logo"><span class="material-icons-round" id="loginIconEl">school</span></div>
+        <div>
+          <div class="lp-header-title">الإدارة العامة للتعليم</div>
+          <div class="lp-header-sub">المملكة العربية السعودية</div>
+        </div>
       </div>
-      <button class="lfc-btn" onclick="doLogin()">
-        <span class="material-icons-round" style="font-size:17px;">login</span> دخول
-      </button>
-      <div class="lfc-err" id="loginError">رمز غير صحيح</div>
+      <div class="lp-header-date">1446 هـ</div>
+    </div>
+    <div class="lp-subheader">
+      <div class="lp-subheader-dot"></div>
+      <div class="lp-subheader-text">نظام متابعة الانضباط المدرسي — بوابة الكادر التعليمي</div>
+    </div>
+    <div class="lp-body-gate">
+      <div class="lp-gate-icon"><span class="material-icons-round">school</span></div>
+      <div>
+        <div class="lp-gate-title" id="loginTitleEl">بوابة الكادر التعليمي</div>
+        <div class="lp-gate-sub" id="loginSubEl">أدخل رمز الدخول الخاص بك للوصول إلى لوحة المعلم</div>
+      </div>
+      <div class="lp-gate-card">
+        <label class="lfc-lbl">رمز الدخول</label>
+        <div class="lfc-field">
+          <span class="material-icons-round lfc-ico">lock</span>
+          <input type="password" class="lfc-inp" id="loginCode" placeholder="••••••" maxlength="20" onkeypress="if(event.key==='Enter')doLogin()">
+        </div>
+        <button class="lfc-btn" onclick="doLogin()">
+          <span>دخول</span>
+          <span class="material-icons-round">login</span>
+        </button>
+        <div class="lfc-err" id="loginError">رمز الدخول غير صحيح</div>
+        <div class="lp-gate-hint">تواصل مع الإدارة للحصول على رمز الدخول</div>
+      </div>
+    </div>
+    <div class="lp-footer">
+      <span class="lp-footer-text">© 2026 M E H</span>
+      <span class="lp-footer-text">وزارة التعليم — المملكة العربية السعودية</span>
     </div>
   </div>
 </div>
@@ -1376,6 +1370,13 @@ tr:hover td{background:var(--em-ghost);}
     <div id="studentsListContainer" style="display:none;">
     <div id="tStudentsListContainer">
       <label style="font-size:11px;font-weight:700;color:#555;margin-bottom:5px;display:block;">اختر الطلاب <span class="chip" id="selectedCount">0</span></label>
+      <!-- بحث الطلاب -->
+      <div style="position:relative;margin-bottom:8px;">
+        <span class="material-icons-round" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:16px;color:#aaa;pointer-events:none;">search</span>
+        <input type="text" id="studentSearchInput" placeholder="بحث باسم الطالب..."
+          oninput="filterStudentsList(this.value)"
+          style="width:100%;padding:8px 34px 8px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:12px;box-sizing:border-box;">
+      </div>
       <div class="select-all-bar"><label style="cursor:pointer;display:flex;align-items:center;gap:6px;"><input type="checkbox" id="selectAllStudents" onchange="toggleSelectAll()" style="width:16px;height:16px;accent-color:#07A869;"> تحديد الكل</label></div>
       <div class="students-checkbox-list" id="studentsCheckboxList"></div>
     </div>
@@ -1552,7 +1553,17 @@ tr:hover td{background:var(--em-ghost);}
         <select id="myLogFilterVtype" onchange="loadMyLog()" style="font-family:inherit;padding:5px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px;"><option value="">كل المخالفات</option></select>
         <button class="btn btn-outline btn-sm" onclick="clearMyLogFilters()">مسح</button>
         <span class="chip" id="myLogCount">0</span>
-      </div><div class="table-wrapper"><table><thead><tr><th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>المخالفة</th><th>الإجراء المتخذ</th><th>التكرار</th><th title="تحكم بظهور المخالفة في ملف الطالب لدى ولي الأمر">ولي الأمر 👁</th><th>إجراءات</th></tr></thead><tbody id="myLogBody"><tr><td colspan="7" class="empty-state">لا توجد</td></tr></tbody></table></div></div></div>
+      </div><div class="table-wrapper"><table><div id="myLogBulkBar" class="bulk-bar">
+  <span class="bulk-bar-count"><span id="myLogBulkCount">0</span> محدد</span>
+  <button class="btn btn-danger btn-sm" onclick="bulkDeleteMyLog()">
+    <span class="material-icons-round" style="font-size:14px;">delete_sweep</span> حذف المحدد
+  </button>
+  <button class="btn btn-outline btn-sm" onclick="clearBulkSelection('myLogBody','myLogSelectAll','myLogBulkBar','myLogBulkCount')">إلغاء</button>
+</div>
+<thead><tr>
+  <th class="cb-col"><input type="checkbox" class="bulk-cb" id="myLogSelectAll" onchange="toggleBulkAll('myLogBody','myLogSelectAll','myLogBulkBar','myLogBulkCount')"></th>
+  <th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>المخالفة</th><th>الإجراء المتخذ</th><th>التكرار</th><th title="تحكم بظهور المخالفة في ملف الطالب لدى ولي الأمر">ولي الأمر 👁</th><th>إجراءات</th>
+</tr></thead><tbody id="myLogBody"><tr><td colspan="7" class="empty-state">لا توجد</td></tr></tbody></table></div></div></div>
 
 <div class="page-section" id="page-mymessages">
 <div class="page-toolbar">
@@ -1563,7 +1574,17 @@ tr:hover td{background:var(--em-ghost);}
     <button class="pt-print" onclick="printSection('mymessages')"><span class="material-icons-round">print</span> طباعة</button>
     <button class="pt-pdf" onclick="exportPDF('mymessages')"><span class="material-icons-round">picture_as_pdf</span> PDF</button>
   </div>
-<div class="card"><div class="card-title"><span class="material-icons-round">chat</span> رسائلي</div><div class="filters-bar"><input type="date" id="myMsgDate" onchange="loadMyMsgs()"><button class="btn btn-outline btn-sm" onclick="document.getElementById('myMsgDate').value='';loadMyMsgs();">الكل</button><span class="chip" id="myMsgCount">0</span></div><div class="table-wrapper"><table><thead><tr><th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>المخالفة</th><th>الحالة</th></tr></thead><tbody id="myMsgBody"><tr><td colspan="6" class="empty-state">لا توجد</td></tr></tbody></table></div></div></div>
+<div class="card"><div class="card-title"><span class="material-icons-round">chat</span> رسائلي</div><div class="filters-bar"><input type="date" id="myMsgDate" onchange="loadMyMsgs()"><button class="btn btn-outline btn-sm" onclick="document.getElementById('myMsgDate').value='';loadMyMsgs();">الكل</button><span class="chip" id="myMsgCount">0</span></div><div class="table-wrapper"><table><div id="myMsgBulkBar" class="bulk-bar">
+  <span class="bulk-bar-count"><span id="myMsgBulkCount">0</span> محدد</span>
+  <button class="btn btn-danger btn-sm" onclick="bulkDeleteMyMsg()">
+    <span class="material-icons-round" style="font-size:14px;">delete_sweep</span> حذف المحدد
+  </button>
+  <button class="btn btn-outline btn-sm" onclick="clearBulkSelection('myMsgBody','myMsgSelectAll','myMsgBulkBar','myMsgBulkCount')">إلغاء</button>
+</div>
+<thead><tr>
+  <th class="cb-col"><input type="checkbox" class="bulk-cb" id="myMsgSelectAll" onchange="toggleBulkAll('myMsgBody','myMsgSelectAll','myMsgBulkBar','myMsgBulkCount')"></th>
+  <th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>المخالفة</th><th>الحالة</th>
+</tr></thead><tbody id="myMsgBody"><tr><td colspan="6" class="empty-state">لا توجد</td></tr></tbody></table></div></div></div>
 
 <div class="page-section" id="page-alerts">
 <div class="page-toolbar">
@@ -1641,11 +1662,19 @@ tr:hover td{background:var(--em-ghost);}
     </div>
     <div class="table-wrapper">
       <table>
-        <thead><tr>
-          <th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th>
-          <th>اسم السلوك</th><th>نوع السلوك</th><th>الإجراءات</th>
-        </tr></thead>
-        <tbody id="tPosLogBody">
+        <div id="tPosBulkBar" class="bulk-bar">
+  <span class="bulk-bar-count"><span id="tPosBulkCount">0</span> محدد</span>
+  <button class="btn btn-danger btn-sm" onclick="bulkDeleteTPos()">
+    <span class="material-icons-round" style="font-size:14px;">delete_sweep</span> حذف المحدد
+  </button>
+  <button class="btn btn-outline btn-sm" onclick="clearBulkSelection('tPosLogBody','tPosSelectAll','tPosBulkBar','tPosBulkCount')">إلغاء</button>
+</div>
+<thead><tr>
+  <th class="cb-col"><input type="checkbox" class="bulk-cb" id="tPosSelectAll" onchange="toggleBulkAll('tPosLogBody','tPosSelectAll','tPosBulkBar','tPosBulkCount')"></th>
+  <th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th>
+  <th>اسم السلوك</th><th>نوع السلوك</th><th>الإجراءات</th>
+</tr></thead>
+<tbody id="tPosLogBody">
           <tr><td colspan="7" class="empty-state">لا توجد سجلات</td></tr>
         </tbody>
       </table>
@@ -2308,6 +2337,39 @@ function getSelectedStudents() {
   return result;
 }
 
+
+
+function toggleBulkAll(tbodyId, selectAllId, barId, countId) {
+  var checked = document.getElementById(selectAllId).checked;
+  var rows = document.querySelectorAll('#' + tbodyId + ' .bulk-row-cb');
+  rows.forEach(function(cb) { cb.checked = checked; });
+  updateBulkBar(tbodyId, barId, countId);
+}
+
+function updateBulkBar(tbodyId, barId, countId) {
+  var checked = document.querySelectorAll('#' + tbodyId + ' .bulk-row-cb:checked').length;
+  var bar = document.getElementById(barId);
+  var cnt = document.getElementById(countId);
+  if (bar) bar.style.display = checked > 0 ? 'flex' : 'none';
+  if (cnt) cnt.textContent = checked;
+}
+
+function clearBulkSelection(tbodyId, selectAllId, barId, countId) {
+  var all = document.getElementById(selectAllId);
+  if (all) all.checked = false;
+  document.querySelectorAll('#' + tbodyId + ' .bulk-row-cb').forEach(function(cb){ cb.checked = false; });
+  updateBulkBar(tbodyId, barId, countId);
+}
+
+function filterStudentsList(query) {
+  var q = query.trim().toLowerCase();
+  var items = document.querySelectorAll('#studentsCheckboxList .student-checkbox-item');
+  items.forEach(function(item) {
+    var label = item.querySelector('label');
+    var name  = label ? label.textContent.trim().toLowerCase() : '';
+    item.style.display = (!q || name.includes(q)) ? '' : 'none';
+  });
+}
 function toggleSelectAll() {
   var sa = document.getElementById('selectAllStudents');
   var boxes = document.querySelectorAll('#studentsCheckboxList input[type=checkbox]');
@@ -2587,6 +2649,7 @@ function loadMyLog(){
 
       var delBtn = '<button class="btn btn-danger btn-sm" onclick="tDelViolation(\''+r.date.replace(/\'/g,"\\'")+'\''+',\''+r.studentName.replace(/\'/g,"\\'")+'\''+',\''+r.violationType.replace(/\'/g,"\\'")+'\')" style="padding:4px 6px;" title="حذف"><span class="material-icons-round" style="font-size:14px;">delete</span></button>';
       return '<tr>'
+        + '<td><input type="checkbox" class="bulk-row-cb myLog-cb" onchange="updateBulkBar(\'myLogBody\',\'myLogBulkBar\',\'myLogBulkCount\')"></td>'
         + '<td>'+(i+1)+'</td>'
         + '<td>'+r.date+'</td>'
         + '<td><strong>'+r.studentName+'</strong> '+icons+'</td>'
@@ -2652,7 +2715,7 @@ function toggleVis(date,studentName,violationType,makeVisible,btn){
   }).catch(function(e){ hideL(); console.error(e); });
 }
 
-function loadMyMsgs(){if(!T)return;const fd=document.getElementById('myMsgDate').value;showL();google.script.run.withSuccessHandler(msgs=>{hideL();const my=msgs.filter(m=>m.sender===T.name);document.getElementById('myMsgCount').textContent=my.length;const tb=document.getElementById('myMsgBody');tb.innerHTML=my.length?my.map((m,i)=>'<tr><td>'+(i+1)+'</td><td>'+m.date+'</td><td><strong>'+m.studentName+'</strong></td><td>'+m.className+'</td><td>'+m.violationType+'</td><td><span class="status-sent">'+m.status+'</span></td></tr>').join(''):'<tr><td colspan="6" class="empty-state">لا توجد</td></tr>';}).getMessagesLog('الكل',fd);}
+function loadMyMsgs(){if(!T)return;const fd=document.getElementById('myMsgDate').value;showL();google.script.run.withSuccessHandler(msgs=>{hideL();const my=msgs.filter(m=>m.sender===T.name);document.getElementById('myMsgCount').textContent=my.length;const tb=document.getElementById('myMsgBody');tb.innerHTML=my.length?my.map((m,i)=>'<tr><td><input type="checkbox" class="bulk-row-cb myMsg-cb" onchange="updateBulkBar(\'myMsgBody\',\'myMsgBulkBar\',\'myMsgBulkCount\')"></td><td>'+(i+1)+'</td><td>'+m.date+'</td><td><strong>'+m.studentName+'</strong></td><td>'+m.className+'</td><td>'+m.violationType+'</td><td><span class="status-sent">'+m.status+'</span></td></tr>').join(''):'<tr><td colspan="6" class="empty-state">لا توجد</td></tr>';}).getMessagesLog('الكل',fd);}
 
 function loadReferredLog(){
   if(!T)return;
@@ -4086,6 +4149,7 @@ function loadTPosLog() {
         + 'data-date="'+rawDate+'" '
         + 'style="padding:3px 7px;" title="حذف"><span class="material-icons-round" style="font-size:13px;">delete</span></button>';
       return '<tr style="'+(isD?'background:rgba(34,211,238,0.03)':'') + '">'
+        + '<td><input type="checkbox" class="bulk-row-cb tPos-cb" onchange="updateBulkBar(\'tPosLogBody\',\'tPosBulkBar\',\'tPosBulkCount\')"></td>'
         + '<td>'+(i+1)+'</td>'
         + '<td>'+dispDate+'</td>'
         + '<td><strong>'+sn+'</strong></td>'
