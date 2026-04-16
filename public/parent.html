@@ -277,27 +277,41 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
 @keyframes spin{to{transform:rotate(360deg);}}
 
 /* ══ LOGIN ══ */
-/* ✅ FIX: transition لمنع وميض اللون عند التغيير */
-.login-pg{display:flex;min-height:100vh;background:linear-gradient(150deg,#062E22 0%,#0A5C44 55%,#0D7A5C 100%);position:relative;overflow:hidden;align-items:center;justify-content:center;transition:background 0.3s ease;}
-.login-pg::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:44px 44px;}
-.l-blob1,.l-blob2{position:absolute;pointer-events:none;}
-.l-blob1{width:280px;height:280px;background:rgba(255,255,255,.03);top:-70px;right:-70px;border-radius:30% 70% 70% 30%/30% 30% 70% 70%;}
-.l-blob2{width:200px;height:200px;background:rgba(201,134,10,.05);bottom:-50px;left:-50px;border-radius:50%;}
-.lp-center-wrap{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 24px;width:100%;max-width:440px;}
-.lp-icon-box{width:80px;height:80px;background:rgba(255,255,255,.12);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.22);border-radius:22px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;}
-.lp-icon-box .material-icons-round{font-size:40px;color:#fff;}
-.lp-title{font-size:26px;font-weight:900;color:#fff;margin-bottom:8px;}
-.lp-sub{font-size:14px;color:rgba(255,255,255,.62);line-height:1.7;margin-bottom:28px;max-width:320px;}
-.lp-card{width:100%;background:rgba(255,255,255,.09);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.18);border-radius:20px;padding:28px 26px;box-shadow:0 40px 80px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.12);text-align:right;}
-.lfc-lbl{font-size:11px;font-weight:700;color:rgba(255,255,255,.44);letter-spacing:1.2px;text-transform:uppercase;display:block;margin-bottom:8px;}
-.lfc-field{position:relative;margin-bottom:16px;}
-.lfc-ico{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.3);font-size:18px;pointer-events:none;}
-.lfc-inp{width:100%;padding:13px 46px 13px 16px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:7px;font-family:inherit;font-size:17px;font-weight:700;color:#fff;letter-spacing:5px;text-align:center;transition:all .2s;}
-.lfc-inp::placeholder{color:rgba(255,255,255,.22);letter-spacing:3px;font-size:14px;}
-.lfc-inp:focus{outline:none;border-color:rgba(255,255,255,.55);background:rgba(255,255,255,.15);}
-.lfc-btn{width:100%;padding:14px;background:rgba(255,255,255,.94);color:#0A5C44;border:none;border-radius:7px;font-family:inherit;font-size:15px;font-weight:900;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
-.lfc-btn:hover{background:#fff;transform:translateY(-1px);box-shadow:0 10px 28px rgba(0,0,0,.2);}
-.lfc-err{margin-top:12px;padding:10px 14px;background:rgba(220,38,38,.14);border:1px solid rgba(220,38,38,.28);border-radius:7px;color:#fca5a5;font-size:12px;text-align:center;display:none;}
+/* ══ LOGIN PAGE ══ */
+.login-pg{display:flex;min-height:100vh;background:#E4EBF0;align-items:center;justify-content:center;padding:20px;}
+.lp-wrap{background:#F8FAFB;border-radius:16px;overflow:hidden;border:1px solid #D8E2EC;box-shadow:0 4px 24px rgba(0,0,0,0.09);width:100%;max-width:520px;display:flex;flex-direction:column;}
+.lp-header{background:#0A5C44;padding:13px 22px;display:flex;justify-content:space-between;align-items:center;}
+.lp-header-brand{display:flex;align-items:center;gap:10px;}
+.lp-header-logo{width:34px;height:34px;background:rgba(255,255,255,0.15);border-radius:50%;border:1.5px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;}
+.lp-header-logo .material-icons-round{font-size:17px;color:white;}
+.lp-header-title{color:white;font-size:11px;font-weight:600;}
+.lp-header-sub{color:rgba(255,255,255,0.5);font-size:9px;margin-top:2px;}
+.lp-header-date{color:rgba(255,255,255,0.4);font-size:10px;}
+.lp-subheader{background:#0D7A5C;padding:6px 22px;display:flex;align-items:center;gap:7px;}
+.lp-subheader-dot{width:4px;height:4px;background:rgba(255,255,255,0.5);border-radius:50%;}
+.lp-subheader-text{color:rgba(255,255,255,0.65);font-size:10px;}
+.lp-body-gate{padding:36px 32px;display:flex;flex-direction:column;align-items:center;gap:20px;}
+.lp-gate-icon{width:64px;height:64px;background:#E8F5EE;border-radius:18px;display:flex;align-items:center;justify-content:center;}
+.lp-gate-icon .material-icons-round{font-size:30px;color:#0A5C44;}
+.lp-gate-title{color:#0A5C44;font-size:17px;font-weight:700;text-align:center;margin-bottom:4px;}
+.lp-gate-sub{color:#999;font-size:11px;text-align:center;line-height:1.7;}
+.lp-gate-card{background:white;border:1px solid #E0E8F0;border-radius:12px;padding:20px;width:100%;}
+.lfc-lbl{color:#555;font-size:10px;font-weight:600;display:block;margin-bottom:6px;}
+.lfc-field{display:flex;align-items:center;background:#F8F9FA;border:1px solid #E2E7EE;border-radius:8px;padding:10px 12px;margin-bottom:12px;gap:8px;}
+.lfc-ico{font-size:16px;color:#CCC;flex-shrink:0;}
+.lfc-inp{border:none;background:transparent;outline:none;font-family:inherit;font-size:15px;color:#333;width:100%;letter-spacing:2px;direction:ltr;text-align:center;}
+.lfc-inp::placeholder{color:#CCC;letter-spacing:0;font-size:12px;}
+.lfc-btn{width:100%;padding:11px;background:#0A5C44;color:white;border:none;border-radius:8px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:opacity 0.2s;}
+.lfc-btn:hover{opacity:0.9;}
+.lfc-btn .material-icons-round{font-size:15px;}
+.lfc-err{margin-top:10px;padding:8px 12px;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.2);border-radius:7px;color:#DC2626;font-size:11px;text-align:center;display:none;}
+.lp-gate-hint{color:#CCC;font-size:9px;text-align:center;margin-top:6px;}
+.lp-footer{background:#EEF4F0;border-top:1px solid #D4E6DA;padding:8px 22px;display:flex;justify-content:space-between;}
+.lp-footer-text{color:#5A8A72;font-size:9px;}
+/* remember me */
+.lp-remember{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.lp-remember input{width:14px;height:14px;accent-color:#0A5C44;cursor:pointer;}
+.lp-remember label{font-size:11px;color:#888;cursor:pointer;}
 
 /* ══ APP ══ */
 #app{display:none;min-height:100vh;}
@@ -681,26 +695,48 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
 <!-- ══ LOGIN ══ -->
 <!-- ✅ FIX: تبدأ مخفية opacity:0 — تظهر بعد تطبيق الألوان الصحيحة فقط -->
 <div class="login-pg" id="loginScreen" style="opacity:0;transition:opacity .35s ease;">
-  <div class="l-blob1"></div><div class="l-blob2"></div>
-  <div class="lp-center-wrap">
-    <div class="lp-icon-box"><span class="material-icons-round" id="loginIconEl">family_restroom</span></div>
-    <h1 class="lp-title" id="loginTitleEl">بوابة ولي الأمر</h1>
-    <p class="lp-sub" id="loginSubEl">تابع سلوك طفلك وتعرّف على أحدث تقارير المدرسة.</p>
-    <div class="lp-card">
-      <label class="lfc-lbl">رقم هوية الطالب</label>
-      <div class="lfc-field">
-        <span class="material-icons-round lfc-ico">badge</span>
-        <input type="password" class="lfc-inp" id="nationalIdInput" placeholder="••••••••••" maxlength="20">
+  <div class="lp-wrap">
+    <div class="lp-header">
+      <div class="lp-header-brand">
+        <div class="lp-header-logo"><span class="material-icons-round" id="loginIconEl">family_restroom</span></div>
+        <div>
+          <div class="lp-header-title">الإدارة العامة للتعليم</div>
+          <div class="lp-header-sub">المملكة العربية السعودية</div>
+        </div>
       </div>
-      <!-- تذكرني -->
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
-        <input type="checkbox" id="rememberMe" style="width:16px;height:16px;accent-color:#0A5C44;cursor:pointer;">
-        <label for="rememberMe" style="font-size:12px;color:rgba(255,255,255,0.75);cursor:pointer;">تذكرني في هذا الجهاز</label>
+      <div class="lp-header-date">1446 هـ</div>
+    </div>
+    <div class="lp-subheader">
+      <div class="lp-subheader-dot"></div>
+      <div class="lp-subheader-text">نظام متابعة الانضباط المدرسي — بوابة الأسرة</div>
+    </div>
+    <div class="lp-body-gate">
+      <div class="lp-gate-icon"><span class="material-icons-round">family_restroom</span></div>
+      <div>
+        <div class="lp-gate-title" id="loginTitleEl">بوابة الأسرة</div>
+        <div class="lp-gate-sub" id="loginSubEl">أدخل رقم هوية الطالب لمتابعة سلوكه وتقاريره</div>
       </div>
-      <button class="lfc-btn" id="loginBtn">
-        <span class="material-icons-round" style="font-size:17px;">login</span> دخول
-      </button>
-      <div class="lfc-err" id="loginError">رقم الهوية غير صحيح أو غير مسجل</div>
+      <div class="lp-gate-card">
+        <label class="lfc-lbl">رقم هوية الطالب</label>
+        <div class="lfc-field">
+          <span class="material-icons-round lfc-ico">badge</span>
+          <input type="password" class="lfc-inp" id="nationalIdInput" placeholder="••••••••••" maxlength="20" onkeypress="if(event.key==='Enter')doLogin()">
+        </div>
+        <div class="lp-remember">
+          <input type="checkbox" id="rememberMe">
+          <label for="rememberMe">تذكرني في هذا الجهاز</label>
+        </div>
+        <button class="lfc-btn" id="loginBtn" onclick="doLogin()">
+          <span>دخول</span>
+          <span class="material-icons-round">login</span>
+        </button>
+        <div class="lfc-err" id="loginError">رقم الهوية غير صحيح أو غير مسجل</div>
+        <div class="lp-gate-hint">رقم هوية الطالب هو كلمة المرور</div>
+      </div>
+    </div>
+    <div class="lp-footer">
+      <span class="lp-footer-text">© 2026 M E H</span>
+      <span class="lp-footer-text">وزارة التعليم — المملكة العربية السعودية</span>
     </div>
   </div>
 </div>
@@ -1315,6 +1351,23 @@ function registerForNotifications(studentName, className) {
   window._notifSchoolCode  = sc;
   // نعرض الزر دائماً بعد الدخول
   setTimeout(showNotifBtn, 600);
+}
+
+function showNotifBtn() {
+  var wrap = document.getElementById('notifBtnWrap');
+  if (!wrap) return;
+  wrap.style.display = 'block';
+  // نتحقق من حالة الاشتراك لتحديث نص الزر
+  if (typeof OneSignalDeferred !== 'undefined') {
+    OneSignalDeferred.push(async function(OneSignal) {
+      try {
+        var optedIn = await OneSignal.User.PushSubscription.optedIn;
+        updateNotifBtn(!!optedIn);
+      } catch(e) {
+        updateNotifBtn(false);
+      }
+    });
+  }
 }
 
 // ══ دوال الإشعارات ══
