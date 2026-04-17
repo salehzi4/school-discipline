@@ -202,65 +202,98 @@ html, body { margin: 0; padding: 0; width: 100%; overflow-x: hidden; }
 }
 .lp-footer-text { color: #5A8A72; font-size: 10px; }
 
-/* ══ MOBILE ══ */
-@media (max-width: 768px) {
+/* ══ MOBILE — إجباري تخطيط عمودي ══ */
+@media only screen and (max-width: 768px) {
+  html, body { width: 100% !important; max-width: 100vw !important; overflow-x: hidden !important; }
+
+  .login-pg {
+    position: static !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    min-height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
   .lp-header {
-    padding: 12px 16px !important;
+    padding: 12px 14px !important;
+    width: 100% !important;
   }
-  .lp-header-logo {
-    width: 34px !important; height: 34px !important;
-  }
-  .lp-header-logo .material-icons-round { font-size: 17px !important; }
+  .lp-header-logo { width: 32px !important; height: 32px !important; }
+  .lp-header-logo .material-icons-round { font-size: 16px !important; }
   .lp-header-title { font-size: 11px !important; }
   .lp-header-sub { font-size: 9px !important; }
   .lp-header-date { font-size: 10px !important; }
 
-  .lp-subheader { padding: 6px 16px !important; }
+  .lp-subheader {
+    padding: 6px 14px !important;
+    width: 100% !important;
+  }
   .lp-subheader-text { font-size: 10px !important; }
 
   .lp-main {
+    display: flex !important;
     flex-direction: column !important;
-    padding: 16px !important;
-    gap: 16px !important;
+    padding: 14px !important;
+    gap: 14px !important;
     max-width: 100% !important;
     width: 100% !important;
     align-items: stretch !important;
+    justify-content: flex-start !important;
+    margin: 0 !important;
   }
 
   .lp-info {
+    display: flex !important;
+    flex-direction: column !important;
     width: 100% !important;
     max-width: 100% !important;
     flex: none !important;
-    padding: 8px 0 !important;
-    gap: 18px !important;
-    order: 1;
+    padding: 6px 0 !important;
+    gap: 16px !important;
+    order: 1 !important;
+    text-align: right !important;
+    align-items: stretch !important;
   }
 
-  .lp-brand { font-size: 22px !important; margin-bottom: 8px !important; }
+  .lp-brand { font-size: 22px !important; line-height: 1.25 !important; margin-bottom: 6px !important; }
   .lp-desc { font-size: 12px !important; line-height: 1.8 !important; }
   .lp-eyebrow-line { width: 20px !important; }
   .lp-eyebrow-txt { font-size: 9px !important; }
 
-  .lp-features { gap: 10px !important; }
+  .lp-features { display: flex !important; flex-direction: column !important; gap: 10px !important; width: 100% !important; }
+  .lp-feat { display: flex !important; gap: 10px !important; width: 100% !important; }
   .lp-feat-icon { width: 32px !important; height: 32px !important; }
-  .lp-feat-icon .material-icons-round { font-size: 17px !important; }
+  .lp-feat-icon .material-icons-round { font-size: 16px !important; }
   .lp-feat-title { font-size: 12px !important; }
   .lp-feat-desc { font-size: 10px !important; }
 
   .lp-login-card {
+    display: flex !important;
+    flex-direction: column !important;
     width: 100% !important;
     max-width: 100% !important;
     flex: none !important;
     align-self: stretch !important;
-    padding: 20px 16px !important;
+    padding: 18px 14px !important;
     gap: 8px !important;
-    order: 2;
+    order: 2 !important;
+    margin: 0 !important;
   }
+  .lp-login-title { font-size: 14px !important; }
+  .lp-login-sub { font-size: 10px !important; }
+  .role-card { padding: 10px 12px !important; min-height: 48px !important; }
+  .role-name { font-size: 12px !important; }
+  .role-sub { font-size: 10px !important; }
+  .lp-pass-field { padding: 10px 12px !important; }
+  .lp-enter-btn { padding: 12px !important; min-height: 48px !important; font-size: 13px !important; }
 
   .lp-footer {
-    padding: 10px 16px !important;
+    padding: 10px 14px !important;
+    display: flex !important;
     flex-direction: column !important;
     gap: 2px !important;
+    width: 100% !important;
   }
   .lp-footer-text {
     width: 100% !important;
@@ -269,12 +302,13 @@ html, body { margin: 0; padding: 0; width: 100%; overflow-x: hidden; }
   }
 }
 
-@media (max-width: 380px) {
+@media only screen and (max-width: 380px) {
   .lp-header { padding: 10px 12px !important; }
   .lp-main { padding: 12px !important; gap: 12px !important; }
   .lp-brand { font-size: 19px !important; }
-  .lp-login-card { padding: 18px 14px !important; }
+  .lp-login-card { padding: 16px 12px !important; }
 }
+
 
 /* ══ APP SHELL ══ */
 #app { display: none; min-height: 100vh; }
