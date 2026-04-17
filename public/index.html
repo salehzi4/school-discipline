@@ -1944,12 +1944,28 @@ tr:hover td{background:var(--em-ghost);}
   display: none;
 }
 
-/* شاشات أقل من 900px (جوال + آيباد) */
+  /* شاشات أقل من 900px (جوال + آيباد) */
 @media screen and (max-width: 900px) {
   /* إخفاء الـ margin لأن القائمة أصبحت طافية */
   .app-layout {
     margin-right: 0 !important;
+    padding-top: 0 !important;
+    margin-top: 0 !important;
   }
+
+  .app-header {
+    position: relative !important;
+    padding: 0 !important;
+  }
+  .app-header > div:first-child {
+    padding: 8px 12px !important;
+    gap: 8px !important;
+  }
+  .header-ministry-img { width: 32px !important; height: 32px !important; }
+  .header-school-name { font-size: 12px !important; }
+  .header-school-sub { font-size: 10px !important; }
+  .header-title-bar-t { padding: 4px 12px !important; }
+  .header-title-bar-t span { font-size: 11px !important; }
 
   /* القائمة تختبئ خارج الشاشة */
   .sidebar {
@@ -1997,6 +2013,12 @@ tr:hover td{background:var(--em-ghost);}
   .stat-card { padding: 12px 8px !important; }
   .page-content { padding: 14px 12px 120px !important; max-width: 100% !important; }
   .hero-quick { gap: 10px !important; }
+  .hero { padding: 16px 14px 20px !important; }
+  .hero-inner { gap: 14px !important; }
+  .ring-wrap { width: 70px !important; height: 70px !important; }
+  .ring-num { font-size: 20px !important; }
+  .hero-name { font-size: 18px !important; }
+  .hero-class { font-size: 12px !important; margin-bottom: 8px !important; }
 }
 
 /* جوال صغير جداً */
