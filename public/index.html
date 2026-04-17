@@ -1,8 +1,131 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<!-- ✅ FIX: خلفية فاتحة لشاشة الدخول -->
-<style>html{background:#E4EBF0;margin:0;}body{background:#E4EBF0;margin:0;}body.app-ready{background:var(--bg);}</style>
+<!-- ✅ FIX: يُطبَّق فوراً قبل اكتمال تحميل الصفحة -->
+<style>html{background:#062E22;margin:0;}body{background:#062E22;margin:0;}body.app-ready{background:var(--bg,#F0F3F7)!important;}
+/* ── MOBILE RESPONSIVE ── */
+/* ═══════════════════════════════════════════
+   RESPONSIVE — MOBILE FIRST
+   Breakpoints: 768px | 520px | 400px
+═══════════════════════════════════════════ */
+
+/* ── الجداول: تمرير أفقي بدل الفيضان ── */
+.table-wrapper, .tw { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table { min-width: 500px; }
+
+/* header responsive — defined above */
+
+/* ── البطاقات الإحصائية ── */
+@media (max-width: 768px) {
+  .stats-grid-new { grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; }
+  .stat-card-new  { min-height: 80px; padding: 10px 6px !important; }
+  .sc-val  { font-size: 20px !important; }
+  .sc-lbl  { font-size: 10px !important; }
+}
+@media (max-width: 520px) {
+  .stats-grid-new { grid-template-columns: repeat(2, 1fr) !important; }
+}
+
+/* ── الـ modals ── */
+@media (max-width: 768px) {
+  .modal-overlay > div,
+  [class*="modal"] > div:first-child {
+    width: 95vw !important;
+    max-width: 95vw !important;
+    margin: 10px auto !important;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+}
+
+/* ── الـ cards grids ── */
+@media (max-width: 768px) {
+  [style*="grid-template-columns: repeat(4"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  [style*="grid-template-columns: 1fr 1fr 1fr"],
+  [style*="grid-template-columns:1fr 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── السيدبار — handled above ── */
+@media (max-width: 900px) {
+  .content { margin-right: 0 !important; padding: 10px !important; }
+}
+
+
+/* ── الفلاتر والـ inputs ── */
+@media (max-width: 768px) {
+  .filters-row, [style*="display:flex"][style*="gap"][style*="flex-wrap"] {
+    flex-wrap: wrap !important;
+  }
+  select, input[type="text"], input[type="date"], input[type="search"] {
+    min-width: 120px;
+    max-width: 100%;
+  }
+}
+
+/* ── page-fullreport ── */
+@media (max-width: 768px) {
+  #frKpiGrid { grid-template-columns: repeat(4, 1fr) !important; }
+  #frAnalysisGrid { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 520px) {
+  #frKpiGrid { grid-template-columns: repeat(2, 1fr) !important; }
+}
+
+/* ── overflow global ── */
+body { overflow-x: hidden; }
+.content, .page { max-width: 100%; overflow-x: hidden; }
+
+
+/* ── إصلاحات جوال إضافية index ── */
+@media (max-width: 768px) {
+  /* بطاقة رصد المخالفة */
+  .record-grid, [id="recordSection"] .grid {
+    grid-template-columns: 1fr !important;
+  }
+  /* جداول السجلات */
+  .table-wrapper { overflow-x: auto; }
+  .table-wrapper table { min-width: 480px; }
+  /* فلاتر السجل */
+  #violationsLogFilters, .log-filters {
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+  /* بطاقة التقرير */
+  #reportViewModal > div {
+    width: 98vw !important;
+    max-width: 98vw !important;
+    padding: 10px !important;
+  }
+  /* بطاقات الإجراءات */
+  [style*="grid-template-columns:repeat(5,1fr)"] {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  /* KPIs التقرير الدوري */
+  #frKpiGrid {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 6px !important;
+  }
+  /* التحليل عمود واحد */
+  #frAnalysisGrid {
+    grid-template-columns: 1fr !important;
+  }
+  /* أزرار الهيدر */
+  .header-actions-wrap { gap: 4px !important; }
+}
+@media (max-width: 520px) {
+  #frKpiGrid { grid-template-columns: repeat(2, 1fr) !important; }
+  [style*="grid-template-columns:repeat(5,1fr)"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  /* بطاقات KPI login */
+  .role-card { width: 110px !important; padding: 14px 12px 12px !important; }
+  .role-icon-wrap { width: 46px !important; height: 46px !important; }
+}
+</style>
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -35,7 +158,7 @@
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 /* ✅ FIX: خلفية html تمنع الشاشة البيضاء أثناء تحميل loginScreen */
-html { background: #E4EBF0; }
+html { background: #062E22; }
 body { font-family: 'IBM Plex Sans Arabic', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; }
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-thumb { background: var(--border-dk); border-radius: 3px; }
@@ -46,422 +169,135 @@ body { font-family: 'IBM Plex Sans Arabic', sans-serif; background: var(--bg); c
 .spin { width: 34px; height: 34px; border: 3px solid var(--border); border-top-color: var(--em); border-radius: 50%; animation: spin .7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ══ LOGIN PAGE — Clean Responsive ══ */
-*, *::before, *::after { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; width: 100%; overflow-x: hidden; }
-
+/* ══ LOGIN PAGE ══ */
 .login-pg {
-  position: fixed; inset: 0;
-  width: 100vw;
-  min-height: 100vh; min-height: 100dvh;
-  background: #E4EBF0;
-  display: flex; flex-direction: column;
-  overflow-y: auto; overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
+  display: flex; min-height: 100vh;
+  background: linear-gradient(150deg, #062E22 0%, #0A5C44 55%, #0D7A5C 100%);
+  position: relative; overflow: hidden;
+  align-items: center; justify-content: center;
+  transition: background 0.3s ease;
 }
+.login-pg::before {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+.login-pg::after {
+  content: ''; position: absolute; width: 600px; height: 600px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,.04) 0%, transparent 65%);
+  top: 50%; left: 50%; transform: translate(-50%,-50%);
+}
+.l-blob1, .l-blob2 { position: absolute; pointer-events: none; }
+.l-blob1 { width: 280px; height: 280px; background: rgba(255,255,255,.03); top: -70px; right: -70px; border-radius: 30% 70% 70% 30%/30% 30% 70% 70%; }
+.l-blob2 { width: 200px; height: 200px; background: rgba(201,134,10,.05); bottom: -50px; left: -50px; border-radius: 50%; }
 
-/* HEADER */
-.lp-header {
-  background: #0A5C44;
-  padding: 10px 14px;
-  display: flex; justify-content: space-between; align-items: center;
-  gap: 12px; flex-shrink: 0;
-}
-.lp-header-brand { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1; }
-.lp-header-logo {
-  width: 40px; height: 40px;
-  background: rgba(255,255,255,0.15);
-  border-radius: 50%;
-  border: 1.5px solid rgba(255,255,255,0.3);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
-.lp-header-logo .material-icons-round { font-size: 20px; color: white; }
-.lp-header-title { color: white; font-size: 11px; font-weight: 600; line-height: 1.3; }
-@media (min-width: 900px) {
-  .lp-header { padding: 14px 24px; }
-  .lp-header-title { font-size: 13px; }
-}
-.lp-header-sub { color: rgba(255,255,255,0.55); font-size: 10px; margin-top: 2px; }
-.lp-header-date { color: rgba(255,255,255,0.5); font-size: 11px; flex-shrink: 0; }
-
-.lp-subheader {
-  background: #0D7A5C;
-  padding: 8px 24px;
-  display: flex; align-items: center; gap: 8px;
-  flex-shrink: 0;
-}
-.lp-subheader-dot { width: 5px; height: 5px; background: rgba(255,255,255,0.5); border-radius: 50%; flex-shrink: 0; }
-.lp-subheader-text { color: rgba(255,255,255,0.75); font-size: 11px; }
-
-/* MAIN */
-.lp-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 14px;
-  gap: 14px;
-  align-items: stretch;
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  box-sizing: border-box;
-}
-@media (min-width: 900px) {
-  .lp-main {
-    flex-direction: row;
-    padding: 24px;
-    gap: 24px;
-    max-width: 1200px;
-  }
-}
-
-/* INFO SECTION */
-.lp-info {
-  display: flex; flex-direction: column;
-  width: 100%;
-  gap: 14px;
-  padding: 6px 2px;
-  box-sizing: border-box;
-}
-@media (min-width: 900px) {
-  .lp-info {
-    flex: 1; min-width: 0;
-    justify-content: center;
-    gap: 28px;
-    padding: 20px 16px;
-    width: auto;
-  }
-}
-.lp-eyebrow { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-.lp-eyebrow-line { width: 28px; height: 2px; background: #C9860A; border-radius: 2px; }
-.lp-eyebrow-txt { color: #888; font-size: 10px; letter-spacing: 2px; font-weight: 500; }
-.lp-brand {
-  color: #062E22;
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 1.2;
-  margin-bottom: 6px;
-}
-@media (min-width: 900px) {
-  .lp-brand { font-size: 32px; margin-bottom: 12px; }
-}
-.lp-brand .lp-ac { color: #0A5C44; }
-.lp-desc { color: #666; font-size: 12px; line-height: 1.8; }
-@media (min-width: 900px) { .lp-desc { font-size: 13px; line-height: 2; } }
-.lp-desc strong { color: #0A5C44; font-weight: 600; }
-
-.lp-features { display: flex; flex-direction: column; gap: 14px; }
-.lp-feat { display: flex; align-items: flex-start; gap: 12px; }
-.lp-feat-icon {
-  width: 36px; height: 36px; background: #E8F5EE; border-radius: 9px;
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
-.lp-feat-icon .material-icons-round { font-size: 19px; color: #0A5C44; }
-.lp-feat-title { color: #1A3A2A; font-size: 13px; font-weight: 600; margin-bottom: 2px; }
-.lp-feat-desc { color: #999; font-size: 11px; }
-
-/* LOGIN CARD */
-.lp-login-card {
-  width: 100%;
-  max-width: 100%;
-  background: white;
-  border: 1px solid #E0E8F0;
-  border-radius: 12px;
-  padding: 16px 14px;
-  display: flex; flex-direction: column; gap: 8px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-  box-sizing: border-box;
-}
-@media (min-width: 900px) {
-  .lp-login-card {
-    width: 340px;
-    max-width: 340px;
-    flex-shrink: 0;
-    padding: 28px 24px;
-    gap: 10px;
-    align-self: center;
-    border-radius: 14px;
-  }
-}
-.lp-login-title { color: #1A3A2A; font-size: 16px; font-weight: 700; }
-.lp-login-sub { color: #999; font-size: 11px; margin-top: -4px; margin-bottom: 6px; }
-
+/* CENTERED COLUMN LAYOUT */
+/* ── Role Cards Login ── */
 .role-card {
-  display: flex; align-items: center; gap: 10px;
-  padding: 12px 14px; border-radius: 10px; cursor: pointer;
-  transition: all 0.2s; width: 100%;
-  min-height: 44px;
+  background: rgba(255,255,255,.07);
+  border: 1.5px solid rgba(255,255,255,.12);
+  border-radius: 18px;
+  padding: 20px 20px 16px;
+  width: 130px;
+  cursor: pointer;
+  text-align: center;
+  transition: all .25s;
 }
-.role-card.off { background: #FAFBFC; border: 1px solid #E8EDF2; }
-.role-card.on, .role-card.active { background: #EEF8F3; border: 1.5px solid #0A5C44; }
-.role-card:hover { border-color: #0A5C44; }
-.role-bar { width: 4px; height: 32px; border-radius: 3px; flex-shrink: 0; }
-.role-name { font-size: 12px; font-weight: 600; color: #1A3A2A; }
-.role-name.dim { color: #777; font-weight: 400; }
-.role-sub { font-size: 10px; color: #BBB; margin-top: 2px; }
-.role-check {
-  width: 18px; height: 18px; border-radius: 50%; background: #0A5C44;
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+.role-card:hover {
+  background: rgba(255,255,255,.11);
+  border-color: rgba(255,255,255,.25);
+  transform: translateY(-2px);
 }
-.role-check .material-icons-round { font-size: 12px; color: white; }
-.lp-divider { height: 1px; background: #F0F2F5; margin: 4px 0; }
-
-.lp-pass-field {
-  background: #F8F9FA; border: 1px solid #E2E7EE;
-  border-radius: 8px; padding: 12px 14px;
-  display: flex; align-items: center; gap: 8px;
+.role-card.active {
+  background: rgba(255,255,255,.15);
+  border-color: rgba(255,255,255,.45);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0,0,0,.2);
 }
-.lp-pass-field .material-icons-round { font-size: 16px; color: #CCC; }
-.lp-pass-field input {
-  border: none; background: transparent; outline: none;
-  font-family: inherit; font-size: 16px; color: #333;
-  width: 100%; min-width: 0;
-  letter-spacing: 4px; direction: ltr; text-align: center;
+.role-icon-wrap {
+  width: 56px; height: 56px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.25);
 }
-.lp-pass-field input::placeholder { color: #CCC; letter-spacing: 2px; font-size: 13px; }
-
-.lp-enter-btn {
-  background: #0A5C44; border-radius: 9px; padding: 13px;
-  color: white; font-size: 14px; font-weight: 600; border: none;
-  font-family: inherit; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; gap: 7px;
-  width: 100%; transition: opacity 0.2s;
-  min-height: 44px;
+.role-icon-wrap .material-icons-round { font-size: 28px; color: #fff; }
+.role-lbl { font-size: 12px; font-weight: 700; color: rgba(255,255,255,.9); margin-bottom: 12px; }
+.role-input-wrap { margin-top: 10px; }
+.role-field {
+  display: flex; align-items: center;
+  background: rgba(255,255,255,.12);
+  border: 1.5px solid rgba(255,255,255,.25);
+  border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; gap: 8px;
 }
-.lp-enter-btn:hover { opacity: 0.9; }
-.lp-enter-btn .material-icons-round { font-size: 16px; }
-
-.lfc-err {
-  margin-top: 6px; padding: 10px 12px;
-  background: rgba(220,38,38,.08);
-  border: 1px solid rgba(220,38,38,.2);
-  border-radius: 7px; color: #DC2626;
-  font-size: 11px; text-align: center; display: none;
+.role-field-ico { font-size: 18px; color: rgba(255,255,255,.7); flex-shrink: 0; }
+.role-inp {
+  background: transparent; border: none; outline: none;
+  color: #fff; font-family: inherit; font-size: 14px;
+  width: 100%; direction: ltr; text-align: center;
+  letter-spacing: 2px;
 }
-
-/* FOOTER */
-.lp-footer {
-  background: #EEF4F0; border-top: 1px solid #D4E6DA;
-  padding: 10px 24px;
-  display: flex; justify-content: space-between; align-items: center;
-  flex-wrap: wrap; gap: 8px;
-  flex-shrink: 0;
+.role-inp::placeholder { color: rgba(255,255,255,.45); font-size: 11px; letter-spacing: 0; }
+.role-btn {
+  width: 100%; padding: 10px;
+  background: linear-gradient(135deg,#0A5C44,#0D7A5C);
+  color: #fff; border: none; border-radius: 10px;
+  font-family: inherit; font-size: 13px; font-weight: 700;
+  cursor: pointer; display: flex; align-items: center;
+  justify-content: center; gap: 6px; transition: opacity .15s;
 }
-.lp-footer-text { color: #5A8A72; font-size: 10px; }
+.role-btn:hover { opacity: .9; }
 
-/* ══ MOBILE FIRST — تصميم جوال محسّن ══ */
-@media only screen and (max-width: 1024px) {
-  html, body { width: 100% !important; max-width: 100vw !important; overflow-x: hidden !important; margin: 0 !important; padding: 0 !important; }
-
-  .login-pg {
-    position: static !important;
-    width: 100% !important;
-    max-width: 100vw !important;
-    min-height: 100vh !important;
-    min-height: 100dvh !important;
-    display: flex !important;
-    flex-direction: column !important;
-    background: #E4EBF0 !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-  }
-
-  /* إخفاء قسم المعلومات على الموبايل */
-  .lp-info {
-    display: none !important;
-  }
-
-  /* هيدر مضغوط وبسيط */
-  .lp-header {
-    background: #0A5C44 !important;
-    padding: 12px 16px !important;
-    width: 100% !important;
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    gap: 10px !important;
-    flex-shrink: 0 !important;
-  }
-  .lp-header-brand { display: flex !important; align-items: center !important; gap: 10px !important; flex: 1 !important; }
-  .lp-header-logo { width: 36px !important; height: 36px !important; }
-  .lp-header-logo .material-icons-round { font-size: 18px !important; }
-  .lp-header-title { font-size: 12px !important; font-weight: 600 !important; color: white !important; }
-  .lp-header-sub { font-size: 10px !important; color: rgba(255,255,255,0.7) !important; margin-top: 1px !important; }
-  .lp-header-date { font-size: 11px !important; color: rgba(255,255,255,0.6) !important; flex-shrink: 0 !important; }
-
-  .lp-subheader {
-    background: #0D7A5C !important;
-    padding: 8px 16px !important;
-    width: 100% !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    flex-shrink: 0 !important;
-  }
-  .lp-subheader-dot { width: 4px !important; height: 4px !important; background: rgba(255,255,255,0.5) !important; border-radius: 50% !important; flex-shrink: 0 !important; }
-  .lp-subheader-text { font-size: 11px !important; color: rgba(255,255,255,0.75) !important; }
-
-  /* المحتوى الرئيسي — مضغوط وبسيط */
-  .lp-main {
-    display: flex !important;
-    flex-direction: column !important;
-    padding: 16px !important;
-    gap: 16px !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    align-items: stretch !important;
-    justify-content: flex-start !important;
-    flex: 1 0 auto !important;
-  }
-
-  /* كارد الدخول — تصميم جوال محسّن */
-  .lp-login-card {
-    width: 100% !important;
-    max-width: 100% !important;
-    flex: none !important;
-    align-self: stretch !important;
-    background: white !important;
-    border: 1px solid #E0E8F0 !important;
-    border-radius: 14px !important;
-    padding: 20px 16px !important;
-    gap: 12px !important;
-    margin: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.05) !important;
-  }
-  .lp-login-title { font-size: 16px !important; font-weight: 700 !important; color: #1A3A2A !important; margin-bottom: 4px !important; }
-  .lp-login-sub { font-size: 12px !important; color: #888 !important; margin-bottom: 8px !important; }
-
-  /* بطاقات الأدوار — محسّنة للموبايل */
-  .role-card {
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-    padding: 14px 14px !important;
-    min-height: 48px !important;
-    border-radius: 10px !important;
-    cursor: pointer !important;
-    transition: all 0.25s ease !important;
-    width: 100% !important;
-    border: 1.5px solid #E8EDF2 !important;
-    background: #FAFBFC !important;
-  }
-  .role-card.on, .role-card.active {
-    background: #EEF8F3 !important;
-    border-color: #0A5C44 !important;
-  }
-  .role-card:active { transform: scale(0.98) !important; }
-  .role-bar { width: 4px !important; height: 30px !important; border-radius: 3px !important; flex-shrink: 0 !important; }
-  .role-name { font-size: 13px !important; font-weight: 600 !important; color: #1A3A2A !important; }
-  .role-name.dim { color: #888 !important; font-weight: 500 !important; }
-  .role-sub { font-size: 11px !important; color: #AAA !important; margin-top: 2px !important; }
-  .role-check {
-    width: 20px !important;
-    height: 20px !important;
-    border-radius: 50% !important;
-    background: #0A5C44 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    flex-shrink: 0 !important;
-  }
-  .role-check .material-icons-round { font-size: 12px !important; color: white !important; }
-
-  .lp-divider { height: 1px !important; background: #F0F2F5 !important; margin: 6px 0 !important; }
-
-  /* حقل الرمز — محسّن للموبايل */
-  .lp-pass-field {
-    background: #F8F9FA !important;
-    border: 1.5px solid #E2E7EE !important;
-    border-radius: 10px !important;
-    padding: 14px 14px !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 10px !important;
-  }
-  .lp-pass-field .material-icons-round { font-size: 18px !important; color: #0A5C44 !important; flex-shrink: 0 !important; }
-  .lp-pass-field input {
-    border: none !important;
-    background: transparent !important;
-    outline: none !important;
-    font-family: inherit !important;
-    font-size: 16px !important;
-    color: #333 !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    letter-spacing: 3px !important;
-    direction: ltr !important;
-    text-align: center !important;
-  }
-  .lp-pass-field input::placeholder { color: #CCC !important; letter-spacing: 2px !important; font-size: 13px !important; }
-
-  /* زر الدخول — محسّن للموبايل */
-  .lp-enter-btn {
-    background: #0A5C44 !important;
-    border-radius: 10px !important;
-    padding: 14px 16px !important;
-    color: white !important;
-    font-size: 14px !important;
-    font-weight: 600 !important;
-    border: none !important;
-    font-family: inherit !important;
-    cursor: pointer !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 8px !important;
-    width: 100% !important;
-    transition: all 0.2s ease !important;
-    min-height: 48px !important;
-  }
-  .lp-enter-btn:active { transform: scale(0.97) !important; opacity: 0.9 !important; }
-  .lp-enter-btn .material-icons-round { font-size: 16px !important; }
-
-  /* رسالة الخطأ */
-  .lfc-err {
-    margin-top: 8px !important;
-    padding: 12px 14px !important;
-    background: rgba(220,38,38,.08) !important;
-    border: 1px solid rgba(220,38,38,.2) !important;
-    border-radius: 8px !important;
-    color: #DC2626 !important;
-    font-size: 12px !important;
-    text-align: center !important;
-    display: none !important;
-  }
-
-  /* فوتر */
-  .lp-footer {
-    background: #EEF4F0 !important;
-    border-top: 1px solid #D4E6DA !important;
-    padding: 12px 16px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-    align-items: center !important;
-    gap: 4px !important;
-    width: 100% !important;
-    flex-shrink: 0 !important;
-  }
-  .lp-footer-text {
-    color: #5A8A72 !important;
-    font-size: 10px !important;
-    text-align: center !important;
-  }
+.lp-center-wrap {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 40px 24px;
+  width: 100%; max-width: 440px;
 }
-
-@media only screen and (max-width: 380px) {
-  .lp-header { padding: 10px 12px !important; }
-  .lp-header-title { font-size: 11px !important; }
-  .lp-main { padding: 14px !important; gap: 14px !important; }
-  .lp-login-card { padding: 18px 14px !important; }
-  .role-card { padding: 12px 12px !important; min-height: 44px !important; }
-  .lp-enter-btn { min-height: 44px !important; padding: 12px 14px !important; }
+.lp-icon-box {
+  width: 80px; height: 80px;
+  background: rgba(255,255,255,.12);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,.22);
+  border-radius: 22px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px;
 }
- ══ APP SHELL ══ */
+.lp-icon-box .material-icons-round { font-size: 40px; color: #fff; }
+.lp-title {
+  font-size: 26px; font-weight: 900; color: #fff;
+  margin-bottom: 8px; line-height: 1.25;
+}
+.lp-sub {
+  font-size: 14px; color: rgba(255,255,255,.62);
+  line-height: 1.7; margin-bottom: 28px;
+  max-width: 320px;
+}
+.lp-card {
+  width: 100%;
+  background: rgba(255,255,255,.09);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 20px;
+  padding: 28px 26px;
+  box-shadow: 0 40px 80px rgba(0,0,0,.26), inset 0 1px 0 rgba(255,255,255,.12);
+  text-align: right;
+}
+/* Shared lfc-* classes */
+.lfc-lbl { font-size: 11px; font-weight: 700; color: rgba(255,255,255,.44); letter-spacing: 1.2px; text-transform: uppercase; display: block; margin-bottom: 8px; }
+.lfc-field { position: relative; margin-bottom: 16px; }
+.lfc-ico { position: absolute; right: 13px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,.3); font-size: 18px; pointer-events: none; }
+.lfc-inp { width: 100%; padding: 13px 46px 13px 16px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); border-radius: 7px; font-family: inherit; font-size: 17px; font-weight: 700; color: #fff; letter-spacing: 5px; text-align: center; direction: ltr; transition: all .2s; }
+.lfc-inp::placeholder { color: rgba(255,255,255,.22); letter-spacing: 3px; font-size: 14px; }
+.lfc-inp:focus { outline: none; border-color: rgba(255,255,255,.55); background: rgba(255,255,255,.15); }
+.lfc-btn { width: 100%; padding: 14px; background: rgba(255,255,255,.94); color: #0A5C44; border: none; border-radius: 7px; font-family: inherit; font-size: 15px; font-weight: 900; cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.lfc-btn:hover { background: #fff; transform: translateY(-1px); box-shadow: 0 10px 28px rgba(0,0,0,.2); }
+.lfc-err { margin-top: 12px; padding: 10px 14px; background: rgba(220,38,38,.14); border: 1px solid rgba(220,38,38,.28); border-radius: 7px; color: #fca5a5; font-size: 12px; text-align: center; display: none; }
+
+/* ══ APP SHELL ══ */
 #app { display: none; min-height: 100vh; }
 
 /* HEADER */
@@ -1944,28 +1780,12 @@ tr:hover td{background:var(--em-ghost);}
   display: none;
 }
 
-  /* شاشات أقل من 900px (جوال + آيباد) */
+/* شاشات أقل من 900px (جوال + آيباد) */
 @media screen and (max-width: 900px) {
   /* إخفاء الـ margin لأن القائمة أصبحت طافية */
   .app-layout {
     margin-right: 0 !important;
-    padding-top: 0 !important;
-    margin-top: 0 !important;
   }
-
-  .app-header {
-    position: relative !important;
-    padding: 0 !important;
-  }
-  .app-header > div:first-child {
-    padding: 8px 12px !important;
-    gap: 8px !important;
-  }
-  .header-ministry-img { width: 32px !important; height: 32px !important; }
-  .header-school-name { font-size: 12px !important; }
-  .header-school-sub { font-size: 10px !important; }
-  .header-title-bar-t { padding: 4px 12px !important; }
-  .header-title-bar-t span { font-size: 11px !important; }
 
   /* القائمة تختبئ خارج الشاشة */
   .sidebar {
@@ -2013,12 +1833,6 @@ tr:hover td{background:var(--em-ghost);}
   .stat-card { padding: 12px 8px !important; }
   .page-content { padding: 14px 12px 120px !important; max-width: 100% !important; }
   .hero-quick { gap: 10px !important; }
-  .hero { padding: 16px 14px 20px !important; }
-  .hero-inner { gap: 14px !important; }
-  .ring-wrap { width: 70px !important; height: 70px !important; }
-  .ring-num { font-size: 20px !important; }
-  .hero-name { font-size: 18px !important; }
-  .hero-class { font-size: 12px !important; margin-bottom: 8px !important; }
 }
 
 /* جوال صغير جداً */
@@ -2273,126 +2087,62 @@ tr:hover td{background:var(--em-ghost);}
 <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
 
 <div class="login-pg" id="loginScreen" style="opacity:0;transition:opacity .35s ease;">
-
-  <!-- هيدر -->
-  <div class="lp-header">
-    <div class="lp-header-brand">
-      <div class="lp-header-logo">
-        <span class="material-icons-round" id="loginLogoIcon">school</span>
-      </div>
-      <div>
-        <div class="lp-header-title" id="loginTitle">الإدارة العامة للتعليم</div>
-        <div class="lp-header-sub">المملكة العربية السعودية</div>
-      </div>
+  <div class="l-blob1"></div>
+  <div class="l-blob2"></div>
+  <div class="lp-center-wrap">
+    <div class="lp-icon-box">
+      <span class="material-icons-round" id="loginLogoIcon">gavel</span>
     </div>
-    <div class="lp-header-date">1446 هـ</div>
-  </div>
-  <div class="lp-subheader">
-    <div class="lp-subheader-dot"></div>
-    <div class="lp-subheader-text" id="loginSubtitle">منصة متابعة السلوك والانضباط المدرسي</div>
-  </div>
+    <h1 class="lp-title" id="loginTitle">سجل المخالفات السلوكية</h1>
+    <p class="lp-sub" id="loginSubtitle">منصة متكاملة لإدارة السلوك المدرسي</p>
 
-  <!-- المحتوى الرئيسي -->
-  <div class="lp-main">
+    <!-- الأيقونات الثلاث -->
+    <div style="display:flex;gap:20px;justify-content:center;align-items:center;margin-bottom:20px;">
 
-    <!-- معلومات -->
-    <div class="lp-info">
-      <div>
-        <div class="lp-eyebrow">
-          <div class="lp-eyebrow-line"></div>
-          <div class="lp-eyebrow-txt">SCHOOL DISCIPLINE SYSTEM</div>
+      <div class="role-card" id="roleCard_admin" onclick="selectRole('admin')" title="إدارة المدرسة">
+        <div class="role-icon-wrap" style="background:linear-gradient(135deg,#0A5C44,#0D7A5C);">
+          <span class="material-icons-round">admin_panel_settings</span>
         </div>
-        <div class="lp-brand">نظام <span class="lp-ac">الانضباط</span><br>المدرسي</div>
-        <div class="lp-desc">
-          منصة إلكترونية متكاملة تمكّن الإدارة والمعلمين من
-          <strong>رصد السلوك وتوثيقه</strong>،
-          مع إشراك أولياء الأمور بشكل فوري وشفاف.
-        </div>
+        <div class="role-lbl">إدارة المدرسة</div>
       </div>
-      <div class="lp-features">
-        <div class="lp-feat">
-          <div class="lp-feat-icon"><span class="material-icons-round">task_alt</span></div>
-          <div>
-            <div class="lp-feat-title">رصد المخالفات والسلوك الإيجابي</div>
-            <div class="lp-feat-desc">تسجيل فوري مع تصنيف حسب الدرجة والفئة</div>
-          </div>
+
+      <div class="role-card" id="roleCard_teacher" onclick="goToTeacher()" title="الكادر التعليمي">
+        <div class="role-icon-wrap" style="background:linear-gradient(135deg,#1A4A7A,#2563EB);">
+          <span class="material-icons-round">school</span>
         </div>
-        <div class="lp-feat">
-          <div class="lp-feat-icon"><span class="material-icons-round">description</span></div>
-          <div>
-            <div class="lp-feat-title">محاضر ومراسلات رسمية موثقة</div>
-            <div class="lp-feat-desc">إصدار فوري مع التوقيع الإلكتروني</div>
-          </div>
-        </div>
-        <div class="lp-feat">
-          <div class="lp-feat-icon"><span class="material-icons-round">groups</span></div>
-          <div>
-            <div class="lp-feat-title">تواصل مباشر مع أولياء الأمور</div>
-            <div class="lp-feat-desc">إشعارات فورية وبوابة متابعة مخصصة</div>
-          </div>
-        </div>
+        <div class="role-lbl">الكادر التعليمي</div>
       </div>
+
+      <div class="role-card" id="roleCard_parent" onclick="goToParent()" title="الأسرة">
+        <div class="role-icon-wrap" style="background:linear-gradient(135deg,#7C3AED,#9333EA);">
+          <span class="material-icons-round">family_restroom</span>
+        </div>
+        <div class="role-lbl">الأسرة</div>
+      </div>
+
     </div>
 
-    <!-- كارد الدخول -->
-    <div class="lp-login-card">
-      <div class="lp-login-title">تسجيل الدخول</div>
-      <div class="lp-login-sub">اختر صفتك للمتابعة</div>
-
-      <div class="role-card on" id="roleCard_admin" onclick="selectRole('admin')">
-        <div class="role-bar" style="background:#0A5C44;"></div>
-        <div style="flex:1;">
-          <div class="role-name">إدارة المدرسة</div>
-          <div class="role-sub">صلاحية كاملة</div>
-        </div>
-        <div class="role-check"><span class="material-icons-round">check</span></div>
+    <!-- خانة الرمز الموحدة -->
+    <div id="unifiedInputWrap" style="display:none;width:100%;max-width:320px;margin:0 auto 10px;">
+      <div id="unifiedInputLabel" style="font-size:11px;font-weight:700;color:rgba(255,255,255,.7);margin-bottom:8px;text-align:center;"></div>
+      <div class="role-field" style="margin-bottom:10px;">
+        <span class="material-icons-round role-field-ico" id="unifiedInputIco">lock</span>
+        <input class="role-inp" id="unifiedPass"
+          placeholder="••••••"
+          maxlength="30" autocomplete="off"
+          onkeypress="if(event.key==='Enter')doRoleLogin(window._selectedRole)">
       </div>
-
-      <div class="role-card off" id="roleCard_teacher" onclick="goToTeacher()">
-        <div class="role-bar" style="background:#1A4A7A;"></div>
-        <div style="flex:1;">
-          <div class="role-name dim">الكادر التعليمي</div>
-          <div class="role-sub">رصد وتسجيل</div>
-        </div>
-      </div>
-
-      <div class="role-card off" id="roleCard_parent" onclick="goToParent()">
-        <div class="role-bar" style="background:#7C3AED;"></div>
-        <div style="flex:1;">
-          <div class="role-name dim">الأسرة</div>
-          <div class="role-sub">متابعة واطلاع</div>
-        </div>
-      </div>
-
-      <div class="lp-divider"></div>
-
-      <div id="unifiedInputWrap" style="display:none;">
-        <div id="unifiedInputLabel" style="font-size:10px;font-weight:600;color:#555;margin-bottom:6px;"></div>
-        <div class="lp-pass-field">
-          <span class="material-icons-round" id="unifiedInputIco">lock</span>
-          <input id="unifiedPass" placeholder="••••••" maxlength="30" autocomplete="off"
-            onkeypress="if(event.key==='Enter')doRoleLogin(window._selectedRole)">
-        </div>
-      </div>
-
-      <button class="lp-enter-btn" id="unifiedBtn" onclick="doRoleLogin(window._selectedRole)" style="display:none;">
-        <span>دخول</span>
-        <span class="material-icons-round">login</span>
+      <button class="role-btn" id="unifiedBtn" onclick="doRoleLogin(window._selectedRole)">
+        <span class="material-icons-round" style="font-size:15px;">login</span> دخول
       </button>
-
-      <div class="lfc-err" id="loginError">رمز غير صحيح</div>
-
-      <input type="hidden" id="loginPassword">
     </div>
 
-  </div>
+    <!-- رسالة الخطأ -->
+    <div class="lfc-err" id="loginError" style="display:none;margin-top:4px;">رمز غير صحيح</div>
 
-  <!-- فوتر -->
-  <div class="lp-footer">
-    <span class="lp-footer-text">© 2026 M E H — جميع الحقوق محفوظة</span>
-    <span class="lp-footer-text">وزارة التعليم — المملكة العربية السعودية</span>
+    <!-- حقل مخفي للتوافق -->
+    <input type="hidden" id="loginPassword">
   </div>
-
 </div>
 
 <div id="mainApp" style="display:none;">
@@ -3705,18 +3455,7 @@ tr:hover td{background:var(--em-ghost);}
       <button class="btn btn-outline btn-sm" onclick="clearMsgFilters()">مسح</button>
       <span class="chip" id="msgCountChip">0</span>
     </div>
-    <div class="table-wrapper"><table><!-- Bulk Bar رسائل -->
-<div id="msgBulkBar" class="bulk-bar">
-  <span class="bulk-bar-count"><span id="msgBulkCount">0</span> محدد</span>
-  <button class="btn btn-danger btn-sm" onclick="bulkDeleteMessages()">
-    <span class="material-icons-round" style="font-size:14px;">delete_sweep</span> حذف المحدد
-  </button>
-  <button class="btn btn-outline btn-sm" onclick="clearBulkSelection('messagesTableBody','msgSelectAll','msgBulkBar','msgBulkCount')">إلغاء</button>
-</div>
-<thead><tr>
-  <th class="cb-col"><input type="checkbox" class="bulk-cb" id="msgSelectAll" onchange="toggleBulkAll('messagesTableBody','msgSelectAll','msgBulkBar','msgBulkCount')"></th>
-  <th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>نص الرسالة</th><th>المرسل</th><th>الحالة</th><th>الإجراءات</th>
-</tr></thead><tbody id="messagesTableBody"><tr><td colspan="7" class="empty-state">لا توجد</td></tr></tbody></table></div>
+    <div class="table-wrapper"><table><thead><tr><th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>نص الرسالة</th><th>المرسل</th><th>الحالة</th><th>الإجراءات</th></tr></thead><tbody id="messagesTableBody"><tr><td colspan="7" class="empty-state">لا توجد</td></tr></tbody></table></div>
   </div>
 </div>
 
@@ -3766,17 +3505,7 @@ tr:hover td{background:var(--em-ghost);}
         </select>
         <button class="btn btn-outline btn-sm" onclick="clearLogFilters()">مسح</button>
       </div>
-      <div class="table-wrapper"><table><div class="bulk-bar" id="vlBulkBar">
-  <span id="vlBulkCount">0 محدد</span>
-  <button class="btn btn-danger btn-sm" onclick="bulkDeleteViolations()">
-    <span class="material-icons-round" style="font-size:13px;">delete</span> حذف المحدد
-  </button>
-  <button class="btn btn-outline btn-sm" onclick="clearBulkViolations()">إلغاء</button>
-</div>
-<thead><tr>
-  <th class="cb-col"><input type="checkbox" class="bulk-cb" id="vlSelectAll" onchange="toggleBulkAll('violationsLogTableBody','vlSelectAll','vlBulkBar','vlBulkCount')"></th>
-  <th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>نوع المخالفة</th><th>المخالفة</th><th>الإجراء المتخذ</th><th>التكرار</th><th>المسجّل</th><th>ولي الأمر 👁</th><th>إجراءات</th>
-</tr></thead><tbody id="violationsLogTableBody"><tr><td colspan="8" class="empty-state">لا توجد</td></tr></tbody></table></div>
+      <div class="table-wrapper"><table><thead><tr><th>#</th><th>التاريخ</th><th>الطالب</th><th>الفصل</th><th>نوع المخالفة</th><th>المخالفة</th><th>الإجراء المتخذ</th><th>التكرار</th><th>المسجّل</th><th>ولي الأمر 👁</th><th>إجراءات</th></tr></thead><tbody id="violationsLogTableBody"><tr><td colspan="8" class="empty-state">لا توجد</td></tr></tbody></table></div>
     </div>
   </div>
 
@@ -4071,16 +3800,9 @@ tr:hover td{background:var(--em-ghost);}
       <span id="reportsCount" style="background:var(--em-pale);color:var(--em);padding:3px 12px;border-radius:20px;font-size:11px;font-weight:700;"></span>
     </div>
     <div class="table-wrapper">
-        <div class="bulk-bar" id="rptBulkBar">
-          <span id="rptBulkCount">0 محدد</span>
-          <button class="btn btn-danger btn-sm" onclick="bulkDeleteReports()">
-            <span class="material-icons-round" style="font-size:13px;">delete</span> حذف المحدد
-          </button>
-        </div>
       <table>
         <thead>
           <tr>
-            <th class="cb-col"><input type="checkbox" class="bulk-cb" id="rptSelectAll" onchange="toggleBulkAll('reportsTableBody','rptSelectAll','rptBulkBar','rptBulkCount')"></th>
             <th>#</th>
             <th>اسم الطالب</th>
             <th>المخالفة</th>
@@ -4312,15 +4034,7 @@ tr:hover td{background:var(--em-ghost);}
       </div>
       <div class="table-wrapper">
         <table>
-          <div class="bulk-bar" id="posBulkBar">
-  <span id="posBulkCount">0 محدد</span>
-  <button class="btn btn-danger btn-sm" onclick="bulkDeletePositive()">
-    <span class="material-icons-round" style="font-size:13px;">delete</span> حذف المحدد
-  </button>
-  <button class="btn btn-outline btn-sm" onclick="clearBulkPositive()">إلغاء</button>
-</div>
-<thead><tr>
-  <th class="cb-col"><input type="checkbox" class="bulk-cb" id="posSelectAll" onchange="toggleBulkAll('positiveLogTableBody','posSelectAll','posBulkBar','posBulkCount')"></th>
+          <thead><tr>
             <th>#</th>
             <th>التاريخ</th>
             <th>الطالب</th>
@@ -4468,8 +4182,6 @@ function selectRole(role) {
   if(window._selectedRole === role) {
     window._selectedRole = null;
     wrap.style.display = 'none';
-    var _b = document.getElementById('unifiedBtn');
-    if(_b) _b.style.display = 'none';
     inp.value = '';
     if(err) err.style.display = 'none';
     document.getElementById('roleCard_'+role).classList.remove('active');
@@ -4504,7 +4216,6 @@ function selectRole(role) {
   inp.inputMode      = role==='parent' ? 'numeric' : 'text';
   btn.style.background = cfg.btnBg;
   wrap.style.display = 'block';
-  if(btn) btn.style.display = 'flex';
   setTimeout(function(){ inp.focus(); }, 80);
 }
 
@@ -4945,7 +4656,6 @@ function loadPositiveLogTable() {
           'style="padding:3px 7px;" title="حذف"><span class="material-icons-round" style="font-size:13px;">delete</span></button>'
         : '';
       return '<tr style="'+(isD?'background:rgba(34,211,238,0.03)':'')+'">'
-        +'<td class="cb-col"><input type="checkbox" class="bulk-cb pos-cb" data-idx="'+i+'" onchange="updateBulkBar(\'posBulkBar\',\'pos-cb\',\'posBulkCount\')"></td>'
         +'<td>'+(i+1)+'</td>'
         +'<td>'+date+'</td>'
         +'<td><strong>'+esc(r.student_name||r.studentName||'')+'</strong></td>'
@@ -6554,8 +6264,7 @@ function loadMessagesLog() {
     msgs.forEach(function(m, i) {
       var tr = document.createElement('tr');
       tr.innerHTML =
-          '<td><input type="checkbox" class="bulk-cb msg-cb"></td>'
-        + '<td>' + (i+1) + '</td>'
+          '<td>' + (i+1) + '</td>'
         + '<td>' + (m.date||'') + '</td>'
         + '<td><strong>' + (m.studentName||'') + '</strong></td>'
         + '<td>' + (m.className||'') + '</td>'
@@ -6573,8 +6282,6 @@ function loadMessagesLog() {
       delBtn.dataset.vtype = m.violationType || '';
       delBtn.onclick = function(){ delMessage(this); };
       tr.cells[7].appendChild(delBtn);
-      var msgCb = tr.querySelector('.msg-cb');
-      if (msgCb) msgCb.addEventListener('change', function(){ updateBulkBar('msgBulkBar','msg-cb','msgBulkCount'); });
       tb.appendChild(tr);
     });
   }).catch(function(e){ hideLoading(); console.error(e); });
@@ -6605,131 +6312,6 @@ function _getCategoryLabel(cat) {
     'positive':   '<span style="padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:#e8f5ee;color:#055c38;border:1px solid #07A869;">إيجابي</span>'
   };
   return map[cat] || '<span style="padding:2px 8px;border-radius:20px;font-size:10px;color:#999;border:1px solid #C2C1C1;">'+(cat||'—')+'</span>';
-}
-
-
-// ═══════════════════════════════════════════════════════
-// Bulk Delete — حذف متعدد
-// ═══════════════════════════════════════════════════════
-
-// تحديد/إلغاء الكل
-function toggleBulkAll(tbodyId, selectAllId, barId, countId) {
-  var checked = document.getElementById(selectAllId).checked;
-  var cbs = document.querySelectorAll('#' + tbodyId + ' .bulk-cb');
-  cbs.forEach(function(cb) { cb.checked = checked; });
-  updateBulkBar(barId, tbodyId + ' .bulk-cb', countId);
-}
-
-// تحديث شريط الـ bulk
-function updateBulkBar(barId, cbClass, countId) {
-  // نبني الـ selector بشكل صحيح
-  var sel = cbClass;
-  if (sel.indexOf('#') === -1 && sel.indexOf('.') === -1) sel = '.' + sel;
-  else if (sel.charAt(0) === '.') sel = sel; // بالفعل يبدأ بنقطة
-  var cbs = document.querySelectorAll(sel);
-  var checked = Array.from(cbs).filter(function(cb) { return cb.checked; });
-  var bar = document.getElementById(barId);
-  var cnt = document.getElementById(countId);
-  if (bar) bar.classList.toggle('active', checked.length > 0);
-  if (cnt) cnt.textContent = checked.length + ' محدد';
-}
-
-// ── حذف متعدد: سجل المخالفات ──
-function bulkDeleteViolations() {
-  var cbs = document.querySelectorAll('.vl-cb:checked');
-  if (!cbs.length) return;
-  if (!confirm('حذف ' + cbs.length + ' سجل؟ لا يمكن التراجع.')) return;
-  showLoading();
-  var promises = Array.from(cbs).map(function(cb) {
-    var idx = parseInt(cb.dataset.idx);
-    var rec = window._allVlRecords && window._allVlRecords[idx];
-    if (!rec) return Promise.resolve();
-    return GAS.deleteViolationLog(rec.date, rec.studentName, rec.violationType);
-  });
-  Promise.all(promises).then(function() {
-    hideLoading();
-    clearBulkViolations();
-    loadViolationsLog();
-  }).catch(function(e) { hideLoading(); console.error(e); });
-}
-
-function clearBulkViolations() {
-  document.querySelectorAll('.vl-cb').forEach(function(cb) { cb.checked = false; });
-  var bar = document.getElementById('vlBulkBar');
-  if (bar) bar.classList.remove('active');
-  var sa = document.getElementById('vlSelectAll');
-  if (sa) sa.checked = false;
-}
-
-// ── حذف متعدد: سجل الإيجابي ──
-function bulkDeletePositive() {
-  var cbs = document.querySelectorAll('.pos-cb:checked');
-  if (!cbs.length) return;
-  if (!confirm('حذف ' + cbs.length + ' سجل؟')) return;
-  showLoading();
-  var promises = Array.from(cbs).map(function(cb) {
-    var idx = parseInt(cb.dataset.idx);
-    var recs = window._allPosRecords || [];
-    var rec = recs[idx];
-    if (!rec) return Promise.resolve();
-    return GAS.deletePositiveBehaviorLog(rec.date, rec.studentName || rec.student_name, rec.behaviorType || rec.behavior_type);
-  });
-  Promise.all(promises).then(function() {
-    hideLoading();
-    clearBulkPositive();
-    loadPositiveLogTable();
-  }).catch(function(e) { hideLoading(); console.error(e); });
-}
-
-function clearBulkPositive() {
-  document.querySelectorAll('.pos-cb').forEach(function(cb) { cb.checked = false; });
-  var bar = document.getElementById('posBulkBar');
-  if (bar) bar.classList.remove('active');
-  var sa = document.getElementById('posSelectAll');
-  if (sa) sa.checked = false;
-}
-
-// ── حذف متعدد: سجل الرسائل ──
-
-// Bulk checkbox delegation
-document.addEventListener('change', function(e) {
-  if (e.target.classList.contains('bulk-row-cb')) {
-    var tr = e.target.closest('tr');
-    var tbody = tr && tr.closest('tbody');
-    if (!tbody) return;
-    var id = tbody.id;
-    var map = {
-      'messagesTableBody': ['msgBulkBar', 'msgBulkCount'],
-    };
-    if (map[id]) updateBulkBar(id, map[id][0], map[id][1]);
-  }
-});
-
-function bulkDeleteMessages() {
-  var cbs = document.querySelectorAll('.msg-cb:checked');
-  if (!cbs.length) return;
-  if (!confirm('حذف ' + cbs.length + ' رسالة؟')) return;
-  showLoading();
-  var promises = Array.from(cbs).map(function(cb) {
-    var idx = parseInt(cb.dataset.idx);
-    var recs = window._allMsgRecords || [];
-    var rec = recs[idx];
-    if (!rec) return Promise.resolve();
-    return GAS.deleteMessageLog(rec.date, rec.studentName, rec.violationType);
-  });
-  Promise.all(promises).then(function() {
-    hideLoading();
-    clearBulkMessages();
-    loadMessagesLog();
-  }).catch(function(e) { hideLoading(); console.error(e); });
-}
-
-function clearBulkMessages() {
-  document.querySelectorAll('.msg-cb').forEach(function(cb) { cb.checked = false; });
-  var bar = document.getElementById('msgBulkBar');
-  if (bar) bar.classList.remove('active');
-  var sa = document.getElementById('msgSelectAll');
-  if (sa) sa.checked = false;
 }
 
 function loadViolationsLog(){
@@ -6830,8 +6412,7 @@ function loadViolationsLog(){
       }
 
       return '<tr id="vlRow_'+i+'">'
-        +'<td>'+'<td class="cb-col"><input type="checkbox" class="bulk-cb vl-cb" data-idx="'+i+'" onchange="updateBulkBar(\'vlBulkBar\',\'vl-cb\',\'vlBulkCount\')"></td>'
-        +(i+1)+'</td>'
+        +'<td>'+(i+1)+'</td>'
         +'<td>'+r.date+'</td>'
         +'<td><strong>'+r.studentName+'</strong> '+icons+'</td>'
         +'<td>'+r.className+'</td>'
@@ -7023,7 +6604,7 @@ function applyCS(s){
   // خلفية شاشة الدخول
   if(s.loginBg1 || s.loginBg2){
     const lpg = document.querySelector('.login-pg');
-    // خلفية ثابتة
+    if(lpg) lpg.style.background = `linear-gradient(150deg, ${v('loginBg1','#0D2E44')} 0%, ${v('loginBg2','#1A5276')} 100%)`;
   }
   // زر الدخول
   const lbtn = document.querySelector('.lp-btn');
@@ -8459,22 +8040,6 @@ function sendReportToParent() {
 }
 
 // ── تحميل جدول المحاضر ──
-function bulkDeleteReports() {
-  var cbs = document.querySelectorAll('#reportsTableBody .rpt-cb:checked');
-  if (!cbs.length) return;
-  if (!confirm('حذف ' + cbs.length + ' محضر؟ لا يمكن التراجع.')) return;
-  showLoading();
-  var promises = Array.from(cbs).map(function(cb) {
-    return GAS.deleteReport(cb.dataset.num);
-  });
-  Promise.all(promises).then(function() {
-    hideLoading();
-    document.getElementById('rptSelectAll').checked = false;
-    updateBulkBar('rptBulkBar','#reportsTableBody .rpt-cb','rptBulkCount');
-    loadReports();
-  }).catch(function(e){ hideLoading(); console.error(e); });
-}
-
 function loadReports() {
   var tbody = document.getElementById('reportsTableBody');
   if (!tbody) return;
@@ -8495,16 +8060,7 @@ function loadReports() {
 
       var encData = encodeURIComponent(JSON.stringify(r));
       var tr = document.createElement('tr');
-      tr.dataset.num = r.reportNum || '';
-      var cbTd = document.createElement('td');
-      cbTd.style.cssText = 'padding:10px 8px;border-top:1px solid var(--border);text-align:center;';
-      var cb = document.createElement('input');
-      cb.type = 'checkbox'; cb.className = 'bulk-cb rpt-cb';
-      cb.dataset.num = r.reportNum || '';
-      cb.onchange = function(){ updateBulkBar('rptBulkBar','#reportsTableBody .rpt-cb','rptBulkCount'); };
-      cbTd.appendChild(cb);
-      tr.appendChild(cbTd);
-      tr.innerHTML +=
+      tr.innerHTML =
           '<td style="padding:10px 14px;border-top:1px solid var(--border);color:var(--text-2);font-weight:700;">' + (r.reportNum||'') + '</td>'
         + '<td style="padding:10px 14px;border-top:1px solid var(--border);color:var(--text);font-weight:700;">' + (r.studentName||'') + '</td>'
         + '<td style="padding:10px 14px;border-top:1px solid var(--border);color:var(--text-2);">' + (r.violationType||'') + '</td>'
