@@ -1,141 +1,8 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<!-- ✅ FIX: يُطبَّق فوراً قبل اكتمال تحميل الصفحة -->
-<style>html{background:#062E22;margin:0;}body{background:#062E22;margin:0;}body.app-ready{background:var(--bg,#F0F3F7)!important;}
-/* ── MOBILE RESPONSIVE ── */
-/* ═══════════════════════════════════════════
-   RESPONSIVE — MOBILE FIRST
-   Breakpoints: 768px | 520px | 400px
-═══════════════════════════════════════════ */
-
-/* ── الجداول: تمرير أفقي بدل الفيضان ── */
-.table-wrapper, .tw { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-table { min-width: 500px; }
-
-/* header responsive — defined above */
-
-/* ── البطاقات الإحصائية ── */
-@media (max-width: 768px) {
-  .stats-grid-new { grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; }
-  .stat-card-new  { min-height: 80px; padding: 10px 6px !important; }
-  .sc-val  { font-size: 20px !important; }
-  .sc-lbl  { font-size: 10px !important; }
-}
-@media (max-width: 520px) {
-  .stats-grid-new { grid-template-columns: repeat(2, 1fr) !important; }
-}
-
-/* ── الـ modals ── */
-@media (max-width: 768px) {
-  .modal-overlay > div,
-  [class*="modal"] > div:first-child {
-    width: 95vw !important;
-    max-width: 95vw !important;
-    margin: 10px auto !important;
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-}
-
-/* ── الـ cards grids ── */
-@media (max-width: 768px) {
-  [style*="grid-template-columns: repeat(4"] {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-  [style*="grid-template-columns: 1fr 1fr 1fr"],
-  [style*="grid-template-columns:1fr 1fr 1fr"] {
-    grid-template-columns: 1fr !important;
-  }
-}
-
-/* ── السيدبار — handled above ── */
-@media (max-width: 900px) {
-  .content { margin-right: 0 !important; padding: 10px !important; }
-}
-
-
-/* ── الفلاتر والـ inputs ── */
-@media (max-width: 768px) {
-  .filters-row, [style*="display:flex"][style*="gap"][style*="flex-wrap"] {
-    flex-wrap: wrap !important;
-  }
-  select, input[type="text"], input[type="date"], input[type="search"] {
-    min-width: 120px;
-    max-width: 100%;
-  }
-}
-
-/* ── page-fullreport ── */
-@media (max-width: 768px) {
-  #frKpiGrid { grid-template-columns: repeat(4, 1fr) !important; }
-  #frAnalysisGrid { grid-template-columns: 1fr !important; }
-}
-@media (max-width: 520px) {
-  #frKpiGrid { grid-template-columns: repeat(2, 1fr) !important; }
-}
-
-/* ── overflow global ── */
-body { overflow-x: hidden; }
-.content, .page { max-width: 100%; overflow-x: hidden; }
-
-
-/* ── إصلاحات جوال إضافية index ── */
-@media (max-width: 768px) {
-  /* بطاقة رصد المخالفة */
-  .record-grid, [id="recordSection"] .grid {
-    grid-template-columns: 1fr !important;
-  }
-  /* جداول السجلات */
-  .table-wrapper { overflow-x: auto; }
-  .table-wrapper table { min-width: 480px; }
-  /* فلاتر السجل */
-  #violationsLogFilters, .log-filters {
-    flex-wrap: wrap !important;
-    gap: 6px !important;
-  }
-  /* بطاقة التقرير */
-  #reportViewModal > div {
-    width: 98vw !important;
-    max-width: 98vw !important;
-    padding: 10px !important;
-  }
-  /* بطاقات الإجراءات */
-  [style*="grid-template-columns:repeat(5,1fr)"] {
-    grid-template-columns: repeat(3, 1fr) !important;
-  }
-  /* KPIs التقرير الدوري */
-  #frKpiGrid {
-    grid-template-columns: repeat(4, 1fr) !important;
-    gap: 6px !important;
-  }
-  /* التحليل عمود واحد */
-  #frAnalysisGrid {
-    grid-template-columns: 1fr !important;
-  }
-  /* أزرار الهيدر */
-  .header-actions-wrap { gap: 4px !important; }
-}
-@media (max-width: 520px) {
-  #frKpiGrid { grid-template-columns: repeat(2, 1fr) !important; }
-  [style*="grid-template-columns:repeat(5,1fr)"] {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-  /* بطاقات KPI login */
-  .role-card { width: 110px !important; padding: 14px 12px 12px !important; }
-  .role-icon-wrap { width: 46px !important; height: 46px !important; }
-}
-
-/* ══ Bulk Delete ══ */
-.bulk-bar {
-  display:none;align-items:center;gap:10px;padding:8px 14px;
-  background:#fff3cd;border:1.5px solid #ffc107;border-radius:8px;
-  margin-bottom:8px;font-size:12px;font-weight:700;
-}
-.bulk-bar.active { display:flex; }
-.bulk-cb { width:15px;height:15px;accent-color:var(--danger);cursor:pointer; }
-th.cb-col, td.cb-col { width:36px;text-align:center;padding:4px!important; }
-</style>
+<!-- ✅ FIX: خلفية فاتحة لشاشة الدخول -->
+<style>html{background:#E4EBF0;margin:0;}body{background:#E4EBF0;margin:0;}body.app-ready{background:var(--bg);}</style>
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -168,7 +35,7 @@ th.cb-col, td.cb-col { width:36px;text-align:center;padding:4px!important; }
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 /* ✅ FIX: خلفية html تمنع الشاشة البيضاء أثناء تحميل loginScreen */
-html { background: #062E22; }
+html { background: #E4EBF0; }
 body { font-family: 'IBM Plex Sans Arabic', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; }
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-thumb { background: var(--border-dk); border-radius: 3px; }
@@ -6937,7 +6804,7 @@ function applyCS(s){
   // خلفية شاشة الدخول
   if(s.loginBg1 || s.loginBg2){
     const lpg = document.querySelector('.login-pg');
-    if(lpg) lpg.style.background = `linear-gradient(150deg, ${v('loginBg1','#0D2E44')} 0%, ${v('loginBg2','#1A5276')} 100%)`;
+    // خلفية ثابتة
   }
   // زر الدخول
   const lbtn = document.querySelector('.lp-btn');
