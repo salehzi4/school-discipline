@@ -180,71 +180,88 @@ body { font-family: 'IBM Plex Sans Arabic', sans-serif; background: var(--bg); c
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* ══ LOGIN PAGE ══ */
+html, body { margin: 0; padding: 0; }
 .login-pg {
-  display: flex; min-height: 100vh;
+  position: fixed; inset: 0;
+  width: 100vw; min-height: 100vh;
   background: #E4EBF0;
-  align-items: center; justify-content: center;
-  padding: 20px;
+  display: flex; flex-direction: column;
+  overflow-y: auto;
 }
-/* هيدر */
+/* هيدر يمتد بكامل العرض */
 .lp-header {
   background: #0A5C44;
-  padding: 13px 24px;
+  padding: 14px 28px;
   display: flex; justify-content: space-between; align-items: center;
 }
-.lp-header-brand { display: flex; align-items: center; gap: 10px; }
+.lp-header-brand { display: flex; align-items: center; gap: 12px; }
 .lp-header-logo {
-  width: 36px; height: 36px;
+  width: 40px; height: 40px;
   background: rgba(255,255,255,0.15);
   border-radius: 50%;
   border: 1.5px solid rgba(255,255,255,0.3);
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
-.lp-header-logo .material-icons-round { font-size: 17px; color: white; }
-.lp-header-title { color: white; font-size: 11px; font-weight: 600; }
-.lp-header-sub { color: rgba(255,255,255,0.55); font-size: 9px; margin-top: 2px; }
-.lp-header-date { color: rgba(255,255,255,0.45); font-size: 10px; }
+.lp-header-logo .material-icons-round { font-size: 20px; color: white; }
+.lp-header-title { color: white; font-size: 13px; font-weight: 600; }
+.lp-header-sub { color: rgba(255,255,255,0.55); font-size: 10px; margin-top: 2px; }
+.lp-header-date { color: rgba(255,255,255,0.5); font-size: 11px; }
 .lp-subheader {
   background: #0D7A5C;
-  padding: 6px 24px;
-  display: flex; align-items: center; gap: 7px;
+  padding: 8px 28px;
+  display: flex; align-items: center; gap: 8px;
 }
-.lp-subheader-dot { width: 4px; height: 4px; background: rgba(255,255,255,0.5); border-radius: 50%; }
-.lp-subheader-text { color: rgba(255,255,255,0.7); font-size: 10px; }
-/* الجسم */
-.lp-body { display: flex; flex: 1; }
-.lp-info { flex: 1; padding: 32px 28px; display: flex; flex-direction: column; gap: 24px; justify-content: center; }
-.lp-eyebrow { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-.lp-eyebrow-line { width: 22px; height: 2px; background: #C9860A; border-radius: 2px; }
-.lp-eyebrow-txt { color: #999; font-size: 9px; letter-spacing: 1.5px; }
-.lp-brand { color: #062E22; font-size: 24px; font-weight: 700; line-height: 1.25; margin-bottom: 8px; }
+.lp-subheader-dot { width: 5px; height: 5px; background: rgba(255,255,255,0.5); border-radius: 50%; }
+.lp-subheader-text { color: rgba(255,255,255,0.75); font-size: 11px; }
+/* المحتوى الرئيسي — يتوسع */
+.lp-main {
+  flex: 1;
+  display: flex;
+  padding: 24px;
+  gap: 24px;
+  align-items: stretch;
+  max-width: 1200px; width: 100%; margin: 0 auto;
+}
+.lp-info {
+  flex: 1;
+  display: flex; flex-direction: column; justify-content: center;
+  gap: 28px;
+  padding: 20px 16px;
+}
+.lp-eyebrow { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.lp-eyebrow-line { width: 28px; height: 2px; background: #C9860A; border-radius: 2px; }
+.lp-eyebrow-txt { color: #888; font-size: 10px; letter-spacing: 2px; font-weight: 500; }
+.lp-brand { color: #062E22; font-size: 32px; font-weight: 700; line-height: 1.2; margin-bottom: 12px; }
 .lp-brand .lp-ac { color: #0A5C44; }
-.lp-desc { color: #666; font-size: 11px; line-height: 1.9; }
+.lp-desc { color: #666; font-size: 13px; line-height: 2; max-width: 440px; }
 .lp-desc strong { color: #0A5C44; font-weight: 600; }
-.lp-features { display: flex; flex-direction: column; gap: 10px; }
-.lp-feat { display: flex; align-items: flex-start; gap: 9px; }
+.lp-features { display: flex; flex-direction: column; gap: 14px; }
+.lp-feat { display: flex; align-items: flex-start; gap: 12px; }
 .lp-feat-icon {
-  width: 28px; height: 28px; background: #E8F5EE; border-radius: 7px;
+  width: 36px; height: 36px; background: #E8F5EE; border-radius: 9px;
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
-.lp-feat-icon .material-icons-round { font-size: 15px; color: #0A5C44; }
-.lp-feat-title { color: #1A3A2A; font-size: 11px; font-weight: 600; margin-bottom: 1px; }
-.lp-feat-desc { color: #999; font-size: 9px; }
+.lp-feat-icon .material-icons-round { font-size: 19px; color: #0A5C44; }
+.lp-feat-title { color: #1A3A2A; font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+.lp-feat-desc { color: #999; font-size: 11px; }
 /* كارد الدخول */
-.lp-login-side {
-  width: 220px; flex-shrink: 0;
+.lp-login-card {
+  width: 340px; flex-shrink: 0;
   background: white;
-  border-right: 1px solid #E8EDF5;
-  padding: 26px 18px;
-  display: flex; flex-direction: column; gap: 9px;
+  border: 1px solid #E0E8F0;
+  border-radius: 14px;
+  padding: 28px 24px;
+  display: flex; flex-direction: column; gap: 10px;
+  align-self: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
 }
-.lp-login-title { color: #1A3A2A; font-size: 13px; font-weight: 700; }
-.lp-login-sub { color: #AAA; font-size: 10px; margin-top: -4px; margin-bottom: 4px; }
-/* الأدوار الجديدة */
+.lp-login-title { color: #1A3A2A; font-size: 16px; font-weight: 700; }
+.lp-login-sub { color: #999; font-size: 11px; margin-top: -4px; margin-bottom: 6px; }
+/* الأدوار */
 .role-card {
-  display: flex; align-items: center; gap: 9px;
-  padding: 10px 12px; border-radius: 9px; cursor: pointer;
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px; border-radius: 10px; cursor: pointer;
   transition: all 0.2s; width: 100%;
 }
 .role-card.off { background: #FAFBFC; border: 1px solid #E8EDF2; }
@@ -252,66 +269,74 @@ body { font-family: 'IBM Plex Sans Arabic', sans-serif; background: var(--bg); c
   background: #EEF8F3; border: 1.5px solid #0A5C44;
 }
 .role-card:hover { border-color: #0A5C44; }
-.role-bar { width: 4px; height: 30px; border-radius: 3px; flex-shrink: 0; }
-.role-name { font-size: 11px; font-weight: 600; color: #1A3A2A; }
+.role-bar { width: 4px; height: 34px; border-radius: 3px; flex-shrink: 0; }
+.role-name { font-size: 12px; font-weight: 600; color: #1A3A2A; }
 .role-name.dim { color: #777; font-weight: 400; }
-.role-sub { font-size: 9px; color: #BBB; margin-top: 1px; }
+.role-sub { font-size: 10px; color: #BBB; margin-top: 2px; }
 .role-check {
-  width: 15px; height: 15px; border-radius: 50%; background: #0A5C44;
+  width: 17px; height: 17px; border-radius: 50%; background: #0A5C44;
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
-.role-check .material-icons-round { font-size: 10px; color: white; }
-.lp-divider { height: 1px; background: #F0F2F5; }
+.role-check .material-icons-round { font-size: 11px; color: white; }
+.lp-divider { height: 1px; background: #F0F2F5; margin: 4px 0; }
 .lp-pass-field {
   background: #F8F9FA; border: 1px solid #E2E7EE;
-  border-radius: 7px; padding: 9px 11px;
-  display: flex; align-items: center; gap: 7px;
+  border-radius: 8px; padding: 11px 13px;
+  display: flex; align-items: center; gap: 8px;
 }
-.lp-pass-field .material-icons-round { font-size: 14px; color: #CCC; }
-.lp-pass-ph { color: #CCC; font-size: 13px; letter-spacing: 3px; }
+.lp-pass-field .material-icons-round { font-size: 16px; color: #CCC; }
+.lp-pass-field input {
+  border: none; background: transparent; outline: none;
+  font-family: inherit; font-size: 14px; color: #333;
+  width: 100%; letter-spacing: 4px; direction: ltr; text-align: center;
+}
+.lp-pass-field input::placeholder { color: #CCC; letter-spacing: 2px; font-size: 12px; }
 .lp-enter-btn {
-  background: #0A5C44; border-radius: 8px; padding: 10px;
-  color: white; font-size: 11px; font-weight: 600; border: none;
+  background: #0A5C44; border-radius: 9px; padding: 12px;
+  color: white; font-size: 13px; font-weight: 600; border: none;
   font-family: inherit; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; gap: 6px;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
   width: 100%; transition: opacity 0.2s;
 }
 .lp-enter-btn:hover { opacity: 0.9; }
-.lp-enter-btn .material-icons-round { font-size: 15px; }
-/* فوتر */
-.lp-footer {
-  background: #EEF4F0; border-top: 1px solid #D4E6DA;
-  padding: 8px 24px;
-  display: flex; justify-content: space-between; align-items: center;
-}
-.lp-footer-text { color: #5A8A72; font-size: 9px; }
-/* الحاوية الكاملة */
-.lp-wrap {
-  background: #F8FAFB;
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid #D8E2EC;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.09);
-  width: 100%; max-width: 900px;
-  display: flex; flex-direction: column;
-}
-/* رسالة الخطأ */
+.lp-enter-btn .material-icons-round { font-size: 16px; }
 .lfc-err {
-  margin-top: 4px; padding: 8px 12px;
+  margin-top: 6px; padding: 9px 12px;
   background: rgba(220,38,38,.08);
   border: 1px solid rgba(220,38,38,.2);
   border-radius: 7px; color: #DC2626;
   font-size: 11px; text-align: center; display: none;
 }
-/* شاشة صغيرة */
-@media (max-width: 640px) {
-  .lp-info { padding: 20px 16px; gap: 16px; }
-  .lp-brand { font-size: 18px; }
-  .lp-body { flex-direction: column; }
-  .lp-login-side { width: 100%; border-right: none; border-top: 1px solid #E8EDF5; padding: 18px 16px; }
-  .lp-header { padding: 10px 16px; }
-  .lp-subheader { padding: 5px 16px; }
-  .lp-footer { padding: 7px 16px; }
+/* فوتر */
+.lp-footer {
+  background: #EEF4F0; border-top: 1px solid #D4E6DA;
+  padding: 10px 28px;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 8px;
+}
+.lp-footer-text { color: #5A8A72; font-size: 10px; }
+/* ══ شاشات متوسطة (تابلت) ══ */
+@media (max-width: 900px) {
+  .lp-main { flex-direction: column; align-items: center; padding: 20px; }
+  .lp-info { width: 100%; max-width: 500px; text-align: right; padding: 16px 0; }
+  .lp-login-card { width: 100%; max-width: 440px; }
+  .lp-brand { font-size: 26px; }
+}
+/* ══ جوال ══ */
+@media (max-width: 520px) {
+  .lp-header { padding: 11px 16px; }
+  .lp-header-logo { width: 34px; height: 34px; }
+  .lp-header-title { font-size: 11px; }
+  .lp-header-sub { font-size: 9px; }
+  .lp-header-date { font-size: 10px; }
+  .lp-subheader { padding: 6px 16px; }
+  .lp-subheader-text { font-size: 10px; }
+  .lp-main { padding: 16px; gap: 16px; }
+  .lp-brand { font-size: 22px; }
+  .lp-desc { font-size: 12px; }
+  .lp-login-card { padding: 22px 18px; }
+  .lp-footer { padding: 8px 16px; font-size: 9px; justify-content: center; }
+  .lp-footer-text { font-size: 9px; text-align: center; }
 }
 
 /* ══ APP SHELL ══ */
@@ -2104,130 +2129,126 @@ tr:hover td{background:var(--em-ghost);}
 <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
 
 <div class="login-pg" id="loginScreen" style="opacity:0;transition:opacity .35s ease;">
-  <div class="lp-wrap">
 
-    <!-- هيدر -->
-    <div class="lp-header">
-      <div class="lp-header-brand">
-        <div class="lp-header-logo">
-          <span class="material-icons-round" id="loginLogoIcon">school</span>
-        </div>
-        <div>
-          <div class="lp-header-title" id="loginTitle">الإدارة العامة للتعليم</div>
-          <div class="lp-header-sub">المملكة العربية السعودية</div>
-        </div>
+  <!-- هيدر -->
+  <div class="lp-header">
+    <div class="lp-header-brand">
+      <div class="lp-header-logo">
+        <span class="material-icons-round" id="loginLogoIcon">school</span>
       </div>
-      <div class="lp-header-date">1446 هـ</div>
-    </div>
-    <div class="lp-subheader">
-      <div class="lp-subheader-dot"></div>
-      <div class="lp-subheader-text" id="loginSubtitle">منصة متابعة السلوك والانضباط المدرسي</div>
-    </div>
-
-    <!-- الجسم -->
-    <div class="lp-body">
-
-      <!-- يمين: معلومات -->
-      <div class="lp-info">
-        <div>
-          <div class="lp-eyebrow">
-            <div class="lp-eyebrow-line"></div>
-            <div class="lp-eyebrow-txt">SCHOOL DISCIPLINE SYSTEM</div>
-          </div>
-          <div class="lp-brand">نظام <span class="lp-ac">الانضباط</span><br>المدرسي</div>
-          <div class="lp-desc">
-            منصة إلكترونية متكاملة تمكّن الإدارة والمعلمين من
-            <strong>رصد السلوك وتوثيقه</strong>،
-            مع إشراك أولياء الأمور بشكل فوري وشفاف.
-          </div>
-        </div>
-        <div class="lp-features">
-          <div class="lp-feat">
-            <div class="lp-feat-icon"><span class="material-icons-round">task_alt</span></div>
-            <div>
-              <div class="lp-feat-title">رصد المخالفات والسلوك الإيجابي</div>
-              <div class="lp-feat-desc">تسجيل فوري مع تصنيف حسب الدرجة والفئة</div>
-            </div>
-          </div>
-          <div class="lp-feat">
-            <div class="lp-feat-icon"><span class="material-icons-round">description</span></div>
-            <div>
-              <div class="lp-feat-title">محاضر ومراسلات رسمية موثقة</div>
-              <div class="lp-feat-desc">إصدار فوري مع التوقيع الإلكتروني</div>
-            </div>
-          </div>
-          <div class="lp-feat">
-            <div class="lp-feat-icon"><span class="material-icons-round">groups</span></div>
-            <div>
-              <div class="lp-feat-title">تواصل مباشر مع أولياء الأمور</div>
-              <div class="lp-feat-desc">إشعارات فورية وبوابة متابعة مخصصة</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- يسار: تسجيل الدخول -->
-      <div class="lp-login-side">
-        <div class="lp-login-title">تسجيل الدخول</div>
-        <div class="lp-login-sub">اختر صفتك للمتابعة</div>
-
-        <div class="role-card on" id="roleCard_admin" onclick="selectRole('admin')">
-          <div class="role-bar" style="background:#0A5C44;"></div>
-          <div style="flex:1;">
-            <div class="role-name">إدارة المدرسة</div>
-            <div class="role-sub">صلاحية كاملة</div>
-          </div>
-          <div class="role-check"><span class="material-icons-round">check</span></div>
-        </div>
-
-        <div class="role-card off" id="roleCard_teacher" onclick="goToTeacher()">
-          <div class="role-bar" style="background:#1A4A7A;"></div>
-          <div style="flex:1;">
-            <div class="role-name dim">الكادر التعليمي</div>
-            <div class="role-sub">رصد وتسجيل</div>
-          </div>
-        </div>
-
-        <div class="role-card off" id="roleCard_parent" onclick="goToParent()">
-          <div class="role-bar" style="background:#7C3AED;"></div>
-          <div style="flex:1;">
-            <div class="role-name dim">الأسرة</div>
-            <div class="role-sub">متابعة واطلاع</div>
-          </div>
-        </div>
-
-        <div class="lp-divider"></div>
-
-        <!-- حقل كلمة المرور -->
-        <div id="unifiedInputWrap" style="display:none;">
-          <div id="unifiedInputLabel" style="font-size:10px;font-weight:600;color:#555;margin-bottom:6px;"></div>
-          <div class="lp-pass-field" style="margin-bottom:8px;">
-            <span class="material-icons-round" id="unifiedInputIco">lock</span>
-            <input style="border:none;background:transparent;outline:none;font-family:inherit;font-size:13px;color:#333;width:100%;letter-spacing:3px;direction:ltr;text-align:center;"
-              id="unifiedPass" placeholder="••••••" maxlength="30" autocomplete="off"
-              onkeypress="if(event.key==='Enter')doRoleLogin(window._selectedRole)">
-          </div>
-        </div>
-
-        <button class="lp-enter-btn" id="unifiedBtn" onclick="doRoleLogin(window._selectedRole)" style="display:none;">
-          <span>دخول</span>
-          <span class="material-icons-round">login</span>
-        </button>
-
-        <!-- رسالة الخطأ -->
-        <div class="lfc-err" id="loginError">رمز غير صحيح</div>
-
-        <!-- حقل مخفي للتوافق -->
-        <input type="hidden" id="loginPassword">
+      <div>
+        <div class="lp-header-title" id="loginTitle">الإدارة العامة للتعليم</div>
+        <div class="lp-header-sub">المملكة العربية السعودية</div>
       </div>
     </div>
-
-    <!-- فوتر -->
-    <div class="lp-footer">
-      <span class="lp-footer-text">© 2026 M E H — جميع الحقوق محفوظة</span>
-      <span class="lp-footer-text">وزارة التعليم — المملكة العربية السعودية</span>
-    </div>
+    <div class="lp-header-date">1446 هـ</div>
   </div>
+  <div class="lp-subheader">
+    <div class="lp-subheader-dot"></div>
+    <div class="lp-subheader-text" id="loginSubtitle">منصة متابعة السلوك والانضباط المدرسي</div>
+  </div>
+
+  <!-- المحتوى الرئيسي -->
+  <div class="lp-main">
+
+    <!-- معلومات -->
+    <div class="lp-info">
+      <div>
+        <div class="lp-eyebrow">
+          <div class="lp-eyebrow-line"></div>
+          <div class="lp-eyebrow-txt">SCHOOL DISCIPLINE SYSTEM</div>
+        </div>
+        <div class="lp-brand">نظام <span class="lp-ac">الانضباط</span><br>المدرسي</div>
+        <div class="lp-desc">
+          منصة إلكترونية متكاملة تمكّن الإدارة والمعلمين من
+          <strong>رصد السلوك وتوثيقه</strong>،
+          مع إشراك أولياء الأمور بشكل فوري وشفاف.
+        </div>
+      </div>
+      <div class="lp-features">
+        <div class="lp-feat">
+          <div class="lp-feat-icon"><span class="material-icons-round">task_alt</span></div>
+          <div>
+            <div class="lp-feat-title">رصد المخالفات والسلوك الإيجابي</div>
+            <div class="lp-feat-desc">تسجيل فوري مع تصنيف حسب الدرجة والفئة</div>
+          </div>
+        </div>
+        <div class="lp-feat">
+          <div class="lp-feat-icon"><span class="material-icons-round">description</span></div>
+          <div>
+            <div class="lp-feat-title">محاضر ومراسلات رسمية موثقة</div>
+            <div class="lp-feat-desc">إصدار فوري مع التوقيع الإلكتروني</div>
+          </div>
+        </div>
+        <div class="lp-feat">
+          <div class="lp-feat-icon"><span class="material-icons-round">groups</span></div>
+          <div>
+            <div class="lp-feat-title">تواصل مباشر مع أولياء الأمور</div>
+            <div class="lp-feat-desc">إشعارات فورية وبوابة متابعة مخصصة</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- كارد الدخول -->
+    <div class="lp-login-card">
+      <div class="lp-login-title">تسجيل الدخول</div>
+      <div class="lp-login-sub">اختر صفتك للمتابعة</div>
+
+      <div class="role-card on" id="roleCard_admin" onclick="selectRole('admin')">
+        <div class="role-bar" style="background:#0A5C44;"></div>
+        <div style="flex:1;">
+          <div class="role-name">إدارة المدرسة</div>
+          <div class="role-sub">صلاحية كاملة</div>
+        </div>
+        <div class="role-check"><span class="material-icons-round">check</span></div>
+      </div>
+
+      <div class="role-card off" id="roleCard_teacher" onclick="goToTeacher()">
+        <div class="role-bar" style="background:#1A4A7A;"></div>
+        <div style="flex:1;">
+          <div class="role-name dim">الكادر التعليمي</div>
+          <div class="role-sub">رصد وتسجيل</div>
+        </div>
+      </div>
+
+      <div class="role-card off" id="roleCard_parent" onclick="goToParent()">
+        <div class="role-bar" style="background:#7C3AED;"></div>
+        <div style="flex:1;">
+          <div class="role-name dim">الأسرة</div>
+          <div class="role-sub">متابعة واطلاع</div>
+        </div>
+      </div>
+
+      <div class="lp-divider"></div>
+
+      <div id="unifiedInputWrap" style="display:none;">
+        <div id="unifiedInputLabel" style="font-size:10px;font-weight:600;color:#555;margin-bottom:6px;"></div>
+        <div class="lp-pass-field">
+          <span class="material-icons-round" id="unifiedInputIco">lock</span>
+          <input id="unifiedPass" placeholder="••••••" maxlength="30" autocomplete="off"
+            onkeypress="if(event.key==='Enter')doRoleLogin(window._selectedRole)">
+        </div>
+      </div>
+
+      <button class="lp-enter-btn" id="unifiedBtn" onclick="doRoleLogin(window._selectedRole)" style="display:none;">
+        <span>دخول</span>
+        <span class="material-icons-round">login</span>
+      </button>
+
+      <div class="lfc-err" id="loginError">رمز غير صحيح</div>
+
+      <input type="hidden" id="loginPassword">
+    </div>
+
+  </div>
+
+  <!-- فوتر -->
+  <div class="lp-footer">
+    <span class="lp-footer-text">© 2026 M E H — جميع الحقوق محفوظة</span>
+    <span class="lp-footer-text">وزارة التعليم — المملكة العربية السعودية</span>
+  </div>
+
 </div>
 
 <div id="mainApp" style="display:none;">
