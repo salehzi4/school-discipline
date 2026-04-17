@@ -278,40 +278,74 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
 
 /* ══ LOGIN ══ */
 /* ══ LOGIN PAGE ══ */
-.login-pg{display:flex;min-height:100vh;background:#E4EBF0;align-items:center;justify-content:center;padding:20px;}
-.lp-wrap{background:#F8FAFB;border-radius:16px;overflow:hidden;border:1px solid #D8E2EC;box-shadow:0 4px 24px rgba(0,0,0,0.09);width:100%;max-width:520px;display:flex;flex-direction:column;}
-.lp-header{background:#0A5C44;padding:13px 22px;display:flex;justify-content:space-between;align-items:center;}
-.lp-header-brand{display:flex;align-items:center;gap:10px;}
-.lp-header-logo{width:34px;height:34px;background:rgba(255,255,255,0.15);border-radius:50%;border:1.5px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;}
-.lp-header-logo .material-icons-round{font-size:17px;color:white;}
-.lp-header-title{color:white;font-size:11px;font-weight:600;}
-.lp-header-sub{color:rgba(255,255,255,0.5);font-size:9px;margin-top:2px;}
-.lp-header-date{color:rgba(255,255,255,0.4);font-size:10px;}
-.lp-subheader{background:#0D7A5C;padding:6px 22px;display:flex;align-items:center;gap:7px;}
-.lp-subheader-dot{width:4px;height:4px;background:rgba(255,255,255,0.5);border-radius:50%;}
-.lp-subheader-text{color:rgba(255,255,255,0.65);font-size:10px;}
-.lp-body-gate{padding:36px 32px;display:flex;flex-direction:column;align-items:center;gap:20px;}
-.lp-gate-icon{width:64px;height:64px;background:#E8F5EE;border-radius:18px;display:flex;align-items:center;justify-content:center;}
-.lp-gate-icon .material-icons-round{font-size:30px;color:#0A5C44;}
-.lp-gate-title{color:#0A5C44;font-size:17px;font-weight:700;text-align:center;margin-bottom:4px;}
-.lp-gate-sub{color:#999;font-size:11px;text-align:center;line-height:1.7;}
-.lp-gate-card{background:white;border:1px solid #E0E8F0;border-radius:12px;padding:20px;width:100%;}
-.lfc-lbl{color:#555;font-size:10px;font-weight:600;display:block;margin-bottom:6px;}
-.lfc-field{display:flex;align-items:center;background:#F8F9FA;border:1px solid #E2E7EE;border-radius:8px;padding:10px 12px;margin-bottom:12px;gap:8px;}
-.lfc-ico{font-size:16px;color:#CCC;flex-shrink:0;}
-.lfc-inp{border:none;background:transparent;outline:none;font-family:inherit;font-size:15px;color:#333;width:100%;letter-spacing:2px;direction:ltr;text-align:center;}
-.lfc-inp::placeholder{color:#CCC;letter-spacing:0;font-size:12px;}
-.lfc-btn{width:100%;padding:11px;background:#0A5C44;color:white;border:none;border-radius:8px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:opacity 0.2s;}
-.lfc-btn:hover{opacity:0.9;}
-.lfc-btn .material-icons-round{font-size:15px;}
-.lfc-err{margin-top:10px;padding:8px 12px;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.2);border-radius:7px;color:#DC2626;font-size:11px;text-align:center;display:none;}
-.lp-gate-hint{color:#CCC;font-size:9px;text-align:center;margin-top:6px;}
-.lp-footer{background:#EEF4F0;border-top:1px solid #D4E6DA;padding:8px 22px;display:flex;justify-content:space-between;}
-.lp-footer-text{color:#5A8A72;font-size:9px;}
-/* remember me */
-.lp-remember{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
-.lp-remember input{width:14px;height:14px;accent-color:#0A5C44;cursor:pointer;}
-.lp-remember label{font-size:11px;color:#888;cursor:pointer;}
+html, body { margin: 0; padding: 0; }
+.login-pg {
+  position: fixed; inset: 0;
+  width: 100vw; min-height: 100vh;
+  background: #E4EBF0;
+  display: flex; flex-direction: column;
+  overflow-y: auto;
+}
+.lp-header { background: #0A5C44; padding: 14px 28px; display: flex; justify-content: space-between; align-items: center; }
+.lp-header-brand { display: flex; align-items: center; gap: 12px; }
+.lp-header-logo { width: 40px; height: 40px; background: rgba(255,255,255,0.15); border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.lp-header-logo .material-icons-round { font-size: 20px; color: white; }
+.lp-header-title { color: white; font-size: 13px; font-weight: 600; }
+.lp-header-sub { color: rgba(255,255,255,0.55); font-size: 10px; margin-top: 2px; }
+.lp-header-date { color: rgba(255,255,255,0.5); font-size: 11px; }
+.lp-subheader { background: #0D7A5C; padding: 8px 28px; display: flex; align-items: center; gap: 8px; }
+.lp-subheader-dot { width: 5px; height: 5px; background: rgba(255,255,255,0.5); border-radius: 50%; }
+.lp-subheader-text { color: rgba(255,255,255,0.75); font-size: 11px; }
+.lp-main {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center;
+  padding: 32px 24px;
+}
+.lp-gate-wrap {
+  background: white;
+  border: 1px solid #E0E8F0;
+  border-radius: 16px;
+  padding: 40px 32px;
+  width: 100%; max-width: 440px;
+  display: flex; flex-direction: column; align-items: center; gap: 20px;
+  box-shadow: 0 6px 28px rgba(0,0,0,0.08);
+}
+.lp-gate-icon { width: 72px; height: 72px; background: #E8F5EE; border-radius: 20px; display: flex; align-items: center; justify-content: center; }
+.lp-gate-icon .material-icons-round { font-size: 36px; color: #0A5C44; }
+.lp-gate-title { color: #0A5C44; font-size: 20px; font-weight: 700; text-align: center; margin-bottom: 4px; }
+.lp-gate-sub { color: #999; font-size: 12px; text-align: center; line-height: 1.7; margin-top: 4px; }
+.lp-gate-form { width: 100%; display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+.lfc-lbl { color: #555; font-size: 11px; font-weight: 600; display: block; margin-bottom: 4px; }
+.lfc-field { display: flex; align-items: center; background: #F8F9FA; border: 1px solid #E2E7EE; border-radius: 9px; padding: 12px 14px; gap: 9px; }
+.lfc-ico { font-size: 17px; color: #CCC; flex-shrink: 0; }
+.lfc-inp { border: none; background: transparent; outline: none; font-family: inherit; font-size: 16px; color: #333; width: 100%; letter-spacing: 3px; direction: ltr; text-align: center; }
+.lfc-inp::placeholder { color: #CCC; letter-spacing: 2px; font-size: 13px; }
+.lfc-btn { width: 100%; padding: 13px; background: #0A5C44; color: white; border: none; border-radius: 9px; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; transition: opacity 0.2s; }
+.lfc-btn:hover { opacity: 0.9; }
+.lfc-btn .material-icons-round { font-size: 16px; }
+.lfc-err { margin-top: 4px; padding: 9px 12px; background: rgba(220,38,38,.08); border: 1px solid rgba(220,38,38,.2); border-radius: 8px; color: #DC2626; font-size: 11px; text-align: center; display: none; }
+.lp-gate-hint { color: #BBB; font-size: 10px; text-align: center; margin-top: 6px; }
+.lp-remember { display: flex; align-items: center; gap: 9px; }
+.lp-remember input { width: 15px; height: 15px; accent-color: #0A5C44; cursor: pointer; }
+.lp-remember label { font-size: 12px; color: #666; cursor: pointer; }
+.lp-footer { background: #EEF4F0; border-top: 1px solid #D4E6DA; padding: 10px 28px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+.lp-footer-text { color: #5A8A72; font-size: 10px; }
+/* جوال */
+@media (max-width: 520px) {
+  .lp-header { padding: 11px 16px; }
+  .lp-header-logo { width: 34px; height: 34px; }
+  .lp-header-title { font-size: 11px; }
+  .lp-header-sub { font-size: 9px; }
+  .lp-subheader { padding: 6px 16px; }
+  .lp-subheader-text { font-size: 10px; }
+  .lp-main { padding: 20px 16px; }
+  .lp-gate-wrap { padding: 28px 22px; }
+  .lp-gate-icon { width: 60px; height: 60px; border-radius: 16px; }
+  .lp-gate-icon .material-icons-round { font-size: 30px; }
+  .lp-gate-title { font-size: 17px; }
+  .lp-footer { padding: 8px 16px; justify-content: center; }
+  .lp-footer-text { font-size: 9px; text-align: center; }
+}
 
 /* ══ APP ══ */
 #app{display:none;min-height:100vh;}
@@ -695,28 +729,28 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
 <!-- ══ LOGIN ══ -->
 <!-- ✅ FIX: تبدأ مخفية opacity:0 — تظهر بعد تطبيق الألوان الصحيحة فقط -->
 <div class="login-pg" id="loginScreen" style="opacity:0;transition:opacity .35s ease;">
-  <div class="lp-wrap">
-    <div class="lp-header">
-      <div class="lp-header-brand">
-        <div class="lp-header-logo"><span class="material-icons-round" id="loginIconEl">family_restroom</span></div>
-        <div>
-          <div class="lp-header-title">الإدارة العامة للتعليم</div>
-          <div class="lp-header-sub">المملكة العربية السعودية</div>
-        </div>
-      </div>
-      <div class="lp-header-date">1446 هـ</div>
-    </div>
-    <div class="lp-subheader">
-      <div class="lp-subheader-dot"></div>
-      <div class="lp-subheader-text">نظام متابعة الانضباط المدرسي — بوابة الأسرة</div>
-    </div>
-    <div class="lp-body-gate">
-      <div class="lp-gate-icon"><span class="material-icons-round">family_restroom</span></div>
+  <div class="lp-header">
+    <div class="lp-header-brand">
+      <div class="lp-header-logo"><span class="material-icons-round" id="loginIconEl">family_restroom</span></div>
       <div>
+        <div class="lp-header-title">الإدارة العامة للتعليم</div>
+        <div class="lp-header-sub">المملكة العربية السعودية</div>
+      </div>
+    </div>
+    <div class="lp-header-date">1446 هـ</div>
+  </div>
+  <div class="lp-subheader">
+    <div class="lp-subheader-dot"></div>
+    <div class="lp-subheader-text">نظام متابعة الانضباط المدرسي — بوابة الأسرة</div>
+  </div>
+  <div class="lp-main">
+    <div class="lp-gate-wrap">
+      <div class="lp-gate-icon"><span class="material-icons-round">family_restroom</span></div>
+      <div style="text-align:center;">
         <div class="lp-gate-title" id="loginTitleEl">بوابة الأسرة</div>
         <div class="lp-gate-sub" id="loginSubEl">أدخل رقم هوية الطالب لمتابعة سلوكه وتقاريره</div>
       </div>
-      <div class="lp-gate-card">
+      <div class="lp-gate-form">
         <label class="lfc-lbl">رقم هوية الطالب</label>
         <div class="lfc-field">
           <span class="material-icons-round lfc-ico">badge</span>
@@ -734,10 +768,10 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
         <div class="lp-gate-hint">رقم هوية الطالب هو كلمة المرور</div>
       </div>
     </div>
-    <div class="lp-footer">
-      <span class="lp-footer-text">© 2026 M E H</span>
-      <span class="lp-footer-text">وزارة التعليم — المملكة العربية السعودية</span>
-    </div>
+  </div>
+  <div class="lp-footer">
+    <span class="lp-footer-text">© 2026 M E H</span>
+    <span class="lp-footer-text">وزارة التعليم — المملكة العربية السعودية</span>
   </div>
 </div>
 
