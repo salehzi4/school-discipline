@@ -180,21 +180,23 @@ body { font-family: 'IBM Plex Sans Arabic', sans-serif; background: var(--bg); c
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* ══ LOGIN PAGE ══ */
-html, body { margin: 0; padding: 0; }
+html, body { margin: 0; padding: 0; width: 100%; overflow-x: hidden; }
 .login-pg {
   position: fixed; inset: 0;
-  width: 100vw; min-height: 100vh;
+  width: 100vw; min-height: 100vh; min-height: 100dvh;
   background: #E4EBF0;
   display: flex; flex-direction: column;
-  overflow-y: auto;
+  overflow-y: auto; overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
-/* هيدر يمتد بكامل العرض */
+/* هيدر */
 .lp-header {
   background: #0A5C44;
   padding: 14px 28px;
   display: flex; justify-content: space-between; align-items: center;
+  flex-shrink: 0;
 }
-.lp-header-brand { display: flex; align-items: center; gap: 12px; }
+.lp-header-brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .lp-header-logo {
   width: 40px; height: 40px;
   background: rgba(255,255,255,0.15);
@@ -206,15 +208,16 @@ html, body { margin: 0; padding: 0; }
 .lp-header-logo .material-icons-round { font-size: 20px; color: white; }
 .lp-header-title { color: white; font-size: 13px; font-weight: 600; }
 .lp-header-sub { color: rgba(255,255,255,0.55); font-size: 10px; margin-top: 2px; }
-.lp-header-date { color: rgba(255,255,255,0.5); font-size: 11px; }
+.lp-header-date { color: rgba(255,255,255,0.5); font-size: 11px; flex-shrink: 0; }
 .lp-subheader {
   background: #0D7A5C;
   padding: 8px 28px;
   display: flex; align-items: center; gap: 8px;
+  flex-shrink: 0;
 }
-.lp-subheader-dot { width: 5px; height: 5px; background: rgba(255,255,255,0.5); border-radius: 50%; }
+.lp-subheader-dot { width: 5px; height: 5px; background: rgba(255,255,255,0.5); border-radius: 50%; flex-shrink: 0; }
 .lp-subheader-text { color: rgba(255,255,255,0.75); font-size: 11px; }
-/* المحتوى الرئيسي — يتوسع */
+/* المحتوى الرئيسي */
 .lp-main {
   flex: 1;
   display: flex;
@@ -222,9 +225,10 @@ html, body { margin: 0; padding: 0; }
   gap: 24px;
   align-items: stretch;
   max-width: 1200px; width: 100%; margin: 0 auto;
+  box-sizing: border-box;
 }
 .lp-info {
-  flex: 1;
+  flex: 1; min-width: 0;
   display: flex; flex-direction: column; justify-content: center;
   gap: 28px;
   padding: 20px 16px;
@@ -234,7 +238,7 @@ html, body { margin: 0; padding: 0; }
 .lp-eyebrow-txt { color: #888; font-size: 10px; letter-spacing: 2px; font-weight: 500; }
 .lp-brand { color: #062E22; font-size: 32px; font-weight: 700; line-height: 1.2; margin-bottom: 12px; }
 .lp-brand .lp-ac { color: #0A5C44; }
-.lp-desc { color: #666; font-size: 13px; line-height: 2; max-width: 440px; }
+.lp-desc { color: #666; font-size: 13px; line-height: 2; }
 .lp-desc strong { color: #0A5C44; font-weight: 600; }
 .lp-features { display: flex; flex-direction: column; gap: 14px; }
 .lp-feat { display: flex; align-items: flex-start; gap: 12px; }
@@ -255,6 +259,7 @@ html, body { margin: 0; padding: 0; }
   display: flex; flex-direction: column; gap: 10px;
   align-self: center;
   box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  box-sizing: border-box;
 }
 .lp-login-title { color: #1A3A2A; font-size: 16px; font-weight: 700; }
 .lp-login-sub { color: #999; font-size: 11px; margin-top: -4px; margin-bottom: 6px; }
@@ -263,6 +268,7 @@ html, body { margin: 0; padding: 0; }
   display: flex; align-items: center; gap: 10px;
   padding: 12px 14px; border-radius: 10px; cursor: pointer;
   transition: all 0.2s; width: 100%;
+  box-sizing: border-box;
 }
 .role-card.off { background: #FAFBFC; border: 1px solid #E8EDF2; }
 .role-card.on, .role-card.active {
@@ -283,12 +289,14 @@ html, body { margin: 0; padding: 0; }
   background: #F8F9FA; border: 1px solid #E2E7EE;
   border-radius: 8px; padding: 11px 13px;
   display: flex; align-items: center; gap: 8px;
+  box-sizing: border-box;
 }
 .lp-pass-field .material-icons-round { font-size: 16px; color: #CCC; }
 .lp-pass-field input {
   border: none; background: transparent; outline: none;
   font-family: inherit; font-size: 14px; color: #333;
   width: 100%; letter-spacing: 4px; direction: ltr; text-align: center;
+  min-width: 0;
 }
 .lp-pass-field input::placeholder { color: #CCC; letter-spacing: 2px; font-size: 12px; }
 .lp-enter-btn {
@@ -297,6 +305,7 @@ html, body { margin: 0; padding: 0; }
   font-family: inherit; cursor: pointer;
   display: flex; align-items: center; justify-content: center; gap: 7px;
   width: 100%; transition: opacity 0.2s;
+  box-sizing: border-box;
 }
 .lp-enter-btn:hover { opacity: 0.9; }
 .lp-enter-btn .material-icons-round { font-size: 16px; }
@@ -313,8 +322,60 @@ html, body { margin: 0; padding: 0; }
   padding: 10px 28px;
   display: flex; justify-content: space-between; align-items: center;
   flex-wrap: wrap; gap: 8px;
+  flex-shrink: 0;
 }
 .lp-footer-text { color: #5A8A72; font-size: 10px; }
+/* ══ شاشات متوسطة (تابلت) ══ */
+@media (max-width: 900px) {
+  .lp-main {
+    flex-direction: column; align-items: center;
+    padding: 20px; gap: 20px;
+  }
+  .lp-info {
+    width: 100%; max-width: 500px; padding: 16px 0;
+    text-align: right; align-items: flex-start;
+  }
+  .lp-login-card { width: 100%; max-width: 440px; align-self: stretch; }
+  .lp-brand { font-size: 26px; }
+}
+/* ══ جوال ══ */
+@media (max-width: 600px) {
+  .lp-header { padding: 10px 14px; }
+  .lp-header-logo { width: 32px; height: 32px; }
+  .lp-header-logo .material-icons-round { font-size: 17px; }
+  .lp-header-title { font-size: 11px; }
+  .lp-header-sub { font-size: 9px; }
+  .lp-header-date { font-size: 10px; }
+  .lp-subheader { padding: 6px 14px; }
+  .lp-subheader-text { font-size: 10px; }
+  .lp-main {
+    flex-direction: column; padding: 16px; gap: 16px;
+    align-items: stretch;
+  }
+  .lp-info {
+    width: 100%; max-width: 100%;
+    padding: 8px 0; gap: 20px;
+  }
+  .lp-brand { font-size: 22px; }
+  .lp-desc { font-size: 12px; line-height: 1.9; }
+  .lp-feat-title { font-size: 12px; }
+  .lp-feat-desc { font-size: 10px; }
+  .lp-login-card {
+    width: 100%; max-width: 100%;
+    padding: 22px 18px;
+  }
+  .lp-footer {
+    padding: 9px 14px; justify-content: center;
+    text-align: center;
+  }
+  .lp-footer-text { font-size: 9px; text-align: center; }
+}
+@media (max-width: 380px) {
+  .lp-header { padding: 9px 12px; }
+  .lp-main { padding: 12px; }
+  .lp-brand { font-size: 20px; }
+}
+
 /* ══ شاشات متوسطة (تابلت) ══ */
 @media (max-width: 900px) {
   .lp-main { flex-direction: column; align-items: center; padding: 20px; }
