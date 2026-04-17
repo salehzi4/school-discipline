@@ -4261,6 +4261,8 @@ function selectRole(role) {
   if(window._selectedRole === role) {
     window._selectedRole = null;
     wrap.style.display = 'none';
+    var _b = document.getElementById('unifiedBtn');
+    if(_b) _b.style.display = 'none';
     inp.value = '';
     if(err) err.style.display = 'none';
     document.getElementById('roleCard_'+role).classList.remove('active');
@@ -4295,6 +4297,7 @@ function selectRole(role) {
   inp.inputMode      = role==='parent' ? 'numeric' : 'text';
   btn.style.background = cfg.btnBg;
   wrap.style.display = 'block';
+  if(btn) btn.style.display = 'flex';
   setTimeout(function(){ inp.focus(); }, 80);
 }
 
