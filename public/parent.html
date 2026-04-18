@@ -1398,6 +1398,8 @@ function doLogin(){
     if(!r){ showErr('رقم الهوية غير صحيح أو غير مسجل في النظام'); return; }
     sessionStorage.setItem('parentStudentName', r.name);
     sessionStorage.setItem('parentStudentClass', r.className);
+    // ✅ حفظ الدور لـ PWA redirect (iOS)
+    localStorage.setItem('pwaRole', 'parent');
     registerForNotifications(r.name, r.className);
     registerForNotifications(r.name, r.className);
     // حفظ بيانات تذكرني
