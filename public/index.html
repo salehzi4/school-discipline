@@ -1,6 +1,32 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+<!-- ✅ PWA REDIRECT: لو فُتحت كاختصار من الشاشة الرئيسية (iOS/Android) حوّل لـ parent.html -->
+<script>
+(function(){
+  try {
+    // فحص هل الصفحة مفتوحة كـ PWA (standalone mode)
+    var isStandalone =
+      window.navigator.standalone === true ||                         // iOS Safari
+      window.matchMedia('(display-mode: standalone)').matches ||      // Android/Chrome
+      window.matchMedia('(display-mode: fullscreen)').matches ||
+      window.matchMedia('(display-mode: minimal-ui)').matches;
+
+    if (isStandalone) {
+      // نقرأ school code من localStorage (محفوظ من آخر دخول)
+      var sc = localStorage.getItem('schoolCode') || '';
+      var role = localStorage.getItem('pwaRole') || 'parent'; // الدور المحفوظ (افتراضي ولي أمر)
+      var target = '/' + role + '.html' + (sc ? '?school=' + sc : '');
+
+      // لو الرابط الحالي فعلاً هو parent/teacher ما نعمل شي
+      var currentPath = window.location.pathname;
+      if (currentPath !== '/' + role + '.html' && currentPath.indexOf(role + '.html') === -1) {
+        window.location.replace(target);
+      }
+    }
+  } catch(e) { console.warn('[PWA Redirect]', e); }
+})();
+</script>
 <!-- ✅ FIX: يُطبَّق فوراً قبل اكتمال تحميل الصفحة -->
 <style>html{background:#062E22;margin:0;}body{background:#062E22;margin:0;}body.app-ready{background:var(--bg,#F0F3F7)!important;}
 /* ── MOBILE RESPONSIVE ── */
