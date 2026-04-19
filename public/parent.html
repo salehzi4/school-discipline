@@ -1516,40 +1516,60 @@ function showErr(msg){
   setTimeout(function(){ e.style.display='none'; }, 4000);
 }
 function doLogout(){
-  // تسجيل الخروج لا يحذف الأبناء المحفوظين
-  // (الأبناء يُحذفون فقط من لوحة "أبنائي" أو عبر زر "حذف جميع الأبناء")
+  // تسجيل الخروج لا يحذف الأبناء المحفوظين ولا يلغي الإشعارات
+  // (الإشعارات تبقى فعّالة لأن ولي الأمر يحتاج إشعارات أبنائه حتى في حال الخروج)
   sessionStorage.removeItem('parentStudentName');
   sessionStorage.removeItem('parentStudentClass');
   sessionStorage.removeItem('loggedIn');
   sessionStorage.removeItem('userRole');
-  sessionStorage.removeItem('schoolCode');
   sessionStorage.removeItem(ACTIVE_CHILD_KEY);
-  // إلغاء الاشتراك من الإشعارات
-  if (typeof OneSignalDeferred !== 'undefined') {
-    OneSignalDeferred.push(async function(OneSignal) {
-      try { await OneSignal.User.PushSubscription.optOut(); } catch(e){}
-    });
+  // إخفاء التطبيق وإظهار شاشة الدخول
+  var app = document.getElementById('app');
+  if (app) app.style.display = 'none';
+  var ls = document.getElementById('loginScreen');
+  if (ls) {
+    ls.style.display = 'flex';
+    ls.style.opacity = '1';
   }
-  // العودة لصفحة الدخول الموحد
-  var sc = new URLSearchParams(window.location.search).get('school') || '';
-  window.location.href = sc ? '/?school=' + sc : '/';
+  // تفريغ حقل الإدخال
+  var inp = document.getElementById('nationalIdInput');
+  if (inp) inp.value = '';
+  // إلغاء خيار "تذكرني"
+  var cb = document.getElementById('rememberMe');
+  if (cb) cb.checked = false;
+  // تمرير للأعلى
+  window.scrollTo(0, 0);
 }
 
-// 🆕 حذف جميع الأبناء (إجراء منفصل ومتعمّد)
+// 🆕 حذف جميع الأبناء (إجراء منفصل ومتعمّد) — يبقى في صفحة ولي الأمر
 function clearAllChildren() {
   if (!confirm('سيتم حذف جميع الأبناء المحفوظين. هل أنت متأكد؟')) return;
   localStorage.removeItem(CHILDREN_KEY);
   localStorage.removeItem('rememberedId');
   localStorage.removeItem('rememberedName');
   localStorage.removeItem('rememberedClass');
-  localStorage.removeItem('pwaRole');
-  sessionStorage.clear();
+  sessionStorage.removeItem('parentStudentName');
+  sessionStorage.removeItem('parentStudentClass');
+  sessionStorage.removeItem(ACTIVE_CHILD_KEY);
   if (typeof OneSignalDeferred !== 'undefined') {
     OneSignalDeferred.push(async function(OneSignal) {
       try { await OneSignal.User.PushSubscription.optOut(); } catch(e){}
     });
   }
-  window.location.href = '/';
+  closeChildrenPanel();
+  // إخفاء التطبيق وإظهار شاشة الدخول
+  var app = document.getElementById('app');
+  if (app) app.style.display = 'none';
+  var ls = document.getElementById('loginScreen');
+  if (ls) {
+    ls.style.display = 'flex';
+    ls.style.opacity = '1';
+  }
+  var inp = document.getElementById('nationalIdInput');
+  if (inp) inp.value = '';
+  var cb = document.getElementById('rememberMe');
+  if (cb) cb.checked = false;
+  window.scrollTo(0, 0);
 }
 
 // 🆕 تبديل الابن النشط
