@@ -718,9 +718,11 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
   <!-- STUDENT BANNER -->
   <div class="student-banner">
     <div class="sb-inner">
-      <div class="sb-student-info">
-        <div class="sb-label">اسم الطالب</div>
-        <div class="sb-name" id="heroName">{اسم_الطالب}</div>
+      <div class="sb-student-info" onclick="openChildrenPanel()" style="cursor:pointer;">
+        <div class="sb-label">اسم الطالب <span id="sbChildrenBadge" style="display:none;background:rgba(255,255,255,0.25);padding:1px 6px;border-radius:10px;font-size:9px;margin-right:4px;"></span></div>
+        <div class="sb-name" id="heroName">{اسم_الطالب}
+          <span class="material-icons-round" id="sbSwitchIcon" style="font-size:14px;vertical-align:middle;margin-right:4px;opacity:0.7;display:none;">unfold_more</span>
+        </div>
       </div>
       <div class="sb-divider-v"></div>
       <div class="sb-class-info">
@@ -732,13 +734,6 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
           style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.5);background:rgba(255,255,255,0.15);color:#fff;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;">
           <span class="material-icons-round" id="notifBtnIcon" style="font-size:15px;">notifications_active</span>
           <span id="notifBtnText">تفعيل الإشعارات</span>
-        </button>
-      </div>
-      <div id="notifBtnWrap" style="display:none;margin-right:auto;">
-        <button id="notifBtn" onclick="toggleNotifications()"
-          style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.5);background:rgba(255,255,255,0.15);color:#fff;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;">
-          <span class="material-icons-round" id="notifIcon" style="font-size:15px;">notifications_active</span>
-          <span id="notifText">تفعيل الإشعارات</span>
         </button>
       </div>
     </div>
@@ -1075,11 +1070,97 @@ const _PAR_KEY = 'par_settings_cache';
 sessionStorage.removeItem(_PAR_KEY);
 
 /* ══════════════════════════════════════════════════════════
+   🆕 نظام إدارة الأبناء المتعددين (Multi-Children System)
+   ══════════════════════════════════════════════════════════ */
+var CHILDREN_KEY       = 'parentChildren';        // localStorage: قائمة الأبناء
+var ACTIVE_CHILD_KEY   = 'activeChildIndex';      // sessionStorage: الابن المختار حالياً
+
+// قراءة قائمة الأبناء من localStorage
+function getChildren() {
+  try {
+    var raw = localStorage.getItem(CHILDREN_KEY);
+    if (!raw) return [];
+    var arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  } catch(e) { return []; }
+}
+
+// حفظ قائمة الأبناء
+function saveChildren(list) {
+  try { localStorage.setItem(CHILDREN_KEY, JSON.stringify(list || [])); } catch(e) {}
+}
+
+// إضافة ابن جديد (بدون تكرار)
+function addChild(id, name, className) {
+  var list = getChildren();
+  // تحقق من التكرار
+  for (var i = 0; i < list.length; i++) {
+    if (list[i].id === id) { return i; } // موجود مسبقاً
+  }
+  list.push({ id: id, name: name, className: className });
+  saveChildren(list);
+  return list.length - 1;
+}
+
+// حذف ابن
+function removeChild(index) {
+  var list = getChildren();
+  if (index < 0 || index >= list.length) return;
+  list.splice(index, 1);
+  saveChildren(list);
+  // إذا كان هو النشط، نرجع للأول
+  var active = parseInt(sessionStorage.getItem(ACTIVE_CHILD_KEY) || '0', 10);
+  if (active >= list.length) sessionStorage.setItem(ACTIVE_CHILD_KEY, '0');
+}
+
+// الحصول على الابن النشط
+function getActiveChild() {
+  var list = getChildren();
+  if (!list.length) return null;
+  var idx = parseInt(sessionStorage.getItem(ACTIVE_CHILD_KEY) || '0', 10);
+  if (idx < 0 || idx >= list.length) idx = 0;
+  return list[idx];
+}
+
+// تعيين الابن النشط
+function setActiveChild(index) {
+  sessionStorage.setItem(ACTIVE_CHILD_KEY, String(index));
+}
+
+// تحديث tag OneSignal ليشمل كل الأبناء
+function syncAllChildrenTags() {
+  if (typeof OneSignalDeferred === 'undefined') return;
+  var sc = window.getSchoolCode ? window.getSchoolCode() : '';
+  var list = getChildren();
+  if (!sc || !list.length) return;
+
+  // نبني قيمة students_list بصيغة |اسم1|اسم2|اسم3|
+  var namesStr = '|' + list.map(function(c){ return c.name; }).join('|') + '|';
+  var classesStr = '|' + list.map(function(c){ return c.className; }).filter(function(v,i,a){ return a.indexOf(v)===i; }).join('|') + '|';
+
+  OneSignalDeferred.push(async function(OneSignal) {
+    try {
+      var optedIn = await OneSignal.User.PushSubscription.optedIn;
+      if (optedIn) {
+        await OneSignal.User.addTags({
+          school_code:   sc,
+          students_list: namesStr,
+          classes_list:  classesStr,
+          // نُبقي القديمة للتوافق مع الإصدارات السابقة (الابن الأول)
+          student_name:  list[0].name,
+          class_name:    list[0].className
+        });
+      }
+    } catch(e) { console.warn('[OneSignal syncAll]', e); }
+  });
+}
+
+/* ══════════════════════════════════════════════════════════
    ✅ FIX: دالة إظهار شاشة الدخول — تُستدعى فقط بعد تطبيق الألوان
    ══════════════════════════════════════════════════════════ */
 function _showParentLogin() {
-  // لا تُظهر إذا كان ولي الأمر مسجّل دخول مسبقاً
-  if (!sessionStorage.getItem('parentStudentName')) {
+  // لا تُظهر إذا كان ولي الأمر مسجّل دخول مسبقاً أو عنده أبناء محفوظين
+  if (!sessionStorage.getItem('parentStudentName') && !getChildren().length) {
     var ls = document.getElementById('loginScreen');
     if (ls) ls.style.opacity = '1';
   }
@@ -1093,13 +1174,13 @@ document.addEventListener('DOMContentLoaded', function(){
   if(lBtn) lBtn.addEventListener('click', doLogin);
   if(lInp) lInp.addEventListener('keypress', function(e){ if(e.key==='Enter') doLogin(); });
   GAS.getParentSettings().then(applySettings).catch(function(){});
-  // ── تحقق من URL params أو تذكرني ──
+  // ── تحقق من URL params أو الأبناء المحفوظين ──
   var urlParams = new URLSearchParams(window.location.search);
   var urlStudent = urlParams.get('student');
   var urlClass   = urlParams.get('class');
 
   if(urlStudent && urlClass){
-    // دخول عبر رابط مباشر
+    // دخول عبر رابط مباشر (من رابط مرسل بإشعار مثلاً)
     sessionStorage.setItem('parentStudentName', urlStudent);
     sessionStorage.setItem('parentStudentClass', urlClass);
     registerForNotifications(urlStudent, urlClass);
@@ -1109,20 +1190,38 @@ document.addEventListener('DOMContentLoaded', function(){
     loadProfile(urlStudent, urlClass);
 
   } else {
-    // تحقق من تذكرني
-    var remName  = localStorage.getItem('rememberedName');
-    var remClass = localStorage.getItem('rememberedClass');
-    if(remName && remClass){
-      sessionStorage.setItem('parentStudentName', remName);
-      sessionStorage.setItem('parentStudentClass', remClass);
-      var ls2 = document.getElementById('loginScreen');
-      if(ls2){ ls2.style.display='none'; ls2.style.opacity='0'; }
-      checkNewReports(remName, remClass);
-      loadProfile(remName, remClass);
+    // 🆕 تحقق من قائمة الأبناء المحفوظة
+    var children = getChildren();
+    if (children.length > 0) {
+      // عنده أبناء محفوظين — استخدم الابن النشط
+      var active = getActiveChild();
+      if (active) {
+        sessionStorage.setItem('parentStudentName', active.name);
+        sessionStorage.setItem('parentStudentClass', active.className);
+        var ls2 = document.getElementById('loginScreen');
+        if(ls2){ ls2.style.display='none'; ls2.style.opacity='0'; }
+        checkNewReports(active.name, active.className);
+        loadProfile(active.name, active.className);
+        // نُحدّث tags لكل الأبناء
+        setTimeout(syncAllChildrenTags, 1500);
+      }
     } else {
-      // عرض شاشة الدخول مع تعبئة رقم الهوية المحفوظ
-      var remId = localStorage.getItem('rememberedId');
-      if(remId){
+      // لا يوجد أبناء — توافق مع "تذكرني" القديم
+      var remName  = localStorage.getItem('rememberedName');
+      var remClass = localStorage.getItem('rememberedClass');
+      var remId    = localStorage.getItem('rememberedId');
+      if(remName && remClass && remId){
+        // ترقية: نحفظهم في النظام الجديد
+        addChild(remId, remName, remClass);
+        setActiveChild(0);
+        sessionStorage.setItem('parentStudentName', remName);
+        sessionStorage.setItem('parentStudentClass', remClass);
+        var ls3 = document.getElementById('loginScreen');
+        if(ls3){ ls3.style.display='none'; ls3.style.opacity='0'; }
+        checkNewReports(remName, remClass);
+        loadProfile(remName, remClass);
+      } else if(remId){
+        // عرض شاشة الدخول مع تعبئة رقم الهوية المحفوظ
         var inp = document.getElementById('nationalIdInput');
         if(inp) inp.value = remId;
         var cb = document.getElementById('rememberMe');
@@ -1388,22 +1487,26 @@ function doLogin(){
   GAS.verifyParentById(id).then(function(r){
     hideL();
     if(!r){ showErr('رقم الهوية غير صحيح أو غير مسجل في النظام'); return; }
+
+    // 🆕 إضافة الابن للقائمة
+    var idx = addChild(id, r.name, r.className);
+    setActiveChild(idx);
+
     sessionStorage.setItem('parentStudentName', r.name);
     sessionStorage.setItem('parentStudentClass', r.className);
     // ✅ حفظ الدور لـ PWA redirect (iOS)
     localStorage.setItem('pwaRole', 'parent');
+
+    // سجل للإشعارات باسم هذا الابن، وبعدها نُحدّث tags لكل الأبناء
     registerForNotifications(r.name, r.className);
-    registerForNotifications(r.name, r.className);
-    // حفظ بيانات تذكرني
+    setTimeout(syncAllChildrenTags, 1500);
+
+    // حفظ آخر هوية دخل بها (للتعبئة السريعة)
     var remember = document.getElementById('rememberMe');
     if(remember && remember.checked){
       localStorage.setItem('rememberedId', id);
       localStorage.setItem('rememberedName', r.name);
       localStorage.setItem('rememberedClass', r.className);
-    } else {
-      localStorage.removeItem('rememberedId');
-      localStorage.removeItem('rememberedName');
-      localStorage.removeItem('rememberedClass');
     }
     loadProfile(r.name, r.className);
   }).catch(function(){ hideL(); showErr('حدث خطأ، يرجى المحاولة مجدداً'); });
@@ -1413,18 +1516,196 @@ function showErr(msg){
   setTimeout(function(){ e.style.display='none'; }, 4000);
 }
 function doLogout(){
-  // حذف بيانات تذكرني عند الخروج
-  localStorage.removeItem('rememberedId');
-  localStorage.removeItem('rememberedName');
-  localStorage.removeItem('rememberedClass');
+  // تسجيل الخروج لا يحذف الأبناء المحفوظين
+  // (الأبناء يُحذفون فقط من لوحة "أبنائي" أو عبر زر "حذف جميع الأبناء")
   sessionStorage.removeItem('parentStudentName');
   sessionStorage.removeItem('parentStudentClass');
   sessionStorage.removeItem('loggedIn');
   sessionStorage.removeItem('userRole');
   sessionStorage.removeItem('schoolCode');
+  sessionStorage.removeItem(ACTIVE_CHILD_KEY);
+  // إلغاء الاشتراك من الإشعارات
+  if (typeof OneSignalDeferred !== 'undefined') {
+    OneSignalDeferred.push(async function(OneSignal) {
+      try { await OneSignal.User.PushSubscription.optOut(); } catch(e){}
+    });
+  }
   // العودة لصفحة الدخول الموحد
   var sc = new URLSearchParams(window.location.search).get('school') || '';
   window.location.href = sc ? '/?school=' + sc : '/';
+}
+
+// 🆕 حذف جميع الأبناء (إجراء منفصل ومتعمّد)
+function clearAllChildren() {
+  if (!confirm('سيتم حذف جميع الأبناء المحفوظين. هل أنت متأكد؟')) return;
+  localStorage.removeItem(CHILDREN_KEY);
+  localStorage.removeItem('rememberedId');
+  localStorage.removeItem('rememberedName');
+  localStorage.removeItem('rememberedClass');
+  localStorage.removeItem('pwaRole');
+  sessionStorage.clear();
+  if (typeof OneSignalDeferred !== 'undefined') {
+    OneSignalDeferred.push(async function(OneSignal) {
+      try { await OneSignal.User.PushSubscription.optOut(); } catch(e){}
+    });
+  }
+  window.location.href = '/';
+}
+
+// 🆕 تبديل الابن النشط
+function switchChild(index) {
+  var list = getChildren();
+  if (index < 0 || index >= list.length) return;
+  setActiveChild(index);
+  var c = list[index];
+  sessionStorage.setItem('parentStudentName', c.name);
+  sessionStorage.setItem('parentStudentClass', c.className);
+  loadProfile(c.name, c.className);
+  checkNewReports(c.name, c.className);
+  closeChildrenPanel();
+}
+
+// 🆕 حذف ابن من القائمة
+function removeChildFromList(index) {
+  var list = getChildren();
+  if (!list[index]) return;
+  if (list.length === 1) {
+    alert('لا يمكن حذف الابن الوحيد. استخدم زر "تسجيل الخروج" بدلاً من ذلك.');
+    return;
+  }
+  if (!confirm('هل تريد إزالة "' + list[index].name + '" من القائمة؟')) return;
+  removeChild(index);
+  // إعادة عرض لوحة الأبناء
+  openChildrenPanel();
+  // تحديث tags
+  syncAllChildrenTags();
+  // إذا كان هو النشط، نعيد تحميل الابن الحالي
+  var active = getActiveChild();
+  if (active) {
+    sessionStorage.setItem('parentStudentName', active.name);
+    sessionStorage.setItem('parentStudentClass', active.className);
+    loadProfile(active.name, active.className);
+  }
+}
+
+// 🆕 فتح لوحة إدارة الأبناء
+function openChildrenPanel() {
+  var list = getChildren();
+  var activeIdx = parseInt(sessionStorage.getItem(ACTIVE_CHILD_KEY) || '0', 10);
+  var html = '';
+  html += '<div id="childrenPanelOverlay" onclick="if(event.target===this)closeChildrenPanel()" style="position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;">';
+  html += '<div style="background:#fff;border-radius:16px;max-width:420px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);">';
+  // Header
+  html += '<div style="background:linear-gradient(135deg,#0A5C44,#0D7A5C);color:#fff;padding:18px 20px;border-radius:16px 16px 0 0;display:flex;align-items:center;justify-content:space-between;">';
+  html += '<div style="display:flex;align-items:center;gap:10px;"><span class="material-icons-round" style="font-size:24px;">family_restroom</span><div><div style="font-size:16px;font-weight:800;">أبنائي</div><div style="font-size:11px;opacity:0.85;margin-top:2px;">'+list.length+' '+(list.length===1?'ابن':'أبناء')+'</div></div></div>';
+  html += '<button onclick="closeChildrenPanel()" style="background:rgba(255,255,255,0.2);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;"><span class="material-icons-round" style="font-size:18px;">close</span></button>';
+  html += '</div>';
+  // Body
+  html += '<div style="padding:16px;">';
+  if (list.length === 0) {
+    html += '<div style="text-align:center;padding:30px;color:#64748b;font-size:13px;">لا يوجد أبناء مسجلين</div>';
+  } else {
+    list.forEach(function(c, i) {
+      var isActive = (i === activeIdx);
+      html += '<div style="display:flex;align-items:center;gap:10px;padding:12px;border-radius:10px;margin-bottom:8px;border:2px solid '+(isActive?'#0A5C44':'#e2e8f0')+';background:'+(isActive?'#ecfdf5':'#fff')+';cursor:pointer;" onclick="switchChild('+i+')">';
+      html += '<div style="width:40px;height:40px;border-radius:50%;background:'+(isActive?'#0A5C44':'#cbd5e1')+';color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;">'+(c.name.charAt(0))+'</div>';
+      html += '<div style="flex:1;min-width:0;"><div style="font-weight:700;font-size:13px;color:#1e293b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+c.name+'</div><div style="font-size:11px;color:#64748b;margin-top:2px;">'+c.className+'</div></div>';
+      if (isActive) html += '<span class="material-icons-round" style="color:#0A5C44;font-size:20px;">check_circle</span>';
+      html += '<button onclick="event.stopPropagation();removeChildFromList('+i+')" style="background:transparent;border:none;color:#94a3b8;cursor:pointer;padding:4px;display:flex;align-items:center;"><span class="material-icons-round" style="font-size:18px;">close</span></button>';
+      html += '</div>';
+    });
+  }
+  // Add child button
+  html += '<button onclick="showAddChildPrompt()" style="width:100%;padding:12px;margin-top:8px;background:#0A5C44;color:#fff;border:none;border-radius:10px;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;"><span class="material-icons-round" style="font-size:18px;">person_add</span> إضافة ابن آخر</button>';
+
+  // زر حذف جميع الأبناء (يظهر فقط إذا فيه أبناء)
+  if (list.length > 0) {
+    html += '<button onclick="clearAllChildren()" style="width:100%;padding:10px;margin-top:8px;background:transparent;color:#dc2626;border:1.5px solid #fecaca;border-radius:10px;font-family:inherit;font-weight:700;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;"><span class="material-icons-round" style="font-size:16px;">delete_sweep</span> حذف جميع الأبناء من الجهاز</button>';
+  }
+
+  html += '</div></div></div>';
+
+  // إضافة للـ body
+  var ex = document.getElementById('childrenPanelOverlay');
+  if (ex) ex.remove();
+  var div = document.createElement('div');
+  div.innerHTML = html;
+  document.body.appendChild(div.firstChild);
+}
+
+function closeChildrenPanel() {
+  var el = document.getElementById('childrenPanelOverlay');
+  if (el) el.remove();
+}
+
+// 🆕 شاشة إضافة ابن آخر
+function showAddChildPrompt() {
+  closeChildrenPanel();
+  var html = '';
+  html += '<div id="addChildOverlay" onclick="if(event.target===this)closeAddChild()" style="position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;">';
+  html += '<div style="background:#fff;border-radius:16px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.3);">';
+  html += '<div style="background:linear-gradient(135deg,#0A5C44,#0D7A5C);color:#fff;padding:18px 20px;border-radius:16px 16px 0 0;text-align:center;">';
+  html += '<span class="material-icons-round" style="font-size:36px;">person_add</span>';
+  html += '<div style="font-size:16px;font-weight:800;margin-top:6px;">إضافة ابن آخر</div>';
+  html += '<div style="font-size:11px;opacity:0.85;margin-top:2px;">أدخل رقم هوية الابن</div>';
+  html += '</div>';
+  html += '<div style="padding:20px;">';
+  html += '<label style="display:block;font-size:12px;font-weight:600;color:#475569;margin-bottom:6px;">رقم هوية الطالب</label>';
+  html += '<input id="addChildIdInput" type="password" placeholder="••••••••••" maxlength="20" style="width:100%;padding:12px;border:1.5px solid #cbd5e1;border-radius:10px;font-family:inherit;font-size:14px;text-align:center;letter-spacing:3px;" onkeypress="if(event.key===\'Enter\')submitAddChild()">';
+  html += '<div id="addChildError" style="color:#dc2626;font-size:11px;margin-top:6px;display:none;"></div>';
+  html += '<div style="display:flex;gap:8px;margin-top:14px;">';
+  html += '<button onclick="closeAddChild()" style="flex:1;padding:11px;background:#f1f5f9;color:#475569;border:none;border-radius:10px;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;">إلغاء</button>';
+  html += '<button onclick="submitAddChild()" id="addChildSubmitBtn" style="flex:2;padding:11px;background:#0A5C44;color:#fff;border:none;border-radius:10px;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;">إضافة</button>';
+  html += '</div></div></div></div>';
+  var div = document.createElement('div');
+  div.innerHTML = html;
+  document.body.appendChild(div.firstChild);
+  setTimeout(function(){ var inp = document.getElementById('addChildIdInput'); if(inp) inp.focus(); }, 100);
+}
+
+function closeAddChild() {
+  var el = document.getElementById('addChildOverlay');
+  if (el) el.remove();
+}
+
+function submitAddChild() {
+  var inp = document.getElementById('addChildIdInput');
+  var err = document.getElementById('addChildError');
+  var btn = document.getElementById('addChildSubmitBtn');
+  if (!inp) return;
+  var id = inp.value.trim();
+  if (!id) { err.textContent = 'أدخل رقم الهوية'; err.style.display = 'block'; return; }
+
+  // فحص إذا كان موجوداً
+  var existing = getChildren();
+  for (var i = 0; i < existing.length; i++) {
+    if (existing[i].id === id) {
+      err.textContent = 'هذا الابن مضاف مسبقاً'; err.style.display = 'block'; return;
+    }
+  }
+
+  btn.disabled = true; btn.textContent = 'جاري التحقق...';
+  err.style.display = 'none';
+
+  GAS.verifyParentById(id).then(function(r){
+    btn.disabled = false; btn.textContent = 'إضافة';
+    if (!r) { err.textContent = 'رقم الهوية غير صحيح أو غير مسجل'; err.style.display = 'block'; return; }
+    // إضافة للقائمة
+    var idx = addChild(id, r.name, r.className);
+    // نجعله النشط
+    setActiveChild(idx);
+    sessionStorage.setItem('parentStudentName', r.name);
+    sessionStorage.setItem('parentStudentClass', r.className);
+    closeAddChild();
+    // تحميل بيانات الابن الجديد
+    loadProfile(r.name, r.className);
+    checkNewReports(r.name, r.className);
+    // تحديث tags لكل الأبناء
+    syncAllChildrenTags();
+  }).catch(function(){
+    btn.disabled = false; btn.textContent = 'إضافة';
+    err.textContent = 'حدث خطأ، يرجى المحاولة مجدداً'; err.style.display = 'block';
+  });
 }
 
 /* ══ CHECK NEW REPORTS ══ */
@@ -1463,6 +1744,23 @@ function loadProfile(name, cls){
 function renderAll(p){
   $('heroName').textContent  = p.name    || '—';
   $('heroClass').textContent = p.className || '—';
+
+  // 🆕 تحديث شارة عدد الأبناء
+  var childrenList = getChildren();
+  var badge = document.getElementById('sbChildrenBadge');
+  var icon  = document.getElementById('sbSwitchIcon');
+  if (childrenList.length > 1) {
+    if (badge) { badge.textContent = childrenList.length + ' أبناء'; badge.style.display = 'inline-block'; }
+    if (icon)  { icon.style.display = 'inline-block'; }
+    // إعادة وضع الاسم والأيقونة
+    var heroEl = document.getElementById('heroName');
+    if (heroEl && !heroEl.querySelector('.material-icons-round')) {
+      heroEl.innerHTML = (p.name || '—') + ' <span class="material-icons-round" style="font-size:14px;vertical-align:middle;margin-right:4px;opacity:0.7;">unfold_more</span>';
+    }
+  } else {
+    if (badge) badge.style.display = 'none';
+    if (icon)  icon.style.display = 'none';
+  }
   var absExcused   = (p.violations||[]).filter(function(v){ return (v.category==='غياب'||v.category==='absence') && !v.type.includes('بدون عذر'); }).length
                    + (p.classViolations||[]).filter(function(v){ return (v.category==='غياب'||v.category==='absence') && !v.type.includes('بدون عذر'); }).length;
   var absUnexcused = (p.violations||[]).filter(function(v){ return (v.category==='غياب'||v.category==='absence') && v.type.includes('بدون عذر'); }).length
