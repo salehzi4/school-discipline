@@ -569,48 +569,59 @@ async function deletePositiveBehaviorType(typeName, sc) {
 // ═══════════════════════════════════════════════════════
 // OneSignal — إرسال إشعار Push
 // ═══════════════════════════════════════════════════════
-async function sendPushNotification(schoolCode, studentName, title, message) {
-  const API_KEY = process.env.ONESIGNAL_API_KEY || '';
-  const APP_ID  = '02b5a380-ec64-4f1d-8db4-3e4963197408';
+// (الدالة الأساسية معرّفة أدناه — تدعم الأبناء المتعددين)
 
-  if (!API_KEY) { console.warn('[OneSignal] ONESIGNAL_API_KEY غير موجود'); return; }
+// ═══════════════════════════════════════════════════════
+// OneSignal Push Notifications — يدعم ولي الأمر بأبناء متعددين
+// ═══════════════════════════════════════════════════════
+async function sendPushNotification(schoolCode, studentName, message, title) {
+  const API_KEY = process.env.ONESIGNAL_API_KEY || '';
+  if (!API_KEY) { console.warn('[OneSignal] API Key غير موجود'); return; }
   if (!schoolCode || !studentName) return;
+
+  // العنوان: نضيف اسم الطالب للتمييز بين الأبناء
+  const finalTitle = (title || 'سجل المخالفات السلوكية') + ' — ' + studentName;
 
   try {
     const res = await fetch('https://onesignal.com/api/v1/notifications', {
       method: 'POST',
       headers: {
-        'Content-Type':  'application/json',
+        'Content-Type': 'application/json',
         'Authorization': 'Basic ' + API_KEY
       },
       body: JSON.stringify({
-        app_id:   APP_ID,
-        filters:  [
-          { field: 'tag', key: 'school_code',  relation: '=', value: schoolCode  },
+        app_id: '02b5a380-ec64-4f1d-8db4-3e4963197408',
+        // 🆕 نستخدم students_list (contains) للتعامل مع ولي الأمر بأبناء متعددين
+        //     قيمة الـ tag: |أحمد|سعد|خالد|  — نبحث عن |اسم_الطالب|
+        filters: [
+          { field: 'tag', key: 'school_code',   relation: '=',        value: schoolCode  },
           { operator: 'AND' },
-          { field: 'tag', key: 'student_name', relation: '=', value: studentName }
+          { field: 'tag', key: 'students_list', relation: 'exists' },
+          { operator: 'AND' },
+          { field: 'tag', key: 'students_list', relation: 'contains', value: '|' + studentName + '|' }
         ],
-        headings: { en: title   || 'سجل المخالفات السلوكية' },
+        headings: { en: finalTitle },
         contents: { en: message || 'يوجد تحديث جديد' },
         url: 'https://schools00.netlify.app/parent.html?school=' + schoolCode
       })
     });
     const data = await res.json();
-    if (data.errors) { console.error('[OneSignal] خطأ:', data.errors); }
-    else { console.log('[OneSignal] أُرسل:', data.id); }
+    if (data.errors) {
+      console.error('[OneSignal] خطأ:', JSON.stringify(data.errors));
+      // Fallback: جرّب الفلتر القديم للتوافق مع المستخدمين القدامى
+      await sendPushFallback(schoolCode, studentName, message, finalTitle, API_KEY);
+    } else {
+      console.log('[OneSignal] إشعار:', data.id);
+    }
   } catch(e) {
-    console.error('[OneSignal] استثناء:', e);
+    console.error('[OneSignal] خطأ:', e);
   }
 }
 
-// ═══════════════════════════════════════════════════════
-// OneSignal Push Notifications
-// ═══════════════════════════════════════════════════════
-async function sendPushNotification(schoolCode, studentName, message, title) {
-  const API_KEY = process.env.ONESIGNAL_API_KEY || '';
-  if (!API_KEY) { console.warn('[OneSignal] API Key غير موجود'); return; }
+// Fallback للتوافق مع المستخدمين القدامى (اللي يستخدمون tag student_name)
+async function sendPushFallback(schoolCode, studentName, message, title, API_KEY) {
   try {
-    const res = await fetch('https://onesignal.com/api/v1/notifications', {
+    await fetch('https://onesignal.com/api/v1/notifications', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -628,11 +639,7 @@ async function sendPushNotification(schoolCode, studentName, message, title) {
         url: 'https://schools00.netlify.app/parent.html?school=' + schoolCode
       })
     });
-    const data = await res.json();
-    console.log('[OneSignal] إشعار:', data.id || JSON.stringify(data.errors));
-  } catch(e) {
-    console.error('[OneSignal] خطأ:', e);
-  }
+  } catch(e) { console.warn('[OneSignal fallback]', e); }
 }
 
 async function recordViolation(body, sc) {
